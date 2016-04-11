@@ -60,6 +60,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             tableView.scrollEnabled = !currentlyEditing
         }
     }
+    var topConstraint: NSLayoutConstraint?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +82,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func setupTableView() {
         view.addSubview(tableView)
         constrain(tableView) { tableView in
-            tableView.edges == tableView.superview!.edges
+            topConstraint = (tableView.top == tableView.superview!.top)
+            tableView.right == tableView.superview!.right
+            tableView.bottom == tableView.superview!.bottom
+            tableView.left == tableView.superview!.left
         }
         tableView.dataSource = self
         tableView.delegate = self
@@ -132,7 +136,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         guard recognizer.state == .Ended else {
             return
         }
-        if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
+        if currentlyEditing {
+            tableView.endEditing(true)
+        } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
             cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
@@ -235,6 +241,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let rowFloat = CGFloat(indexPath.row)
         cell.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
                                        green: 0.07 + (0.04 * rowFloat), blue: 0.1, alpha: 1)
+        cell.alpha = currentlyEditing ? 0.3 : 1
     }
 
     // MARK: TableViewCellDelegate
@@ -286,10 +293,28 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
-        // TODO: Dim other cells
+        currentlyEditing = true
+        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
+        topConstraint?.constant = -editingOffset
+        UIView.animateWithDuration(0.3) { [unowned self] in
+            self.view.layoutSubviews()
+            for cell in self.visibleTableViewCells where cell !== editingCell {
+                cell.alpha = 0.3
+            }
+        }
     }
 
     func cellDidEndEditing(editingCell: TableViewCell) {
-        // TODO: Undim other cells
+        currentlyEditing = false
+        topConstraint?.constant = 0
+        UIView.animateWithDuration(0.3) { [unowned self] in
+            self.view.layoutSubviews()
+            for cell in self.visibleTableViewCells where cell !== editingCell {
+                cell.alpha = 1
+            }
+        }
+        if let item = editingCell.item where item.text.isEmpty {
+            itemDeleted(item)
+        }
     }
 }
