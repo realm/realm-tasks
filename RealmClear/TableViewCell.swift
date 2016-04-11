@@ -9,6 +9,10 @@
 import Cartography
 import UIKit
 
+enum ReleaseAction {
+    case Complete, Delete
+}
+
 class TableViewCell: UITableViewCell {
     var item: ToDoItem! {
         didSet {
@@ -17,6 +21,7 @@ class TableViewCell: UITableViewCell {
     }
     let textView = ToDoItemTextView()
     var originalCenter = CGPoint()
+    var releaseAction: ReleaseAction?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -79,12 +84,27 @@ class TableViewCell: UITableViewCell {
         switch recognizer.state {
         case .Began:
             originalCenter = center
+            releaseAction = nil
             break
         case .Changed:
             let translation = recognizer.translationInView(self)
             center = CGPoint(x: originalCenter.x + translation.x, y: originalCenter.y)
+            let exceedsThreshold = fabs(frame.origin.x) > frame.size.width / 4
+            releaseAction = exceedsThreshold ? (frame.origin.x > 0 ? .Complete : .Delete) : nil
+            // TODO: update UI to reflect release action
             break
         case .Ended:
+            switch releaseAction {
+            case .Some(.Complete):
+                // TODO: mark item as completed
+                break
+            case .Some(.Delete):
+                // TODO: delete item
+                break
+            case nil:
+                // TODO: reset state
+                break
+            }
             let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
             UIView.animateWithDuration(0.2) { [unowned self] in self.frame = originalFrame }
             break
