@@ -21,6 +21,21 @@ class ToDoItemTextView: UITextView {
         scrollEnabled = false
     }
 
+    func strike(fraction: Double = 1) {
+        let mutableAttributedString = attributedText!.mutableCopy() as! NSMutableAttributedString
+        mutableAttributedString.addAttribute(NSStrikethroughStyleAttributeName, value: 2, range: NSMakeRange(0, Int(fraction * Double(mutableAttributedString.length))))
+        attributedText = mutableAttributedString.copy() as? NSAttributedString
+    }
+
+    func unstrike() {
+        var mutableTypingAttributes = typingAttributes
+        mutableTypingAttributes.removeValueForKey(NSStrikethroughStyleAttributeName)
+        typingAttributes = mutableTypingAttributes
+        let mutableAttributedString = attributedText!.mutableCopy() as! NSMutableAttributedString
+        mutableAttributedString.removeAttribute(NSStrikethroughStyleAttributeName, range: NSMakeRange(0, mutableAttributedString.length))
+        attributedText = mutableAttributedString.copy() as? NSAttributedString
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

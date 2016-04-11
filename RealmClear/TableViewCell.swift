@@ -91,7 +91,14 @@ class TableViewCell: UITableViewCell {
             center = CGPoint(x: originalCenter.x + translation.x, y: originalCenter.y)
             let exceedsThreshold = fabs(frame.origin.x) > frame.size.width / 4
             releaseAction = exceedsThreshold ? (frame.origin.x > 0 ? .Complete : .Delete) : nil
-            // TODO: update UI to reflect release action
+
+            if frame.origin.x > 0 {
+                let fractionOfThreshold = min(1, Double(abs(frame.origin.x) / (frame.size.width / 4)))
+                textView.unstrike()
+                textView.strike(fractionOfThreshold)
+            } else {
+                releaseAction == .Complete ? textView.strike() : textView.unstrike()
+            }
             break
         case .Ended:
             switch releaseAction {
@@ -102,7 +109,7 @@ class TableViewCell: UITableViewCell {
                 // TODO: delete item
                 break
             case nil:
-                // TODO: reset state
+                item.completed ? textView.strike() : textView.unstrike()
                 break
             }
             let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
