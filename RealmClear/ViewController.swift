@@ -34,6 +34,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         setupUI()
     }
 
+    // MARK: UI
+
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
+    }
+
     func setupUI() {
         setupTableView()
         setupTitleBar()
