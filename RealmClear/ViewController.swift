@@ -118,7 +118,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
 
     func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
-        // TODO: Implement this
+        guard recognizer.state == .Ended else {
+            return
+        }
+        if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
+            cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
+            cell.textView.becomeFirstResponder()
+        }
     }
 
     func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
