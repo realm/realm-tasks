@@ -16,6 +16,7 @@ class TableViewCell: UITableViewCell {
         }
     }
     let textView = ToDoItemTextView()
+    var originalCenter = CGPoint()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -75,7 +76,21 @@ class TableViewCell: UITableViewCell {
     }
 
     func handlePan(recognizer: UIPanGestureRecognizer) {
-        // TODO: Implement this
+        switch recognizer.state {
+        case .Began:
+            originalCenter = center
+            break
+        case .Changed:
+            let translation = recognizer.translationInView(self)
+            center = CGPoint(x: originalCenter.x + translation.x, y: originalCenter.y)
+            break
+        case .Ended:
+            let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
+            UIView.animateWithDuration(0.2) { [unowned self] in self.frame = originalFrame }
+            break
+        default:
+            break
+        }
     }
 
     override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
