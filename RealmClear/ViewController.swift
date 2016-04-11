@@ -26,13 +26,14 @@ var items =  [
     "Cras aliquam velit luctus lacus accumsan, id fringilla eros commodo."
 ].map(ToDoItem.init)
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
     let tableView = UITableView()
     var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupGestureRecognizers()
     }
 
     // MARK: UI
@@ -84,6 +85,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             titleLabel.right == titleLabel.superview!.right
             titleLabel.bottom == titleLabel.superview!.bottom - 5
         }
+    }
+
+    // MARK: Gesture Recognizers
+
+    func setupGestureRecognizers() {
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureRecognized(_:)))
+        longPressGestureRecognizer.delegate = self
+        tableView.addGestureRecognizer(longPressGestureRecognizer)
+    }
+
+    func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
+        // TODO: Implement this
     }
 
     // MARK: UITableViewDataSource
