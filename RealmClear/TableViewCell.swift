@@ -10,6 +10,10 @@ import AudioToolbox
 import Cartography
 import UIKit
 
+protocol TableViewCellDelegate {
+    func itemDeleted(item: ToDoItem)
+}
+
 extension UIColor {
     static func completeDimBackgroundColor() -> UIColor {
         return UIColor(white: 0.2, alpha: 1)
@@ -33,6 +37,7 @@ class TableViewCell: UITableViewCell {
             setCompleted(item.completed)
         }
     }
+    var delegate: TableViewCellDelegate?
     let textView = ToDoItemTextView()
     var originalCenter = CGPoint()
     var releaseAction: ReleaseAction?
@@ -143,7 +148,7 @@ class TableViewCell: UITableViewCell {
                 setCompleted(!item.completed, animated: true)
                 break
             case .Some(.Delete):
-                // TODO: delete item
+                delegate?.itemDeleted(item)
                 break
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()

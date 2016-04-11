@@ -26,8 +26,9 @@ var items =  [
     "Cras aliquam velit luctus lacus accumsan, id fringilla eros commodo."
 ].map(ToDoItem.init)
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate {
     let tableView = UITableView()
+    var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,6 +95,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell
         cell.item = items[indexPath.row]
+        cell.delegate = self
         return cell
     }
 
@@ -103,5 +105,32 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let rowFloat = CGFloat(indexPath.row)
         cell.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
                                        green: 0.07 + (0.04 * rowFloat), blue: 0.1, alpha: 1)
+    }
+
+    // MARK: TableViewCellDelegate
+
+    func itemDeleted(item: ToDoItem) {
+        guard let index = items.indexOf({ $0 === item }) else {
+            return
+        }
+        items.removeAtIndex(index)
+
+        // loop over the visible cells to animate delete
+        let visibleCells = visibleTableViewCells
+        let deletedIndex = visibleCells.indexOf { $0.item === item }
+        visibleCells[deletedIndex!].hidden = true
+        for cell in visibleCells[deletedIndex!..<visibleCells.count] {
+            UIView.animateWithDuration(0.3, delay: 0.01, options: .CurveEaseInOut, animations: {
+                cell.frame = CGRectOffset(cell.frame, 0, -cell.frame.size.height)
+            }, completion: { [weak self] _ in
+                if (cell == visibleCells.last) {
+                    self?.tableView.reloadData()
+                }
+            })
+        }
+        tableView.beginUpdates()
+        let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
+        tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
+        tableView.endUpdates()
     }
 }
