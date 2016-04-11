@@ -31,7 +31,7 @@ enum ReleaseAction {
 
 private let isDevice = TARGET_OS_SIMULATOR == 0
 
-class TableViewCell: UITableViewCell {
+class TableViewCell: UITableViewCell, UITextViewDelegate {
     var item: ToDoItem! {
         didSet {
             textView.text = item.text
@@ -70,6 +70,7 @@ class TableViewCell: UITableViewCell {
     }
 
     func setupTextView() {
+        textView.delegate = self
         addSubview(textView)
         constrain(textView) { textView in
             textView.left == textView.superview!.left + 8
@@ -194,6 +195,30 @@ class TableViewCell: UITableViewCell {
         } else {
             updateColor()
         }
+    }
+
+    // MARK: UITextViewDelegate methods
+
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+
+    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+        // disable editing of completed to-do items
+        return !item.completed
+    }
+
+    func textViewDidBeginEditing(textView: UITextView) {
+        // TODO: dim other cells
+    }
+
+    func textViewDidEndEditing(textView: UITextView) {
+        // TODO: undim other cells
+        item.text = textView.text
     }
 
     // MARK: Unimplemented
