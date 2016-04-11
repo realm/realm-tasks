@@ -62,6 +62,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     var topConstraint: NSLayoutConstraint?
 
+    // Placeholder cell to use before being adding to the table view
+    let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -76,6 +79,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     func setupUI() {
         setupTableView()
+        setupPlaceholderCell()
         setupTitleBar()
     }
 
@@ -96,6 +100,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.contentInset = UIEdgeInsets(top: 45, left: 0, bottom: 0, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
         tableView.showsVerticalScrollIndicator = false
+    }
+
+    func setupPlaceholderCell() {
+        placeHolderCell.backgroundColor = UIColor(red: 0.85, green: 0, blue: 0, alpha: 1)
+        tableView.addSubview(placeHolderCell)
+        constrain(placeHolderCell) { placeHolderCell in
+            placeHolderCell.bottom == placeHolderCell.superview!.topMargin - 7
+            placeHolderCell.left == placeHolderCell.superview!.superview!.left
+            placeHolderCell.right == placeHolderCell.superview!.superview!.right
+            placeHolderCell.height == tableView.rowHeight
+        }
     }
 
     func setupTitleBar() {
@@ -242,6 +257,26 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         cell.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
                                        green: 0.07 + (0.04 * rowFloat), blue: 0.1, alpha: 1)
         cell.alpha = currentlyEditing ? 0.3 : 1
+    }
+
+    // MARK: UIScrollViewDelegate methods
+
+    func scrollViewDidScroll(scrollView: UIScrollView)  {
+        placeHolderCell.textView.text = (-scrollView.contentOffset.y - scrollView.contentInset.top) > tableView.rowHeight ?
+            "Release to Create Item" : "Pull to Create Item"
+        placeHolderCell.alpha = min(1, (-tableView.contentInset.top - tableView.contentOffset.y) / tableView.rowHeight)
+    }
+
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if -tableView.contentOffset.y - tableView.contentInset.top > tableView.rowHeight {
+            // exceeds threshold
+            items.insert(ToDoItem(text: ""), atIndex: 0)
+            tableView.reloadData()
+            if let textView = visibleTableViewCells.first?.textView {
+                textView.userInteractionEnabled = true
+                textView.becomeFirstResponder()
+            }
+        }
     }
 
     // MARK: TableViewCellDelegate
