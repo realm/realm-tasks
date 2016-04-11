@@ -22,7 +22,10 @@ class TableViewCell: UITableViewCell {
         selectionStyle = .None
 
         setupUI()
+        setupPanGestureRecognizer()
     }
+
+    // MARK: UI
 
     func setupUI() {
         setupTextView()
@@ -62,6 +65,28 @@ class TableViewCell: UITableViewCell {
             shadowLine.height == singlePixelInPoints
         }
     }
+
+    // MARK: Pan Gesture Recognizer
+
+    func setupPanGestureRecognizer() {
+        let recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        recognizer.delegate = self
+        addGestureRecognizer(recognizer)
+    }
+
+    func handlePan(recognizer: UIPanGestureRecognizer) {
+        // TODO: Implement this
+    }
+
+    override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
+            return false
+        }
+        let translation = panGestureRecognizer.translationInView(superview!)
+        return fabs(translation.x) > fabs(translation.y)
+    }
+
+    // MARK: Unimplemented
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
