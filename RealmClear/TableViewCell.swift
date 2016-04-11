@@ -16,7 +16,8 @@ enum ReleaseAction {
 class TableViewCell: UITableViewCell {
     var item: ToDoItem! {
         didSet {
-            textView.text = item?.text
+            textView.text = item.text
+            setCompleted(item.completed)
         }
     }
     let textView = ToDoItemTextView()
@@ -89,21 +90,29 @@ class TableViewCell: UITableViewCell {
         case .Changed:
             let translation = recognizer.translationInView(self)
             center = CGPoint(x: originalCenter.x + translation.x, y: originalCenter.y)
-            let exceedsThreshold = fabs(frame.origin.x) > frame.size.width / 4
-            releaseAction = exceedsThreshold ? (frame.origin.x > 0 ? .Complete : .Delete) : nil
+            let fractionOfThreshold = min(1, Double(abs(frame.origin.x) / (frame.size.width / 4)))
+            releaseAction = fractionOfThreshold >= 1 ? (frame.origin.x > 0 ? .Complete : .Delete) : nil
 
-            if frame.origin.x > 0 {
-                let fractionOfThreshold = min(1, Double(abs(frame.origin.x) / (frame.size.width / 4)))
-                textView.unstrike()
-                textView.strike(fractionOfThreshold)
+            if !item.completed {
+                if frame.origin.x > 0 {
+                    textView.unstrike()
+                    textView.strike(fractionOfThreshold)
+                } else {
+                    releaseAction == .Complete ? textView.strike() : textView.unstrike()
+                }
             } else {
-                releaseAction == .Complete ? textView.strike() : textView.unstrike()
+                if frame.origin.x > 0 {
+                    textView.unstrike()
+                    textView.strike(1 - fractionOfThreshold)
+                } else {
+                    releaseAction == .Complete ? textView.unstrike() : textView.strike()
+                }
             }
             break
         case .Ended:
             switch releaseAction {
             case .Some(.Complete):
-                // TODO: mark item as completed
+                setCompleted(!item.completed)
                 break
             case .Some(.Delete):
                 // TODO: delete item
@@ -121,11 +130,19 @@ class TableViewCell: UITableViewCell {
     }
 
     override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+
         guard let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
             return false
         }
         let translation = panGestureRecognizer.translationInView(superview!)
         return fabs(translation.x) > fabs(translation.y)
+    }
+
+    // MARK: Actions
+
+    private func setCompleted(completed: Bool) {
+        item.completed = completed
+        completed ? textView.strike() : textView.unstrike()
     }
 
     // MARK: Unimplemented
