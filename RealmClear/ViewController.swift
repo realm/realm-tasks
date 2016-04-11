@@ -26,6 +26,24 @@ var items =  [
     "Cras aliquam velit luctus lacus accumsan, id fringilla eros commodo."
 ].map(ToDoItem.init)
 
+extension UIView {
+    private var snapshot: UIView {
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
+        layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        // Create an image view
+        let snapshot = UIImageView(image: image)
+        snapshot.layer.masksToBounds = false
+        snapshot.layer.cornerRadius = 0
+        snapshot.layer.shadowOffset = CGSizeMake(-5, 0)
+        snapshot.layer.shadowRadius = 5
+        snapshot.layer.shadowOpacity = 0
+        return snapshot
+    }
+}
+
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
     let tableView = UITableView()
     var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
