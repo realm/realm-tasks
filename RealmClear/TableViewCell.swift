@@ -13,6 +13,8 @@ import UIKit
 protocol TableViewCellDelegate {
     func itemCompleted(item: ToDoItem)
     func itemDeleted(item: ToDoItem)
+    func cellDidBeginEditing(editingCell: TableViewCell)
+    func cellDidEndEditing(editingCell: TableViewCell)
 }
 
 extension UIColor {
@@ -213,12 +215,13 @@ class TableViewCell: UITableViewCell, UITextViewDelegate {
     }
 
     func textViewDidBeginEditing(textView: UITextView) {
-        // TODO: dim other cells
+        delegate?.cellDidBeginEditing(self)
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        // TODO: undim other cells
         item.text = textView.text
+        textView.userInteractionEnabled = false
+        delegate?.cellDidEndEditing(self)
     }
 
     // MARK: Unimplemented

@@ -45,10 +45,21 @@ extension UIView {
 }
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
+
+    // Properties
     let tableView = UITableView()
     var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
+
+    // Moving
     var snapshot: UIView! = nil
     var sourceIndexPath: NSIndexPath? = nil
+
+    // Editing
+    var currentlyEditing = false {
+        didSet {
+            tableView.scrollEnabled = !currentlyEditing
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -272,5 +283,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         dispatch_after(afterMoveToBottomDelay, dispatch_get_main_queue()) { [unowned self] in
             self.tableView.reloadData()
         }
+    }
+
+    func cellDidBeginEditing(editingCell: TableViewCell) {
+        // TODO: Dim other cells
+    }
+
+    func cellDidEndEditing(editingCell: TableViewCell) {
+        // TODO: Undim other cells
     }
 }
