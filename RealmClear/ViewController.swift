@@ -110,9 +110,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // MARK: Gesture Recognizers
 
     func setupGestureRecognizers() {
+        tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(_:))))
+
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureRecognized(_:)))
         longPressGestureRecognizer.delegate = self
         tableView.addGestureRecognizer(longPressGestureRecognizer)
+    }
+
+    func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
+        // TODO: Implement this
     }
 
     func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
