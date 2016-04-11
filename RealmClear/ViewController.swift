@@ -133,4 +133,25 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
         tableView.endUpdates()
     }
+
+    func itemCompleted(item: ToDoItem) {
+        // move cell all the way down
+        guard let index = items.indexOf({ $0 === item }) else {
+            return
+        }
+        let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
+        let destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.2 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) { [unowned self] in
+            items.removeAtIndex(sourceIndexPath.row)
+            items.insert(item, atIndex: destinationIndexPath.row)
+            self.tableView.beginUpdates()
+            self.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
+            self.tableView.endUpdates()
+        }
+        let afterMoveToBottomDelay = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
+        dispatch_after(afterMoveToBottomDelay, dispatch_get_main_queue()) { [unowned self] in
+            self.tableView.reloadData()
+        }
+    }
 }

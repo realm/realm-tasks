@@ -11,6 +11,7 @@ import Cartography
 import UIKit
 
 protocol TableViewCellDelegate {
+    func itemCompleted(item: ToDoItem)
     func itemDeleted(item: ToDoItem)
 }
 
@@ -187,7 +188,9 @@ class TableViewCell: UITableViewCell {
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
             }
             UIView.animateWithDuration(0.2, animations: updateColor)
-            // TODO: Update table view
+            if completed {
+                delegate?.itemCompleted(item)
+            }
         } else {
             updateColor()
         }
