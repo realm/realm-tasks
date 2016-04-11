@@ -185,6 +185,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     // MARK: UITableViewDelegate
 
+    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return tableView.rowHeight
+    }
+
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let text = items[indexPath.row].text as NSString
+        let height = text.boundingRectWithSize(view.bounds.size,
+                                               options: [.UsesLineFragmentOrigin],
+                                               attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
+                                               context: nil).height
+        return height + 32
+    }
+
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let rowFloat = CGFloat(indexPath.row)
         cell.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
