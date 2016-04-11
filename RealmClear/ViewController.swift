@@ -47,6 +47,8 @@ extension UIView {
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
     let tableView = UITableView()
     var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
+    var snapshot: UIView! = nil
+    var sourceIndexPath: NSIndexPath? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -114,7 +116,58 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
 
     func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
-        // TODO: Implement this
+        let location = recognizer.locationInView(tableView)
+        let indexPath = tableView.indexPathForRowAtPoint(location)
+        switch recognizer.state {
+        case .Possible: break
+        case .Began:
+            guard let indexPath = indexPath, cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
+            sourceIndexPath = indexPath
+
+            // Add the snapshot as subview, aligned with the cell
+            var center = cell.center
+            snapshot = cell.snapshot
+            snapshot.center = center
+            cell.hidden = true
+            tableView.addSubview(snapshot)
+
+            // Animate
+            UIView.animateWithDuration(0.3) { [unowned self] in
+                center.y = location.y
+                self.snapshot.center = center
+                self.snapshot.transform = CGAffineTransformMakeScale(1.05, 1.05)
+                self.snapshot.layer.shadowColor = UIColor.blackColor().CGColor
+                self.snapshot.layer.shadowOpacity = 1
+            }
+            break
+        case .Changed:
+            var center = snapshot.center
+            center.y = location.y
+            snapshot.center = center
+
+            guard let indexPath = indexPath, sourceIndexPath = sourceIndexPath
+                where indexPath != sourceIndexPath else { break }
+
+            // update data source & move rows
+            swap(&items[indexPath.row], &items[sourceIndexPath.row])
+            tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
+            self.sourceIndexPath = indexPath
+            break
+        case .Ended, .Cancelled, .Failed:
+            guard let indexPath = indexPath, cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
+            UIView.animateWithDuration(0.3, animations: { [unowned self] in
+                self.snapshot.center = cell.center
+                self.snapshot.transform = CGAffineTransformIdentity
+                self.snapshot.layer.shadowOpacity = 0
+            }, completion: { [unowned self] _ in
+                cell.hidden = false
+                self.sourceIndexPath = nil
+                self.snapshot.removeFromSuperview()
+                self.snapshot = nil
+                self.tableView.reloadData()
+            })
+            break
+        }
     }
 
     // MARK: UITableViewDataSource
