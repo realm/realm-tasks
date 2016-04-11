@@ -36,6 +36,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     func setupUI() {
         setupTableView()
+        setupTitleBar()
     }
 
     func setupTableView() {
@@ -52,6 +53,30 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.contentInset = UIEdgeInsets(top: 45, left: 0, bottom: 0, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
         tableView.showsVerticalScrollIndicator = false
+    }
+
+    func setupTitleBar() {
+        let titleBar = UIToolbar()
+        titleBar.barStyle = .BlackTranslucent
+        view.addSubview(titleBar)
+        constrain(titleBar) { titleBar in
+            titleBar.left == titleBar.superview!.left
+            titleBar.top == titleBar.superview!.top
+            titleBar.right == titleBar.superview!.right
+            titleBar.height == 45
+        }
+
+        let titleLabel = UILabel()
+        titleLabel.font = .boldSystemFontOfSize(13)
+        titleLabel.textAlignment = .Center
+        titleLabel.text = "List Title"
+        titleLabel.textColor = .whiteColor()
+        titleBar.addSubview(titleLabel)
+        constrain(titleLabel) { titleLabel in
+            titleLabel.left == titleLabel.superview!.left
+            titleLabel.right == titleLabel.superview!.right
+            titleLabel.bottom == titleLabel.superview!.bottom - 5
+        }
     }
 
     // MARK: UITableViewDataSource
