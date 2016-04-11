@@ -9,6 +9,16 @@
 import Cartography
 import UIKit
 
+extension UIColor {
+    static func completeDimBackgroundColor() -> UIColor {
+        return UIColor(white: 0.2, alpha: 1)
+    }
+
+    static func completeGreenBackgroundColor() -> UIColor {
+        return UIColor(red: 0, green: 0.6, blue: 0, alpha: 1)
+    }
+}
+
 enum ReleaseAction {
     case Complete, Delete
 }
@@ -23,6 +33,7 @@ class TableViewCell: UITableViewCell {
     let textView = ToDoItemTextView()
     var originalCenter = CGPoint()
     var releaseAction: ReleaseAction?
+    let backgroundOverlayView = UIView()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -35,8 +46,18 @@ class TableViewCell: UITableViewCell {
     // MARK: UI
 
     func setupUI() {
+        setupBackgroundOverlayView()
         setupTextView()
         setupBorders()
+    }
+
+    func setupBackgroundOverlayView() {
+        backgroundOverlayView.backgroundColor = .completeDimBackgroundColor()
+        backgroundOverlayView.hidden = true
+        addSubview(backgroundOverlayView)
+        constrain(backgroundOverlayView) { backgroundOverlayView in
+            backgroundOverlayView.edges == backgroundOverlayView.superview!.edges
+        }
     }
 
     func setupTextView() {
@@ -94,6 +115,8 @@ class TableViewCell: UITableViewCell {
             releaseAction = fractionOfThreshold >= 1 ? (frame.origin.x > 0 ? .Complete : .Delete) : nil
 
             if !item.completed {
+                backgroundOverlayView.backgroundColor = .completeGreenBackgroundColor()
+                backgroundOverlayView.hidden = releaseAction != .Complete
                 if frame.origin.x > 0 {
                     textView.unstrike()
                     textView.strike(fractionOfThreshold)
@@ -101,6 +124,8 @@ class TableViewCell: UITableViewCell {
                     releaseAction == .Complete ? textView.strike() : textView.unstrike()
                 }
             } else {
+                backgroundOverlayView.hidden = releaseAction == .Complete
+                textView.alpha = releaseAction == .Complete ? 1 : 0.3
                 if frame.origin.x > 0 {
                     textView.unstrike()
                     textView.strike(1 - fractionOfThreshold)
@@ -112,7 +137,7 @@ class TableViewCell: UITableViewCell {
         case .Ended:
             switch releaseAction {
             case .Some(.Complete):
-                setCompleted(!item.completed)
+                setCompleted(!item.completed, animated: true)
                 break
             case .Some(.Delete):
                 // TODO: delete item
@@ -140,9 +165,21 @@ class TableViewCell: UITableViewCell {
 
     // MARK: Actions
 
-    private func setCompleted(completed: Bool) {
+    private func setCompleted(completed: Bool, animated: Bool = false) {
         item.completed = completed
         completed ? textView.strike() : textView.unstrike()
+        backgroundOverlayView.hidden = !completed
+        let updateColor = { [unowned self] in
+            self.backgroundOverlayView.backgroundColor = completed ?
+                .completeDimBackgroundColor() : .completeGreenBackgroundColor()
+            self.textView.alpha = completed ? 0.3 : 1
+        }
+        if animated {
+            UIView.animateWithDuration(0.2, animations: updateColor)
+            // TODO: Update table view
+        } else {
+            updateColor()
+        }
     }
 
     // MARK: Unimplemented
