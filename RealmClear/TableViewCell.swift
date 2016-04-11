@@ -6,6 +6,7 @@
 //  Copyright © 2016 Realm. All rights reserved.
 //
 
+import AudioToolbox
 import Cartography
 import UIKit
 
@@ -22,6 +23,8 @@ extension UIColor {
 enum ReleaseAction {
     case Complete, Delete
 }
+
+private let isDevice = TARGET_OS_SIMULATOR == 0
 
 class TableViewCell: UITableViewCell {
     var item: ToDoItem! {
@@ -175,6 +178,9 @@ class TableViewCell: UITableViewCell {
             self.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
+            if isDevice {
+                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+            }
             UIView.animateWithDuration(0.2, animations: updateColor)
             // TODO: Update table view
         } else {
