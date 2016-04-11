@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		E84CF2B51CBC408000082C1A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84CF2B41CBC408000082C1A /* AppDelegate.swift */; };
 		E84CF2B71CBC408000082C1A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84CF2B61CBC408000082C1A /* ViewController.swift */; };
-		E84CF2BA1CBC408000082C1A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E84CF2B81CBC408000082C1A /* Main.storyboard */; };
 		E84CF2BC1CBC408000082C1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E84CF2BB1CBC408000082C1A /* Assets.xcassets */; };
 		E84CF2BF1CBC408000082C1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E84CF2BD1CBC408000082C1A /* LaunchScreen.storyboard */; };
 		E84CF2CA1CBC408000082C1A /* RealmClearTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84CF2C91CBC408000082C1A /* RealmClearTests.swift */; };
@@ -29,7 +28,6 @@
 		E84CF2B11CBC408000082C1A /* RealmClear.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmClear.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E84CF2B41CBC408000082C1A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E84CF2B61CBC408000082C1A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		E84CF2B91CBC408000082C1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E84CF2BB1CBC408000082C1A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E84CF2BE1CBC408000082C1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E84CF2C01CBC408000082C1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -79,7 +77,6 @@
 			children = (
 				E84CF2B41CBC408000082C1A /* AppDelegate.swift */,
 				E84CF2B61CBC408000082C1A /* ViewController.swift */,
-				E84CF2B81CBC408000082C1A /* Main.storyboard */,
 				E84CF2BB1CBC408000082C1A /* Assets.xcassets */,
 				E84CF2BD1CBC408000082C1A /* LaunchScreen.storyboard */,
 				E84CF2C01CBC408000082C1A /* Info.plist */,
@@ -179,7 +176,6 @@
 			files = (
 				E84CF2BF1CBC408000082C1A /* LaunchScreen.storyboard in Resources */,
 				E84CF2BC1CBC408000082C1A /* Assets.xcassets in Resources */,
-				E84CF2BA1CBC408000082C1A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,14 +217,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		E84CF2B81CBC408000082C1A /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E84CF2B91CBC408000082C1A /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		E84CF2BD1CBC408000082C1A /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -388,6 +376,7 @@
 				E84CF2D01CBC408000082C1A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E84CF2D11CBC408000082C1A /* Build configuration list for PBXNativeTarget "RealmClearTests" */ = {
 			isa = XCConfigurationList;
@@ -396,6 +385,7 @@
 				E84CF2D31CBC408000082C1A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
