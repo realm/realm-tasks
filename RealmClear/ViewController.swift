@@ -117,6 +117,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     private func setupPlaceholderCell() {
+        placeHolderCell.alpha = 0
         placeHolderCell.backgroundColor = UIColor(red: 0.85, green: 0, blue: 0, alpha: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
