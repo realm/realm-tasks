@@ -312,12 +312,19 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func itemCompleted(item: ToDoItem) {
-        // move cell all the way down
         guard let index = items.indexOf({ $0 === item }) else {
             return
         }
         let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
-        let destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+        let destinationIndexPath: NSIndexPath
+        if item.completed {
+            // move cell to bottom
+            destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+        } else {
+            // move cell just above the first completed item
+            let completedCount = items.filter({ $0.completed }).count
+            destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
+        }
         delay(0.2) { [weak self] in
             self?.items.removeAtIndex(sourceIndexPath.row)
             self?.items.insert(item, atIndex: destinationIndexPath.row)

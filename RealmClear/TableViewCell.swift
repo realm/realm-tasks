@@ -209,9 +209,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
             }
             UIView.animateWithDuration(0.2, animations: updateColor)
-            if completed {
-                delegate?.itemCompleted(item)
-            }
+            delegate?.itemCompleted(item)
         } else {
             updateColor()
         }
