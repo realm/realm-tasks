@@ -382,7 +382,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Actions
 
-    func updateColors() {
+    private func updateColors() {
         let visibleIndexPaths = visibleTableViewCells.flatMap(tableView.indexPathForCell)
         tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
     }
