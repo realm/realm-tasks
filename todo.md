@@ -12,7 +12,6 @@
 * Proper icons
 * Allow scrolling while reordering
 * Remove scrolling jankiness when adding new items
-* Fix green flicker when scrolling down with completed cells
 * Support multiple screen sizes
 * Pinch to add
 * Fan out to display new list
