@@ -193,7 +193,6 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     }
 
     override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
-
         guard let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
             return false
         }
@@ -204,7 +203,6 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     // MARK: Actions
 
     private func setCompleted(completed: Bool, animated: Bool = false) {
-        item.completed = completed
         completed ? textView.strike() : textView.unstrike()
         backgroundOverlayView.hidden = !completed
         let updateColor = { [weak self] in
@@ -213,6 +211,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             self?.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
+            item.completed = completed
             vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
             delegate?.itemCompleted(item)
