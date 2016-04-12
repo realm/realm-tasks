@@ -296,6 +296,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             let afterCount = items.count
             guard afterCount < beforeCount else { return }
 
+            vibrate()
             tableView.beginUpdates()
             let indexPathsToDelete = (afterCount..<beforeCount).map({ NSIndexPath(forRow: $0, inSection: 0) })
             tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .Fade)

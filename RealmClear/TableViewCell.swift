@@ -10,6 +10,14 @@ import AudioToolbox
 import Cartography
 import UIKit
 
+// MARK: Shared Functions
+
+func vibrate() {
+    if isDevice {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+    }
+}
+
 // MARK: Protocols
 
 protocol TableViewCellDelegate {
@@ -205,9 +213,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             self?.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
-            if isDevice {
-                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-            }
+            vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
             delegate?.itemCompleted(item)
         } else {
