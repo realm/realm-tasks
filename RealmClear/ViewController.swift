@@ -273,7 +273,10 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if -tableView.contentOffset.y - tableView.contentInset.top > tableView.rowHeight {
             // exceeds threshold
             items.insert(ToDoItem(text: ""), atIndex: 0)
-            tableView.reloadData()
+            tableView.beginUpdates()
+            let indexPathForRow = NSIndexPath(forRow: 0, inSection: 0)
+            tableView.insertRowsAtIndexPaths([indexPathForRow], withRowAnimation: .None)
+            tableView.endUpdates()
             if let textView = visibleTableViewCells.first?.textView {
                 textView.userInteractionEnabled = true
                 textView.becomeFirstResponder()
