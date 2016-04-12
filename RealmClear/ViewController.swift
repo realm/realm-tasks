@@ -29,6 +29,15 @@ extension UIView {
     }
 }
 
+// MARK: Private Functions
+
+private func delay(time: Double, block: () -> ()) {
+    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
+    dispatch_after(delayTime, dispatch_get_main_queue(), block)
+}
+
+// MARK: View Controller
+
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
@@ -292,19 +301,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         items.removeAtIndex(index)
 
-        // loop over the visible cells to animate delete
         let visibleCells = visibleTableViewCells
         let deletedIndex = visibleCells.indexOf { $0.item === item }
         visibleCells[deletedIndex!].hidden = true
-        UIView.animateWithDuration(0.3) {
-            for cell in visibleCells[deletedIndex!..<visibleCells.count] {
-                cell.frame = CGRectOffset(cell.frame, 0, -cell.frame.size.height)
-            }
-        }
         tableView.beginUpdates()
         let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
         tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
         tableView.endUpdates()
+        delay(0.2) { [weak self] in self?.updateColors() }
     }
 
     func itemCompleted(item: ToDoItem) {
@@ -314,10 +318,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
         let destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
-        func delay(time: Double, block: () -> ()) {
-            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
-            dispatch_after(delayTime, dispatch_get_main_queue(), block)
-        }
         delay(0.2) { [weak self] in
             self?.items.removeAtIndex(sourceIndexPath.row)
             self?.items.insert(item, atIndex: destinationIndexPath.row)
@@ -325,12 +325,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
             self?.tableView.endUpdates()
         }
-        // Update colors
-        delay(0.5) { [weak self] in
-            guard let strongSelf = self else { return }
-            let visibleIndexPaths = strongSelf.visibleTableViewCells.flatMap(strongSelf.tableView.indexPathForCell)
-            strongSelf.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
-        }
+        delay(0.5) { [weak self] in self?.updateColors() }
     }
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
@@ -358,5 +353,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if let item = editingCell.item where item.text.isEmpty {
             itemDeleted(item)
         }
+    }
+
+    // MARK: Actions
+
+    func updateColors() {
+        let visibleIndexPaths = visibleTableViewCells.flatMap(tableView.indexPathForCell)
+        tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
     }
 }
