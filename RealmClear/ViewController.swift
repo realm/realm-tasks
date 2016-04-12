@@ -63,8 +63,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
 
     // Scrolling
-    var distancePulledDown: CGFloat { return -tableView.contentOffset.y - tableView.contentInset.top }
-    var distancePulledUp: CGFloat { return tableView.contentOffset.y + tableView.bounds.size.height - tableView.contentSize.height }
+    var distancePulledDown: CGFloat {
+        return -tableView.contentOffset.y - tableView.contentInset.top
+    }
+    var distancePulledUp: CGFloat {
+        return tableView.contentOffset.y + tableView.bounds.size.height - max(tableView.bounds.size.height, tableView.contentSize.height)
+    }
 
     // Moving
     private var snapshot: UIView! = nil
