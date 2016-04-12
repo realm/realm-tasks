@@ -1,3 +1,6 @@
 [submodule "Carthage/Checkouts/Cartography"]
 	path = Carthage/Checkouts/Cartography
 	url = https://github.com/robb/Cartography.git
+[submodule "Carthage/Checkouts/realm-cocoa"]
+	path = Carthage/Checkouts/realm-cocoa
+	url = https://github.com/realm/realm-cocoa.git
