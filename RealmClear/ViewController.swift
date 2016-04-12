@@ -296,14 +296,10 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         let visibleCells = visibleTableViewCells
         let deletedIndex = visibleCells.indexOf { $0.item === item }
         visibleCells[deletedIndex!].hidden = true
-        for cell in visibleCells[deletedIndex!..<visibleCells.count] {
-            UIView.animateWithDuration(0.3, delay: 0.01, options: .CurveEaseInOut, animations: {
+        UIView.animateWithDuration(0.3) {
+            for cell in visibleCells[deletedIndex!..<visibleCells.count] {
                 cell.frame = CGRectOffset(cell.frame, 0, -cell.frame.size.height)
-            }, completion: { [weak self] _ in
-                if (cell == visibleCells.last) {
-                    self?.tableView.reloadData()
-                }
-            })
+            }
         }
         tableView.beginUpdates()
         let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
@@ -318,17 +314,20 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
         let destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.2 * Double(NSEC_PER_SEC)))
-        dispatch_after(delayTime, dispatch_get_main_queue()) { [unowned self] in
-            self.items.removeAtIndex(sourceIndexPath.row)
-            self.items.insert(item, atIndex: destinationIndexPath.row)
-            self.tableView.beginUpdates()
-            self.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-            self.tableView.endUpdates()
+        func delay(time: Double, block: () -> ()) {
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
+            dispatch_after(delayTime, dispatch_get_main_queue(), block)
         }
-        let afterMoveToBottomDelay = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
-        dispatch_after(afterMoveToBottomDelay, dispatch_get_main_queue()) { [unowned self] in
-            self.tableView.reloadData()
+        delay(0.2) { [weak self] in
+            self?.items.removeAtIndex(sourceIndexPath.row)
+            self?.items.insert(item, atIndex: destinationIndexPath.row)
+            self?.tableView.beginUpdates()
+            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
+            self?.tableView.endUpdates()
+        }
+        // Update colors
+        delay(0.5) { [weak self] in
+            self?.tableView.reloadData()
         }
     }
 
@@ -347,9 +346,10 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func cellDidEndEditing(editingCell: TableViewCell) {
         currentlyEditing = false
         topConstraint?.constant = 0
-        UIView.animateWithDuration(0.3) { [unowned self] in
-            self.view.layoutSubviews()
-            for cell in self.visibleTableViewCells where cell !== editingCell {
+        UIView.animateWithDuration(0.3) { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.view.layoutSubviews()
+            for cell in strongSelf.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 1
             }
         }

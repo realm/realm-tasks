@@ -177,7 +177,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                 break
             }
             let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
-            UIView.animateWithDuration(0.2) { [unowned self] in self.frame = originalFrame }
+            UIView.animateWithDuration(0.2) { [weak self] in self?.frame = originalFrame }
             break
         default:
             break
@@ -199,10 +199,10 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         item.completed = completed
         completed ? textView.strike() : textView.unstrike()
         backgroundOverlayView.hidden = !completed
-        let updateColor = { [unowned self] in
-            self.backgroundOverlayView.backgroundColor = completed ?
+        let updateColor = { [weak self] in
+            self?.backgroundOverlayView.backgroundColor = completed ?
                 .completeDimBackgroundColor() : .completeGreenBackgroundColor()
-            self.textView.alpha = completed ? 0.3 : 1
+            self?.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
             if isDevice {
