@@ -115,7 +115,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.separatorStyle = .None
         tableView.backgroundColor = .blackColor()
         tableView.rowHeight = 54
-        tableView.contentInset = UIEdgeInsets(top: 45, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 45, left: 0, bottom: 54, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
         tableView.showsVerticalScrollIndicator = false
     }

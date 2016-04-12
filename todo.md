@@ -16,5 +16,4 @@
 * Support multiple screen sizes
 * Pinch to add
 * Fan out to display new list
-* Add extra space at bottom of list
 * Tap bottom to add
