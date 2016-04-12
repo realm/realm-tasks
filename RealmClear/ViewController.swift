@@ -244,10 +244,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: UITableViewDelegate
 
-    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return tableView.rowHeight
-    }
-
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         let text = items[indexPath.row].text as NSString
         let height = text.boundingRectWithSize(view.bounds.size,
