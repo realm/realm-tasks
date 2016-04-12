@@ -6,7 +6,7 @@
 //  Copyright © 2016 Realm. All rights reserved.
 //
 
-class ToDoItem {
+final class ToDoItem {
     var text: String
     var completed = false
 

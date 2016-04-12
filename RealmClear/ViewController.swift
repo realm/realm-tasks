@@ -9,22 +9,7 @@
 import Cartography
 import UIKit
 
-var items =  [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "Quisque at magna auctor, rhoncus massa sit amet, sodales felis.",
-    "Suspendisse consequat purus at dolor ultricies interdum.",
-    "In luctus magna aliquet, tincidunt ante et, aliquam tellus.",
-    "Suspendisse suscipit lorem ac purus interdum, eu maximus ante pellentesque.",
-    "Aenean elementum est ut eros varius posuere vel sit amet eros.",
-    "Duis accumsan dolor quis leo tincidunt consectetur.",
-    "Proin dictum felis non dui dapibus molestie.",
-    "Fusce id est eget erat blandit rutrum.",
-    "Fusce rutrum ipsum ac nisi euismod pellentesque.",
-    "Nulla venenatis neque id eros consectetur, id pretium turpis sodales.",
-    "Nulla in sem pharetra, hendrerit diam ac, mollis nisl.",
-    "Nulla nec lectus sed massa tristique maximus.",
-    "Cras aliquam velit luctus lacus accumsan, id fringilla eros commodo."
-].map(ToDoItem.init)
+// MARK: Private Extensions
 
 extension UIView {
     private var snapshot: UIView {
@@ -44,26 +29,46 @@ extension UIView {
     }
 }
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
+final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
 
-    // Properties
-    let tableView = UITableView()
-    var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
+    // MARK: Properties
+
+    // Stored Properties
+    private var items =  [
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "Quisque at magna auctor, rhoncus massa sit amet, sodales felis.",
+        "Suspendisse consequat purus at dolor ultricies interdum.",
+        "In luctus magna aliquet, tincidunt ante et, aliquam tellus.",
+        "Suspendisse suscipit lorem ac purus interdum, eu maximus ante pellentesque.",
+        "Aenean elementum est ut eros varius posuere vel sit amet eros.",
+        "Duis accumsan dolor quis leo tincidunt consectetur.",
+        "Proin dictum felis non dui dapibus molestie.",
+        "Fusce id est eget erat blandit rutrum.",
+        "Fusce rutrum ipsum ac nisi euismod pellentesque.",
+        "Nulla venenatis neque id eros consectetur, id pretium turpis sodales.",
+        "Nulla in sem pharetra, hendrerit diam ac, mollis nisl.",
+        "Nulla nec lectus sed massa tristique maximus.",
+        "Cras aliquam velit luctus lacus accumsan, id fringilla eros commodo."
+    ].map(ToDoItem.init)
+    private let tableView = UITableView()
+    private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
 
     // Moving
-    var snapshot: UIView! = nil
-    var sourceIndexPath: NSIndexPath? = nil
+    private var snapshot: UIView! = nil
+    private var sourceIndexPath: NSIndexPath? = nil
 
     // Editing
-    var currentlyEditing = false {
+    private var currentlyEditing = false {
         didSet {
             tableView.scrollEnabled = !currentlyEditing
         }
     }
-    var topConstraint: NSLayoutConstraint?
+    private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
-    let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+    private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+
+    // MARK: View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,13 +82,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         return .LightContent
     }
 
-    func setupUI() {
+    private func setupUI() {
         setupTableView()
         setupPlaceholderCell()
         setupTitleBar()
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         view.addSubview(tableView)
         constrain(tableView) { tableView in
             topConstraint = (tableView.top == tableView.superview!.top)
@@ -102,7 +107,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.showsVerticalScrollIndicator = false
     }
 
-    func setupPlaceholderCell() {
+    private func setupPlaceholderCell() {
         placeHolderCell.backgroundColor = UIColor(red: 0.85, green: 0, blue: 0, alpha: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -113,7 +118,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
 
-    func setupTitleBar() {
+    private func setupTitleBar() {
         let titleBar = UIToolbar()
         titleBar.barStyle = .BlackTranslucent
         view.addSubview(titleBar)
@@ -139,7 +144,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     // MARK: Gesture Recognizers
 
-    func setupGestureRecognizers() {
+    private func setupGestureRecognizers() {
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(_:))))
 
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureRecognized(_:)))
@@ -315,8 +320,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
         let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.2 * Double(NSEC_PER_SEC)))
         dispatch_after(delayTime, dispatch_get_main_queue()) { [unowned self] in
-            items.removeAtIndex(sourceIndexPath.row)
-            items.insert(item, atIndex: destinationIndexPath.row)
+            self.items.removeAtIndex(sourceIndexPath.row)
+            self.items.insert(item, atIndex: destinationIndexPath.row)
             self.tableView.beginUpdates()
             self.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
             self.tableView.endUpdates()

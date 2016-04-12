@@ -8,7 +8,10 @@
 
 import UIKit
 
-class ToDoItemTextView: UITextView {
+final class ToDoItemTextView: UITextView {
+
+    // MARK: Initializers
+
     init() {
         super.init(frame: .null, textContainer: nil)
         editable = true
@@ -20,6 +23,12 @@ class ToDoItemTextView: UITextView {
         returnKeyType = .Done
         scrollEnabled = false
     }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: Actions
 
     func strike(fraction: Double = 1) {
         let mutableAttributedString = attributedText!.mutableCopy() as! NSMutableAttributedString
@@ -34,9 +43,5 @@ class ToDoItemTextView: UITextView {
         let mutableAttributedString = attributedText!.mutableCopy() as! NSMutableAttributedString
         mutableAttributedString.removeAttribute(NSStrikethroughStyleAttributeName, range: NSMakeRange(0, mutableAttributedString.length))
         attributedText = mutableAttributedString.copy() as? NSAttributedString
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

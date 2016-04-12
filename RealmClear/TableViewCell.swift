@@ -10,6 +10,8 @@ import AudioToolbox
 import Cartography
 import UIKit
 
+// MARK: Protocols
+
 protocol TableViewCellDelegate {
     func itemCompleted(item: ToDoItem)
     func itemDeleted(item: ToDoItem)
@@ -17,23 +19,30 @@ protocol TableViewCellDelegate {
     func cellDidEndEditing(editingCell: TableViewCell)
 }
 
+// MARK: Private Declarations
+
 extension UIColor {
-    static func completeDimBackgroundColor() -> UIColor {
+    private static func completeDimBackgroundColor() -> UIColor {
         return UIColor(white: 0.2, alpha: 1)
     }
 
-    static func completeGreenBackgroundColor() -> UIColor {
+    private static func completeGreenBackgroundColor() -> UIColor {
         return UIColor(red: 0, green: 0.6, blue: 0, alpha: 1)
     }
 }
 
-enum ReleaseAction {
+private enum ReleaseAction {
     case Complete, Delete
 }
 
 private let isDevice = TARGET_OS_SIMULATOR == 0
 
-class TableViewCell: UITableViewCell, UITextViewDelegate {
+// MARK: Table View Cell
+
+final class TableViewCell: UITableViewCell, UITextViewDelegate {
+
+    // Properties
+
     var item: ToDoItem! {
         didSet {
             textView.text = item.text
@@ -42,9 +51,14 @@ class TableViewCell: UITableViewCell, UITextViewDelegate {
     }
     var delegate: TableViewCellDelegate?
     let textView = ToDoItemTextView()
-    var originalCenter = CGPoint()
-    var releaseAction: ReleaseAction?
-    let backgroundOverlayView = UIView()
+
+    // Private Properties
+
+    private var originalCenter = CGPoint()
+    private var releaseAction: ReleaseAction?
+    private let backgroundOverlayView = UIView()
+
+    // MARK: Initializers
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -54,15 +68,19 @@ class TableViewCell: UITableViewCell, UITextViewDelegate {
         setupPanGestureRecognizer()
     }
 
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: UI
 
-    func setupUI() {
+    private func setupUI() {
         setupBackgroundOverlayView()
         setupTextView()
         setupBorders()
     }
 
-    func setupBackgroundOverlayView() {
+    private func setupBackgroundOverlayView() {
         backgroundOverlayView.backgroundColor = .completeDimBackgroundColor()
         backgroundOverlayView.hidden = true
         addSubview(backgroundOverlayView)
@@ -71,7 +89,7 @@ class TableViewCell: UITableViewCell, UITextViewDelegate {
         }
     }
 
-    func setupTextView() {
+    private func setupTextView() {
         textView.delegate = self
         addSubview(textView)
         constrain(textView) { textView in
@@ -108,7 +126,7 @@ class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     // MARK: Pan Gesture Recognizer
 
-    func setupPanGestureRecognizer() {
+    private func setupPanGestureRecognizer() {
         let recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
         recognizer.delegate = self
         addGestureRecognizer(recognizer)
@@ -222,11 +240,5 @@ class TableViewCell: UITableViewCell, UITextViewDelegate {
         item.text = textView.text
         textView.userInteractionEnabled = false
         delegate?.cellDidEndEditing(self)
-    }
-
-    // MARK: Unimplemented
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
