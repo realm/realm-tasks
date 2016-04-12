@@ -214,7 +214,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.sourceIndexPath = nil
                 self.snapshot.removeFromSuperview()
                 self.snapshot = nil
-                self.tableView.reloadData()
+                let visibleIndexPaths = self.visibleTableViewCells.flatMap(self.tableView.indexPathForCell)
+                self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
             })
             break
         }
@@ -323,7 +324,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         // Update colors
         delay(0.5) { [weak self] in
-            self?.tableView.reloadData()
+            guard let strongSelf = self else { return }
+            let visibleIndexPaths = strongSelf.visibleTableViewCells.flatMap(strongSelf.tableView.indexPathForCell)
+            strongSelf.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
         }
     }
 
