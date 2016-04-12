@@ -321,9 +321,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         items.removeAtIndex(index)
 
-        let visibleCells = visibleTableViewCells
-        let deletedIndex = visibleCells.indexOf { $0.item === item }
-        visibleCells[deletedIndex!].hidden = true
+        visibleTableViewCells.filter({ $0.item === item }).first?.hidden = true
         tableView.beginUpdates()
         let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
         tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
