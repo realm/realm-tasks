@@ -1,6 +1,5 @@
 * Expand text view to fit size when editing
 * Scroll to previous location instead of top when done editing
-* Clear completed items
 * Get swipe animations right
 * Allow pulling back up
 * Allow pulling back down

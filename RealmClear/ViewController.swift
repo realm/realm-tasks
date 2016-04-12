@@ -62,6 +62,10 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private let tableView = UITableView()
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
 
+    // Scrolling
+    var distancePulledDown: CGFloat { return -tableView.contentOffset.y - tableView.contentInset.top }
+    var distancePulledUp: CGFloat { return tableView.contentOffset.y + tableView.bounds.size.height - tableView.contentSize.height }
+
     // Moving
     private var snapshot: UIView! = nil
     private var sourceIndexPath: NSIndexPath? = nil
@@ -274,23 +278,38 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: UIScrollViewDelegate methods
 
     func scrollViewDidScroll(scrollView: UIScrollView)  {
-        placeHolderCell.textView.text = (-scrollView.contentOffset.y - scrollView.contentInset.top) > tableView.rowHeight ?
+        guard distancePulledDown > 0 else { return }
+
+        placeHolderCell.textView.text = distancePulledDown > tableView.rowHeight ?
             "Release to Create Item" : "Pull to Create Item"
-        placeHolderCell.alpha = min(1, (-tableView.contentInset.top - tableView.contentOffset.y) / tableView.rowHeight)
+        placeHolderCell.alpha = min(1, distancePulledDown / tableView.rowHeight)
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if -tableView.contentOffset.y - tableView.contentInset.top > tableView.rowHeight {
-            // exceeds threshold
-            items.insert(ToDoItem(text: ""), atIndex: 0)
+        guard distancePulledUp < 160 else {
+            let beforeCount = items.count
+            items = items.filter { !$0.completed }
+            let afterCount = items.count
+            guard afterCount < beforeCount else { return }
+
             tableView.beginUpdates()
-            let indexPathForRow = NSIndexPath(forRow: 0, inSection: 0)
-            tableView.insertRowsAtIndexPaths([indexPathForRow], withRowAnimation: .None)
+            let indexPathsToDelete = (afterCount..<beforeCount).map({ NSIndexPath(forRow: $0, inSection: 0) })
+            tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .Fade)
             tableView.endUpdates()
-            if let textView = visibleTableViewCells.first?.textView {
-                textView.userInteractionEnabled = true
-                textView.becomeFirstResponder()
-            }
+            return
+        }
+
+        guard distancePulledDown > tableView.rowHeight else { return }
+
+        // exceeds threshold
+        items.insert(ToDoItem(text: ""), atIndex: 0)
+        tableView.beginUpdates()
+        let indexPathForRow = NSIndexPath(forRow: 0, inSection: 0)
+        tableView.insertRowsAtIndexPaths([indexPathForRow], withRowAnimation: .None)
+        tableView.endUpdates()
+        if let textView = visibleTableViewCells.first?.textView {
+            textView.userInteractionEnabled = true
+            textView.becomeFirstResponder()
         }
     }
 
