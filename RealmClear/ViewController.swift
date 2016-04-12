@@ -47,6 +47,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
+    private var realmNotificationToken: NotificationToken!
 
     // Scrolling
     var distancePulledDown: CGFloat {
@@ -77,6 +78,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         super.viewDidLoad()
         setupUI()
         setupGestureRecognizers()
+        setupRealmNotifications()
     }
 
     // MARK: UI
@@ -236,6 +238,43 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         return true
     }
 
+    // MARK: Realm
+
+    func setupRealmNotifications() {
+        realmNotificationToken = items.addNotificationBlock { [unowned self] (change: RealmCollectionChangePaths) in
+            switch change {
+            case .Initial:
+                // Results are now populated and can be accessed without blocking the UI
+                self.tableView.reloadData()
+                break
+            case .Update(_, let deletions, let insertions, let modifications):
+                // Query results have changed, so apply them to the table view
+                self.tableView.beginUpdates()
+                self.tableView.insertRowsAtIndexPaths(insertions, withRowAnimation: .None)
+                self.tableView.deleteRowsAtIndexPaths(deletions, withRowAnimation: .None)
+                self.tableView.reloadRowsAtIndexPaths(modifications, withRowAnimation: .None)
+                self.tableView.endUpdates()
+
+                if insertions.map({ $0.row }) == [0],
+                    let textView = self.visibleTableViewCells.first?.textView {
+                    // new item was added, let's edit it
+                    textView.userInteractionEnabled = true
+                    textView.becomeFirstResponder()
+                }
+                break
+            case .Error(let error):
+                // An error occured while opening the Realm file on the background worker thread
+                fatalError("\(error)")
+                break
+            }
+        }
+    }
+
+    deinit {
+        realmNotificationToken.stop()
+        realmNotificationToken = nil
+    }
+
     // MARK: UITableViewDataSource
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -278,10 +317,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard distancePulledUp < 160 else {
-            let beforeCount = items.count
+        if distancePulledUp > 160 {
             let itemsToDelete = items.filter("completed = true")
-            let afterCount = items.count - itemsToDelete.count
             guard !itemsToDelete.isEmpty else { return }
 
             try! items.realm?.write {
@@ -289,44 +326,21 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             }
 
             vibrate()
-            tableView.beginUpdates()
-            let indexPathsToDelete = (afterCount..<beforeCount).map({ NSIndexPath(forRow: $0, inSection: 0) })
-            tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .Fade)
-            tableView.endUpdates()
-            return
-        }
-
-        guard distancePulledDown > tableView.rowHeight else { return }
-
-        // exceeds threshold
-        try! items.realm?.write {
-            items.insert(ToDoItem(text: ""), atIndex: 0)
-        }
-        tableView.beginUpdates()
-        let indexPathForRow = NSIndexPath(forRow: 0, inSection: 0)
-        tableView.insertRowsAtIndexPaths([indexPathForRow], withRowAnimation: .None)
-        tableView.endUpdates()
-        if let textView = visibleTableViewCells.first?.textView {
-            textView.userInteractionEnabled = true
-            textView.becomeFirstResponder()
+        } else if distancePulledDown > tableView.rowHeight {
+            try! items.realm?.write {
+                items.insert(ToDoItem(text: ""), atIndex: 0)
+            }
         }
     }
 
     // MARK: TableViewCellDelegate
 
     func itemDeleted(item: ToDoItem) {
-        guard let index = items.indexOf(item) else {
-            return
-        }
         try! items.realm?.write {
             items.realm?.delete(item)
         }
 
         visibleTableViewCells.filter({ $0.item === item }).first?.hidden = true
-        tableView.beginUpdates()
-        let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
-        tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
-        tableView.endUpdates()
         delay(0.2) { [weak self] in self?.updateColors() }
     }
 
@@ -349,9 +363,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self!.items.removeAtIndex(sourceIndexPath.row)
                 self!.items.insert(item, atIndex: destinationIndexPath.row)
             }
-            self?.tableView.beginUpdates()
-            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-            self?.tableView.endUpdates()
         }
         delay(0.5) { [weak self] in self?.updateColors() }
     }
