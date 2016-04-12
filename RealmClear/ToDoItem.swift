@@ -6,11 +6,15 @@
 //  Copyright © 2016 Realm. All rights reserved.
 //
 
-final class ToDoItem {
-    var text: String
-    var completed = false
+import Foundation
+import RealmSwift
 
-    init(text: String) {
+final class ToDoItem: Object {
+    dynamic var text = ""
+    dynamic var completed = false
+
+    convenience init(text: String) {
+        self.init()
         self.text = text
     }
 }
