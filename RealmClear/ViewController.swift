@@ -180,6 +180,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             guard let indexPath = indexPath, cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
             sourceIndexPath = indexPath
 
+            items.realm!.beginWrite()
+
             // Add the snapshot as subview, aligned with the cell
             var center = cell.center
             snapshot = cell.snapshot
@@ -205,13 +207,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 where indexPath != sourceIndexPath else { break }
 
             // update data source & move rows
-            try! items.realm?.write {
-                swap(&items[indexPath.row], &items[sourceIndexPath.row])
-            }
+            items.move(from: indexPath.row, to: sourceIndexPath.row)
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
             self.sourceIndexPath = indexPath
             break
         case .Ended, .Cancelled, .Failed:
+            try! items.realm!.commitWrite()
             guard let indexPath = indexPath, cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center

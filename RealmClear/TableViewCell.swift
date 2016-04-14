@@ -211,11 +211,12 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             self?.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
-            try! item.realm?.write {
-                item.completed = completed
-            }
+            item.realm!.beginWrite()
+            item.completed = completed
             vibrate()
-            UIView.animateWithDuration(0.2, animations: updateColor)
+            UIView.animateWithDuration(0.2, animations: updateColor, completion: { _ in
+                try! self.item.realm!.commitWrite()
+            })
             delegate?.itemCompleted(item)
         } else {
             updateColor()
