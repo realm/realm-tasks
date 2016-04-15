@@ -30,6 +30,14 @@ extension UIView {
     }
 }
 
+//extension Realm {
+//    public func writeIgnoringNotifications(@noescape block: (() -> Void)) throws {
+//        rlmRealm.beginWriteTransactionWithNotificationStuff()
+//        block()
+//        try commitWrite()
+//    }
+//}
+
 // MARK: Private Functions
 
 private func delay(time: Double, block: () -> ()) {
@@ -204,10 +212,10 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             guard let indexPath = indexPath, sourceIndexPath = sourceIndexPath
                 where indexPath != sourceIndexPath else { break }
 
-            items.realm!.beginWriteIgnoringNotifications()
             // update data source & move rows
-            items.move(from: indexPath.row, to: sourceIndexPath.row)
-            try! items.realm!.commitWrite()
+            try! items.realm?.writeIgnoringNotifications {
+                swap(&items[indexPath.row], &items[sourceIndexPath.row])
+            }
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
             self.sourceIndexPath = indexPath
             break
@@ -321,13 +329,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             let itemsToDelete = items.filter("completed = true")
             guard !itemsToDelete.isEmpty else { return }
 
-            try! items.realm?.write {
+            try! items.realm?.writeIgnoringNotifications {
                 items.realm?.delete(itemsToDelete)
             }
 
             vibrate()
         } else if distancePulledDown > tableView.rowHeight {
-            try! items.realm?.write {
+            try! items.realm?.writeIgnoringNotifications {
                 items.insert(ToDoItem(text: ""), atIndex: 0)
             }
         }
@@ -336,7 +344,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: TableViewCellDelegate
 
     func itemDeleted(item: ToDoItem) {
-        try! items.realm?.write {
+        try! items.realm?.writeIgnoringNotifications {
             items.realm?.delete(item)
         }
 
@@ -359,7 +367,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
         }
         delay(0.2) { [weak self] in
-            try! self?.items.realm?.write {
+            try! self?.items.realm?.writeIgnoringNotifications {
                 self!.items.removeAtIndex(sourceIndexPath.row)
                 self!.items.insert(item, atIndex: destinationIndexPath.row)
             }

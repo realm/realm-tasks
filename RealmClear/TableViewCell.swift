@@ -211,9 +211,9 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             self?.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
-            item.realm!.beginWriteIgnoringNotifications()
-            item.completed = completed
-            try! self.item.realm!.commitWrite()
+            try! item.realm?.writeIgnoringNotifications {
+                item.completed = completed
+            }
             vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
             delegate?.itemCompleted(item)
@@ -242,9 +242,9 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        item.realm!.beginWriteIgnoringNotifications()
-        item.text = textView.text
-        try! item.realm!.commitWrite()
+        try! item.realm?.writeIgnoringNotifications {
+            item.text = textView.text
+        }
         textView.userInteractionEnabled = false
         delegate?.cellDidEndEditing(self)
     }
