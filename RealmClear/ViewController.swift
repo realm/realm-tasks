@@ -36,6 +36,10 @@ private func delay(time: Double, block: () -> ()) {
     dispatch_after(delayTime, dispatch_get_main_queue(), block)
 }
 
+private func degreesToRadians(value: Double) -> Double {
+    return value * M_PI / 180.0
+}
+
 // MARK: View Controller
 
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
@@ -127,9 +131,10 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
         placeHolderCell.backgroundColor = UIColor(red: 0.85, green: 0, blue: 0, alpha: 1)
+        placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
-            placeHolderCell.bottom == placeHolderCell.superview!.topMargin - 7
+            placeHolderCell.bottom == placeHolderCell.superview!.topMargin - 7 + 26
             placeHolderCell.left == placeHolderCell.superview!.superview!.left
             placeHolderCell.right == placeHolderCell.superview!.superview!.right
             placeHolderCell.height == tableView.rowHeight
@@ -284,9 +289,27 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func scrollViewDidScroll(scrollView: UIScrollView)  {
         guard distancePulledDown > 0 else { return }
 
-        placeHolderCell.textView.text = distancePulledDown > tableView.rowHeight ?
-            "Release to Create Item" : "Pull to Create Item"
-        placeHolderCell.alpha = min(1, distancePulledDown / tableView.rowHeight)
+        if distancePulledDown <= tableView.rowHeight {
+            placeHolderCell.textView.text = "Pull to Create Item"
+
+            let cellHeight: CGFloat = 54.0
+            let angle = CGFloat(degreesToRadians(90)) - tan(distancePulledDown / cellHeight)
+
+            var transform = CATransform3DIdentity
+            transform.m34 = 1.0 / -(1000 * 0.2)
+            transform = CATransform3DRotate(transform, angle, 1.0, 0.0, 0.0)
+
+            placeHolderCell.layer.transform = transform
+        } else {
+            placeHolderCell.layer.transform = CATransform3DIdentity
+            placeHolderCell.textView.text = "Release to Create Item"
+        }
+
+        if scrollView.dragging {
+            placeHolderCell.alpha = min(1, distancePulledDown / tableView.rowHeight)
+        } else {
+            placeHolderCell.alpha = 0.0
+        }
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
