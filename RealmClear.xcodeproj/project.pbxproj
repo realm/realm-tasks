@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E8227CF61CBC447700E7D6FB /* Cartography.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8227CEB1CBC446E00E7D6FB /* Cartography.framework */; };
-		E8227CF71CBC447700E7D6FB /* Cartography.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E8227CEB1CBC446E00E7D6FB /* Cartography.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2212D5BC1D19E0700017CBC4 /* Realm.framework */; };
+		89BB5111A354E8CB3A46360E /* Pods_RealmClear.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ACA9FB2BA5D8D16277CA1CF /* Pods_RealmClear.framework */; };
 		E83D4A821CBC471E002505F9 /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83D4A811CBC471E002505F9 /* ToDoItem.swift */; };
 		E83D4A8C1CBC4888002505F9 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83D4A8B1CBC4888002505F9 /* TableViewCell.swift */; };
 		E83D4A931CBC4DEB002505F9 /* ToDoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83D4A921CBC4DEB002505F9 /* ToDoTextView.swift */; };
@@ -17,62 +17,9 @@
 		E84CF2BC1CBC408000082C1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E84CF2BB1CBC408000082C1A /* Assets.xcassets */; };
 		E84CF2BF1CBC408000082C1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E84CF2BD1CBC408000082C1A /* LaunchScreen.storyboard */; };
 		E84CF2CA1CBC408000082C1A /* RealmClearTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84CF2C91CBC408000082C1A /* RealmClearTests.swift */; };
-		E8A6CD271CBC9B4C0049A2A1 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8A6CD241CBC9B3F0049A2A1 /* RealmSwift.framework */; };
-		E8A6CD281CBC9B4C0049A2A1 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E8A6CD241CBC9B3F0049A2A1 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E8A6CD2F1CBC9B5E0049A2A1 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8A6CD1A1CBC9B3F0049A2A1 /* Realm.framework */; };
-		E8A6CD301CBC9B5E0049A2A1 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E8A6CD1A1CBC9B3F0049A2A1 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E8227CEA1CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54C96A11195063CD000CDD27;
-			remoteInfo = "Cartography-iOS";
-		};
-		E8227CEC1CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54C96A1C195063CD000CDD27;
-			remoteInfo = "Cartography-iOS-Tests";
-		};
-		E8227CEE1CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54F6A838195C20C100313D24;
-			remoteInfo = "Cartography-Mac";
-		};
-		E8227CF01CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54F6A842195C20C200313D24;
-			remoteInfo = "Cartography-Mac-Tests";
-		};
-		E8227CF21CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 632F090A1BF1E7AA002431A3;
-			remoteInfo = "Cartography-tvOS";
-		};
-		E8227CF41CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 632F09221BF1E7FC002431A3;
-			remoteInfo = "Cartography-tvOS-tests";
-		};
-		E8227CF81CBC447700E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 54C96A10195063CD000CDD27;
-			remoteInfo = "Cartography-iOS";
-		};
 		E84CF2C61CBC408000082C1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E84CF2A91CBC408000082C1A /* Project object */;
@@ -80,89 +27,13 @@
 			remoteGlobalIDString = E84CF2B01CBC408000082C1A;
 			remoteInfo = RealmClear;
 		};
-		E8A6CD191CBC9B3F0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5D659ED91BE04556006515A0;
-			remoteInfo = Realm;
-		};
-		E8A6CD1B1CBC9B3F0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5DD755CF1BE056DE002800DA;
-			remoteInfo = "Realm iOS static";
-		};
-		E8A6CD1D1CBC9B3F0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E8D89BA31955FC6D00CF2B9A;
-			remoteInfo = Tests;
-		};
-		E8A6CD1F1CBC9B3F0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E856D1DF195614A400FB2FCF;
-			remoteInfo = "iOS static tests";
-		};
-		E8A6CD211CBC9B3F0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3F1A5E721992EB7400F45F4C;
-			remoteInfo = TestHost;
-		};
-		E8A6CD231CBC9B3F0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5D660FCC1BE98C560021E04F;
-			remoteInfo = RealmSwift;
-		};
-		E8A6CD251CBC9B3F0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5D660FD81BE98C7C0021E04F;
-			remoteInfo = "RealmSwift Tests";
-		};
-		E8A6CD291CBC9B4C0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5D660FCB1BE98C560021E04F;
-			remoteInfo = RealmSwift;
-		};
-		E8A6CD311CBC9B5E0049A2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5D659E7D1BE04556006515A0;
-			remoteInfo = Realm;
-		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		E8227CFA1CBC447700E7D6FB /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				E8A6CD301CBC9B5E0049A2A1 /* Realm.framework in Embed Frameworks */,
-				E8A6CD281CBC9B4C0049A2A1 /* RealmSwift.framework in Embed Frameworks */,
-				E8227CF71CBC447700E7D6FB /* Cartography.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cartography.xcodeproj; path = Carthage/Checkouts/Cartography/Cartography.xcodeproj; sourceTree = "<group>"; };
+		01064821B9B0323059E6E745 /* Pods-RealmClear.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmClear.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear.release.xcconfig"; sourceTree = "<group>"; };
+		2212D5BC1D19E0700017CBC4 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/Realm/ios/static/xcode-7/Realm.framework"; sourceTree = "<group>"; };
+		5F63F9370C2192427DBC5119 /* Pods-RealmClear.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmClear.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear.debug.xcconfig"; sourceTree = "<group>"; };
+		6ACA9FB2BA5D8D16277CA1CF /* Pods_RealmClear.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmClear.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E83D4A811CBC471E002505F9 /* ToDoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoItem.swift; sourceTree = "<group>"; };
 		E83D4A8B1CBC4888002505F9 /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		E83D4A921CBC4DEB002505F9 /* ToDoTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoTextView.swift; sourceTree = "<group>"; };
@@ -175,7 +46,6 @@
 		E84CF2C51CBC408000082C1A /* RealmClearTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RealmClearTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E84CF2C91CBC408000082C1A /* RealmClearTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmClearTests.swift; sourceTree = "<group>"; };
 		E84CF2CB1CBC408000082C1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Realm.xcodeproj; path = "Carthage/Checkouts/realm-cocoa/Realm.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,9 +53,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8A6CD2F1CBC9B5E0049A2A1 /* Realm.framework in Frameworks */,
-				E8A6CD271CBC9B4C0049A2A1 /* RealmSwift.framework in Frameworks */,
-				E8227CF61CBC447700E7D6FB /* Cartography.framework in Frameworks */,
+				89BB5111A354E8CB3A46360E /* Pods_RealmClear.framework in Frameworks */,
+				2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,27 +68,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E8227CE21CBC446E00E7D6FB /* Products */ = {
+		20DDCD0E2C347EB88F402A75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E8227CEB1CBC446E00E7D6FB /* Cartography.framework */,
-				E8227CED1CBC446E00E7D6FB /* Cartography-iOS-Tests.xctest */,
-				E8227CEF1CBC446E00E7D6FB /* Cartography.framework */,
-				E8227CF11CBC446E00E7D6FB /* Cartography-Mac-Tests.xctest */,
-				E8227CF31CBC446E00E7D6FB /* Cartography.framework */,
-				E8227CF51CBC446E00E7D6FB /* Cartography-tvOS-tests.xctest */,
+				2212D5BC1D19E0700017CBC4 /* Realm.framework */,
+				6ACA9FB2BA5D8D16277CA1CF /* Pods_RealmClear.framework */,
 			);
-			name = Products;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CE759B09B95721CF2EB9B60D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5F63F9370C2192427DBC5119 /* Pods-RealmClear.debug.xcconfig */,
+				01064821B9B0323059E6E745 /* Pods-RealmClear.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		E84CF2A81CBC408000082C1A = {
 			isa = PBXGroup;
 			children = (
-				E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */,
-				E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */,
 				E84CF2B31CBC408000082C1A /* RealmClear */,
 				E84CF2C81CBC408000082C1A /* RealmClearTests */,
 				E84CF2B21CBC408000082C1A /* Products */,
+				CE759B09B95721CF2EB9B60D /* Pods */,
+				20DDCD0E2C347EB88F402A75 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -256,20 +130,6 @@
 			path = RealmClearTests;
 			sourceTree = "<group>";
 		};
-		E8A6CD081CBC9B3F0049A2A1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E8A6CD1A1CBC9B3F0049A2A1 /* Realm.framework */,
-				E8A6CD1C1CBC9B3F0049A2A1 /* Realm.framework */,
-				E8A6CD1E1CBC9B3F0049A2A1 /* Tests.xctest */,
-				E8A6CD201CBC9B3F0049A2A1 /* iOS static tests.xctest */,
-				E8A6CD221CBC9B3F0049A2A1 /* TestHost.app */,
-				E8A6CD241CBC9B3F0049A2A1 /* RealmSwift.framework */,
-				E8A6CD261CBC9B3F0049A2A1 /* RealmSwift Tests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -277,17 +137,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E84CF2CE1CBC408000082C1A /* Build configuration list for PBXNativeTarget "RealmClear" */;
 			buildPhases = (
+				35F4D05D72F0BCD961216D94 /* [CP] Check Pods Manifest.lock */,
 				E84CF2AD1CBC408000082C1A /* Sources */,
 				E84CF2AE1CBC408000082C1A /* Frameworks */,
 				E84CF2AF1CBC408000082C1A /* Resources */,
-				E8227CFA1CBC447700E7D6FB /* Embed Frameworks */,
+				ACBBCF75C70A42D21B9BAF61 /* [CP] Embed Pods Frameworks */,
+				96BCB93C57BBBCB3E5DA568B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				E8227CF91CBC447700E7D6FB /* PBXTargetDependency */,
-				E8A6CD2A1CBC9B4C0049A2A1 /* PBXTargetDependency */,
-				E8A6CD321CBC9B5E0049A2A1 /* PBXTargetDependency */,
 			);
 			name = RealmClear;
 			productName = RealmClear;
@@ -342,16 +201,6 @@
 			mainGroup = E84CF2A81CBC408000082C1A;
 			productRefGroup = E84CF2B21CBC408000082C1A /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = E8227CE21CBC446E00E7D6FB /* Products */;
-					ProjectRef = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-				},
-				{
-					ProductGroup = E8A6CD081CBC9B3F0049A2A1 /* Products */;
-					ProjectRef = E8A6CD071CBC9B3F0049A2A1 /* Realm.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				E84CF2B01CBC408000082C1A /* RealmClear */,
@@ -359,100 +208,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		E8227CEB1CBC446E00E7D6FB /* Cartography.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Cartography.framework;
-			remoteRef = E8227CEA1CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CED1CBC446E00E7D6FB /* Cartography-iOS-Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Cartography-iOS-Tests.xctest";
-			remoteRef = E8227CEC1CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CEF1CBC446E00E7D6FB /* Cartography.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Cartography.framework;
-			remoteRef = E8227CEE1CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CF11CBC446E00E7D6FB /* Cartography-Mac-Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Cartography-Mac-Tests.xctest";
-			remoteRef = E8227CF01CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CF31CBC446E00E7D6FB /* Cartography.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Cartography.framework;
-			remoteRef = E8227CF21CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CF51CBC446E00E7D6FB /* Cartography-tvOS-tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Cartography-tvOS-tests.xctest";
-			remoteRef = E8227CF41CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8A6CD1A1CBC9B3F0049A2A1 /* Realm.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Realm.framework;
-			remoteRef = E8A6CD191CBC9B3F0049A2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8A6CD1C1CBC9B3F0049A2A1 /* Realm.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework.static;
-			path = Realm.framework;
-			remoteRef = E8A6CD1B1CBC9B3F0049A2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8A6CD1E1CBC9B3F0049A2A1 /* Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = Tests.xctest;
-			remoteRef = E8A6CD1D1CBC9B3F0049A2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8A6CD201CBC9B3F0049A2A1 /* iOS static tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "iOS static tests.xctest";
-			remoteRef = E8A6CD1F1CBC9B3F0049A2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8A6CD221CBC9B3F0049A2A1 /* TestHost.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = TestHost.app;
-			remoteRef = E8A6CD211CBC9B3F0049A2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8A6CD241CBC9B3F0049A2A1 /* RealmSwift.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = RealmSwift.framework;
-			remoteRef = E8A6CD231CBC9B3F0049A2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8A6CD261CBC9B3F0049A2A1 /* RealmSwift Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "RealmSwift Tests.xctest";
-			remoteRef = E8A6CD251CBC9B3F0049A2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		E84CF2AF1CBC408000082C1A /* Resources */ = {
@@ -472,6 +227,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		35F4D05D72F0BCD961216D94 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		96BCB93C57BBBCB3E5DA568B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ACBBCF75C70A42D21B9BAF61 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E84CF2AD1CBC408000082C1A /* Sources */ = {
@@ -497,25 +300,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E8227CF91CBC447700E7D6FB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Cartography-iOS";
-			targetProxy = E8227CF81CBC447700E7D6FB /* PBXContainerItemProxy */;
-		};
 		E84CF2C71CBC408000082C1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E84CF2B01CBC408000082C1A /* RealmClear */;
 			targetProxy = E84CF2C61CBC408000082C1A /* PBXContainerItemProxy */;
-		};
-		E8A6CD2A1CBC9B4C0049A2A1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = RealmSwift;
-			targetProxy = E8A6CD291CBC9B4C0049A2A1 /* PBXContainerItemProxy */;
-		};
-		E8A6CD321CBC9B5E0049A2A1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Realm;
-			targetProxy = E8A6CD311CBC9B5E0049A2A1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -616,9 +404,14 @@
 		};
 		E84CF2CF1CBC408000082C1A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5F63F9370C2192427DBC5119 /* Pods-RealmClear.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/Realm/ios/static/xcode-7",
+					"$(PROJECT_DIR)/Pods/RealmSwift/ios/swift-2.2",
+				);
 				INFOPLIST_FILE = RealmClear/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmClear;
@@ -628,9 +421,14 @@
 		};
 		E84CF2D01CBC408000082C1A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01064821B9B0323059E6E745 /* Pods-RealmClear.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/Realm/ios/static/xcode-7",
+					"$(PROJECT_DIR)/Pods/RealmSwift/ios/swift-2.2",
+				);
 				INFOPLIST_FILE = RealmClear/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmClear;
