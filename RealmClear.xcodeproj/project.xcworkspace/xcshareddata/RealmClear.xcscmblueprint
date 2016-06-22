@@ -5,11 +5,13 @@
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
     "364D2E5F611143E7C4D0A99C691B1988FBD5381F" : 0,
+    "9FB1FDDBA011002795A1FF5BD3CABFA2F79E6A59" : 0,
     "CF5F665E74E5B72DF98310C10F999A6AEC7CC28D" : 0
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "A248474B-B757-4BC8-98CC-19D1F828CABE",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
     "364D2E5F611143E7C4D0A99C691B1988FBD5381F" : "RealmClear\/Carthage\/Checkouts\/Cartography\/",
+    "9FB1FDDBA011002795A1FF5BD3CABFA2F79E6A59" : "RealmClear\/Carthage\/Checkouts\/realm-cocoa\/",
     "CF5F665E74E5B72DF98310C10F999A6AEC7CC28D" : "RealmClear\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "RealmClear",
@@ -20,6 +22,11 @@
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/robb\/Cartography.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "364D2E5F611143E7C4D0A99C691B1988FBD5381F"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/realm\/realm-cocoa.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9FB1FDDBA011002795A1FF5BD3CABFA2F79E6A59"
     },
     {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:realm\/RealmClear.git",

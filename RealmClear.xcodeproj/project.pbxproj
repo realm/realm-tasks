@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E8227CF61CBC447700E7D6FB /* Cartography.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8227CEB1CBC446E00E7D6FB /* Cartography.framework */; };
-		E8227CF71CBC447700E7D6FB /* Cartography.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E8227CEB1CBC446E00E7D6FB /* Cartography.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2212D5BC1D19E0700017CBC4 /* Realm.framework */; };
+		89BB5111A354E8CB3A46360E /* Pods_RealmClear.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ACA9FB2BA5D8D16277CA1CF /* Pods_RealmClear.framework */; };
 		E83D4A821CBC471E002505F9 /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83D4A811CBC471E002505F9 /* ToDoItem.swift */; };
 		E83D4A8C1CBC4888002505F9 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83D4A8B1CBC4888002505F9 /* TableViewCell.swift */; };
 		E83D4A931CBC4DEB002505F9 /* ToDoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83D4A921CBC4DEB002505F9 /* ToDoTextView.swift */; };
@@ -20,55 +20,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E8227CEA1CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54C96A11195063CD000CDD27;
-			remoteInfo = "Cartography-iOS";
-		};
-		E8227CEC1CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54C96A1C195063CD000CDD27;
-			remoteInfo = "Cartography-iOS-Tests";
-		};
-		E8227CEE1CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54F6A838195C20C100313D24;
-			remoteInfo = "Cartography-Mac";
-		};
-		E8227CF01CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54F6A842195C20C200313D24;
-			remoteInfo = "Cartography-Mac-Tests";
-		};
-		E8227CF21CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 632F090A1BF1E7AA002431A3;
-			remoteInfo = "Cartography-tvOS";
-		};
-		E8227CF41CBC446E00E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 632F09221BF1E7FC002431A3;
-			remoteInfo = "Cartography-tvOS-tests";
-		};
-		E8227CF81CBC447700E7D6FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 54C96A10195063CD000CDD27;
-			remoteInfo = "Cartography-iOS";
-		};
 		E84CF2C61CBC408000082C1A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E84CF2A91CBC408000082C1A /* Project object */;
@@ -78,22 +29,11 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		E8227CFA1CBC447700E7D6FB /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				E8227CF71CBC447700E7D6FB /* Cartography.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Cartography.xcodeproj; path = Carthage/Checkouts/Cartography/Cartography.xcodeproj; sourceTree = "<group>"; };
+		01064821B9B0323059E6E745 /* Pods-RealmClear.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmClear.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear.release.xcconfig"; sourceTree = "<group>"; };
+		2212D5BC1D19E0700017CBC4 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/Realm/ios/static/xcode-7/Realm.framework"; sourceTree = "<group>"; };
+		5F63F9370C2192427DBC5119 /* Pods-RealmClear.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmClear.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear.debug.xcconfig"; sourceTree = "<group>"; };
+		6ACA9FB2BA5D8D16277CA1CF /* Pods_RealmClear.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmClear.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E83D4A811CBC471E002505F9 /* ToDoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoItem.swift; sourceTree = "<group>"; };
 		E83D4A8B1CBC4888002505F9 /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		E83D4A921CBC4DEB002505F9 /* ToDoTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoTextView.swift; sourceTree = "<group>"; };
@@ -113,7 +53,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8227CF61CBC447700E7D6FB /* Cartography.framework in Frameworks */,
+				89BB5111A354E8CB3A46360E /* Pods_RealmClear.framework in Frameworks */,
+				2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,26 +68,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E8227CE21CBC446E00E7D6FB /* Products */ = {
+		20DDCD0E2C347EB88F402A75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E8227CEB1CBC446E00E7D6FB /* Cartography.framework */,
-				E8227CED1CBC446E00E7D6FB /* Cartography-iOS-Tests.xctest */,
-				E8227CEF1CBC446E00E7D6FB /* Cartography.framework */,
-				E8227CF11CBC446E00E7D6FB /* Cartography-Mac-Tests.xctest */,
-				E8227CF31CBC446E00E7D6FB /* Cartography.framework */,
-				E8227CF51CBC446E00E7D6FB /* Cartography-tvOS-tests.xctest */,
+				2212D5BC1D19E0700017CBC4 /* Realm.framework */,
+				6ACA9FB2BA5D8D16277CA1CF /* Pods_RealmClear.framework */,
 			);
-			name = Products;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CE759B09B95721CF2EB9B60D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5F63F9370C2192427DBC5119 /* Pods-RealmClear.debug.xcconfig */,
+				01064821B9B0323059E6E745 /* Pods-RealmClear.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		E84CF2A81CBC408000082C1A = {
 			isa = PBXGroup;
 			children = (
-				E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */,
 				E84CF2B31CBC408000082C1A /* RealmClear */,
 				E84CF2C81CBC408000082C1A /* RealmClearTests */,
 				E84CF2B21CBC408000082C1A /* Products */,
+				CE759B09B95721CF2EB9B60D /* Pods */,
+				20DDCD0E2C347EB88F402A75 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -190,15 +137,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E84CF2CE1CBC408000082C1A /* Build configuration list for PBXNativeTarget "RealmClear" */;
 			buildPhases = (
+				35F4D05D72F0BCD961216D94 /* [CP] Check Pods Manifest.lock */,
 				E84CF2AD1CBC408000082C1A /* Sources */,
 				E84CF2AE1CBC408000082C1A /* Frameworks */,
 				E84CF2AF1CBC408000082C1A /* Resources */,
-				E8227CFA1CBC447700E7D6FB /* Embed Frameworks */,
+				ACBBCF75C70A42D21B9BAF61 /* [CP] Embed Pods Frameworks */,
+				96BCB93C57BBBCB3E5DA568B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				E8227CF91CBC447700E7D6FB /* PBXTargetDependency */,
 			);
 			name = RealmClear;
 			productName = RealmClear;
@@ -253,12 +201,6 @@
 			mainGroup = E84CF2A81CBC408000082C1A;
 			productRefGroup = E84CF2B21CBC408000082C1A /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = E8227CE21CBC446E00E7D6FB /* Products */;
-					ProjectRef = E8227CE11CBC446E00E7D6FB /* Cartography.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				E84CF2B01CBC408000082C1A /* RealmClear */,
@@ -266,51 +208,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		E8227CEB1CBC446E00E7D6FB /* Cartography.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Cartography.framework;
-			remoteRef = E8227CEA1CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CED1CBC446E00E7D6FB /* Cartography-iOS-Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Cartography-iOS-Tests.xctest";
-			remoteRef = E8227CEC1CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CEF1CBC446E00E7D6FB /* Cartography.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Cartography.framework;
-			remoteRef = E8227CEE1CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CF11CBC446E00E7D6FB /* Cartography-Mac-Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Cartography-Mac-Tests.xctest";
-			remoteRef = E8227CF01CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CF31CBC446E00E7D6FB /* Cartography.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Cartography.framework;
-			remoteRef = E8227CF21CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8227CF51CBC446E00E7D6FB /* Cartography-tvOS-tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Cartography-tvOS-tests.xctest";
-			remoteRef = E8227CF41CBC446E00E7D6FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		E84CF2AF1CBC408000082C1A /* Resources */ = {
@@ -330,6 +227,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		35F4D05D72F0BCD961216D94 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		96BCB93C57BBBCB3E5DA568B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ACBBCF75C70A42D21B9BAF61 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E84CF2AD1CBC408000082C1A /* Sources */ = {
@@ -355,11 +300,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E8227CF91CBC447700E7D6FB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Cartography-iOS";
-			targetProxy = E8227CF81CBC447700E7D6FB /* PBXContainerItemProxy */;
-		};
 		E84CF2C71CBC408000082C1A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E84CF2B01CBC408000082C1A /* RealmClear */;
@@ -464,9 +404,14 @@
 		};
 		E84CF2CF1CBC408000082C1A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5F63F9370C2192427DBC5119 /* Pods-RealmClear.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/Realm/ios/static/xcode-7",
+					"$(PROJECT_DIR)/Pods/RealmSwift/ios/swift-2.2",
+				);
 				INFOPLIST_FILE = RealmClear/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmClear;
@@ -476,9 +421,14 @@
 		};
 		E84CF2D01CBC408000082C1A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01064821B9B0323059E6E745 /* Pods-RealmClear.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/Realm/ios/static/xcode-7",
+					"$(PROJECT_DIR)/Pods/RealmSwift/ios/swift-2.2",
+				);
 				INFOPLIST_FILE = RealmClear/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmClear;

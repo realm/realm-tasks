@@ -7,6 +7,7 @@
 //
 
 import Cartography
+import RealmSwift
 import UIKit
 
 // MARK: Private Extensions
@@ -47,22 +48,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: Properties
 
     // Stored Properties
-    private var items =  [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "Quisque at magna auctor, rhoncus massa sit amet, sodales felis.",
-        "Suspendisse consequat purus at dolor ultricies interdum.",
-        "In luctus magna aliquet, tincidunt ante et, aliquam tellus.",
-        "Suspendisse suscipit lorem ac purus interdum, eu maximus ante pellentesque.",
-        "Aenean elementum est ut eros varius posuere vel sit amet eros.",
-        "Duis accumsan dolor quis leo tincidunt consectetur.",
-        "Proin dictum felis non dui dapibus molestie.",
-        "Fusce id est eget erat blandit rutrum.",
-        "Fusce rutrum ipsum ac nisi euismod pellentesque.",
-        "Nulla venenatis neque id eros consectetur, id pretium turpis sodales.",
-        "Nulla in sem pharetra, hendrerit diam ac, mollis nisl.",
-        "Nulla nec lectus sed massa tristique maximus.",
-        "Cras aliquam velit luctus lacus accumsan, id fringilla eros commodo."
-    ].map(ToDoItem.init)
+    private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
 
@@ -222,7 +208,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 where indexPath != sourceIndexPath else { break }
 
             // update data source & move rows
-            swap(&items[indexPath.row], &items[sourceIndexPath.row])
+            try! items.realm?.write {
+                swap(&items[indexPath.row], &items[sourceIndexPath.row])
+            }
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
             self.sourceIndexPath = indexPath
             break
@@ -315,9 +303,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard distancePulledUp < 160 else {
             let beforeCount = items.count
-            items = items.filter { !$0.completed }
-            let afterCount = items.count
-            guard afterCount < beforeCount else { return }
+            let itemsToDelete = items.filter("completed = true")
+            let afterCount = items.count - itemsToDelete.count
+            guard !itemsToDelete.isEmpty else { return }
+
+            try! items.realm?.write {
+                items.realm?.delete(itemsToDelete)
+            }
 
             vibrate()
             tableView.beginUpdates()
@@ -330,7 +322,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         guard distancePulledDown > tableView.rowHeight else { return }
 
         // exceeds threshold
-        items.insert(ToDoItem(text: ""), atIndex: 0)
+        try! items.realm?.write {
+            items.insert(ToDoItem(text: ""), atIndex: 0)
+        }
         tableView.beginUpdates()
         let indexPathForRow = NSIndexPath(forRow: 0, inSection: 0)
         tableView.insertRowsAtIndexPaths([indexPathForRow], withRowAnimation: .None)
@@ -344,10 +338,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: TableViewCellDelegate
 
     func itemDeleted(item: ToDoItem) {
-        guard let index = items.indexOf({ $0 === item }) else {
+        guard let index = items.indexOf(item) else {
             return
         }
-        items.removeAtIndex(index)
+        try! items.realm?.write {
+            items.realm?.delete(item)
+        }
 
         visibleTableViewCells.filter({ $0.item === item }).first?.hidden = true
         tableView.beginUpdates()
@@ -358,7 +354,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func itemCompleted(item: ToDoItem) {
-        guard let index = items.indexOf({ $0 === item }) else {
+        guard let index = items.indexOf(item) else {
             return
         }
         let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
@@ -368,12 +364,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
         } else {
             // move cell just above the first completed item
-            let completedCount = items.filter({ $0.completed }).count
+            let completedCount = items.filter("completed = true").count
             destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
         }
         delay(0.2) { [weak self] in
-            self?.items.removeAtIndex(sourceIndexPath.row)
-            self?.items.insert(item, atIndex: destinationIndexPath.row)
+            try! self?.items.realm?.write {
+                self!.items.removeAtIndex(sourceIndexPath.row)
+                self!.items.insert(item, atIndex: destinationIndexPath.row)
+            }
             self?.tableView.beginUpdates()
             self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
             self?.tableView.endUpdates()
