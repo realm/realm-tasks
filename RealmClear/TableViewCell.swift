@@ -211,7 +211,9 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             self?.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
-            item.completed = completed
+            try! item.realm?.write {
+                item.completed = completed
+            }
             vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
             delegate?.itemCompleted(item)
@@ -240,7 +242,9 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        item.text = textView.text
+        try! item.realm?.write {
+            item.text = textView.text
+        }
         textView.userInteractionEnabled = false
         delegate?.cellDidEndEditing(self)
     }
