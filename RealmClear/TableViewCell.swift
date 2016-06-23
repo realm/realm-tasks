@@ -242,7 +242,11 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        try! item.realm?.write {
+        if let realm = item.realm {
+            try! realm.write {
+                item.text = textView.text
+            }
+        } else {
             item.text = textView.text
         }
         textView.userInteractionEnabled = false
