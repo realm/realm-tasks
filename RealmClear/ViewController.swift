@@ -335,9 +335,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard distancePulledUp < 160 else {
-            let beforeCount = items.count
             let itemsToDelete = items.filter("completed = true")
-            let afterCount = items.count - itemsToDelete.count
             guard !itemsToDelete.isEmpty else { return }
 
             try! items.realm?.write {
@@ -345,10 +343,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             }
 
             vibrate()
-//            tableView.beginUpdates()
-//            let indexPathsToDelete = (afterCount..<beforeCount).map({ NSIndexPath(forRow: $0, inSection: 0) })
-//            tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .Fade)
-//            tableView.endUpdates()
             return
         }
 
@@ -358,10 +352,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         try! items.realm?.write {
             items.insert(ToDoItem(text: ""), atIndex: 0)
         }
-//        tableView.beginUpdates()
-//        let indexPathForRow = NSIndexPath(forRow: 0, inSection: 0)
-//        tableView.insertRowsAtIndexPaths([indexPathForRow], withRowAnimation: .None)
-//        tableView.endUpdates()
+
         if let textView = visibleTableViewCells.first?.textView {
             textView.userInteractionEnabled = true
             textView.becomeFirstResponder()
@@ -377,12 +368,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         try! items.realm?.write {
             items.realm?.delete(item)
         }
-
-//        visibleTableViewCells.filter({ $0.item === item }).first?.hidden = true
-//        tableView.beginUpdates()
-//        let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
-//        tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
-//        tableView.endUpdates()
+        
         delay(0.2) { [weak self] in self?.updateColors() }
     }
 
@@ -405,9 +391,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self!.items.removeAtIndex(sourceIndexPath.row)
                 self!.items.insert(item, atIndex: destinationIndexPath.row)
             }
-//            self?.tableView.beginUpdates()
-//            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-//            self?.tableView.endUpdates()
         }
         delay(0.5) { [weak self] in self?.updateColors() }
     }
