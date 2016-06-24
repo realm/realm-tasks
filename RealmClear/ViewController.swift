@@ -209,11 +209,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
         let location = recognizer.locationInView(tableView)
-        let indexPath = tableView.indexPathForRowAtPoint(location)
+        let indexPath = tableView.indexPathForRowAtPoint(location) ?? NSIndexPath(forRow: items.count - 1, inSection: 0)
         switch recognizer.state {
         case .Possible: break
         case .Began:
-            guard let indexPath = indexPath, cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
+            guard let cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
             sourceIndexPath = indexPath
 
             // Add the snapshot as subview, aligned with the cell
@@ -237,7 +237,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             center.y = location.y
             snapshot.center = center
 
-            guard let indexPath = indexPath, sourceIndexPath = sourceIndexPath
+            guard let sourceIndexPath = sourceIndexPath
                 where indexPath != sourceIndexPath else { break }
 
             // update data source & move rows
@@ -248,7 +248,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             self.sourceIndexPath = indexPath
             break
         case .Ended, .Cancelled, .Failed:
-            guard let indexPath = indexPath, cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
+            guard let cell = tableView.cellForRowAtIndexPath(indexPath) else {
+                break
+            }
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
                 self.snapshot.transform = CGAffineTransformIdentity
