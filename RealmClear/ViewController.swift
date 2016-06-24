@@ -51,7 +51,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
-
+    private var notificationToken: NotificationToken?
+    
     // Scrolling
     var distancePulledDown: CGFloat {
         return -tableView.contentOffset.y - tableView.contentInset.top
@@ -85,6 +86,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         setupGestureRecognizers()
     }
 
+
     // MARK: UI
 
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -95,6 +97,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         setupTableView()
         setupPlaceholderCell()
         setupTitleBar()
+        setupNotifications()
     }
 
     private func setupTableView() {
@@ -151,6 +154,36 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             titleLabel.right == titleLabel.superview!.right
             titleLabel.bottom == titleLabel.superview!.bottom - 5
         }
+    }
+    
+    private func setupNotifications() {
+        if notificationToken != nil {
+            return
+        }
+        
+        notificationToken = items.addNotificationBlock({ (changes: RealmCollectionChange) in
+            switch changes {
+            case .Initial:
+                // Results are now populated and can be accessed without blocking the UI
+                self.tableView.reloadData()
+                break
+            case .Update(_, let deletions, let insertions, let modifications):
+                // Query results have changed, so apply them to the UITableView
+                self.tableView.beginUpdates()
+                self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
+                    withRowAnimation: .Automatic)
+                self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
+                    withRowAnimation: .Automatic)
+                self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
+                    withRowAnimation: .Automatic)
+                self.tableView.endUpdates()
+                break
+            case .Error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError("\(error)")
+                break
+            }
+        })
     }
 
     // MARK: Gesture Recognizers
@@ -314,9 +347,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard distancePulledUp < 160 else {
-            let beforeCount = items.count
             let itemsToDelete = items.filter("completed = true")
-            let afterCount = items.count - itemsToDelete.count
             guard !itemsToDelete.isEmpty else { return }
 
             try! items.realm?.write {
@@ -324,10 +355,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             }
 
             vibrate()
-            tableView.beginUpdates()
-            let indexPathsToDelete = (afterCount..<beforeCount).map({ NSIndexPath(forRow: $0, inSection: 0) })
-            tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .Fade)
-            tableView.endUpdates()
             return
         }
 
@@ -355,12 +382,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         try! items.realm?.write {
             items.realm?.delete(item)
         }
-
-        visibleTableViewCells.filter({ $0.item === item }).first?.hidden = true
-        tableView.beginUpdates()
-        let indexPathForRow = NSIndexPath(forRow: index, inSection: 0)
-        tableView.deleteRowsAtIndexPaths([indexPathForRow], withRowAnimation: .Fade)
-        tableView.endUpdates()
+        
         delay(0.2) { [weak self] in self?.updateColors() }
     }
 
@@ -383,9 +405,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self!.items.removeAtIndex(sourceIndexPath.row)
                 self!.items.insert(item, atIndex: destinationIndexPath.row)
             }
-            self?.tableView.beginUpdates()
-            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-            self?.tableView.endUpdates()
         }
         delay(0.5) { [weak self] in self?.updateColors() }
     }
@@ -416,7 +435,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if let item = editingCell.item where editingCell == textEditingCell && !item.text.isEmpty {
             try! items.realm?.write {
                 items.insert(item, atIndex: 0)
-                tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
             }
         }
         if let _ = textEditingCell.superview {
