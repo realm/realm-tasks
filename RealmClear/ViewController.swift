@@ -435,7 +435,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if let item = editingCell.item where editingCell == textEditingCell && !item.text.isEmpty {
             try! items.realm?.write {
                 items.insert(item, atIndex: 0)
-                tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
             }
         }
         if let _ = textEditingCell.superview {
