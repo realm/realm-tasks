@@ -62,6 +62,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // Moving
     private var snapshot: UIView! = nil
+    private var startIndexPath: NSIndexPath? = nil
     private var sourceIndexPath: NSIndexPath? = nil
 
     // Editing
@@ -182,6 +183,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         case .Possible: break
         case .Began:
             guard let cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
+            startIndexPath = indexPath
             sourceIndexPath = indexPath
 
             // Add the snapshot as subview, aligned with the cell
@@ -208,23 +210,30 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             guard let sourceIndexPath = sourceIndexPath
                 where indexPath != sourceIndexPath else { break }
 
-            // update data source & move rows
-            try! items.realm?.write {
-                swap(&items[indexPath.row], &items[sourceIndexPath.row])
-            }
+            // move rows
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
             self.sourceIndexPath = indexPath
             break
         case .Ended, .Cancelled, .Failed:
-            guard let cell = tableView.cellForRowAtIndexPath(indexPath) else {
-                break
+            guard let cell = tableView.cellForRowAtIndexPath(indexPath),
+                startIndexPath = startIndexPath,
+                sourceIndexPath = sourceIndexPath else { break }
+
+            // update data source & move rows
+            try! items.realm?.write {
+                let item = items[startIndexPath.row]
+                items.removeAtIndex(startIndexPath.row)
+                items.insert(item, atIndex: indexPath.row)
             }
+            tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
+
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
                 self.snapshot.transform = CGAffineTransformIdentity
                 self.snapshot.layer.shadowOpacity = 0
             }, completion: { [unowned self] _ in
                 cell.hidden = false
+                self.startIndexPath = nil
                 self.sourceIndexPath = nil
                 self.snapshot.removeFromSuperview()
                 self.snapshot = nil
