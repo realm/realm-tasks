@@ -325,7 +325,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if distancePulledDown <= tableView.rowHeight {
             placeHolderCell.textView.text = "Pull to Create Item"
 
-            let cellHeight: CGFloat = 54.0
+            let cellHeight = tableView.rowHeight
             let angle = CGFloat(degreesToRadians(90)) - tan(distancePulledDown / cellHeight)
 
             var transform = CATransform3DIdentity
@@ -360,7 +360,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         // exceeds threshold
         textEditingCell.frame = placeHolderCell.bounds
-        textEditingCell.frame.origin.y = distancePulledDown
+        textEditingCell.frame.origin.y = tableView.contentInset.top + (distancePulledDown - tableView.rowHeight)
         textEditingCell.backgroundColor = placeHolderCell.backgroundColor
         view.addSubview(textEditingCell)
 
@@ -409,9 +409,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
         currentlyEditing = true
-        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
-        topConstraint?.constant = -editingOffset
+        topConstraint?.constant = tableView.rowHeight
 
+        placeHolderCell.alpha = 0.0
         tableView.bounces = false
 
         UIView.animateWithDuration(0.3, animations: { [unowned self] in
@@ -421,7 +421,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 cell.alpha = 0.3
             }
         }, completion: { [unowned self] finished in
-            self.placeHolderCell.alpha = 0.0
             self.tableView.bounces = true
         })
     }
