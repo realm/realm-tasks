@@ -74,6 +74,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+    private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
 
     // MARK: View Lifecycle
 
@@ -166,7 +167,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             return
         }
         if currentlyEditing {
-            tableView.endEditing(true)
+            view.endEditing(true)
         } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
             cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
@@ -324,17 +325,16 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         guard distancePulledDown > tableView.rowHeight else { return }
 
         // exceeds threshold
-        try! items.realm?.write {
-            items.insert(ToDoItem(text: ""), atIndex: 0)
-        }
-        tableView.beginUpdates()
-        let indexPathForRow = NSIndexPath(forRow: 0, inSection: 0)
-        tableView.insertRowsAtIndexPaths([indexPathForRow], withRowAnimation: .None)
-        tableView.endUpdates()
-        if let textView = visibleTableViewCells.first?.textView {
-            textView.userInteractionEnabled = true
-            textView.becomeFirstResponder()
-        }
+        textEditingCell.frame = placeHolderCell.bounds
+        textEditingCell.frame.origin.y = distancePulledDown
+        textEditingCell.backgroundColor = placeHolderCell.backgroundColor
+        view.addSubview(textEditingCell)
+
+        textEditingCell.item = ToDoItem(text: "")
+        textEditingCell.delegate = self
+        
+        textEditingCell.textView.userInteractionEnabled = true
+        textEditingCell.textView.becomeFirstResponder()
     }
 
     // MARK: TableViewCellDelegate
@@ -387,6 +387,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         topConstraint?.constant = -editingOffset
         UIView.animateWithDuration(0.3) { [unowned self] in
             self.view.layoutSubviews()
+            self.textEditingCell.frame.origin.y = 45
             for cell in self.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 0.3
             }
@@ -403,8 +404,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 cell.alpha = 1
             }
         }
-        if let item = editingCell.item where item.text.isEmpty {
-            itemDeleted(item)
+        if let item = editingCell.item where editingCell == textEditingCell && !item.text.isEmpty {
+            try! items.realm?.write {
+                items.insert(item, atIndex: 0)
+                tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
+            }
+        }
+        if let _ = textEditingCell.superview {
+            textEditingCell.removeFromSuperview()
         }
     }
 
