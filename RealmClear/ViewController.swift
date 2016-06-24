@@ -340,8 +340,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         if scrollView.dragging {
             placeHolderCell.alpha = min(1, distancePulledDown / tableView.rowHeight)
-        } else {
-            placeHolderCell.alpha = 0.0
         }
     }
 
@@ -413,13 +411,19 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         currentlyEditing = true
         let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
         topConstraint?.constant = -editingOffset
-        UIView.animateWithDuration(0.3) { [unowned self] in
+
+        tableView.bounces = false
+
+        UIView.animateWithDuration(0.3, animations: { [unowned self] in
             self.view.layoutSubviews()
             self.textEditingCell.frame.origin.y = 45
             for cell in self.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 0.3
             }
-        }
+        }, completion: { [unowned self] finished in
+            self.placeHolderCell.alpha = 0.0
+            self.tableView.bounces = true
+        })
     }
 
     func cellDidEndEditing(editingCell: TableViewCell) {
