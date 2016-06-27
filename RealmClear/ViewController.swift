@@ -374,13 +374,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: TableViewCellDelegate
 
     func itemDeleted(item: ToDoItem) {
-        guard let index = items.indexOf(item) else {
+        guard items.indexOf(item) != nil else {
             return
         }
         try! items.realm?.write {
             items.realm?.delete(item)
         }
-        
         delay(0.2) { [weak self] in self?.updateColors() }
     }
 
