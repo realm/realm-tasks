@@ -91,9 +91,19 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     private func setupUI() {
         setupIconViews()
+        setupBackgroundView()
         setupBackgroundOverlayView()
         setupTextView()
         setupBorders()
+    }
+    
+    private func setupBackgroundView() {
+        backgroundView = UIView()
+        constrain(backgroundView!) { backgroundView in
+            backgroundView.edges == backgroundView.superview!.edges
+        }
+        insertSubview(deleteIconView, atIndex: 0)
+        insertSubview(doneIconView, atIndex: 0)
     }
 
     private func setupBackgroundOverlayView() {
@@ -184,6 +194,9 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             let offsetDelta = min(abs(translation.x), (frame.size.width / 4))
             doneIconView.center = CGPoint(x: originalDoneIconCenter.x - offsetDelta, y: originalDoneIconCenter.y)
             deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x + offsetDelta, y: originalDeleteIconCenter.y)
+            
+            doneIconView.alpha = CGFloat(fractionOfThreshold)
+            deleteIconView.alpha = CGFloat(fractionOfThreshold)
             
             if !item.completed {
                 backgroundOverlayView.backgroundColor = .completeGreenBackgroundColor()

@@ -77,7 +77,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
-
+    
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
@@ -121,7 +121,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
-        placeHolderCell.backgroundColor = UIColor(red: 0.85, green: 0, blue: 0, alpha: 1)
+        placeHolderCell.backgroundView!.backgroundColor = UIColor(red: 0.85, green: 0, blue: 0, alpha: 1)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -312,7 +312,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let rowFloat = CGFloat(indexPath.row)
-        cell.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
+        cell.backgroundView!.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
                                        green: 0.07 + (0.04 * rowFloat), blue: 0.1, alpha: 1)
         cell.alpha = currentlyEditing ? 0.3 : 1
     }
@@ -361,7 +361,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         // exceeds threshold
         textEditingCell.frame = placeHolderCell.bounds
         textEditingCell.frame.origin.y = tableView.contentInset.top + (distancePulledDown - tableView.rowHeight)
-        textEditingCell.backgroundColor = placeHolderCell.backgroundColor
+        textEditingCell.backgroundView!.backgroundColor = placeHolderCell.backgroundView!.backgroundColor
         view.addSubview(textEditingCell)
 
         textEditingCell.item = ToDoItem(text: "")
