@@ -238,9 +238,6 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                 self.doneIconView.translatesAutoresizingMaskIntoConstraints = false
                 self.deleteIconView.translatesAutoresizingMaskIntoConstraints = false
             })
-            //            UIView.animateWithDuration(0.2) { [weak self] in
-//                self?.frame = originalFrame
-//            } completion
             
             break
         default:
