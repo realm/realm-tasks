@@ -307,7 +307,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                                                options: [.UsesLineFragmentOrigin],
                                                attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
                                                context: nil).height
-        return height + 32
+        return ceil(height) + 32
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
