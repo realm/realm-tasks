@@ -408,7 +408,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
         currentlyEditing = true
-        topConstraint?.constant = tableView.rowHeight
+
+        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
+        topConstraint?.constant = -editingOffset
 
         placeHolderCell.alpha = 0.0
         tableView.bounces = false
