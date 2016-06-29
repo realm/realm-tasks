@@ -63,9 +63,16 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     // Private Properties
 
     private var originalCenter = CGPoint()
+    private var originalDoneIconCenter = CGPoint()
+    private var originalDeleteIconCenter = CGPoint()
+    
     private var releaseAction: ReleaseAction?
     private let backgroundOverlayView = UIView()
 
+    // Assets
+    private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
+    private let deleteIconView = UIImageView(image: UIImage(named: "DeleteIcon"))
+    
     // MARK: Initializers
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -83,9 +90,20 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     // MARK: UI
 
     private func setupUI() {
+        setupIconViews()
+        setupBackgroundView()
         setupBackgroundOverlayView()
         setupTextView()
         setupBorders()
+    }
+    
+    private func setupBackgroundView() {
+        backgroundView = UIView()
+        constrain(backgroundView!) { backgroundView in
+            backgroundView.edges == backgroundView.superview!.edges
+        }
+        insertSubview(deleteIconView, atIndex: 0)
+        insertSubview(doneIconView, atIndex: 0)
     }
 
     private func setupBackgroundOverlayView() {
@@ -94,6 +112,20 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         addSubview(backgroundOverlayView)
         constrain(backgroundOverlayView) { backgroundOverlayView in
             backgroundOverlayView.edges == backgroundOverlayView.superview!.edges
+        }
+    }
+    
+    private func setupIconViews() {
+        addSubview(doneIconView)
+        constrain(doneIconView) { doneIconView in
+            doneIconView.left == doneIconView.superview!.left + 8
+            doneIconView.centerY == doneIconView.superview!.centerY
+        }
+        
+        addSubview(deleteIconView)
+        constrain(deleteIconView) { deleteIconView in
+            deleteIconView.right == deleteIconView.superview!.right - 12
+            deleteIconView.centerY == deleteIconView.superview!.centerY
         }
     }
 
@@ -144,6 +176,13 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         switch recognizer.state {
         case .Began:
             originalCenter = center
+            
+            originalDeleteIconCenter = deleteIconView.center
+            deleteIconView.translatesAutoresizingMaskIntoConstraints = true
+            
+            originalDoneIconCenter = doneIconView.center
+            doneIconView.translatesAutoresizingMaskIntoConstraints = true
+            
             releaseAction = nil
             break
         case .Changed:
@@ -152,6 +191,13 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             let fractionOfThreshold = min(1, Double(abs(frame.origin.x) / (frame.size.width / 4)))
             releaseAction = fractionOfThreshold >= 1 ? (frame.origin.x > 0 ? .Complete : .Delete) : nil
 
+            let offsetDelta = min(abs(translation.x), (frame.size.width / 4))
+            doneIconView.center = CGPoint(x: originalDoneIconCenter.x - offsetDelta, y: originalDoneIconCenter.y)
+            deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x + offsetDelta, y: originalDeleteIconCenter.y)
+            
+            doneIconView.alpha = CGFloat(fractionOfThreshold)
+            deleteIconView.alpha = CGFloat(fractionOfThreshold)
+            
             if !item.completed {
                 backgroundOverlayView.backgroundColor = .completeGreenBackgroundColor()
                 backgroundOverlayView.hidden = releaseAction != .Complete
@@ -185,7 +231,14 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                 break
             }
             let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
-            UIView.animateWithDuration(0.2) { [weak self] in self?.frame = originalFrame }
+            UIView.animateWithDuration(0.2, animations: { [weak self] in
+                self?.frame = originalFrame
+            },
+            completion: { complete in
+                self.doneIconView.translatesAutoresizingMaskIntoConstraints = false
+                self.deleteIconView.translatesAutoresizingMaskIntoConstraints = false
+            })
+            
             break
         default:
             break
