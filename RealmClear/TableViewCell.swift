@@ -98,6 +98,8 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     }
     
     private func setupBackgroundView() {
+        self.backgroundColor = nil
+        
         backgroundView = UIView()
         constrain(backgroundView!) { backgroundView in
             backgroundView.edges == backgroundView.superview!.edges
