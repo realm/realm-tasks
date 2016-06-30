@@ -223,20 +223,33 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             }
             break
         case .Ended:
+            var deletedAction = false
+            
             switch releaseAction {
             case .Some(.Complete):
                 setCompleted(!item.completed, animated: true)
                 break
             case .Some(.Delete):
+                deletedAction = true
                 delegate?.itemDeleted(item)
                 break
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()
                 break
             }
-            let originalFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
+            
+            // If not deleting, slide it back into the middle
+            // If we are deleting, slide it all the way out of the view
+            var targetFrame = CGRectZero
+            if deletedAction == false {
+                targetFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
+            }
+            else {
+                targetFrame = CGRect(x: -bounds.size.width, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
+            }
+            
             UIView.animateWithDuration(0.2, animations: { [weak self] in
-                self?.frame = originalFrame
+                self?.frame = targetFrame
             },
             completion: { complete in
                 self.doneIconView.translatesAutoresizingMaskIntoConstraints = false
