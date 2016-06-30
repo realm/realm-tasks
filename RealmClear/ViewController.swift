@@ -80,21 +80,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     
-    // Device Identifier
-    private let deviceIdentifierKey = "DeviceIdentifier"
-    private var deviceIdentifier: String {
-        get {
-            guard let deviceIdentifier = NSUserDefaults.standardUserDefaults().stringForKey(deviceIdentifierKey) else {
-                let newIdentifier = NSUUID().UUIDString
-                NSUserDefaults.standardUserDefaults().setObject(newIdentifier, forKey: deviceIdentifierKey)
-                NSUserDefaults.standardUserDefaults().synchronize()
-                return newIdentifier
-            }
-            
-            return deviceIdentifier
-        }
-    }
-    
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
@@ -273,8 +258,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             // update data source & move rows
             try! items.realm?.write {
                 let item = items[startIndexPath.row]
-                item.deviceIdentifier = self.deviceIdentifier
-                
                 items.removeAtIndex(startIndexPath.row)
                 items.insert(item, atIndex: indexPath.row)
             }
@@ -315,7 +298,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell
-        cell.deviceIdentifier = self.deviceIdentifier
         cell.item = items[indexPath.row]
         cell.delegate = self
         return cell
@@ -387,8 +369,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         textEditingCell.backgroundView!.backgroundColor = placeHolderCell.backgroundView!.backgroundColor
         view.addSubview(textEditingCell)
 
-        textEditingCell.item = ToDoItem(text: "", deviceIdentifier: self.deviceIdentifier)
-        textEditingCell.deviceIdentifier = self.deviceIdentifier
+        textEditingCell.item = ToDoItem(text: "")
         textEditingCell.delegate = self
         
         textEditingCell.textView.userInteractionEnabled = true
