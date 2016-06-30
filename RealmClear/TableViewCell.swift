@@ -50,7 +50,6 @@ private let isDevice = TARGET_OS_SIMULATOR == 0
 final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     // Properties
-    var deviceIdentifier: String?
     
     var item: ToDoItem! {
         didSet {
