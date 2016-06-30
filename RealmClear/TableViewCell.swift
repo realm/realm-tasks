@@ -50,7 +50,8 @@ private let isDevice = TARGET_OS_SIMULATOR == 0
 final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     // Properties
-
+    var deviceIdentifier: String?
+    
     var item: ToDoItem! {
         didSet {
             textView.text = item.text
@@ -70,6 +71,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     private let backgroundOverlayView = UIView()
 
     // Assets
+    
     private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
     private let deleteIconView = UIImageView(image: UIImage(named: "DeleteIcon"))
     
@@ -300,9 +302,11 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         if let realm = item.realm {
             try! realm.write {
                 item.text = textView.text
+                item.deviceIdentifier = self.deviceIdentifier!
             }
         } else {
             item.text = textView.text
+            item.deviceIdentifier = self.deviceIdentifier!
         }
         textView.userInteractionEnabled = false
         delegate?.cellDidEndEditing(self)

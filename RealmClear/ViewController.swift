@@ -78,6 +78,21 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     
+    // Device Identifier
+    private let deviceIdentifierKey = "DeviceIdentifier"
+    private var deviceIdentifier: String {
+        get {
+            guard let deviceIdentifier = NSUserDefaults.standardUserDefaults().stringForKey(deviceIdentifierKey) else {
+                let newIdentifier = NSUUID().UUIDString
+                NSUserDefaults.standardUserDefaults().setObject(newIdentifier, forKey: deviceIdentifierKey)
+                NSUserDefaults.standardUserDefaults().synchronize()
+                return newIdentifier
+            }
+            
+            return deviceIdentifier
+        }
+    }
+    
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
@@ -168,14 +183,16 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.tableView.reloadData()
                 break
             case .Update(_, let deletions, let insertions, let modifications):
+                // Filter out any values that were 'touched' by our device last
+                let remoteInsertions = insertions.filter { self.items[$0].deviceIdentifier != self.deviceIdentifier }
+                let remoteModifications = modifications.filter { self.items[$0].deviceIdentifier != self.deviceIdentifier }
+                let remoteDeletions = deletions.filter { self.items[$0].deviceIdentifier != self.deviceIdentifier }
+                
                 // Query results have changed, so apply them to the UITableView
                 self.tableView.beginUpdates()
-                self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
-                self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
-                self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
+                self.tableView.insertRowsAtIndexPaths(remoteInsertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
+                self.tableView.deleteRowsAtIndexPaths(remoteDeletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
+                self.tableView.reloadRowsAtIndexPaths(remoteModifications.map { NSIndexPath(forRow: $0, inSection: 0) },withRowAnimation: .Automatic)
                 self.tableView.endUpdates()
                 break
             case .Error(let error):
@@ -255,6 +272,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             // update data source & move rows
             try! items.realm?.write {
                 let item = items[startIndexPath.row]
+                item.deviceIdentifier = self.deviceIdentifier
+                
                 items.removeAtIndex(startIndexPath.row)
                 items.insert(item, atIndex: indexPath.row)
             }
@@ -294,6 +313,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell
+        cell.deviceIdentifier = self.deviceIdentifier
         cell.item = items[indexPath.row]
         cell.delegate = self
         return cell
@@ -364,7 +384,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         textEditingCell.backgroundView!.backgroundColor = placeHolderCell.backgroundView!.backgroundColor
         view.addSubview(textEditingCell)
 
-        textEditingCell.item = ToDoItem(text: "")
+        textEditingCell.item = ToDoItem(text: "", deviceIdentifier: self.deviceIdentifier)
+        textEditingCell.deviceIdentifier = self.deviceIdentifier
         textEditingCell.delegate = self
         
         textEditingCell.textView.userInteractionEnabled = true
@@ -402,6 +423,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self!.items.removeAtIndex(sourceIndexPath.row)
                 self!.items.insert(item, atIndex: destinationIndexPath.row)
             }
+            
+            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
         }
         delay(0.5) { [weak self] in self?.updateColors() }
     }
@@ -440,6 +463,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             try! items.realm?.write {
                 items.insert(item, atIndex: 0)
             }
+            
+            self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
         }
         if let _ = textEditingCell.superview {
             textEditingCell.removeFromSuperview()
