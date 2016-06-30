@@ -16,11 +16,9 @@ final class ToDoList: Object {
 final class ToDoItem: Object {
     dynamic var text = ""
     dynamic var completed = false
-    dynamic var deviceIdentifier = ""
 
-    convenience init(text: String, deviceIdentifier: String) {
+    convenience init(text: String) {
         self.init()
         self.text = text
-        self.deviceIdentifier = deviceIdentifier
     }
 }

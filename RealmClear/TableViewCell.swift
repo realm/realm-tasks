@@ -315,11 +315,9 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         if let realm = item.realm {
             try! realm.write {
                 item.text = textView.text
-                item.deviceIdentifier = self.deviceIdentifier!
             }
         } else {
             item.text = textView.text
-            item.deviceIdentifier = self.deviceIdentifier!
         }
         textView.userInteractionEnabled = false
         delegate?.cellDidEndEditing(self)
