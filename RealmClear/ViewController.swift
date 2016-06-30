@@ -73,6 +73,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     private var topConstraint: NSLayoutConstraint?
+    private var currentEditingCell: TableViewCell?
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
@@ -85,7 +86,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         setupUI()
         setupGestureRecognizers()
     }
-
 
     // MARK: UI
 
@@ -161,29 +161,43 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             return
         }
         
-        notificationToken = items.addNotificationBlock({ (changes: RealmCollectionChange) in
+        notificationToken = items.addNotificationBlock { (changes: RealmCollectionChange) in
             switch changes {
             case .Initial:
                 // Results are now populated and can be accessed without blocking the UI
                 self.tableView.reloadData()
-                break
-            case .Update(_, let deletions, let insertions, let modifications):
+            case let .Update(objects, deletions, insertions, modifications):
                 // Query results have changed, so apply them to the UITableView
-                self.tableView.beginUpdates()
-                self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
-                self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
-                self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
-                self.tableView.endUpdates()
-                break
-            case .Error(let error):
+                print(self.tableView.numberOfRowsInSection(0) != objects.count)
+                if self.tableView.numberOfRowsInSection(0) != objects.count {
+                    if let currentEditingCell = self.currentEditingCell {
+                        UIView.performWithoutAnimation {
+                            self.tableView.beginUpdates()
+                            self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
+                                withRowAnimation: .None)
+                            self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
+                                withRowAnimation: .None)
+                            self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
+                                withRowAnimation: .None)
+                            self.tableView.endUpdates()
+                            self.cellDidBeginEditing(currentEditingCell)
+                        }
+                    } else {
+                        self.tableView.beginUpdates()
+                        self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
+                            withRowAnimation: .Automatic)
+                        self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
+                            withRowAnimation: .Automatic)
+                        self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
+                            withRowAnimation: .Automatic)
+                        self.tableView.endUpdates()
+                    }
+                }
+            case let .Error(error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
-                break
             }
-        })
+        }
     }
 
     // MARK: Gesture Recognizers
@@ -374,12 +388,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: TableViewCellDelegate
 
     func itemDeleted(item: ToDoItem) {
-        guard items.indexOf(item) != nil else {
+        guard let index = items.indexOf(item) else {
             return
         }
         try! items.realm?.write {
             items.realm?.delete(item)
         }
+        tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Right)
         delay(0.2) { [weak self] in self?.updateColors() }
     }
 
@@ -402,12 +417,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self!.items.removeAtIndex(sourceIndexPath.row)
                 self!.items.insert(item, atIndex: destinationIndexPath.row)
             }
+            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
         }
         delay(0.5) { [weak self] in self?.updateColors() }
     }
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
         currentlyEditing = true
+        currentEditingCell = editingCell
 
         let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
         topConstraint?.constant = -editingOffset
@@ -428,17 +445,19 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func cellDidEndEditing(editingCell: TableViewCell) {
         currentlyEditing = false
+        currentEditingCell = nil
         topConstraint?.constant = 0
-        UIView.animateWithDuration(0.3) { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.view.layoutSubviews()
-            for cell in strongSelf.visibleTableViewCells where cell !== editingCell {
+        UIView.animateWithDuration(0.3) { [unowned self] in
+            for cell in self.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 1
             }
         }
         if let item = editingCell.item where editingCell == textEditingCell && !item.text.isEmpty {
             try! items.realm?.write {
                 items.insert(item, atIndex: 0)
+            }
+            UIView.performWithoutAnimation { [unowned self] in
+                self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
             }
         }
         if let _ = textEditingCell.superview {
