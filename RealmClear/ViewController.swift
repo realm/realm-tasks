@@ -270,7 +270,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.insert(item, atIndex: indexPath.row)
             }
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
-            self.temporarilyDisableNotifications()
+            temporarilyDisableNotifications()
 
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
@@ -362,7 +362,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             try! items.realm?.write {
                 items.realm?.delete(itemsToDelete)
             }
-            self.temporarilyDisableNotifications()
+            temporarilyDisableNotifications()
 
             vibrate()
             return
@@ -395,7 +395,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        self.temporarilyDisableNotifications()
+        temporarilyDisableNotifications()
 
         delay(0.2) { [weak self] in self?.updateColors() }
     }
@@ -487,7 +487,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Sync
     private func temporarilyDisableNotifications() {
-        self.disableNotificationsState = true
+        disableNotificationsState = true
         delay(0.2) {
             self.disableNotificationsState = false
             self.tableView.reloadData()
