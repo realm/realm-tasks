@@ -31,7 +31,7 @@ extension UIColor {
         let realmLogoColors = UIColor().realmColors
 
         // Work out the 'size' that each color stop spans
-        let colorStopRange = 1.0 / Double(realmLogoColors.count)
+        let colorStopRange = 1.0 / Double(realmLogoColors.count-1)
 
         // Determine the base stop our offset is within
         let colorRangeIndex = Int(floor(newOffset / colorStopRange))
