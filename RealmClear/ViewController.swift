@@ -74,6 +74,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             tableView.scrollEnabled = !currentlyEditing
         }
     }
+    private var currentlyEditingCell: TableViewCell?
     private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
@@ -87,7 +88,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         setupUI()
         setupGestureRecognizers()
     }
-
 
     // MARK: UI
 
@@ -172,19 +172,27 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             case .Initial:
                 // Results are now populated and can be accessed without blocking the UI
                 self.tableView.reloadData()
-                break
             case .Update(_, let deletions, let insertions, let modifications):
-                // Query results have changed, so apply them to the UITableView
-                self.tableView.beginUpdates()
-                self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },withRowAnimation: .Automatic)
-                self.tableView.endUpdates()
-                break
+                let updateTableView = {
+                    // Query results have changed, so apply them to the UITableView
+                    self.tableView.beginUpdates()
+                    self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
+                    self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
+                    self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },withRowAnimation: .Automatic)
+                    self.tableView.endUpdates()
+                }
+
+                if let currentlyEditingCell = self.currentlyEditingCell {
+                    UIView.performWithoutAnimation {
+                        updateTableView()
+                        self.cellDidBeginEditing(currentlyEditingCell)
+                    }
+                } else {
+                    updateTableView()
+                }
             case .Error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
-                break
             }
         })
     }
@@ -423,6 +431,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
         currentlyEditing = true
+        currentlyEditingCell = editingCell
 
         let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
         topConstraint?.constant = -editingOffset
@@ -443,6 +452,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func cellDidEndEditing(editingCell: TableViewCell) {
         currentlyEditing = false
+        currentlyEditingCell = nil
+
         topConstraint?.constant = 0
         UIView.animateWithDuration(0.3) { [weak self] in
             guard let strongSelf = self else { return }
