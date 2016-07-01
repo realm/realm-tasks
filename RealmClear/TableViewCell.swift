@@ -50,7 +50,7 @@ private let isDevice = TARGET_OS_SIMULATOR == 0
 final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     // Properties
-    
+
     var item: ToDoItem! {
         didSet {
             textView.text = item.text
@@ -64,15 +64,15 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     private var originalDoneIconCenter = CGPoint()
     private var originalDeleteIconCenter = CGPoint()
-    
+
     private var releaseAction: ReleaseAction?
     private let overlayView = UIView()
 
     // Assets
-    
+
     private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
     private let deleteIconView = UIImageView(image: UIImage(named: "DeleteIcon"))
-    
+
     // MARK: Initializers
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -177,7 +177,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         case .Began:
             originalDeleteIconCenter = deleteIconView.center
             originalDoneIconCenter = doneIconView.center
-            
+
             releaseAction = nil
         case .Changed:
             let translation = recognizer.translationInView(self)

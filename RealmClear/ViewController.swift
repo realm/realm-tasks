@@ -52,9 +52,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private let tableView = UITableView()
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
     private var notificationToken: NotificationToken?
-    
+
     private var disableNotificationsState = false
-    
+
     // Scrolling
     var distancePulledDown: CGFloat {
         return -tableView.contentOffset.y - tableView.contentInset.top
@@ -80,7 +80,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
-    
+
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
@@ -157,17 +157,17 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             titleLabel.bottom == titleLabel.superview!.bottom - 5
         }
     }
-    
+
     private func setupNotifications() {
         if notificationToken != nil {
             return
         }
-        
+
         notificationToken = items.addNotificationBlock({ (changes: RealmCollectionChange) in
             if self.disableNotificationsState {
                 return
             }
-            
+
             switch changes {
             case .Initial:
                 // Results are now populated and can be accessed without blocking the UI
@@ -257,7 +257,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             // move rows
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
             self.sourceIndexPath = indexPath
-            break 
+            break
         case .Ended, .Cancelled, .Failed:
             guard let cell = tableView.cellForRowAtIndexPath(indexPath),
                 startIndexPath = startIndexPath,
@@ -366,7 +366,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.realm?.delete(itemsToDelete)
             }
             self.temporarilyDisableNotifications()
-            
+
             vibrate()
             return
         }
@@ -381,7 +381,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         textEditingCell.item = ToDoItem(text: "")
         textEditingCell.delegate = self
-        
+
         textEditingCell.textView.userInteractionEnabled = true
         textEditingCell.textView.becomeFirstResponder()
     }
@@ -392,14 +392,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         guard let index = items.indexOf(item) else {
             return
         }
-        
+
         try! items.realm?.write {
             items.realm?.delete(item)
         }
 
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
         self.temporarilyDisableNotifications()
-        
+
         delay(0.2) { [weak self] in self?.updateColors() }
     }
 
@@ -422,7 +422,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self!.items.removeAtIndex(sourceIndexPath.row)
                 self!.items.insert(item, atIndex: destinationIndexPath.row)
             }
-            
+
             self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
             self?.temporarilyDisableNotifications()
         }
@@ -461,13 +461,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 cell.alpha = 1
             }
         }
-        
+
         if let item = editingCell.item where editingCell == textEditingCell && !item.text.isEmpty {
             try! items.realm?.write {
                 items.insert(item, atIndex: 0)
             }
 
-            UIView.performWithoutAnimation({ 
+            UIView.performWithoutAnimation({
                 self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
             })
             self.temporarilyDisableNotifications()
@@ -478,7 +478,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 strongSelf.view.layoutSubviews()
             }
         }
-        
+
         if let _ = textEditingCell.superview {
             textEditingCell.removeFromSuperview()
         }
@@ -490,7 +490,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         let visibleIndexPaths = visibleTableViewCells.flatMap(tableView.indexPathForCell)
         tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
     }
-    
+
     // MARK: Sync
     private func temporarilyDisableNotifications() {
         self.disableNotificationsState = true
