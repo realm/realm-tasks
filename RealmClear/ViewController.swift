@@ -315,10 +315,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        let rowFloat = CGFloat(indexPath.row)
-        cell.contentView.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
-                                       green: 0.07 + (0.04 * rowFloat), blue: 0.1, alpha: 1)
+        let rowFloat = Double(indexPath.row)
+        cell.contentView.backgroundColor = UIColor.colorForRealmLogoGradient(rowFloat / 13.0)
         cell.alpha = currentlyEditing ? 0.3 : 1
+
+//        cell.contentView.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
+//                                                   green: 0.07 + (0.04 * rowFloat), blue: 0.1, alpha: 1)
     }
 
     // MARK: UIScrollViewDelegate methods
