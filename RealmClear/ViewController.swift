@@ -53,6 +53,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
     private var notificationToken: NotificationToken?
     
+    private var disableNotificationsState = false
+    
     // Scrolling
     var distancePulledDown: CGFloat {
         return -tableView.contentOffset.y - tableView.contentInset.top
@@ -162,6 +164,10 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         
         notificationToken = items.addNotificationBlock({ (changes: RealmCollectionChange) in
+            if self.disableNotificationsState {
+                return
+            }
+            
             switch changes {
             case .Initial:
                 // Results are now populated and can be accessed without blocking the UI
@@ -170,12 +176,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             case .Update(_, let deletions, let insertions, let modifications):
                 // Query results have changed, so apply them to the UITableView
                 self.tableView.beginUpdates()
-                self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
-                self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
-                self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
-                    withRowAnimation: .Automatic)
+                self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
+                self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
+                self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },withRowAnimation: .Automatic)
                 self.tableView.endUpdates()
                 break
             case .Error(let error):
@@ -246,7 +249,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             // move rows
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
             self.sourceIndexPath = indexPath
-            break
+            break 
         case .Ended, .Cancelled, .Failed:
             guard let cell = tableView.cellForRowAtIndexPath(indexPath),
                 startIndexPath = startIndexPath,
@@ -259,6 +262,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.insert(item, atIndex: indexPath.row)
             }
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
+            self.temporarilyDisableNotifications()
 
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
@@ -351,7 +355,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             try! items.realm?.write {
                 items.realm?.delete(itemsToDelete)
             }
-
+            self.temporarilyDisableNotifications()
+            
             vibrate()
             return
         }
@@ -374,12 +379,17 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: TableViewCellDelegate
 
     func itemDeleted(item: ToDoItem) {
-        guard items.indexOf(item) != nil else {
+        guard let index = items.indexOf(item) else {
             return
         }
+        
         try! items.realm?.write {
             items.realm?.delete(item)
         }
+        
+        tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
+        self.temporarilyDisableNotifications()
+        
         delay(0.2) { [weak self] in self?.updateColors() }
     }
 
@@ -402,8 +412,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self!.items.removeAtIndex(sourceIndexPath.row)
                 self!.items.insert(item, atIndex: destinationIndexPath.row)
             }
+            
+            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
+            self?.temporarilyDisableNotifications()
         }
-        delay(0.5) { [weak self] in self?.updateColors() }
+        delay(0.6) { [weak self] in self?.updateColors() }
     }
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
@@ -431,16 +444,28 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         topConstraint?.constant = 0
         UIView.animateWithDuration(0.3) { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.view.layoutSubviews()
             for cell in strongSelf.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 1
             }
         }
+        
         if let item = editingCell.item where editingCell == textEditingCell && !item.text.isEmpty {
             try! items.realm?.write {
                 items.insert(item, atIndex: 0)
             }
+
+            UIView.performWithoutAnimation({ 
+                self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
+            })
+            self.temporarilyDisableNotifications()
         }
+        else {
+            UIView.animateWithDuration(0.3) { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.view.layoutSubviews()
+            }
+        }
+        
         if let _ = textEditingCell.superview {
             textEditingCell.removeFromSuperview()
         }
@@ -451,5 +476,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private func updateColors() {
         let visibleIndexPaths = visibleTableViewCells.flatMap(tableView.indexPathForCell)
         tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
+    }
+    
+    // MARK: Sync
+    private func temporarilyDisableNotifications() {
+        self.disableNotificationsState = true
+        delay(0.2) {
+            self.disableNotificationsState = false
+            self.tableView.reloadData()
+        }
     }
 }
