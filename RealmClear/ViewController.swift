@@ -262,7 +262,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.insert(item, atIndex: indexPath.row)
             }
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
-            self.disableNotifications()
+            self.temporarilyDisableNotifications()
 
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
@@ -355,7 +355,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             try! items.realm?.write {
                 items.realm?.delete(itemsToDelete)
             }
-            self.disableNotifications()
+            self.temporarilyDisableNotifications()
             
             vibrate()
             return
@@ -388,7 +388,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        self.disableNotifications()
+        self.temporarilyDisableNotifications()
         
         delay(0.2) { [weak self] in self?.updateColors() }
     }
@@ -414,7 +414,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             }
             
             self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-            self?.disableNotifications()
+            self?.temporarilyDisableNotifications()
         }
         delay(0.6) { [weak self] in self?.updateColors() }
     }
@@ -457,7 +457,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             UIView.performWithoutAnimation({ 
                 self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
             })
-            self.disableNotifications()
+            self.temporarilyDisableNotifications()
         }
         else {
             UIView.animateWithDuration(0.3) { [weak self] in
@@ -479,10 +479,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     // MARK: Sync
-    private func disableNotifications() {
+    private func temporarilyDisableNotifications() {
         self.disableNotificationsState = true
-        delay(0.1) {
+        delay(0.2) {
             self.disableNotificationsState = false
+            self.tableView.reloadData()
         }
     }
 }
