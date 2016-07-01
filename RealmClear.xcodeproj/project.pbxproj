@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		220F33D81D265FDE007AFD1C /* RealmColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220F33D71D265FDE007AFD1C /* RealmColor.swift */; };
 		2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2212D5BC1D19E0700017CBC4 /* Realm.framework */; };
 		89BB5111A354E8CB3A46360E /* Pods_RealmClear.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ACA9FB2BA5D8D16277CA1CF /* Pods_RealmClear.framework */; };
 		E83D4A821CBC471E002505F9 /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83D4A811CBC471E002505F9 /* ToDoItem.swift */; };
@@ -31,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		01064821B9B0323059E6E745 /* Pods-RealmClear.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmClear.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear.release.xcconfig"; sourceTree = "<group>"; };
+		220F33D71D265FDE007AFD1C /* RealmColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmColor.swift; sourceTree = "<group>"; };
 		2212D5BC1D19E0700017CBC4 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/Realm/ios/static/xcode-7/Realm.framework"; sourceTree = "<group>"; };
 		5F63F9370C2192427DBC5119 /* Pods-RealmClear.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmClear.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmClear/Pods-RealmClear.debug.xcconfig"; sourceTree = "<group>"; };
 		6ACA9FB2BA5D8D16277CA1CF /* Pods_RealmClear.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmClear.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +119,7 @@
 				E84CF2BB1CBC408000082C1A /* Assets.xcassets */,
 				E84CF2BD1CBC408000082C1A /* LaunchScreen.storyboard */,
 				E84CF2C01CBC408000082C1A /* Info.plist */,
+				220F33D71D265FDE007AFD1C /* RealmColor.swift */,
 			);
 			path = RealmClear;
 			sourceTree = "<group>";
@@ -284,6 +287,7 @@
 				E83D4A931CBC4DEB002505F9 /* ToDoTextView.swift in Sources */,
 				E84CF2B71CBC408000082C1A /* ViewController.swift in Sources */,
 				E83D4A8C1CBC4888002505F9 /* TableViewCell.swift in Sources */,
+				220F33D81D265FDE007AFD1C /* RealmColor.swift in Sources */,
 				E84CF2B51CBC408000082C1A /* AppDelegate.swift in Sources */,
 				E83D4A821CBC471E002505F9 /* ToDoItem.swift in Sources */,
 			);
