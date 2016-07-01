@@ -62,12 +62,11 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     // Private Properties
 
-    private var originalCenter = CGPoint()
     private var originalDoneIconCenter = CGPoint()
     private var originalDeleteIconCenter = CGPoint()
     
     private var releaseAction: ReleaseAction?
-    private let backgroundOverlayView = UIView()
+    private let overlayView = UIView()
 
     // Assets
     
@@ -91,50 +90,48 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     // MARK: UI
 
     private func setupUI() {
-        setupIconViews()
         setupBackgroundView()
-        setupBackgroundOverlayView()
+        setupIconViews()
+        setupOverlayView()
         setupTextView()
         setupBorders()
     }
-    
+
     private func setupBackgroundView() {
-        self.backgroundColor = nil
-        
+        backgroundColor = .clearColor()
+
         backgroundView = UIView()
         constrain(backgroundView!) { backgroundView in
             backgroundView.edges == backgroundView.superview!.edges
         }
-        insertSubview(deleteIconView, atIndex: 0)
-        insertSubview(doneIconView, atIndex: 0)
     }
 
-    private func setupBackgroundOverlayView() {
-        backgroundOverlayView.backgroundColor = .completeDimBackgroundColor()
-        backgroundOverlayView.hidden = true
-        addSubview(backgroundOverlayView)
-        constrain(backgroundOverlayView) { backgroundOverlayView in
-            backgroundOverlayView.edges == backgroundOverlayView.superview!.edges
-        }
-    }
-    
     private func setupIconViews() {
-        addSubview(doneIconView)
-        constrain(doneIconView) { doneIconView in
-            doneIconView.left == doneIconView.superview!.left + 8
-            doneIconView.centerY == doneIconView.superview!.centerY
-        }
-        
-        addSubview(deleteIconView)
-        constrain(deleteIconView) { deleteIconView in
-            deleteIconView.right == deleteIconView.superview!.right - 12
-            deleteIconView.centerY == deleteIconView.superview!.centerY
+        doneIconView.center = center
+        doneIconView.frame.origin.x = 20
+        doneIconView.alpha = 0.0
+        doneIconView.autoresizingMask = .FlexibleRightMargin
+        insertSubview(doneIconView, belowSubview: contentView)
+
+        deleteIconView.center = center
+        deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - 20
+        deleteIconView.alpha = 0.0
+        deleteIconView.autoresizingMask = .FlexibleLeftMargin
+        insertSubview(deleteIconView, belowSubview: contentView)
+    }
+
+    private func setupOverlayView() {
+        overlayView.backgroundColor = .completeDimBackgroundColor()
+        overlayView.hidden = true
+        contentView.addSubview(overlayView)
+        constrain(overlayView) { backgroundOverlayView in
+            backgroundOverlayView.edges == backgroundOverlayView.superview!.edges
         }
     }
 
     private func setupTextView() {
         textView.delegate = self
-        addSubview(textView)
+        contentView.addSubview(textView)
         constrain(textView) { textView in
             textView.left == textView.superview!.left + 8
             textView.top == textView.superview!.top + 8
@@ -178,32 +175,34 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .Began:
-            originalCenter = center
-            
             originalDeleteIconCenter = deleteIconView.center
-            deleteIconView.translatesAutoresizingMaskIntoConstraints = true
-            
             originalDoneIconCenter = doneIconView.center
-            doneIconView.translatesAutoresizingMaskIntoConstraints = true
             
             releaseAction = nil
-            break
         case .Changed:
             let translation = recognizer.translationInView(self)
-            center = CGPoint(x: originalCenter.x + translation.x, y: originalCenter.y)
-            let fractionOfThreshold = min(1, Double(abs(frame.origin.x) / (frame.size.width / 4)))
-            releaseAction = fractionOfThreshold >= 1 ? (frame.origin.x > 0 ? .Complete : .Delete) : nil
+            recognizer.setTranslation(translation, inView: self)
 
-            let offsetDelta = min(abs(translation.x), (frame.size.width / 4))
-            doneIconView.center = CGPoint(x: originalDoneIconCenter.x - offsetDelta, y: originalDoneIconCenter.y)
-            deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x + offsetDelta, y: originalDeleteIconCenter.y)
-            
-            doneIconView.alpha = CGFloat(fractionOfThreshold)
-            deleteIconView.alpha = CGFloat(fractionOfThreshold)
-            
+            contentView.frame.origin.x = translation.x
+
+            let fractionOfThreshold = min(1, Double(abs(translation.x) / (bounds.size.width / 4)))
+            releaseAction = fractionOfThreshold >= 1 ? (translation.x > 0 ? .Complete : .Delete) : nil
+
+            if abs(translation.x) > (frame.size.width / 4) {
+                let x = abs(translation.x) - (frame.size.width / 4)
+                doneIconView.center = CGPoint(x: originalDoneIconCenter.x + x, y: originalDoneIconCenter.y)
+                deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x - x, y: originalDeleteIconCenter.y)
+            }
+
+            if translation.x > 0.0 {
+                doneIconView.alpha = CGFloat(fractionOfThreshold)
+            } else {
+                deleteIconView.alpha = CGFloat(fractionOfThreshold)
+            }
+
             if !item.completed {
-                backgroundOverlayView.backgroundColor = .completeGreenBackgroundColor()
-                backgroundOverlayView.hidden = releaseAction != .Complete
+                overlayView.backgroundColor = .completeGreenBackgroundColor()
+                overlayView.hidden = releaseAction != .Complete
                 if frame.origin.x > 0 {
                     textView.unstrike()
                     textView.strike(fractionOfThreshold)
@@ -211,7 +210,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                     releaseAction == .Complete ? textView.strike() : textView.unstrike()
                 }
             } else {
-                backgroundOverlayView.hidden = releaseAction == .Complete
+                overlayView.hidden = releaseAction == .Complete
                 textView.alpha = releaseAction == .Complete ? 1 : 0.3
                 if frame.origin.x > 0 {
                     textView.unstrike()
@@ -220,42 +219,51 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                     releaseAction == .Complete ? textView.unstrike() : textView.strike()
                 }
             }
-            break
         case .Ended:
-            var deletedAction = false
-            
-            switch releaseAction {
-            case .Some(.Complete):
-                setCompleted(!item.completed, animated: true)
-                break
-            case .Some(.Delete):
-                deletedAction = true
-                delegate?.itemDeleted(item)
-                break
-            case nil:
-                item.completed ? textView.strike() : textView.unstrike()
-                break
-            }
-            
+            let animationBlock: () -> ()
+            let completionBlock: () -> ()
+
             // If not deleting, slide it back into the middle
             // If we are deleting, slide it all the way out of the view
-            var targetFrame = CGRectZero
-            if deletedAction == false {
-                targetFrame = CGRect(x: 0, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
+            switch releaseAction {
+            case .Complete?:
+                animationBlock = {
+                    self.contentView.frame.origin.x = 0.0
+                }
+                completionBlock = {
+                    self.setCompleted(!self.item.completed, animated: true)
+                }
+            case .Delete?:
+                animationBlock = {
+                    self.alpha = 0.0
+                    self.contentView.alpha = 0.0
+
+                    self.contentView.frame.origin.x = -self.contentView.bounds.width - (self.bounds.size.width / 4)
+                    self.deleteIconView.frame.origin.x = -(self.bounds.size.width / 4) + self.deleteIconView.bounds.width + 20
+                }
+                completionBlock = {
+                    self.delegate?.itemDeleted(self.item)
+                }
+            case nil:
+                item.completed ? textView.strike() : textView.unstrike()
+                animationBlock = {
+                    self.contentView.frame.origin.x = 0.0
+                }
+                completionBlock = {}
             }
-            else {
-                targetFrame = CGRect(x: -bounds.size.width, y: frame.origin.y, width: bounds.size.width, height: bounds.size.height)
-            }
-            
-            UIView.animateWithDuration(0.2, animations: { [weak self] in
-                self?.frame = targetFrame
+
+            UIView.animateWithDuration(0.2, animations: {
+                animationBlock()
             },
-            completion: { complete in
-                self.doneIconView.translatesAutoresizingMaskIntoConstraints = false
-                self.deleteIconView.translatesAutoresizingMaskIntoConstraints = false
+            completion: { finished in
+                completionBlock()
+
+                self.doneIconView.frame.origin.x = 20
+                self.doneIconView.alpha = 0.0
+
+                self.deleteIconView.frame.origin.x = self.bounds.width - self.deleteIconView.bounds.width - 20
+                self.deleteIconView.alpha = 0.0
             })
-            
-            break
         default:
             break
         }
@@ -269,15 +277,21 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         return fabs(translation.x) > fabs(translation.y)
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        alpha = 1.0
+        contentView.alpha = 1.0
+    }
+
     // MARK: Actions
 
     private func setCompleted(completed: Bool, animated: Bool = false) {
         completed ? textView.strike() : textView.unstrike()
-        backgroundOverlayView.hidden = !completed
-        let updateColor = { [weak self] in
-            self?.backgroundOverlayView.backgroundColor = completed ?
+        overlayView.hidden = !completed
+        let updateColor = { [unowned self] in
+            self.overlayView.backgroundColor = completed ?
                 .completeDimBackgroundColor() : .completeGreenBackgroundColor()
-            self?.textView.alpha = completed ? 0.3 : 1
+            self.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
             try! item.realm?.write {
