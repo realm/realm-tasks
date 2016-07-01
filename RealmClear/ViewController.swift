@@ -69,12 +69,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var sourceIndexPath: NSIndexPath? = nil
 
     // Editing
-    private var currentlyEditing = false {
+    private var currentlyEditing: Bool { return currentlyEditingCell != nil }
+    private var currentlyEditingCell: TableViewCell? {
         didSet {
             tableView.scrollEnabled = !currentlyEditing
         }
     }
-    private var currentlyEditingCell: TableViewCell?
     private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
@@ -326,9 +326,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         let rowFloat = Double(indexPath.row)
         cell.contentView.backgroundColor = UIColor.colorForRealmLogoGradient(rowFloat / 13.0)
         cell.alpha = currentlyEditing ? 0.3 : 1
-
-//        cell.contentView.backgroundColor = UIColor(red: 0.85 + (0.005 * rowFloat),
-//                                                   green: 0.07 + (0.04 * rowFloat), blue: 0.1, alpha: 1)
     }
 
     // MARK: UIScrollViewDelegate methods
@@ -430,7 +427,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
-        currentlyEditing = true
         currentlyEditingCell = editingCell
 
         let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
@@ -451,7 +447,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func cellDidEndEditing(editingCell: TableViewCell) {
-        currentlyEditing = false
         currentlyEditingCell = nil
 
         topConstraint?.constant = 0
@@ -470,9 +465,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             UIView.performWithoutAnimation({
                 self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
             })
-            self.temporarilyDisableNotifications()
-        }
-        else {
+            temporarilyDisableNotifications()
+        } else {
             UIView.animateWithDuration(0.3) { [weak self] in
                 guard let strongSelf = self else { return }
                 strongSelf.view.layoutSubviews()
