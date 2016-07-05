@@ -324,7 +324,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let rowFloat = Double(indexPath.row)
-        cell.contentView.backgroundColor = UIColor.colorForRealmLogoGradient(rowFloat / 13.0)
+        cell.contentView.backgroundColor = UIColor.colorForRealmLogoGradient(rowFloat / Double(max(13, tableView.numberOfRowsInSection(0))))
         cell.alpha = currentlyEditing ? 0.3 : 1
     }
 
