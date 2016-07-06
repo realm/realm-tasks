@@ -25,6 +25,7 @@ protocol TableViewCellDelegate {
     func itemDeleted(item: ToDoItem)
     func cellDidBeginEditing(editingCell: TableViewCell)
     func cellDidEndEditing(editingCell: TableViewCell)
+    func cellDidChangeText(editingCell: TableViewCell)
 }
 
 // MARK: Private Declarations
@@ -334,5 +335,9 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         }
         textView.userInteractionEnabled = false
         delegate?.cellDidEndEditing(self)
+    }
+
+    func textViewDidChange(textView: UITextView) {
+        delegate?.cellDidChangeText(self)
     }
 }
