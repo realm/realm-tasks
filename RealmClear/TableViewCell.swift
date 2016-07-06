@@ -136,8 +136,8 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         constrain(textView) { textView in
             textView.left == textView.superview!.left + 8
             textView.top == textView.superview!.top + 8
-            textView.bottom == textView.superview!.bottom
-            textView.right == textView.superview!.right
+            textView.bottom == textView.superview!.bottom - 8
+            textView.right == textView.superview!.right - 8
         }
     }
 
