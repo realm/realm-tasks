@@ -206,7 +206,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                                                options: [.UsesLineFragmentOrigin],
                                                attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
                                                context: nil).height
-        return ceil(height) + 32
+        return ceil(height) + 33
     }
 
     // MARK: Gesture Recognizers
@@ -331,7 +331,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-
         var text = items[indexPath.row].text as NSString
         if currentlyEditingIndexPath != nil && currentlyEditingIndexPath!.row == indexPath.row {
             text = currentlyEditingCell!.textView.text as NSString
@@ -510,6 +509,19 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             for cell in self.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 0.3
+            }
+
+            if editingCell == textEditingCell {
+                var frame = textEditingCell.frame
+                frame.size.height = self.cellHeightForText(textEditingCell.textView.text)
+                textEditingCell.frame = frame
+                textEditingCell.textView.sizeToFit()
+                textEditingCell.layoutSubviews()
+                textEditingCell.setNeedsDisplay()
+
+                let editingOffset = editingCell.convertRect(textEditingCell.bounds, toView: tableView).origin.y
+                topConstraint?.constant = -editingOffset
+                self.view.layoutSubviews()
             }
         }
     }
