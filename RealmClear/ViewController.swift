@@ -200,7 +200,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func cellHeightForText(text: NSString) -> CGFloat {
         var size = view.bounds.size
-        size.width -= 16
+        size.width -= 25
 
         let height = text.boundingRectWithSize(size,
                                                options: [.UsesLineFragmentOrigin],
@@ -331,6 +331,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+
         var text = items[indexPath.row].text as NSString
         if currentlyEditingIndexPath != nil && currentlyEditingIndexPath!.row == indexPath.row {
             text = currentlyEditingCell!.textView.text as NSString
@@ -500,11 +501,15 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func cellDidChangeText(editingCell: TableViewCell) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
-        let height = editingCell.textView.contentSize.height
+        let height = self.cellHeightForText(editingCell.textView.text)
         if Int(height) != Int(editingCell.frame.size.height) {
             UIView.performWithoutAnimation {
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
+            }
+
+            for cell in self.visibleTableViewCells where cell !== editingCell {
+                cell.alpha = 0.3
             }
         }
     }
