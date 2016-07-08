@@ -25,6 +25,7 @@ protocol TableViewCellDelegate {
     func itemDeleted(item: ToDoItem)
     func cellDidBeginEditing(editingCell: TableViewCell)
     func cellDidEndEditing(editingCell: TableViewCell)
+    func cellDidChangeText(editingCell: TableViewCell)
 }
 
 // MARK: Private Declarations
@@ -135,8 +136,8 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         constrain(textView) { textView in
             textView.left == textView.superview!.left + 8
             textView.top == textView.superview!.top + 8
-            textView.bottom == textView.superview!.bottom
-            textView.right == textView.superview!.right
+            textView.bottom == textView.superview!.bottom - 8
+            textView.right == textView.superview!.right - 8
         }
     }
 
@@ -334,5 +335,9 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         }
         textView.userInteractionEnabled = false
         delegate?.cellDidEndEditing(self)
+    }
+
+    func textViewDidChange(textView: UITextView) {
+        delegate?.cellDidChangeText(self)
     }
 }
