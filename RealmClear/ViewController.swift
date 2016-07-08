@@ -341,7 +341,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if currentlyEditingIndexPath != nil && currentlyEditingIndexPath!.row == indexPath.row {
+        if currentlyEditingIndexPath?.row == indexPath.row {
             return cellHeightForText(currentlyEditingCell!.textView.text)
         }
 
