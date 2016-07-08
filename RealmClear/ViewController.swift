@@ -269,9 +269,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             guard let sourceIndexPath = sourceIndexPath
                 where indexPath != sourceIndexPath else { break }
 
+            self.sourceIndexPath = indexPath
+
             // move rows
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
-            self.sourceIndexPath = indexPath
+
             break
         case .Ended, .Cancelled, .Failed:
             guard let cell = tableView.cellForRowAtIndexPath(indexPath),
@@ -284,8 +286,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.removeAtIndex(startIndexPath.row)
                 items.insert(item, atIndex: indexPath.row)
             }
-            tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
             temporarilyDisableNotifications()
+
+            self.startIndexPath = nil
+            self.sourceIndexPath = nil
+
+            tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
 
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
@@ -293,12 +299,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.snapshot.layer.shadowOpacity = 0
             }, completion: { [unowned self] _ in
                 cell.hidden = false
-                self.startIndexPath = nil
-                self.sourceIndexPath = nil
                 self.snapshot.removeFromSuperview()
                 self.snapshot = nil
                 let visibleIndexPaths = self.visibleTableViewCells.flatMap(self.tableView.indexPathForCell)
-                self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
+
+                UIView.performWithoutAnimation({ 
+                    self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
+                })
             })
             break
         }
@@ -320,7 +327,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell") as! TableViewCell
         cell.item = items[indexPath.row]
         cell.delegate = self
 
@@ -334,7 +341,21 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        var text = items[indexPath.row].text as NSString
+
+        var item = items[indexPath.row]
+
+        // If we are dragging an item around, swap those 
+        // two items for their appropriate height values
+        if let startIndexPath = startIndexPath, sourceIndexPath = sourceIndexPath {
+            if indexPath.row == sourceIndexPath.row {
+                item = items[startIndexPath.row]
+            }
+            else if indexPath.row == startIndexPath.row {
+                item = items[sourceIndexPath.row]
+            }
+        }
+
+        var text = item.text as NSString
         if currentlyEditingIndexPath != nil && currentlyEditingIndexPath!.row == indexPath.row {
             text = currentlyEditingCell!.textView.text as NSString
         }
