@@ -11,7 +11,7 @@ import UIKit
 
 extension UIColor {
 
-    public var realmColors: [UIColor] {
+    public static var realmColors: [UIColor] {
         return [UIColor(red: 231.0/255.0, green: 167.0/255.0, blue: 118.0/255.0, alpha: 1.0),
                 UIColor(red: 228.0/255.0, green: 125.0/255.0, blue: 114.0/255.0, alpha: 1.0),
                 UIColor(red: 233.0/255.0, green: 99.0/255.0, blue: 111.0/255.0, alpha: 1.0),
@@ -21,17 +21,17 @@ extension UIColor {
                 UIColor(red: 56.0/255.0, green: 71.0/255.0, blue: 126.0/255.0, alpha: 1.0)]
     }
 
-    public class func colorForRealmLogoGradient(offset: Double) -> UIColor {
+    public static func colorForRealmLogoGradient(offset: Double) -> UIColor {
         var newOffset = offset
 
         // Ensure offset is normalized to 1.0
         newOffset = min(newOffset, 1.0)
         newOffset = max(newOffset, 0.0)
 
-        let realmLogoColors = UIColor().realmColors
+        let realmLogoColors = realmColors
 
         // Work out the 'size' that each color stop spans
-        let colorStopRange = 1.0 / Double(realmLogoColors.count-1)
+        let colorStopRange = 1.0 / Double(realmLogoColors.count - 1)
 
         // Determine the base stop our offset is within
         let colorRangeIndex = Int(floor(newOffset / colorStopRange))

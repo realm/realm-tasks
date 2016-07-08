@@ -1,5 +1,5 @@
 //
-//  TableViewCell.swift
+//  ToDoItemCell.swift
 //  RealmClear
 //
 //  Created by JP Simard on 4/11/16.
@@ -23,9 +23,9 @@ func vibrate() {
 protocol TableViewCellDelegate {
     func itemCompleted(item: ToDoItem)
     func itemDeleted(item: ToDoItem)
-    func cellDidBeginEditing(editingCell: TableViewCell)
-    func cellDidEndEditing(editingCell: TableViewCell)
-    func cellDidChangeText(editingCell: TableViewCell)
+    func cellDidBeginEditing(editingCell: ToDoItemCell)
+    func cellDidEndEditing(editingCell: ToDoItemCell)
+    func cellDidChangeText(editingCell: ToDoItemCell)
 }
 
 // MARK: Private Declarations
@@ -48,7 +48,7 @@ private let isDevice = TARGET_OS_SIMULATOR == 0
 
 // MARK: Table View Cell
 
-final class TableViewCell: UITableViewCell, UITextViewDelegate {
+final class ToDoItemCell: UITableViewCell, UITextViewDelegate {
 
     // Properties
 
