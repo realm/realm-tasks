@@ -82,6 +82,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
 
+    // Constants
+    let editingCellAlpha: CGFloat = 0.3
+
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
@@ -322,7 +325,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         cell.delegate = self
 
         if let editingIndexPath = currentlyEditingIndexPath {
-            if editingIndexPath.row != indexPath.row { cell.alpha = 0.3 }
+            if editingIndexPath.row != indexPath.row { cell.alpha = editingCellAlpha }
         }
 
         return cell
@@ -342,7 +345,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let rowFloat = Double(indexPath.row)
         cell.contentView.backgroundColor = UIColor.colorForRealmLogoGradient(rowFloat / Double(max(13, tableView.numberOfRowsInSection(0))))
-        cell.alpha = currentlyEditing ? 0.3 : 1
+        cell.alpha = currentlyEditing ? editingCellAlpha : 1.0
     }
 
     // MARK: UIScrollViewDelegate methods
@@ -457,7 +460,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             self.view.layoutSubviews()
             self.textEditingCell.frame.origin.y = 45
             for cell in self.visibleTableViewCells where cell !== editingCell {
-                cell.alpha = 0.3
+                cell.alpha = self.editingCellAlpha
             }
         }, completion: { [unowned self] finished in
             self.tableView.bounces = true
@@ -508,7 +511,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             }
 
             for cell in self.visibleTableViewCells where cell !== editingCell {
-                cell.alpha = 0.3
+                cell.alpha = editingCellAlpha
             }
 
             if editingCell == textEditingCell {
