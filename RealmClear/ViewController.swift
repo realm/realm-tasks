@@ -341,6 +341,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if currentlyEditingIndexPath != nil && currentlyEditingIndexPath!.row == indexPath.row {
+            return cellHeightForText(currentlyEditingCell!.textView.text)
+        }
 
         var item = items[indexPath.row]
 
@@ -349,18 +352,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if let startIndexPath = startIndexPath, sourceIndexPath = sourceIndexPath {
             if indexPath.row == sourceIndexPath.row {
                 item = items[startIndexPath.row]
-            }
-            else if indexPath.row == startIndexPath.row {
+            } else if indexPath.row == startIndexPath.row {
                 item = items[sourceIndexPath.row]
             }
         }
 
-        var text = item.text as NSString
-        if currentlyEditingIndexPath != nil && currentlyEditingIndexPath!.row == indexPath.row {
-            text = currentlyEditingCell!.textView.text as NSString
-        }
-
-        return self.cellHeightForText(text)
+        return cellHeightForText(item.text)
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
