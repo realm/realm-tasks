@@ -75,11 +75,15 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             tableView.scrollEnabled = !currentlyEditing
         }
     }
+    private var currentlyEditingIndexPath: NSIndexPath? = nil
     private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+
+    // Constants
+    let editingCellAlpha: CGFloat = 0.3
 
     // MARK: View Lifecycle
 
@@ -197,6 +201,17 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         })
     }
 
+    func cellHeightForText(text: NSString) -> CGFloat {
+        var size = view.bounds.size
+        size.width -= 25
+
+        let height = text.boundingRectWithSize(size,
+                                               options: [.UsesLineFragmentOrigin],
+                                               attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
+                                               context: nil).height
+        return ceil(height) + 33
+    }
+
     // MARK: Gesture Recognizers
 
     private func setupGestureRecognizers() {
@@ -308,24 +323,29 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell
         cell.item = items[indexPath.row]
         cell.delegate = self
+
+        if let editingIndexPath = currentlyEditingIndexPath {
+            if editingIndexPath.row != indexPath.row { cell.alpha = editingCellAlpha }
+        }
+
         return cell
     }
 
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let text = items[indexPath.row].text as NSString
-        let height = text.boundingRectWithSize(view.bounds.size,
-                                               options: [.UsesLineFragmentOrigin],
-                                               attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
-                                               context: nil).height
-        return ceil(height) + 32
+        var text = items[indexPath.row].text as NSString
+        if currentlyEditingIndexPath != nil && currentlyEditingIndexPath!.row == indexPath.row {
+            text = currentlyEditingCell!.textView.text as NSString
+        }
+
+        return self.cellHeightForText(text)
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         let rowFloat = Double(indexPath.row)
         cell.contentView.backgroundColor = UIColor.colorForRealmLogoGradient(rowFloat / Double(max(13, tableView.numberOfRowsInSection(0))))
-        cell.alpha = currentlyEditing ? 0.3 : 1
+        cell.alpha = currentlyEditing ? editingCellAlpha : 1.0
     }
 
     // MARK: UIScrollViewDelegate methods
@@ -428,6 +448,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
         currentlyEditingCell = editingCell
+        currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
         let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
         topConstraint?.constant = -editingOffset
@@ -439,7 +460,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             self.view.layoutSubviews()
             self.textEditingCell.frame.origin.y = 45
             for cell in self.visibleTableViewCells where cell !== editingCell {
-                cell.alpha = 0.3
+                cell.alpha = self.editingCellAlpha
             }
         }, completion: { [unowned self] finished in
             self.tableView.bounces = true
@@ -448,6 +469,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     func cellDidEndEditing(editingCell: TableViewCell) {
         currentlyEditingCell = nil
+        currentlyEditingIndexPath = nil
 
         topConstraint?.constant = 0
         UIView.animateWithDuration(0.3) { [weak self] in
@@ -475,6 +497,35 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         if let _ = textEditingCell.superview {
             textEditingCell.removeFromSuperview()
+        }
+    }
+
+    func cellDidChangeText(editingCell: TableViewCell) {
+        // If the height of the text view has extended to the next line,
+        // reload the height of the cell
+        let height = self.cellHeightForText(editingCell.textView.text)
+        if Int(height) != Int(editingCell.frame.size.height) {
+            UIView.performWithoutAnimation {
+                self.tableView.beginUpdates()
+                self.tableView.endUpdates()
+            }
+
+            for cell in self.visibleTableViewCells where cell !== editingCell {
+                cell.alpha = editingCellAlpha
+            }
+
+            if editingCell == textEditingCell {
+                var frame = textEditingCell.frame
+                frame.size.height = self.cellHeightForText(textEditingCell.textView.text)
+                textEditingCell.frame = frame
+                textEditingCell.textView.sizeToFit()
+                textEditingCell.layoutSubviews()
+                textEditingCell.setNeedsDisplay()
+
+                let editingOffset = editingCell.convertRect(textEditingCell.bounds, toView: tableView).origin.y
+                topConstraint?.constant = -editingOffset
+                self.view.layoutSubviews()
+            }
         }
     }
 
