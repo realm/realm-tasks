@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ToDoItemViewController.swift
 //  RealmClear
 //
 //  Created by JP Simard on 4/11/16.
@@ -37,20 +37,20 @@ private func delay(time: Double, block: () -> ()) {
     dispatch_after(delayTime, dispatch_get_main_queue(), block)
 }
 
-private func degreesToRadians(value: Double) -> Double {
+func degreesToRadians(value: Double) -> Double {
     return value * M_PI / 180.0
 }
 
 // MARK: View Controller
 
-final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
+final class ToDoItemViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
     // Stored Properties
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
-    private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
+    private var visibleTableViewCells: [ToDoItemCell] { return tableView.visibleCells as! [ToDoItemCell] }
     private var notificationToken: NotificationToken?
 
     private var disableNotificationsState = false
@@ -70,7 +70,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // Editing
     private var currentlyEditing: Bool { return currentlyEditingCell != nil }
-    private var currentlyEditingCell: TableViewCell? {
+    private var currentlyEditingCell: ToDoItemCell? {
         didSet {
             tableView.scrollEnabled = !currentlyEditing
         }
@@ -79,10 +79,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
-    private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
-    private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+    private let placeHolderCell = ToDoItemCell(style: .Default, reuseIdentifier: "cell")
+    private let textEditingCell = ToDoItemCell(style: .Default, reuseIdentifier: "cell")
 
     // Constants
+    let titleBarHeight: CGFloat = UI_USER_INTERFACE_IDIOM() == .Phone ? 45.0 : UIApplication.sharedApplication().statusBarFrame.height
     let editingCellAlpha: CGFloat = 0.3
 
     // MARK: View Lifecycle
@@ -116,18 +117,19 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.registerClass(TableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(ToDoItemCell.self, forCellReuseIdentifier: "cell")
         tableView.separatorStyle = .None
         tableView.backgroundColor = .blackColor()
         tableView.rowHeight = 54
-        tableView.contentInset = UIEdgeInsets(top: 45, left: 0, bottom: 54, right: 0)
+        let topInset = UI_USER_INTERFACE_IDIOM() == .Pad ? UIApplication.sharedApplication().statusBarFrame.height : titleBarHeight
+        tableView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: tableView.rowHeight, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
         tableView.showsVerticalScrollIndicator = false
     }
 
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
-        placeHolderCell.backgroundView!.backgroundColor = UIColor().realmColors[0]
+        placeHolderCell.backgroundView!.backgroundColor = UIColor.realmColors[0]
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -146,7 +148,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             titleBar.left == titleBar.superview!.left
             titleBar.top == titleBar.superview!.top
             titleBar.right == titleBar.superview!.right
-            titleBar.height == 45
+            titleBar.height == titleBarHeight
         }
 
         let titleLabel = UILabel()
@@ -229,7 +231,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if currentlyEditing {
             view.endEditing(true)
         } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? ToDoItemCell {
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         }
@@ -314,7 +316,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
         let location = gestureRecognizer.locationInView(tableView)
         if let indexPath = tableView.indexPathForRowAtPoint(location),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? ToDoItemCell {
             return !cell.item.completed
         }
         return true
@@ -327,7 +329,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell") as! TableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! ToDoItemCell
         cell.item = items[indexPath.row]
         cell.delegate = self
 
@@ -464,7 +466,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         delay(0.6) { [weak self] in self?.updateColors() }
     }
 
-    func cellDidBeginEditing(editingCell: TableViewCell) {
+    func cellDidBeginEditing(editingCell: ToDoItemCell) {
         currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
@@ -476,7 +478,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         UIView.animateWithDuration(0.3, animations: { [unowned self] in
             self.view.layoutSubviews()
-            self.textEditingCell.frame.origin.y = 45
+            self.textEditingCell.frame.origin.y = self.titleBarHeight
             for cell in self.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = self.editingCellAlpha
             }
@@ -485,7 +487,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         })
     }
 
-    func cellDidEndEditing(editingCell: TableViewCell) {
+    func cellDidEndEditing(editingCell: ToDoItemCell) {
         currentlyEditingCell = nil
         currentlyEditingIndexPath = nil
 
@@ -518,7 +520,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    func cellDidChangeText(editingCell: TableViewCell) {
+    func cellDidChangeText(editingCell: ToDoItemCell) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
         let height = self.cellHeightForText(editingCell.textView.text)
