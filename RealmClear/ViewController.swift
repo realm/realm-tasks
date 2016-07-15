@@ -194,6 +194,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 } else {
                     updateTableView()
                 }
+
+                self.updateColors()
             case .Error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
@@ -286,7 +288,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.removeAtIndex(startIndexPath.row)
                 items.insert(item, atIndex: indexPath.row)
             }
-            temporarilyDisableNotifications()
+            temporarilyDisableNotifications(reloadTable: false)
 
             self.startIndexPath = nil
             self.sourceIndexPath = nil
@@ -301,11 +303,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 cell.hidden = false
                 self.snapshot.removeFromSuperview()
                 self.snapshot = nil
-                let visibleIndexPaths = self.visibleTableViewCells.flatMap(self.tableView.indexPathForCell)
 
-                UIView.performWithoutAnimation({ 
-                    self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
-                })
+                self.updateColors {
+                    UIView.performWithoutAnimation {
+                        self.tableView.reloadData()
+                    }
+                }
             })
             break
         }
@@ -361,8 +364,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        let rowFloat = Double(indexPath.row)
-        cell.contentView.backgroundColor = UIColor.colorForRealmLogoGradient(rowFloat / Double(max(13, tableView.numberOfRowsInSection(0))))
+        cell.contentView.backgroundColor = self.realmColor(forIndexPath: indexPath)
         cell.alpha = currentlyEditing ? editingCellAlpha : 1.0
     }
 
@@ -433,9 +435,15 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        temporarilyDisableNotifications()
+        temporarilyDisableNotifications(reloadTable: false)
 
-        delay(0.2) { [weak self] in self?.updateColors() }
+        delay(0.2) {
+            [weak self] in
+
+            self?.updateColors {
+                self?.tableView.reloadData()
+            }
+        }
     }
 
     func itemCompleted(item: ToDoItem) {
@@ -506,6 +514,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
             })
             temporarilyDisableNotifications()
+
+            updateColors()
         } else {
             UIView.animateWithDuration(0.3) { [weak self] in
                 guard let strongSelf = self else { return }
@@ -549,17 +559,32 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Actions
 
-    private func updateColors() {
+    private func realmColor(forIndexPath indexPath: NSIndexPath) -> UIColor {
+        return UIColor.colorForRealmLogoGradient(Double(indexPath.row) / Double(max(13, tableView.numberOfRowsInSection(0))))
+    }
+
+    private func updateColors(completion completion: (() -> Void)? = nil) {
         let visibleIndexPaths = visibleTableViewCells.flatMap(tableView.indexPathForCell)
-        tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .None)
+
+        UIView.animateWithDuration(0.5, animations: {
+            for indexPath in visibleIndexPaths {
+                let cell = self.tableView.cellForRowAtIndexPath(indexPath)
+                cell?.contentView.backgroundColor = self.realmColor(forIndexPath: indexPath)
+            }
+        }, completion: { completed in
+            completion?()
+        })
     }
 
     // MARK: Sync
-    private func temporarilyDisableNotifications() {
+    private func temporarilyDisableNotifications(reloadTable reloadTable: Bool = true) {
         disableNotificationsState = true
         delay(0.2) {
             self.disableNotificationsState = false
-            self.tableView.reloadData()
+
+            if reloadTable {
+                self.tableView.reloadData()
+            }
         }
     }
 }
