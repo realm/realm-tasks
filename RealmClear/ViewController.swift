@@ -82,6 +82,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
     private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
 
+    // Onboard view
+    private let onboardView = OnboardView()
+
     // Constants
     let editingCellAlpha: CGFloat = 0.3
 
@@ -104,6 +107,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         setupPlaceholderCell()
         setupTitleBar()
         setupNotifications()
+        toggleOnboardView()
     }
 
     private func setupTableView() {
@@ -152,7 +156,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         let titleLabel = UILabel()
         titleLabel.font = .boldSystemFontOfSize(13)
         titleLabel.textAlignment = .Center
-        titleLabel.text = "List Title"
+        titleLabel.text = "My Items"
         titleLabel.textColor = .whiteColor()
         titleBar.addSubview(titleLabel)
         constrain(titleLabel) { titleLabel in
@@ -196,6 +200,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 }
 
                 self.updateColors()
+                self.toggleOnboardView(animated: true)
             case .Error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
@@ -212,6 +217,26 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                                                attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
                                                context: nil).height
         return ceil(height) + 33
+    }
+
+    private func toggleOnboardView(animated animated: Bool = false) {
+        if onboardView.superview == nil {
+            tableView.addSubview(onboardView)
+            onboardView.center = tableView.center
+        }
+
+        let numberOfRows = tableView.numberOfRowsInSection(0)
+        let hidden = (numberOfRows > 0 || textEditingCell.superview != nil)
+
+        if animated == false {
+            onboardView.alpha = hidden ? 0.0 : 1.0
+            return
+        }
+
+        onboardView.alpha = hidden ? 1.0 : 0.0
+        UIView.animateWithDuration(0.3, animations: {
+            self.onboardView.alpha = hidden ? 0.0 : 1.0
+        })
     }
 
     // MARK: Gesture Recognizers
@@ -384,6 +409,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             transform = CATransform3DRotate(transform, angle, 1.0, 0.0, 0.0)
 
             placeHolderCell.layer.transform = transform
+
+            onboardView.alpha = max(0.0, 1.0 - (distancePulledDown / cellHeight))
         } else {
             placeHolderCell.layer.transform = CATransform3DIdentity
             placeHolderCell.textView.text = "Release to Create Item"
@@ -421,6 +448,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         textEditingCell.textView.userInteractionEnabled = true
         textEditingCell.textView.becomeFirstResponder()
+
+        toggleOnboardView()
     }
 
     // MARK: TableViewCellDelegate
@@ -436,6 +465,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
         temporarilyDisableNotifications(reloadTable: false)
+
+        toggleOnboardView(animated: true)
 
         delay(0.2) {
             [weak self] in
@@ -526,6 +557,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if let _ = textEditingCell.superview {
             textEditingCell.removeFromSuperview()
         }
+
+        toggleOnboardView()
     }
 
     func cellDidChangeText(editingCell: TableViewCell) {
@@ -579,7 +612,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: Sync
     private func temporarilyDisableNotifications(reloadTable reloadTable: Bool = true) {
         disableNotificationsState = true
-        delay(0.2) {
+        delay(0.3) {
             self.disableNotificationsState = false
 
             if reloadTable {
