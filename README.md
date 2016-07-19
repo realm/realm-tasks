@@ -1,9 +1,8 @@
-# RealmClear
+# RealmTasks
 
-To Do app built with Realm, inspired by [Clear for iOS](http://realmacsoftware.com/clear/).
+A basic to-do app, designed as a homage to [Clear for iOS](http://realmacsoftware.com/clear/).
 
-**Warning:** This is very much a work in progress.
-It's unclear how much further we'll even want to take this, if at all.
+**Warning:** This project is very much a work in progress, being used as a testbed for new Realm technologies. It is in no way a fully feature-complete product, nor is it ever meant to be an actual competitor for the Clear app.
 
 ## Running a Local Sync Server
 1. [Download the Sync Server and Realm Sync Browser](https://github.com/realm/realm-sync/releases/tag/v0.23.2) from the Realm Sync repo.
