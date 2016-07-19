@@ -422,7 +422,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             placeHolderCell.layer.transform = transform
 
-            onboardView.alpha = max(0.0, 1.0 - (distancePulledDown / cellHeight))
+            if tableView.numberOfRowsInSection(0) == 0 {
+                onboardView.alpha = max(0.0, 1.0 - (distancePulledDown / cellHeight))
+            }
+            else {
+                onboardView.alpha = 0.0
+            }
         } else {
             placeHolderCell.layer.transform = CATransform3DIdentity
             placeHolderCell.textView.text = "Release to Create Item"
@@ -478,7 +483,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
         temporarilyDisableNotifications(reloadTable: false)
 
-        toggleOnboardView(animated: true)
+        toggleOnboardView()
 
         delay(0.2) {
             [weak self] in
