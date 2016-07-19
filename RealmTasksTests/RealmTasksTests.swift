@@ -1,15 +1,15 @@
 //
-//  RealmClearTests.swift
-//  RealmClearTests
+//  RealmTasksTests.swift
+//  RealmTasksTests
 //
 //  Created by JP Simard on 4/11/16.
 //  Copyright © 2016 Realm. All rights reserved.
 //
 
 import XCTest
-@testable import RealmClear
+@testable import RealmTasks
 
-class RealmClearTests: XCTestCase {
+class RealmTasksTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
