@@ -111,13 +111,13 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         doneIconView.center = center
         doneIconView.frame.origin.x = 20
         doneIconView.alpha = 0.0
-        doneIconView.autoresizingMask = .FlexibleRightMargin
+        doneIconView.autoresizingMask = [.FlexibleRightMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
         insertSubview(doneIconView, belowSubview: contentView)
 
         deleteIconView.center = center
         deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - 20
         deleteIconView.alpha = 0.0
-        deleteIconView.autoresizingMask = .FlexibleLeftMargin
+        deleteIconView.autoresizingMask = [.FlexibleLeftMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
         insertSubview(deleteIconView, belowSubview: contentView)
     }
 
