@@ -1,6 +1,6 @@
 //
 //  ToDoItem.swift
-//  RealmClear
+//  RealmTasks
 //
 //  Created by JP Simard on 4/11/16.
 //  Copyright © 2016 Realm. All rights reserved.

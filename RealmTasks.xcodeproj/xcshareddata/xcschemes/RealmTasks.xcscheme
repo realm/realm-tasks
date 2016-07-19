@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-               BuildableName = "RealmClear.app"
-               BlueprintName = "RealmClear"
-               ReferencedContainer = "container:RealmClear.xcodeproj">
+               BuildableName = "RealmTasks.app"
+               BlueprintName = "RealmTasks"
+               ReferencedContainer = "container:RealmTasks.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E84CF2C41CBC408000082C1A"
-               BuildableName = "RealmClearTests.xctest"
-               BlueprintName = "RealmClearTests"
-               ReferencedContainer = "container:RealmClear.xcodeproj">
+               BuildableName = "RealmTasks.xctest"
+               BlueprintName = "RealmTasksTests"
+               ReferencedContainer = "container:RealmTasks.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "RealmClear.app"
-            BlueprintName = "RealmClear"
-            ReferencedContainer = "container:RealmClear.xcodeproj">
+            BuildableName = "RealmTasks.app"
+            BlueprintName = "RealmTasks"
+            ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "RealmClear.app"
-            BlueprintName = "RealmClear"
-            ReferencedContainer = "container:RealmClear.xcodeproj">
+            BuildableName = "RealmTasks.app"
+            BlueprintName = "RealmTasks"
+            ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -85,9 +85,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "RealmClear.app"
-            BlueprintName = "RealmClear"
-            ReferencedContainer = "container:RealmClear.xcodeproj">
+            BuildableName = "RealmTasks.app"
+            BlueprintName = "RealmTasks"
+            ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
