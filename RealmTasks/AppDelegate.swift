@@ -65,17 +65,35 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
         
+        logIn()
+        
+        return true
+    }
+    
+    func logIn() {
         let logInManager = RealmSyncLoginManager(authURL: syncAuthURL, appID: appID, realmPath: "realmtasks")
         
         logInManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
-            if let error = error {
-                UIAlertView(title: error.localizedDescription, message: error.localizedFailureReason ?? "", delegate: nil, cancelButtonTitle: "Ok").show()
+            if let token = accessToken {
+                try! Realm().open(with: token)
             } else {
-                try! Realm().open(with: accessToken!)
+                if let error = error {
+                    let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
+                    let defaultAction = UIAlertAction(title: "I see..", style: .Default, handler: { _ in
+                        // Try ligin again in case of error
+                        self.logIn()
+                    })
+                    
+                    alertController.addAction(defaultAction)
+                    alertController.preferredAction = defaultAction
+                    
+                    self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+                } else {
+                    // This happens whe user choose "Cancel" while login, this is not supported currently, so just show Login view angain
+                    self.logIn()
+                }
             }
         }
-        
-        return true
     }
 
 }
