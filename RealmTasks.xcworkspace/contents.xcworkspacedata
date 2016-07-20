@@ -2,12 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/TiM/Projects/RealmClear/RealmTasks.xcodeproj">
+      location = "group:RealmTasks.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:RealmTasks.xcodeproj">
    </FileRef>
 </Workspace>
