@@ -27,7 +27,7 @@
 			containerPortal = E84CF2A91CBC408000082C1A /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E84CF2B01CBC408000082C1A;
-			remoteInfo = RealmClear;
+			remoteInfo = RealmTasks;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -155,7 +155,7 @@
 			dependencies = (
 			);
 			name = RealmTasks;
-			productName = RealmClear;
+			productName = RealmTasks;
 			productReference = E84CF2B11CBC408000082C1A /* RealmTasks.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -173,7 +173,7 @@
 				E84CF2C71CBC408000082C1A /* PBXTargetDependency */,
 			);
 			name = RealmTasksTests;
-			productName = RealmClearTests;
+			productName = RealmTasksTests;
 			productReference = E84CF2C51CBC408000082C1A /* RealmTasks.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
