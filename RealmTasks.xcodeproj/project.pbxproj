@@ -18,6 +18,7 @@
 		225201A51D3DD648009E45FA /* ToDoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019C1D3DD648009E45FA /* ToDoTextView.swift */; };
 		225201A61D3DD648009E45FA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019D1D3DD648009E45FA /* ViewController.swift */; };
 		225201AB1D3DD65F009E45FA /* RealmTasksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201A91D3DD65F009E45FA /* RealmTasksTests.swift */; };
+		C2E472201D3FDF2E00276542 /* LocalIpAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4721F1D3FDF2E00276542 /* LocalIpAddress.swift */; };
 		CE1E24E26EF88DC57CA26949 /* Pods_RealmTasks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99F5D1A2E003C49C7B29E93 /* Pods_RealmTasks.framework */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +48,7 @@
 		225201A91D3DD65F009E45FA /* RealmTasksTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmTasksTests.swift; sourceTree = "<group>"; };
 		2FB66A984400EA7242A983B0 /* Pods-RealmTasks.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks/Pods-RealmTasks.release.xcconfig"; sourceTree = "<group>"; };
 		A99F5D1A2E003C49C7B29E93 /* Pods_RealmTasks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2E4721F1D3FDF2E00276542 /* LocalIpAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIpAddress.swift; sourceTree = "<group>"; };
 		C3834DC69B700E02514CA084 /* Pods-RealmTasks.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks/Pods-RealmTasks.debug.xcconfig"; sourceTree = "<group>"; };
 		E84CF2B11CBC408000082C1A /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E84CF2C51CBC408000082C1A /* RealmTasks.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RealmTasks.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +105,7 @@
 				2252019B1D3DD648009E45FA /* ToDoItem.swift */,
 				2252019C1D3DD648009E45FA /* ToDoTextView.swift */,
 				2252019D1D3DD648009E45FA /* ViewController.swift */,
+				C2E4721F1D3FDF2E00276542 /* LocalIpAddress.swift */,
 			);
 			path = RealmTasks;
 			sourceTree = "<group>";
@@ -144,6 +147,7 @@
 			buildConfigurationList = E84CF2CE1CBC408000082C1A /* Build configuration list for PBXNativeTarget "RealmTasks" */;
 			buildPhases = (
 				35F4D05D72F0BCD961216D94 /* [CP] Check Pods Manifest.lock */,
+				C2E472211D3FDFDB00276542 /* Write local IP address */,
 				E84CF2AD1CBC408000082C1A /* Sources */,
 				E84CF2AE1CBC408000082C1A /* Frameworks */,
 				E84CF2AF1CBC408000082C1A /* Resources */,
@@ -189,6 +193,7 @@
 				TargetAttributes = {
 					E84CF2B01CBC408000082C1A = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = 57LMAT5XPH;
 					};
 					E84CF2C41CBC408000082C1A = {
 						CreatedOnToolsVersion = 7.3;
@@ -280,6 +285,20 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks/Pods-RealmTasks-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		C2E472211D3FDFDB00276542 /* Write local IP address */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Write local IP address";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "LOCAL_IP_ADDR=$(ipconfig getifaddr en0)\necho \"let localIpAddress = \\\"$LOCAL_IP_ADDR\\\"\" > $SRCROOT/$TARGET_NAME/LocalIpAddress.swift\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -288,6 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				220C334A1D3DE1F40043A885 /* OnboardView.swift in Sources */,
+				C2E472201D3FDF2E00276542 /* LocalIpAddress.swift in Sources */,
 				225201A61D3DD648009E45FA /* ViewController.swift in Sources */,
 				225201A51D3DD648009E45FA /* ToDoTextView.swift in Sources */,
 				225201A31D3DD648009E45FA /* TableViewCell.swift in Sources */,
@@ -415,6 +435,7 @@
 			baseConfigurationReference = C3834DC69B700E02514CA084 /* Pods-RealmTasks.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Pods/Realm/ios/static/xcode-7",
@@ -432,6 +453,7 @@
 			baseConfigurationReference = 2FB66A984400EA7242A983B0 /* Pods-RealmTasks.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Pods/Realm/ios/static/xcode-7",

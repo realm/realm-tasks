@@ -23,13 +23,19 @@ import Realm
 import RealmSwift
 import RealmSyncAuth
 
+#if DEBUG
+let syncHost = localIpAddress
+#else
+let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
+#endif
+
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
     
-    let syncAuthURL = NSURL(string: "http://127.0.0.1:3000/auth")!
-    let syncServerURL = NSURL(string: "realm://127.0.0.1:7800/private/realmtasks")!
+    let syncAuthURL = NSURL(string: "http://\(syncHost):3000/auth")!
+    let syncServerURL = NSURL(string: "realm://\(syncHost):7800/private/realmtasks")!
     
     let appID = NSBundle.mainBundle().bundleIdentifier!
     
