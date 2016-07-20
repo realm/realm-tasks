@@ -7,6 +7,6 @@ target 'RealmTasks' do
     use_frameworks!
 
     pod 'Cartography'
-    pod 'RealmSwift', '1.0.2-1-sync-0.25.1'
+    pod 'RealmSwift', '1.0.2-2-sync-0.25.1'
     pod 'RealmSyncAuth'
 end

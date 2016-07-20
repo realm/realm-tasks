@@ -1,18 +1,18 @@
 PODS:
   - Cartography (0.6.0)
-  - RealmSwift (1.0.2-1-sync-0.25.1)
+  - RealmSwift (1.0.2-2-sync-0.25.1)
   - RealmSyncAuth (0.0.1)
 
 DEPENDENCIES:
   - Cartography
-  - RealmSwift (= 1.0.2-1-sync-0.25.1)
+  - RealmSwift (= 1.0.2-2-sync-0.25.1)
   - RealmSyncAuth
 
 SPEC CHECKSUMS:
   Cartography: 70af183a248547694a8cfaa6b989cb7e04589985
-  RealmSwift: 8dd718508be58a3f4015d0dd7f1f75905d3b3de8
+  RealmSwift: 02a07362c245fed269072cc7bdbefc1392f4dc96
   RealmSyncAuth: a2b3a6fd081238e0a18f022c903354dd40374d2c
 
-PODFILE CHECKSUM: b2be786810209a76a6ef926b70868780734a12aa
+PODFILE CHECKSUM: 8b189f5cd71b1c273868ba76fd40764bfbfa11ba
 
 COCOAPODS: 1.0.1
