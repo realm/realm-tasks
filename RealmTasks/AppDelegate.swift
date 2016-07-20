@@ -24,7 +24,7 @@ import RealmSwift
 import RealmSyncAuth
 
 #if DEBUG
-let syncHost = localIpAddress
+let syncHost = localIPAddress
 #else
 let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
 #endif
