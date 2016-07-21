@@ -18,24 +18,39 @@
  *
  **************************************************************************/
 
-import RealmSwift
 import UIKit
+import Realm
+import RealmSwift
+import RealmSyncAuth
+
+#if DEBUG
+let syncHost = localIPAddress
+#else
+let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
+#endif
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
+    
     var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
+    
+    let syncAuthURL = NSURL(string: "http://\(syncHost):3000/auth")!
+    let syncServerURL = NSURL(string: "realm://\(syncHost):7800/private/realmtasks")!
+    
+    let appID = NSBundle.mainBundle().bundleIdentifier!
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
+        RLMSyncManager.sharedManager().configureWithAppID(appID)
+        
+        Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
+        
+        //Add Sync credentials to Realm
+        var configuration = Realm.Configuration()
+        configuration.syncServerURL = syncServerURL
+        Realm.Configuration.defaultConfiguration = configuration
+        
         do {
-
-            Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
-
-            //Add Sync credentials to Realm
-            var configuration = Realm.Configuration()
-            configuration.syncServerURL = NSURL(string:"realm://127.0.0.1:7800/realmtasks")
-            configuration.syncUserToken = "ewogICJhY2Nlc3MiIDogWwogICAgInVwbG9hZCIsCiAgICAiZG93bmxvYWQiCiAgXSwKICAiYXBwX2lkIiA6ICJpby5yZWFsbS5FeGFtcGxlIiwKICAiaWRlbnRpdHkiIDogInJlYWxtY2xlYXIiCn0=:qlNQkfAF/qMJK4rQzLqxVuY/n8DYPvDx4GdP52TNbCAhkqC5L4Lp+aK/++lWt8b9SrYh3/4OJtE6AFQi7aHW7RVyl+orj9bksyLZtY+p1fYTQzio1nia420g47322lnRIBsrT4CFoRSd1jHJDcul5nFnLgPjFUFZ1UAXClIv/MyKZeAU3Z+yYnnK+ZnoVuQKmmbrFFfQI6wHC0rgv5/Dvlp0/dkvqsF1hWECRqN+XV7V8vFlCJrxU8V+0Mm+e4B/sQ+IP8ZxZHLa9dSz1EM/gKfeZ8f7v1XWY+d5xPSmSzhoEkz+m5pQg7tvvArbb5emqxn70eZxadQhMu8B734NRQ=="
-            Realm.Configuration.defaultConfiguration = configuration
-
-
             let realm = try Realm()
             if realm.isEmpty {
                 // Create a default list if none exist
@@ -46,8 +61,42 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             fatalError("Could not open or write to the realm: \(error)")
         }
+        
         window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
+        
+        logIn()
+        
         return true
+    }
+    
+    func logIn() {
+        let loginManager = RealmSyncLoginManager(authURL: syncAuthURL, appID: appID, realmPath: "realmtasks")
+        
+        loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
+            if let token = accessToken {
+                try! Realm().open(with: token)
+                return
+            }
+
+            guard let error = error else {
+                // This happens when the user chose "Cancel" while logging in, which isn't supported,
+                // so just present the login view controller again
+                self.logIn()
+                return
+            }
+
+            // Present error to user
+
+            let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
+            let defaultAction = UIAlertAction(title: "OK", style: .Default) { _ in
+                self.logIn()
+            }
+
+            alertController.addAction(defaultAction)
+            alertController.preferredAction = defaultAction
+
+            self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+        }
     }
 }
