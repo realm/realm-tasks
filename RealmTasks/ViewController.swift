@@ -188,6 +188,24 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 return
             }
 
+            // FIXME: Hack to work around sync possibly pulling in a new list.
+            // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
+            let realm = self.items.realm!
+            let lists = realm.objects(ToDoList)
+            let hasMultipleLists = lists.count > 1
+            if hasMultipleLists { self.items = lists.first!.items }
+            defer {
+                if hasMultipleLists {
+                    // Append all other items while deleting their lists, in case they were created locally before sync
+                    try! realm.write {
+                        while lists.count > 1 {
+                            self.items.appendContentsOf(lists.last!.items)
+                            realm.delete(lists.last!)
+                        }
+                    }
+                }
+            }
+
             switch changes {
             case .Initial:
                 // Results are now populated and can be accessed without blocking the UI
