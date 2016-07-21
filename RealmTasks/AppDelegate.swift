@@ -71,29 +71,32 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func logIn() {
-        let logInManager = RealmSyncLoginManager(authURL: syncAuthURL, appID: appID, realmPath: "realmtasks")
+        let loginManager = RealmSyncLoginManager(authURL: syncAuthURL, appID: appID, realmPath: "realmtasks")
         
-        logInManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
+        loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
             if let token = accessToken {
                 try! Realm().open(with: token)
-            } else {
-                if let error = error {
-                    let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
-                    let defaultAction = UIAlertAction(title: "I see..", style: .Default, handler: { _ in
-                        // Try ligin again in case of error
-                        self.logIn()
-                    })
-                    
-                    alertController.addAction(defaultAction)
-                    alertController.preferredAction = defaultAction
-                    
-                    self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
-                } else {
-                    // This happens whe user choose "Cancel" while login, this is not supported currently, so just show Login view angain
-                    self.logIn()
-                }
+                return
             }
+
+            guard let error = error else {
+                // This happens when the user chose "Cancel" while logging in, which isn't supported,
+                // so just present the login view controller again
+                self.logIn()
+                return
+            }
+
+            // Present error to user
+
+            let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
+            let defaultAction = UIAlertAction(title: "OK", style: .Default) { _ in
+                self.logIn()
+            }
+
+            alertController.addAction(defaultAction)
+            alertController.preferredAction = defaultAction
+
+            self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
         }
     }
-
 }
