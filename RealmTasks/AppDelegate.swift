@@ -21,13 +21,17 @@
 import UIKit
 import Realm
 import RealmSwift
-import RealmSyncAuth
 
 #if DEBUG
 let syncHost = localIPAddress
 #else
 let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
 #endif
+
+let userRealmConfiguration = Realm.Configuration(
+    fileURL: Realm.Configuration.defaultConfiguration.fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("user.realm"),
+    objectTypes: [User.self]
+)
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -64,8 +68,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
-        
-        logIn()
+
+        if let userRealm = try? Realm(configuration: userRealmConfiguration),
+            let token = userRealm.objects(User.self).first?.accessToken {
+            try! Realm().open(with: token)
+        } else {
+            logIn()
+        }
         
         return true
     }
@@ -75,6 +84,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
             if let token = accessToken {
+                dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
+                    let userRealm = try! Realm(configuration: userRealmConfiguration)
+                    try! userRealm.write {
+                        let user = User()
+                        user.accessToken = token
+                        userRealm.add(user)
+                    }
+                }
                 try! Realm().open(with: token)
                 return
             }
