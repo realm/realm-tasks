@@ -348,7 +348,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "LOCAL_IP_ADDR=$(ipconfig getifaddr en0)\necho \"let localIPAddress = \\\"$LOCAL_IP_ADDR\\\"\" > $SRCROOT/$TARGET_NAME/LocalIPAddress.swift\n";
+			shellScript = "LOCAL_IP_ADDR=$(ipconfig getifaddr $(netstat -f inet -rant | awk '/default/ { print $6; exit }'))\necho \"let localIPAddress = \\\"$LOCAL_IP_ADDR\\\"\" > $SRCROOT/$TARGET_NAME/LocalIPAddress.swift\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
