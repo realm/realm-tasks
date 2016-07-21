@@ -20,6 +20,12 @@
 		225201AB1D3DD65F009E45FA /* RealmTasksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201A91D3DD65F009E45FA /* RealmTasksTests.swift */; };
 		C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */; };
 		CE1E24E26EF88DC57CA26949 /* Pods_RealmTasks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99F5D1A2E003C49C7B29E93 /* Pods_RealmTasks.framework */; };
+		E89CE6681D409AB200BB4521 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6671D409AB200BB4521 /* User.swift */; };
+		E89CE68B1D409D3500BB4521 /* RealmSyncLogin.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */; };
+		E89CE68C1D409D3500BB4521 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6861D409D3500BB4521 /* HTTPClient.swift */; };
+		E89CE68D1D409D3500BB4521 /* RealmSyncLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6871D409D3500BB4521 /* RealmSyncLoginManager.swift */; };
+		E89CE68E1D409D3500BB4521 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6891D409D3500BB4521 /* LogInViewController.swift */; };
+		E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +58,12 @@
 		C3834DC69B700E02514CA084 /* Pods-RealmTasks.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks/Pods-RealmTasks.debug.xcconfig"; sourceTree = "<group>"; };
 		E84CF2B11CBC408000082C1A /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E84CF2C51CBC408000082C1A /* RealmTasks.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RealmTasks.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E89CE6671D409AB200BB4521 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RealmSyncLogin.storyboard; sourceTree = "<group>"; };
+		E89CE6861D409D3500BB4521 /* HTTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		E89CE6871D409D3500BB4521 /* RealmSyncLoginManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmSyncLoginManager.swift; sourceTree = "<group>"; };
+		E89CE6891D409D3500BB4521 /* LogInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
+		E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +107,7 @@
 		225201931D3DD648009E45FA /* RealmTasks */ = {
 			isa = PBXGroup;
 			children = (
+				E89CE6821D409D0400BB4521 /* LogInViewController */,
 				225201941D3DD648009E45FA /* AppDelegate.swift */,
 				225201951D3DD648009E45FA /* Assets.xcassets */,
 				225201961D3DD648009E45FA /* LaunchScreen.storyboard */,
@@ -104,6 +117,7 @@
 				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
 				2252019B1D3DD648009E45FA /* ToDoItem.swift */,
 				2252019C1D3DD648009E45FA /* ToDoTextView.swift */,
+				E89CE6671D409AB200BB4521 /* User.swift */,
 				2252019D1D3DD648009E45FA /* ViewController.swift */,
 				C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */,
 			);
@@ -137,6 +151,42 @@
 				E84CF2C51CBC408000082C1A /* RealmTasks.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E89CE6821D409D0400BB4521 /* LogInViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E89CE6831D409D3500BB4521 /* Assets */,
+				E89CE6851D409D3500BB4521 /* Classes */,
+			);
+			path = LogInViewController;
+			sourceTree = "<group>";
+		};
+		E89CE6831D409D3500BB4521 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		E89CE6851D409D3500BB4521 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				E89CE6861D409D3500BB4521 /* HTTPClient.swift */,
+				E89CE6871D409D3500BB4521 /* RealmSyncLoginManager.swift */,
+				E89CE6881D409D3500BB4521 /* UI */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		E89CE6881D409D3500BB4521 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				E89CE6891D409D3500BB4521 /* LogInViewController.swift */,
+				E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */,
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -227,6 +277,7 @@
 			files = (
 				2252019F1D3DD648009E45FA /* Assets.xcassets in Resources */,
 				225201A01D3DD648009E45FA /* LaunchScreen.storyboard in Resources */,
+				E89CE68B1D409D3500BB4521 /* RealmSyncLogin.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,7 +363,12 @@
 				225201A61D3DD648009E45FA /* ViewController.swift in Sources */,
 				225201A51D3DD648009E45FA /* ToDoTextView.swift in Sources */,
 				225201A31D3DD648009E45FA /* TableViewCell.swift in Sources */,
+				E89CE6681D409AB200BB4521 /* User.swift in Sources */,
+				E89CE68C1D409D3500BB4521 /* HTTPClient.swift in Sources */,
 				2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */,
+				E89CE68E1D409D3500BB4521 /* LogInViewController.swift in Sources */,
+				E89CE68D1D409D3500BB4521 /* RealmSyncLoginManager.swift in Sources */,
+				E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */,
 				225201A41D3DD648009E45FA /* ToDoItem.swift in Sources */,
 				225201A21D3DD648009E45FA /* RealmColor.swift in Sources */,
 			);
