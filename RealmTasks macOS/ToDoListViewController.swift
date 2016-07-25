@@ -50,9 +50,14 @@ extension ToDoListViewController: NSTableViewDelegate {
             fatalError("Unknown cell type")
         }
         
+        cell.backgroundColor = realmColor(forRow: row)
         cell.configureWithToDoItem(items[row])
         
         return cell
+    }
+    
+    private func realmColor(forRow row: Int) -> NSColor {
+        return NSColor.colorForRealmLogoGradient(Double(row) / Double(max(13, tableView.numberOfRows)))
     }
     
 }

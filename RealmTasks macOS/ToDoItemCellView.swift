@@ -22,8 +22,21 @@ import Cocoa
 
 class ToDoItemCellView: NSTableCellView {
     
+    var backgroundColor = NSColor.clearColor() {
+        didSet {
+            needsDisplay = true
+        }
+    }
+    
     func configureWithToDoItem(item: ToDoItem) {
+        textField?.stringValue = item.text
+    }
+    
+    override func drawRect(dirtyRect: NSRect) {
+        super.drawRect(dirtyRect)
         
+        backgroundColor.setFill()
+        NSRectFillUsingOperation(bounds, .CompositeSourceOver)
     }
 
 }

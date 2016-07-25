@@ -399,21 +399,20 @@
         <scene sceneID="2sp-wB-1ci">
             <objects>
                 <viewController id="uaz-vB-EbV" customClass="ToDoListViewController" customModule="Realm_Tasks" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="LWL-J7-uyt">
+                    <view key="view" wantsLayer="YES" id="LWL-J7-uyt">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="425"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhc-0C-8yh">
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="50" horizontalPageScroll="10" verticalLineScroll="50" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhc-0C-8yh">
                                 <rect key="frame" x="0.0" y="0.0" width="480" height="425"/>
-                                <clipView key="contentView" id="OMr-Gz-NZa">
+                                <clipView key="contentView" copiesOnScroll="NO" id="OMr-Gz-NZa">
                                     <rect key="frame" x="0.0" y="0.0" width="480" height="425"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="uDo-wk-Xbz">
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="50" viewBased="YES" floatsGroupRows="NO" id="uDo-wk-Xbz">
                                             <rect key="frame" x="0.0" y="0.0" width="480" height="425"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <size key="intercellSpacing" width="3" height="2"/>
-                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
                                                 <tableColumn width="477" minWidth="40" maxWidth="1000" id="3DS-pu-CHQ">
@@ -430,18 +429,23 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView identifier="ToDoItemCell" id="Laf-Rh-5bp" customClass="ToDoItemCellView" customModule="Realm_Tasks" customModuleProvider="target">
-                                                            <rect key="frame" x="1" y="1" width="477" height="17"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="477" height="50"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cR9-OY-5KQ">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="17"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="ZeJ-dK-PfI">
-                                                                        <font key="font" metaFont="system"/>
-                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="cR9-OY-5KQ">
+                                                                    <rect key="frame" x="10" y="14" width="457" height="22"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="left" title="Table View Cell" id="ZeJ-dK-PfI">
+                                                                        <font key="font" metaFont="system" size="18"/>
+                                                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                     </textFieldCell>
                                                                 </textField>
                                                             </subviews>
+                                                            <constraints>
+                                                                <constraint firstAttribute="trailing" secondItem="cR9-OY-5KQ" secondAttribute="trailing" constant="12" id="Sik-Kb-6Eb"/>
+                                                                <constraint firstItem="cR9-OY-5KQ" firstAttribute="leading" secondItem="Laf-Rh-5bp" secondAttribute="leading" constant="12" id="XSW-Qi-8cz"/>
+                                                                <constraint firstItem="cR9-OY-5KQ" firstAttribute="centerY" secondItem="Laf-Rh-5bp" secondAttribute="centerY" id="v0f-jM-IrA"/>
+                                                            </constraints>
                                                             <connections>
                                                                 <outlet property="textField" destination="cR9-OY-5KQ" id="cz6-nZ-Oja"/>
                                                             </connections>
@@ -455,14 +459,18 @@
                                             </connections>
                                         </tableView>
                                     </subviews>
-                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 </clipView>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="320" id="A9z-TA-0kA"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="425" id="tHg-pF-LU3"/>
+                                </constraints>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="SGt-4L-HqE">
-                                    <rect key="frame" x="1" y="119" width="223" height="15"/>
+                                    <rect key="frame" x="-100" y="-100" width="223" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="afx-6v-1Eq">
-                                    <rect key="frame" x="224" y="17" width="15" height="102"/>
+                                    <rect key="frame" x="-100" y="-100" width="15" height="102"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
