@@ -62,12 +62,12 @@
 		C23EB0211D46329400D3E0AC /* macOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = macOS.xcassets; sourceTree = "<group>"; };
 		C23EB0241D46329400D3E0AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		C23EB0261D46329400D3E0AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C23EB02A1D46339E00D3E0AC /* Realm Tasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Realm Tasks.entitlements"; sourceTree = "<group>"; };
+		C23EB02A1D46339E00D3E0AC /* RealmTasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = RealmTasks.entitlements; sourceTree = "<group>"; };
 		C23EB02C1D4635C400D3E0AC /* Shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Shared.xcassets; sourceTree = "<group>"; };
 		C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmConfigurations.swift; sourceTree = "<group>"; };
 		C23EB0371D4643B900D3E0AC /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIPAddress.swift; sourceTree = "<group>"; };
-		E84CF2B11CBC408000082C1A /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = RealmTasks.app; path = "Realm Tasks.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E84CF2B11CBC408000082C1A /* Realm Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "Realm Tasks.app"; path = "Realm Tasks.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E89CE6671D409AB200BB4521 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RealmSyncLogin.storyboard; sourceTree = "<group>"; };
 		E89CE6861D409D3500BB4521 /* HTTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
@@ -128,7 +128,7 @@
 		C23EB01E1D46329400D3E0AC /* RealmTasks macOS */ = {
 			isa = PBXGroup;
 			children = (
-				C23EB02A1D46339E00D3E0AC /* Realm Tasks.entitlements */,
+				C23EB02A1D46339E00D3E0AC /* RealmTasks.entitlements */,
 				C23EB01F1D46329400D3E0AC /* AppDelegate.swift */,
 				C23EB0211D46329400D3E0AC /* macOS.xcassets */,
 				C23EB0231D46329400D3E0AC /* MainMenu.xib */,
@@ -166,7 +166,7 @@
 		E84CF2B21CBC408000082C1A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E84CF2B11CBC408000082C1A /* RealmTasks.app */,
+				E84CF2B11CBC408000082C1A /* Realm Tasks.app */,
 				C23EB01D1D46329400D3E0AC /* Realm Tasks.app */,
 			);
 			name = Products;
@@ -260,7 +260,7 @@
 			);
 			name = "RealmTasks iOS";
 			productName = RealmTasks;
-			productReference = E84CF2B11CBC408000082C1A /* RealmTasks.app */;
+			productReference = E84CF2B11CBC408000082C1A /* Realm Tasks.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -503,7 +503,7 @@
 			baseConfigurationReference = F9B66AB3287C77E6F01777F3 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "RealmTasks macOS/Realm Tasks.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "RealmTasks macOS/RealmTasks.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
@@ -520,7 +520,7 @@
 			baseConfigurationReference = FE1F651C6DD135AF60B7902F /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "RealmTasks macOS/Realm Tasks.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "RealmTasks macOS/RealmTasks.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
