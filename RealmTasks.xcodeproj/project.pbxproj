@@ -27,6 +27,10 @@
 		C23EB0301D46364000D3E0AC /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019B1D3DD648009E45FA /* ToDoItem.swift */; };
 		C23EB0321D46364000D3E0AC /* LocalIPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */; };
 		C23EB0331D463A2C00D3E0AC /* RealmColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201991D3DD648009E45FA /* RealmColor.swift */; };
+		C23EB0351D46421C00D3E0AC /* RealmConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */; };
+		C23EB0361D46421C00D3E0AC /* RealmConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */; };
+		C23EB0381D4643B900D3E0AC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0371D4643B900D3E0AC /* Constants.swift */; };
+		C23EB0391D4643B900D3E0AC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0371D4643B900D3E0AC /* Constants.swift */; };
 		C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */; };
 		E89CE6681D409AB200BB4521 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6671D409AB200BB4521 /* User.swift */; };
 		E89CE68B1D409D3500BB4521 /* RealmSyncLogin.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */; };
@@ -60,6 +64,8 @@
 		C23EB0261D46329400D3E0AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C23EB02A1D46339E00D3E0AC /* Realm Tasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Realm Tasks.entitlements"; sourceTree = "<group>"; };
 		C23EB02C1D4635C400D3E0AC /* Shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Shared.xcassets; sourceTree = "<group>"; };
+		C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmConfigurations.swift; sourceTree = "<group>"; };
+		C23EB0371D4643B900D3E0AC /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIPAddress.swift; sourceTree = "<group>"; };
 		E84CF2B11CBC408000082C1A /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = RealmTasks.app; path = "Realm Tasks.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E89CE6671D409AB200BB4521 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -134,11 +140,13 @@
 		C23EB02B1D4634B700D3E0AC /* RealmTasks Shared */ = {
 			isa = PBXGroup;
 			children = (
+				C23EB02C1D4635C400D3E0AC /* Shared.xcassets */,
 				E89CE6671D409AB200BB4521 /* User.swift */,
 				2252019B1D3DD648009E45FA /* ToDoItem.swift */,
 				225201991D3DD648009E45FA /* RealmColor.swift */,
 				C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */,
-				C23EB02C1D4635C400D3E0AC /* Shared.xcassets */,
+				C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */,
+				C23EB0371D4643B900D3E0AC /* Constants.swift */,
 			);
 			path = "RealmTasks Shared";
 			sourceTree = "<group>";
@@ -436,9 +444,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C23EB0361D46421C00D3E0AC /* RealmConfigurations.swift in Sources */,
 				C23EB0331D463A2C00D3E0AC /* RealmColor.swift in Sources */,
 				C23EB02F1D46364000D3E0AC /* User.swift in Sources */,
 				C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */,
+				C23EB0391D4643B900D3E0AC /* Constants.swift in Sources */,
 				C23EB0301D46364000D3E0AC /* ToDoItem.swift in Sources */,
 				C23EB0321D46364000D3E0AC /* LocalIPAddress.swift in Sources */,
 			);
@@ -452,6 +462,8 @@
 				C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */,
 				225201A61D3DD648009E45FA /* ViewController.swift in Sources */,
 				225201A51D3DD648009E45FA /* ToDoTextView.swift in Sources */,
+				C23EB0351D46421C00D3E0AC /* RealmConfigurations.swift in Sources */,
+				C23EB0381D4643B900D3E0AC /* Constants.swift in Sources */,
 				225201A31D3DD648009E45FA /* TableViewCell.swift in Sources */,
 				E89CE6681D409AB200BB4521 /* User.swift in Sources */,
 				E89CE68C1D409D3500BB4521 /* HTTPClient.swift in Sources */,
