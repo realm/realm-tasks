@@ -220,10 +220,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                     self.tableView.endUpdates()
                 }
 
-                if let currentlyEditingCell = self.currentlyEditingCell {
+                if let currentlyEditingIndexPath = self.currentlyEditingIndexPath {
                     UIView.performWithoutAnimation {
                         updateTableView()
-                        self.cellDidBeginEditing(currentlyEditingCell)
+                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell
+                        currentlyEditingCell.textView.becomeFirstResponder()
                     }
                 } else {
                     updateTableView()
