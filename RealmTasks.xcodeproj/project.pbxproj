@@ -67,7 +67,7 @@
 		C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmConfigurations.swift; sourceTree = "<group>"; };
 		C23EB0371D4643B900D3E0AC /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIPAddress.swift; sourceTree = "<group>"; };
-		E84CF2B11CBC408000082C1A /* Realm Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "Realm Tasks.app"; path = "Realm Tasks.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E84CF2B11CBC408000082C1A /* Realm Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Realm Tasks.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E89CE6671D409AB200BB4521 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RealmSyncLogin.storyboard; sourceTree = "<group>"; };
 		E89CE6861D409D3500BB4521 /* HTTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
@@ -227,6 +227,7 @@
 			buildConfigurationList = C23EB0271D46329400D3E0AC /* Build configuration list for PBXNativeTarget "RealmTasks macOS" */;
 			buildPhases = (
 				666E57D5FF9C810836B976B3 /* [CP] Check Pods Manifest.lock */,
+				C23EB03A1D4648E100D3E0AC /* Write local IP address */,
 				C23EB0191D46329400D3E0AC /* Sources */,
 				C23EB01A1D46329400D3E0AC /* Frameworks */,
 				C23EB01B1D46329400D3E0AC /* Resources */,
@@ -421,6 +422,20 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		C23EB03A1D4648E100D3E0AC /* Write local IP address */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Write local IP address";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "LOCAL_IP_ADDR=$(ipconfig getifaddr $(netstat -f inet -rant | awk '/default/ { print $6; exit }'))\necho \"let localIPAddress = \\\"$LOCAL_IP_ADDR\\\"\" > \"$SRCROOT/RealmTasks Shared/LocalIPAddress.swift\"";
 		};
 		C2E472211D3FDFDB00276542 /* Write local IP address */ = {
 			isa = PBXShellScriptBuildPhase;
