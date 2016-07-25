@@ -220,10 +220,15 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                     self.tableView.endUpdates()
                 }
 
-                if let currentlyEditingCell = self.currentlyEditingCell {
+                if let currentlyEditingIndexPath = self.currentlyEditingIndexPath {
                     UIView.performWithoutAnimation {
+                        // FIXME: Updating table view forces resigning first responder
+                        // If editing, unintended input state is committed and sync.
+                        self.currentlyEditingCell?.temporarilyIgnoreSaveChanges = true
                         updateTableView()
-                        self.cellDidBeginEditing(currentlyEditingCell)
+                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell
+                        currentlyEditingCell.temporarilyIgnoreSaveChanges = false
+                        currentlyEditingCell.textView.becomeFirstResponder()
                     }
                 } else {
                     updateTableView()
