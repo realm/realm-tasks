@@ -3,7 +3,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '9.0'
 
-target 'RealmTasks' do
+target 'RealmTasks iOS' do
     use_frameworks!
 
     pod 'Cartography'
