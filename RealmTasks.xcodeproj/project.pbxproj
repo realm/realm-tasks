@@ -17,7 +17,6 @@
 		225201A41D3DD648009E45FA /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019B1D3DD648009E45FA /* ToDoItem.swift */; };
 		225201A51D3DD648009E45FA /* ToDoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019C1D3DD648009E45FA /* ToDoTextView.swift */; };
 		225201A61D3DD648009E45FA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019D1D3DD648009E45FA /* ViewController.swift */; };
-		225201AB1D3DD65F009E45FA /* RealmTasksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201A91D3DD65F009E45FA /* RealmTasksTests.swift */; };
 		C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB01F1D46329400D3E0AC /* AppDelegate.swift */; };
 		C23EB0221D46329400D3E0AC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C23EB0211D46329400D3E0AC /* Assets.xcassets */; };
 		C23EB0251D46329400D3E0AC /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C23EB0231D46329400D3E0AC /* MainMenu.xib */; };
@@ -31,16 +30,6 @@
 		E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		E84CF2C61CBC408000082C1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E84CF2A91CBC408000082C1A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E84CF2B01CBC408000082C1A;
-			remoteInfo = RealmTasks;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		220C33491D3DE1F40043A885 /* OnboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardView.swift; sourceTree = "<group>"; };
 		2212D5BC1D19E0700017CBC4 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/Realm/ios/static/xcode-7/Realm.framework"; sourceTree = "<group>"; };
@@ -53,8 +42,6 @@
 		2252019B1D3DD648009E45FA /* ToDoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoItem.swift; sourceTree = "<group>"; };
 		2252019C1D3DD648009E45FA /* ToDoTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoTextView.swift; sourceTree = "<group>"; };
 		2252019D1D3DD648009E45FA /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		225201A81D3DD65F009E45FA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		225201A91D3DD65F009E45FA /* RealmTasksTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmTasksTests.swift; sourceTree = "<group>"; };
 		6D93BA363796B3B4CE891599 /* Pods-RealmTasks iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks iOS/Pods-RealmTasks iOS.release.xcconfig"; sourceTree = "<group>"; };
 		92D3F295044C0D3E483A48E3 /* Pods_RealmTasks_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23EB01D1D46329400D3E0AC /* Realm Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Realm Tasks.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -66,7 +53,6 @@
 		C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIPAddress.swift; sourceTree = "<group>"; };
 		E2E5283E2115122AB05E6363 /* Pods-RealmTasks iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks iOS/Pods-RealmTasks iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		E84CF2B11CBC408000082C1A /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E84CF2C51CBC408000082C1A /* RealmTasks.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RealmTasks.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E89CE6671D409AB200BB4521 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RealmSyncLogin.storyboard; sourceTree = "<group>"; };
 		E89CE6861D409D3500BB4521 /* HTTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
@@ -89,13 +75,6 @@
 			files = (
 				2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */,
 				CD16C0AF1937F6AA8F1E2D08 /* Pods_RealmTasks_iOS.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E84CF2C21CBC408000082C1A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,15 +110,6 @@
 			path = "RealmTasks iOS";
 			sourceTree = "<group>";
 		};
-		225201A71D3DD65F009E45FA /* RealmTasksTests */ = {
-			isa = PBXGroup;
-			children = (
-				225201A81D3DD65F009E45FA /* Info.plist */,
-				225201A91D3DD65F009E45FA /* RealmTasksTests.swift */,
-			);
-			path = RealmTasksTests;
-			sourceTree = "<group>";
-		};
 		C23EB01E1D46329400D3E0AC /* RealmTasks macOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -157,7 +127,6 @@
 			children = (
 				225201931D3DD648009E45FA /* RealmTasks iOS */,
 				C23EB01E1D46329400D3E0AC /* RealmTasks macOS */,
-				225201A71D3DD65F009E45FA /* RealmTasksTests */,
 				E84CF2B21CBC408000082C1A /* Products */,
 				20DDCD0E2C347EB88F402A75 /* Frameworks */,
 				F2FFE312C6BD1B6F7611D73B /* Pods */,
@@ -168,7 +137,6 @@
 			isa = PBXGroup;
 			children = (
 				E84CF2B11CBC408000082C1A /* RealmTasks.app */,
-				E84CF2C51CBC408000082C1A /* RealmTasks.xctest */,
 				C23EB01D1D46329400D3E0AC /* Realm Tasks.app */,
 			);
 			name = Products;
@@ -260,24 +228,6 @@
 			productReference = E84CF2B11CBC408000082C1A /* RealmTasks.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E84CF2C41CBC408000082C1A /* RealmTasksTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E84CF2D11CBC408000082C1A /* Build configuration list for PBXNativeTarget "RealmTasksTests" */;
-			buildPhases = (
-				E84CF2C11CBC408000082C1A /* Sources */,
-				E84CF2C21CBC408000082C1A /* Frameworks */,
-				E84CF2C31CBC408000082C1A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E84CF2C71CBC408000082C1A /* PBXTargetDependency */,
-			);
-			name = RealmTasksTests;
-			productName = RealmTasksTests;
-			productReference = E84CF2C51CBC408000082C1A /* RealmTasks.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -301,10 +251,6 @@
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = 57LMAT5XPH;
 					};
-					E84CF2C41CBC408000082C1A = {
-						CreatedOnToolsVersion = 7.3;
-						TestTargetID = E84CF2B01CBC408000082C1A;
-					};
 				};
 			};
 			buildConfigurationList = E84CF2AC1CBC408000082C1A /* Build configuration list for PBXProject "RealmTasks" */;
@@ -322,7 +268,6 @@
 			targets = (
 				E84CF2B01CBC408000082C1A /* RealmTasks iOS */,
 				C23EB01C1D46329400D3E0AC /* RealmTasks macOS */,
-				E84CF2C41CBC408000082C1A /* RealmTasksTests */,
 			);
 		};
 /* End PBXProject section */
@@ -344,13 +289,6 @@
 				2252019F1D3DD648009E45FA /* Assets.xcassets in Resources */,
 				225201A01D3DD648009E45FA /* LaunchScreen.storyboard in Resources */,
 				E89CE68B1D409D3500BB4521 /* RealmSyncLogin.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E84CF2C31CBC408000082C1A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,23 +386,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E84CF2C11CBC408000082C1A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				225201AB1D3DD65F009E45FA /* RealmTasksTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		E84CF2C71CBC408000082C1A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E84CF2B01CBC408000082C1A /* RealmTasks iOS */;
-			targetProxy = E84CF2C61CBC408000082C1A /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		225201961D3DD648009E45FA /* LaunchScreen.storyboard */ = {
@@ -630,30 +552,6 @@
 			};
 			name = Release;
 		};
-		E84CF2D21CBC408000082C1A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = RealmTasksTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmTasksTests;
-				PRODUCT_NAME = RealmTasks;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RealmTasks.app/RealmTasks";
-			};
-			name = Debug;
-		};
-		E84CF2D31CBC408000082C1A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = RealmTasksTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmTasksTests;
-				PRODUCT_NAME = RealmTasks;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RealmTasks.app/RealmTasks";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -679,15 +577,6 @@
 			buildConfigurations = (
 				E84CF2CF1CBC408000082C1A /* Debug */,
 				E84CF2D01CBC408000082C1A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E84CF2D11CBC408000082C1A /* Build configuration list for PBXNativeTarget "RealmTasksTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E84CF2D21CBC408000082C1A /* Debug */,
-				E84CF2D31CBC408000082C1A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
