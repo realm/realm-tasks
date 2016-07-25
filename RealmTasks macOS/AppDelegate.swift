@@ -24,10 +24,12 @@ import RealmSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-    @IBOutlet weak var window: NSWindow!
+    
+    private(set) var mainWindow: NSWindow?
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
+        mainWindow = NSApp.windows.first
+        
         RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
         
         Realm.Configuration.defaultConfiguration = syncRealmConfiguration
@@ -51,6 +53,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             // TODO: log in
         }
+    }
+    
+    func applicationShouldHandleReopen(sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        mainWindow?.makeKeyAndOrderFront(self)
+        
+        return true
     }
 
 }
