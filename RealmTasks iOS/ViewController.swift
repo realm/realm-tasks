@@ -89,6 +89,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
     private var currentlyEditingIndexPath: NSIndexPath? = nil
     private var topConstraint: NSLayoutConstraint?
+    private var previousContentOffset = CGPoint.zero
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
@@ -220,10 +221,15 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                     self.tableView.endUpdates()
                 }
 
-                if let currentlyEditingCell = self.currentlyEditingCell {
+                if let currentlyEditingIndexPath = self.currentlyEditingIndexPath {
                     UIView.performWithoutAnimation {
+                        // FIXME: Updating table view forces resigning first responder
+                        // If editing, unintended input state is committed and sync.
+                        self.currentlyEditingCell?.temporarilyIgnoreSaveChanges = true
                         updateTableView()
-                        self.cellDidBeginEditing(currentlyEditingCell)
+                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell
+                        currentlyEditingCell.temporarilyIgnoreSaveChanges = false
+                        currentlyEditingCell.textView.becomeFirstResponder()
                     }
                 } else {
                     updateTableView()
@@ -543,7 +549,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
         let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
-        topConstraint?.constant = -editingOffset
+        if editingOffset >= tableView.contentSize.height / 2 {
+            topConstraint?.constant = -editingOffset
+        } else {
+            topConstraint?.constant = -(editingOffset + distancePulledDown)
+        }
+        previousContentOffset = tableView.contentOffset
 
         placeHolderCell.alpha = 0.0
         tableView.bounces = false
@@ -564,9 +575,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         currentlyEditingIndexPath = nil
 
         topConstraint?.constant = 0
-        UIView.animateWithDuration(0.3) { [weak self] in
-            guard let strongSelf = self else { return }
-            for cell in strongSelf.visibleTableViewCells where cell !== editingCell {
+        UIView.animateWithDuration(0.3) { [unowned self] in
+            self.tableView.contentOffset = self.previousContentOffset
+            for cell in self.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 1
             }
         }

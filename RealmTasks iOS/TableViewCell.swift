@@ -73,6 +73,8 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     var delegate: TableViewCellDelegate?
     let textView = ToDoItemTextView()
 
+    var temporarilyIgnoreSaveChanges = false
+
     // Private Properties
 
     private var originalDoneIconCenter = CGPoint()
@@ -294,6 +296,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
         super.prepareForReuse()
         alpha = 1.0
         contentView.alpha = 1.0
+        temporarilyIgnoreSaveChanges = false
     }
 
     // MARK: Actions
@@ -339,8 +342,10 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     func textViewDidEndEditing(textView: UITextView) {
         if let realm = item.realm {
-            try! realm.write {
-                item.text = textView.text
+            if !temporarilyIgnoreSaveChanges {
+                try! realm.write {
+                    item.text = textView.text
+                }
             }
         } else {
             item.text = textView.text
