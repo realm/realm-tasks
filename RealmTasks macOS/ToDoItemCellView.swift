@@ -28,8 +28,10 @@ class ToDoItemCellView: NSTableCellView {
         }
     }
     
-    func configureWithToDoItem(item: ToDoItem) {
+    func configureWithToDoItem(item: ToDoItem, color: NSColor) {
         textField?.stringValue = item.text
+        
+        backgroundColor = item.completed ? NSColor.completeDimBackgroundColor() : color
     }
     
     override func drawRect(dirtyRect: NSRect) {
