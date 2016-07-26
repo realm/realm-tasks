@@ -22,37 +22,17 @@ import UIKit
 import Realm
 import RealmSwift
 
-#if DEBUG
-let syncHost = localIPAddress
-#else
-let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
-#endif
-
-let userRealmConfiguration = Realm.Configuration(
-    fileURL: Realm.Configuration.defaultConfiguration.fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("user.realm"),
-    objectTypes: [User.self]
-)
-
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
     
-    let syncAuthURL = NSURL(string: "http://\(syncHost):3000/auth")!
-    let syncServerURL = NSURL(string: "realm://\(syncHost):7800/private/realmtasks")!
-    
-    let appID = NSBundle.mainBundle().bundleIdentifier!
-    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        RLMSyncManager.sharedManager().configureWithAppID(appID)
+        RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
         
+        Realm.Configuration.defaultConfiguration = syncRealmConfiguration
         Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
-        
-        //Add Sync credentials to Realm
-        var configuration = Realm.Configuration()
-        configuration.syncServerURL = syncServerURL
-        Realm.Configuration.defaultConfiguration = configuration
         
         do {
             let realm = try Realm()
@@ -80,7 +60,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func logIn() {
-        let loginManager = RealmSyncLoginManager(authURL: syncAuthURL, appID: appID, realmPath: "realmtasks")
+        let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: RLMSyncManager.sharedManager().appID, realmPath: Constants.syncRealmPath)
         
         loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
             if let token = accessToken {

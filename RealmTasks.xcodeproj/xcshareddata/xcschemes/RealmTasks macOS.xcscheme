@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-               BuildableName = "RealmTasks.app"
-               BlueprintName = "RealmTasks"
+               BlueprintIdentifier = "C23EB01C1D46329400D3E0AC"
+               BuildableName = "Realm Tasks.app"
+               BlueprintName = "RealmTasks macOS"
                ReferencedContainer = "container:RealmTasks.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,23 +28,13 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E84CF2C41CBC408000082C1A"
-               BuildableName = "RealmTasks.xctest"
-               BlueprintName = "RealmTasksTests"
-               ReferencedContainer = "container:RealmTasks.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "RealmTasks.app"
-            BlueprintName = "RealmTasks"
+            BlueprintIdentifier = "C23EB01C1D46329400D3E0AC"
+            BuildableName = "Realm Tasks.app"
+            BlueprintName = "RealmTasks macOS"
             ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,19 +55,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "RealmTasks.app"
-            BlueprintName = "RealmTasks"
+            BlueprintIdentifier = "C23EB01C1D46329400D3E0AC"
+            BuildableName = "Realm Tasks.app"
+            BlueprintName = "RealmTasks macOS"
             ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "REALM_DISABLE_UPDATE_CHECKER"
-            value = "1"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -91,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "RealmTasks.app"
-            BlueprintName = "RealmTasks"
+            BlueprintIdentifier = "C23EB01C1D46329400D3E0AC"
+            BuildableName = "Realm Tasks.app"
+            BlueprintName = "RealmTasks macOS"
             ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

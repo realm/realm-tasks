@@ -42,16 +42,6 @@ protocol TableViewCellDelegate {
 
 // MARK: Private Declarations
 
-extension UIColor {
-    private static func completeDimBackgroundColor() -> UIColor {
-        return UIColor(white: 0.2, alpha: 1)
-    }
-
-    private static func completeGreenBackgroundColor() -> UIColor {
-        return UIColor(red: 0, green: 0.6, blue: 0, alpha: 1)
-    }
-}
-
 private enum ReleaseAction {
     case Complete, Delete
 }
