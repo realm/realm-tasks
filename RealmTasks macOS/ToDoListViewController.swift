@@ -83,8 +83,7 @@ extension ToDoListViewController: NSTableViewDelegate {
             fatalError("Unknown cell type")
         }
         
-        cell.backgroundColor = realmColor(forRow: row)
-        cell.configureWithToDoItem(items[row])
+        cell.configureWithToDoItem(items[row], color: realmColor(forRow: row))
         
         return cell
     }
