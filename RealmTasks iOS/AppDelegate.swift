@@ -28,8 +28,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-
         RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
+        RealmSyncLoginManager.application(application, didFinishLaunchingWithOptions: launchOptions)
 
         Realm.Configuration.defaultConfiguration = syncRealmConfiguration
         Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
@@ -59,6 +59,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        return RealmSyncLoginManager.application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+    }
+    
     func logIn() {
         let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: RLMSyncManager.sharedManager().appID ?? "", realmPath: Constants.syncRealmPath)
 

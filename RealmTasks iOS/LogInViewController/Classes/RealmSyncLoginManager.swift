@@ -19,6 +19,7 @@
  **************************************************************************/
 
 import UIKit
+import FBSDKLoginKit
 
 public typealias RealmSyncLoginCompletionHandler = (accessToken: String?, error: NSError?) -> Void
 
@@ -106,6 +107,18 @@ public class RealmSyncLoginManager: NSObject {
 
     public func logOut() {
         // TODO: implement
+    }
+
+    public class func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        return FBSDKApplicationDelegate
+            .sharedInstance()
+            .application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+
+    public class func application(application: UIApplication!, openURL url: NSURL!, sourceApplication: String!, annotation: AnyObject!) -> Bool {
+        return FBSDKApplicationDelegate
+            .sharedInstance()
+            .application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
     }
 
     private func parseResponseData(data: NSData) throws -> String {
