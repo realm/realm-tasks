@@ -18,30 +18,27 @@
  *
  **************************************************************************/
 
-import XCTest
+import Cocoa
 
-class RealmTasksTests: XCTestCase {
+class ToDoItemCellView: NSTableCellView {
     
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
+    var backgroundColor = NSColor.clearColor() {
+        didSet {
+            needsDisplay = true
         }
     }
     
+    func configureWithToDoItem(item: ToDoItem, color: NSColor) {
+        textField?.stringValue = item.text
+        
+        backgroundColor = item.completed ? NSColor.completeDimBackgroundColor() : color
+    }
+    
+    override func drawRect(dirtyRect: NSRect) {
+        super.drawRect(dirtyRect)
+        
+        backgroundColor.setFill()
+        NSRectFillUsingOperation(bounds, .CompositeSourceOver)
+    }
+
 }
