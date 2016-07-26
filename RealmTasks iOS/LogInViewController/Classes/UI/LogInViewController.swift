@@ -19,10 +19,12 @@
  **************************************************************************/
 
 import UIKit
+import FBSDKLoginKit
 
 enum LogInViewControllerReturnCode: Int {
     case LogIn
     case Register
+    case FacebookLogIn
     case Cancel
 }
 
@@ -31,13 +33,16 @@ class LogInViewController: UIViewController {
     @IBOutlet private weak var userNameTextField: UITextField!
     @IBOutlet private weak var passwordTextField: UITextField!
     @IBOutlet private weak var logInButton: UIButton!
+    @IBOutlet weak var facebookLogInButton: FBSDKLoginButton!
 
-    var completionHandler: ((userName: String?, password: String?, returnCode: LogInViewControllerReturnCode) -> ())?
+    var completionHandler: ((userName: String?, password: String?, facebookAccessToken: String?, returnCode: LogInViewControllerReturnCode) -> ())?
 
     override func viewDidLoad() {
         userNameTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
         passwordTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
 
+        facebookLogInButton.delegate = self
+        
         updateUI()
     }
 
@@ -46,14 +51,14 @@ class LogInViewController: UIViewController {
             return
         }
 
-        dismissViewControllerAnimated(true) {
-            self.completionHandler?(userName: self.userNameTextField.text, password: self.passwordTextField.text, returnCode: .LogIn)
+        dismissViewControllerAnimated(true) { 
+            self.completionHandler?(userName: self.userNameTextField.text, password: self.passwordTextField.text, facebookAccessToken: nil, returnCode: .LogIn)
         }
     }
 
     @IBAction func cancel(sender: AnyObject?) {
         dismissViewControllerAnimated(true) {
-            self.completionHandler?(userName: nil, password: nil, returnCode: .Cancel)
+            self.completionHandler?(userName: nil, password: nil, facebookAccessToken: nil, returnCode: .Cancel)
         }
     }
 
@@ -81,7 +86,7 @@ extension LogInViewController {
             viewController.completionHandler = { userName, password, returnCode in
                 if returnCode == .Register {
                     self.dismissViewControllerAnimated(true) {
-                        self.completionHandler?(userName: userName, password: password, returnCode: .Register)
+                        self.completionHandler?(userName: userName, password: password, facebookAccessToken: nil, returnCode: .Register)
                     }
                 }
             }
@@ -109,5 +114,27 @@ extension LogInViewController: UINavigationBarDelegate {
     func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
         return .TopAttached
     }
+    
+}
+
+extension LogInViewController: FBSDKLoginButtonDelegate {
+
+    func loginButtonWillLogin(loginButton: FBSDKLoginButton!) -> Bool {
+        return true
+    }
+
+    func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {
+        if let _ = error {
+            return
+        }
+        if result.isCancelled {
+            return
+        }
+        dismissViewControllerAnimated(true) {
+            self.completionHandler?(userName: nil, password: nil, facebookAccessToken: result.token.tokenString, returnCode: .FacebookLogIn)
+        }
+    }
+
+    func loginButtonDidLogOut(loginButton: FBSDKLoginButton!) {}
 
 }

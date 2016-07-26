@@ -42,12 +42,14 @@ public class RealmSyncLoginManager: NSObject {
             fatalError()
         }
 
-        logInViewController.completionHandler = { userName, password, returnCode in
+        logInViewController.completionHandler = { userName, password, facebookAccessToken, returnCode in
             switch returnCode {
             case .LogIn:
                 self.logIn(userName: userName!, password: password!, completion: completion)
             case .Register:
                 self.register(userName: userName!, password: password!, completion: completion)
+            case .FacebookLogIn:
+                self.logIn(facebookAccessToken: facebookAccessToken!, completion: completion)
             case .Cancel:
                 completion?(accessToken: nil, error: nil)
             }
@@ -61,6 +63,29 @@ public class RealmSyncLoginManager: NSObject {
             "provider": "password",
             "data": userName,
             "password": password,
+            "app_id": appID,
+            "path": realmPath
+        ]
+        
+        try! HTTPClient.post(authURL, json: json) { data, response, error in
+            if let data = data {
+                do {
+                    let token = try self.parseResponseData(data)
+                    
+                    completion?(accessToken: token, error: nil)
+                } catch let error as NSError {
+                    completion?(accessToken: nil, error: error)
+                }
+            } else {
+                completion?(accessToken: nil, error: error)
+            }
+        }
+    }
+
+    public func logIn(facebookAccessToken accessToken: String, completion: RealmSyncLoginCompletionHandler?) {
+        let json = [
+            "provider": "facebook",
+            "data": accessToken,
             "app_id": appID,
             "path": realmPath
         ]

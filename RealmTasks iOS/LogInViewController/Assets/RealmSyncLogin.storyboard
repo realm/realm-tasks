@@ -8,7 +8,7 @@
         <!--Log In View Controller-->
         <scene sceneID="bXo-yz-fW9">
             <objects>
-                <viewController id="rJr-HE-H8k" customClass="LogInViewController" customModule="RealmSyncAuth" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="rJr-HE-H8k" customClass="LogInViewController" customModule="Realm_Tasks" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="LU8-e6-soi"/>
                         <viewControllerLayoutGuide type="bottom" id="TjS-R3-qgZ"/>
@@ -63,6 +63,9 @@
                                     <action selector="logIn:" destination="rJr-HE-H8k" eventType="touchUpInside" id="btr-ar-zOd"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Z4U-Cd-RA8" customClass="FBSDKLoginButton">
+                                <rect key="frame" x="285" y="358" width="30" height="34"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -70,15 +73,19 @@
                             <constraint firstItem="jQh-y8-bZX" firstAttribute="centerX" secondItem="7ja-wW-f1E" secondAttribute="centerX" id="4nD-nE-eR8"/>
                             <constraint firstItem="Bbf-ry-9dU" firstAttribute="top" secondItem="jQh-y8-bZX" secondAttribute="bottom" constant="24" id="6Gl-nQ-Krf"/>
                             <constraint firstItem="SqV-zr-VDA" firstAttribute="top" secondItem="LU8-e6-soi" secondAttribute="bottom" id="Ah0-3K-ufU"/>
+                            <constraint firstItem="Z4U-Cd-RA8" firstAttribute="top" secondItem="k8X-f5-PQg" secondAttribute="bottom" constant="30" id="Ba7-9b-83O"/>
                             <constraint firstItem="jQh-y8-bZX" firstAttribute="top" secondItem="SqV-zr-VDA" secondAttribute="bottom" constant="120" id="K1m-Hr-kWI"/>
                             <constraint firstItem="SqV-zr-VDA" firstAttribute="leading" secondItem="7ja-wW-f1E" secondAttribute="leading" id="Tga-rE-xhg"/>
                             <constraint firstItem="Bbf-ry-9dU" firstAttribute="width" secondItem="jQh-y8-bZX" secondAttribute="width" id="VZH-eJ-Nul"/>
                             <constraint firstItem="k8X-f5-PQg" firstAttribute="centerX" secondItem="Bbf-ry-9dU" secondAttribute="centerX" id="Ye8-e9-nzl"/>
                             <constraint firstItem="Bbf-ry-9dU" firstAttribute="centerX" secondItem="jQh-y8-bZX" secondAttribute="centerX" id="Ykw-EF-KbW"/>
+                            <constraint firstItem="Z4U-Cd-RA8" firstAttribute="centerX" secondItem="k8X-f5-PQg" secondAttribute="centerX" id="ePz-jh-86O"/>
                             <constraint firstAttribute="trailing" secondItem="SqV-zr-VDA" secondAttribute="trailing" id="p3J-1k-VNN"/>
+                            <constraint firstItem="k8X-f5-PQg" firstAttribute="top" secondItem="Bbf-ry-9dU" secondAttribute="bottom" constant="30" id="sW4-Dy-USc"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="facebookLogInButton" destination="Z4U-Cd-RA8" id="BHo-sH-Cdu"/>
                         <outlet property="logInButton" destination="k8X-f5-PQg" id="bgF-WA-u03"/>
                         <outlet property="passwordTextField" destination="Bbf-ry-9dU" id="SLF-La-caP"/>
                         <outlet property="userNameTextField" destination="jQh-y8-bZX" id="DWo-If-4ki"/>
@@ -91,7 +98,7 @@
         <!--Register View Controller-->
         <scene sceneID="3hS-eC-kMa">
             <objects>
-                <viewController id="exZ-BH-3tP" customClass="RegisterViewController" customModule="RealmSyncAuth" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="exZ-BH-3tP" customClass="RegisterViewController" customModule="Realm_Tasks" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="mof-3i-Jm3"/>
                         <viewControllerLayoutGuide type="bottom" id="Fm9-HK-a89"/>
