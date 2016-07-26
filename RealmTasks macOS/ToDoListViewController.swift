@@ -28,9 +28,42 @@ class ToDoListViewController: NSViewController {
     @IBOutlet var tableView: NSTableView!
     
     private var items = try! Realm().objects(ToDoList).first!.items
+    private var notificationToken: NotificationToken?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupNotifications()
+    }
+    
+    private func setupNotifications() {
+        notificationToken = items.addNotificationBlock { changes in
+            // FIXME: Hack to work around sync possibly pulling in a new list.
+            // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
+            let realm = self.items.realm!
+            let lists = realm.objects(ToDoList)
+            let hasMultipleLists = lists.count > 1
+            
+            if hasMultipleLists {
+                self.items = lists.first!.items
+                
+                defer {
+                    // Append all other items while deleting their lists, in case they were created locally before sync
+                    try! realm.write {
+                        while lists.count > 1 {
+                            self.items.appendContentsOf(lists.last!.items)
+                            realm.delete(lists.last!)
+                        }
+                    }
+                    
+                    // Resubscribe to notifications
+                    self.setupNotifications()
+                }
+            }
+            
+            // TODO: add fancy animations
+            self.tableView.reloadData()
+        }
     }
     
 }
