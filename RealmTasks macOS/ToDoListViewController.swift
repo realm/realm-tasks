@@ -29,6 +29,7 @@ class ToDoListViewController: NSViewController {
     
     private var items = try! Realm().objects(ToDoList).first!.items
     private var notificationToken: NotificationToken?
+    private var disableNotificationsState = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +39,10 @@ class ToDoListViewController: NSViewController {
     
     private func setupNotifications() {
         notificationToken = items.addNotificationBlock { changes in
+            if self.disableNotificationsState {
+                return
+            }
+            
             // FIXME: Hack to work around sync possibly pulling in a new list.
             // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
             let realm = self.items.realm!
@@ -76,6 +81,17 @@ class ToDoListViewController: NSViewController {
         }
     }
     
+    private func temporarilyDisableNotifications(reloadTable reloadTable: Bool = true) {
+        disableNotificationsState = true
+        delay(0.6) {
+            self.disableNotificationsState = false
+            
+            if reloadTable {
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
 }
 
 extension ToDoListViewController: NSTableViewDataSource {
@@ -96,6 +112,60 @@ extension ToDoListViewController: NSTableViewDelegate {
         cell.configureWithToDoItem(items[row])
         
         return cell
+    }
+    
+    @available(OSX 10.11, *)
+    func tableView(tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableRowActionEdge) -> [NSTableViewRowAction] {
+        switch edge {
+        case .Leading:
+            let completeAction = NSTableViewRowAction(style: .Regular, title: "✔︎") { action, row in
+                let item = self.items[row]
+                
+                try! item.realm?.write {
+                    item.completed = !item.completed
+                    tableView.rowActionsVisible = false
+                    
+                    let sourceRow = row
+                    let destinationRow: Int
+                    
+                    if item.completed {
+                        // move cell to bottom
+                        destinationRow = self.items.count - 1
+                    } else {
+                        // move cell just above the first completed item
+                        let completedCount = self.items.filter("completed = true").count
+                        destinationRow = self.items.count - completedCount - 1
+                    }
+                    delay(0.5) { [weak self] in
+                        try! self?.items.realm?.write {
+                            self!.items.removeAtIndex(sourceRow)
+                            self!.items.insert(item, atIndex: destinationRow)
+                        }
+                        
+                        self?.tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
+                        self?.temporarilyDisableNotifications()
+                    }
+                }
+                
+            }
+            
+            completeAction.backgroundColor = NSColor.blackColor()
+            
+            return [completeAction]
+        case .Trailing:
+            let deleteAction = NSTableViewRowAction(style: .Destructive, title: "✖︎") { action, row in
+                let item = self.items[row]
+                
+                try! item.realm?.write {
+                    item.realm?.delete(item)
+                }
+                
+            }
+            
+            deleteAction.backgroundColor = NSColor.blackColor()
+            
+            return [deleteAction]
+        }
     }
     
     func tableView(tableView: NSTableView, didAddRowView rowView: NSTableRowView, forRow row: Int) {
@@ -130,4 +200,11 @@ private extension CollectionType where Generator.Element == Int {
         return indexSet
     }
     
+}
+
+// MARK: Private Functions
+
+private func delay(time: Double, block: () -> ()) {
+    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
+    dispatch_after(delayTime, dispatch_get_main_queue(), block)
 }
