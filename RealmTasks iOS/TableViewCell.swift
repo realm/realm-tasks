@@ -208,7 +208,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             if !item.completed {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
                 overlayView.hidden = releaseAction != .Complete
-                if frame.origin.x > 0 {
+                if contentView.frame.origin.x > 0 {
                     textView.unstrike()
                     textView.strike(fractionOfThreshold)
                 } else {
@@ -217,7 +217,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             } else {
                 overlayView.hidden = releaseAction == .Complete
                 textView.alpha = releaseAction == .Complete ? 1 : 0.3
-                if frame.origin.x > 0 {
+                if contentView.frame.origin.x > 0 {
                     textView.unstrike()
                     textView.strike(1 - fractionOfThreshold)
                 } else {
