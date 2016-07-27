@@ -270,7 +270,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             return
         }
 
-        onboardView.alpha = hidden ? 1 : 0
         UIView.animateWithDuration(0.3) {
             self.onboardView.alpha = hidden ? 0 : 1
         }
