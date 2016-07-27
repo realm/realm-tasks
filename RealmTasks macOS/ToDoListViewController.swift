@@ -89,7 +89,7 @@ extension ToDoListViewController: NSTableViewDelegate {
     }
     
     private func realmColor(forRow row: Int) -> NSColor {
-        return NSColor.colorForRealmLogoGradient(Double(row) / Double(max(13, tableView.numberOfRows)))
+        return .colorForRealmLogoGradient(Double(row) / Double(max(13, tableView.numberOfRows)))
     }
     
 }
