@@ -23,6 +23,7 @@ import UIKit
 enum LogInViewControllerReturnCode: Int {
     case LogIn
     case Register
+    case CloudKit
     case Cancel
 }
 
@@ -56,7 +57,13 @@ class LogInViewController: UIViewController {
             self.completionHandler?(userName: nil, password: nil, returnCode: .Cancel)
         }
     }
-    
+
+    @IBAction func cloudKitButtonTapped(sender: AnyObject?) {
+        dismissViewControllerAnimated(true) {
+            self.completionHandler?(userName: nil, password: nil, returnCode: .CloudKit)
+        }
+    }
+
     private dynamic func updateUI() {
         logInButton.enabled = userInputValid()
     }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		220C334A1D3DE1F40043A885 /* OnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220C33491D3DE1F40043A885 /* OnboardView.swift */; };
 		2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2212D5BC1D19E0700017CBC4 /* Realm.framework */; };
+		2229EC251D48A2630010907C /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2229EC241D48A2630010907C /* CloudKit.framework */; };
 		2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201941D3DD648009E45FA /* AppDelegate.swift */; };
 		2252019F1D3DD648009E45FA /* iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 225201951D3DD648009E45FA /* iOS.xcassets */; };
 		225201A01D3DD648009E45FA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 225201961D3DD648009E45FA /* LaunchScreen.storyboard */; };
@@ -49,6 +50,8 @@
 		1F2F1BE895B44ABCE16F567F /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; sourceTree = "<group>"; };
 		220C33491D3DE1F40043A885 /* OnboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardView.swift; sourceTree = "<group>"; };
 		2212D5BC1D19E0700017CBC4 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/Realm/ios/static/xcode-7/Realm.framework"; sourceTree = "<group>"; };
+		2229EC231D489F230010907C /* Realm Tasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Realm Tasks.entitlements"; sourceTree = "<group>"; };
+		2229EC241D48A2630010907C /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		225201941D3DD648009E45FA /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		225201951D3DD648009E45FA /* iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = iOS.xcassets; sourceTree = "<group>"; };
 		225201971D3DD648009E45FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -95,6 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2229EC251D48A2630010907C /* CloudKit.framework in Frameworks */,
 				2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */,
 				EC86AB13DF2672178CFBDC08 /* Pods_RealmTasks_RealmTasks_iOS.framework in Frameworks */,
 			);
@@ -106,6 +110,7 @@
 		20DDCD0E2C347EB88F402A75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2229EC241D48A2630010907C /* CloudKit.framework */,
 				2212D5BC1D19E0700017CBC4 /* Realm.framework */,
 				0F65AA97E042CAA771FDB716 /* Pods_RealmTasks_RealmTasks_iOS.framework */,
 				0C1FC133460B9224E2A98CBE /* Pods_RealmTasks_RealmTasks_macOS.framework */,
@@ -125,6 +130,7 @@
 				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
 				2252019C1D3DD648009E45FA /* ToDoTextView.swift */,
 				2252019D1D3DD648009E45FA /* ViewController.swift */,
+				2229EC231D489F230010907C /* Realm Tasks.entitlements */,
 			);
 			path = "RealmTasks iOS";
 			sourceTree = "<group>";
@@ -291,7 +297,12 @@
 					};
 					E84CF2B01CBC408000082C1A = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = 57LMAT5XPH;
+						DevelopmentTeam = QX5CR2FTN2;
+						SystemCapabilities = {
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -638,10 +649,11 @@
 			baseConfigurationReference = 9CCE23B978EF7565F4866B4B /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/Realm Tasks.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmTasks;
+				PRODUCT_BUNDLE_IDENTIFIER = io.realm.realmtasks.ios;
 				PRODUCT_NAME = "Realm Tasks";
 			};
 			name = Debug;
@@ -651,10 +663,11 @@
 			baseConfigurationReference = 1F2F1BE895B44ABCE16F567F /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/Realm Tasks.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmTasks;
+				PRODUCT_BUNDLE_IDENTIFIER = io.realm.realmtasks.ios;
 				PRODUCT_NAME = "Realm Tasks";
 			};
 			name = Release;

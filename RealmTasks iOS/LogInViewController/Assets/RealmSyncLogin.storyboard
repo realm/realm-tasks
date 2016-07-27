@@ -78,6 +78,9 @@
                                     <constraint firstAttribute="height" constant="50" id="odQ-4m-LvB"/>
                                 </constraints>
                                 <state key="normal" title="Button" image="ConnectWithiCloudButton"/>
+                                <connections>
+                                    <action selector="cloudKitButtonTapped:" destination="rJr-HE-H8k" eventType="touchUpInside" id="5V2-do-fiE"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
