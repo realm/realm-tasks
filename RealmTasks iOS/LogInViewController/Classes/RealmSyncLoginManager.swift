@@ -131,7 +131,7 @@ public class RealmSyncLoginManager: NSObject {
             "provider": "icloud",
             "data": userRecordID,
             "app_id": appID,
-            "path": "realmPath"
+            "path": realmPath
         ]
 
         try! HTTPClient.post(authURL, json: json) { data, response, error in
