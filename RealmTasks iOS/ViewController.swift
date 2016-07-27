@@ -62,16 +62,17 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // Stored Properties
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
-    private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
     private var notificationToken: NotificationToken?
-
     private var disableNotificationsState = false
 
+    // Computed Properties
+    private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
+
     // Scrolling
-    var distancePulledDown: CGFloat {
+    private var distancePulledDown: CGFloat {
         return -tableView.contentOffset.y - tableView.contentInset.top
     }
-    var distancePulledUp: CGFloat {
+    private var distancePulledUp: CGFloat {
         return tableView.contentOffset.y + tableView.bounds.size.height - max(tableView.bounds.size.height, tableView.contentSize.height)
     }
 
