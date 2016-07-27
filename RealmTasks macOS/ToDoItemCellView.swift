@@ -28,17 +28,21 @@ class ToDoItemCellView: NSTableCellView {
         }
     }
     
-    func configureWithToDoItem(item: ToDoItem, color: NSColor) {
+    func configureWithToDoItem(item: ToDoItem) {
         textField?.stringValue = item.text
         
-        backgroundColor = item.completed ? NSColor.completeDimBackgroundColor() : color
+        if item.completed {
+            backgroundColor = .completeDimBackgroundColor()
+            textField?.animator().alphaValue = 0.3
+        } else {
+            backgroundColor = .clearColor()
+            textField?.animator().alphaValue = 1.0
+        }
     }
     
     override func drawRect(dirtyRect: NSRect) {
-        super.drawRect(dirtyRect)
-        
         backgroundColor.setFill()
-        NSRectFillUsingOperation(bounds, .CompositeSourceOver)
+        NSRectFillUsingOperation(dirtyRect, .CompositeSourceOver)
     }
 
 }

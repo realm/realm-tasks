@@ -61,8 +61,18 @@ class ToDoListViewController: NSViewController {
                 }
             }
             
-            // TODO: add fancy animations
-            self.tableView.reloadData()
+            switch changes {
+            case .Initial:
+                self.tableView.reloadData()
+            case .Update(_, let deletions, let insertions, let modifications):
+                self.tableView.beginUpdates()
+                self.tableView.removeRowsAtIndexes(deletions.toIndexSet(), withAnimation: .EffectFade)
+                self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectFade)
+                self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
+                self.tableView.endUpdates()
+            case .Error(let error):
+                fatalError("\(error)")
+            }
         }
     }
     
@@ -83,13 +93,41 @@ extension ToDoListViewController: NSTableViewDelegate {
             fatalError("Unknown cell type")
         }
         
-        cell.configureWithToDoItem(items[row], color: realmColor(forRow: row))
+        cell.configureWithToDoItem(items[row])
         
         return cell
     }
     
+    func tableView(tableView: NSTableView, didAddRowView rowView: NSTableRowView, forRow row: Int) {
+        updateColors()
+    }
+    
+    func tableView(tableView: NSTableView, didRemoveRowView rowView: NSTableRowView, forRow row: Int) {
+        updateColors()
+    }
+    
+    private func updateColors() {
+        tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
+            rowView.backgroundColor = self.realmColor(forRow: row)
+        }
+    }
+    
     private func realmColor(forRow row: Int) -> NSColor {
         return NSColor.colorForRealmLogoGradient(Double(row) / Double(max(13, tableView.numberOfRows)))
+    }
+    
+}
+
+// MARK: Private Extensions
+
+private extension CollectionType where Generator.Element == Int {
+    
+    func toIndexSet() -> NSIndexSet {
+        let indexSet = NSMutableIndexSet()
+        
+        forEach { indexSet.addIndex($0) }
+        
+        return indexSet
     }
     
 }
