@@ -33,9 +33,11 @@ class ToDoItemCellView: NSTableCellView {
         
         if item.completed {
             backgroundColor = .completeDimBackgroundColor()
+            (textField as? ToDoItemTextField)?.strike()
             textField?.animator().alphaValue = 0.3
         } else {
             backgroundColor = .clearColor()
+            (textField as? ToDoItemTextField)?.unstrike()
             textField?.animator().alphaValue = 1.0
         }
     }
@@ -46,3 +48,22 @@ class ToDoItemCellView: NSTableCellView {
     }
 
 }
+
+final class ToDoItemTextField: NSTextField {
+    
+    func strike() {
+        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue)
+    }
+    
+    func unstrike() {
+        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleNone.rawValue)
+    }
+    
+    private func setAttribute(name: String, value: AnyObject) {
+        let mutableAttributedString = NSMutableAttributedString(attributedString: attributedStringValue)
+        mutableAttributedString.addAttribute(name, value: value, range: NSMakeRange(0, mutableAttributedString.length))
+        attributedStringValue = mutableAttributedString
+    }
+
+}
+

@@ -432,7 +432,7 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="400" height="50"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="cR9-OY-5KQ">
+                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="cR9-OY-5KQ" customClass="ToDoItemTextField" customModule="Realm_Tasks" customModuleProvider="target">
                                                                     <rect key="frame" x="10" y="14" width="380" height="22"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="left" title="Table View Cell" id="ZeJ-dK-PfI">
                                                                         <font key="font" metaFont="system" size="18"/>
