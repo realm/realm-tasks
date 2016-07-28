@@ -50,6 +50,16 @@ class ToDoItemCellView: NSTableCellView {
         return textView.stringValue
     }
     
+    var editable: Bool {
+        set {
+            textView.editable = newValue
+        }
+        
+        get {
+            return textView.editable
+        }
+    }
+    
     private let doneIconView: NSImageView = {
         let imageView = NSImageView()
         imageView.image = NSImage(named: "DoneIcon")
@@ -293,9 +303,9 @@ class ToDoItemCellView: NSTableCellView {
 
 }
 
-extension ToDoItemCellView: NSTextFieldDelegate {
+extension ToDoItemCellView: ToDoItemTextFieldDelegate {
     
-    override func controlTextDidBeginEditing(obj: NSNotification) {
+    private func toDoItemTextFieldDidBecomeFirstResponder(textField: ToDoItemTextField) {
         delegate?.cellViewDidBeginEditing(self)
     }
     
@@ -331,6 +341,12 @@ private enum ReleaseAction {
     case Complete, Delete
 }
 
+private protocol ToDoItemTextFieldDelegate: NSTextFieldDelegate {
+
+    func toDoItemTextFieldDidBecomeFirstResponder(textField: ToDoItemTextField)
+
+}
+
 private final class ToDoItemTextField: NSTextField {
     
     override init(frame frameRect: NSRect) {
@@ -353,6 +369,12 @@ private final class ToDoItemTextField: NSTextField {
     
     override func acceptsFirstMouse(theEvent: NSEvent?) -> Bool {
         return false
+    }
+    
+    private override func becomeFirstResponder() -> Bool {
+        (delegate as? ToDoItemTextFieldDelegate)?.toDoItemTextFieldDidBecomeFirstResponder(self)
+        
+        return super.becomeFirstResponder()
     }
     
     override func resetCursorRects() {

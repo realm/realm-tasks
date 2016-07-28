@@ -26,6 +26,7 @@ let toDoCellIdentifier = "ToDoItemCell"
 class ToDoListViewController: NSViewController {
     
     @IBOutlet var tableView: NSTableView!
+    @IBOutlet var topConstraint: NSLayoutConstraint?
     
     private var items = try! Realm().objects(ToDoList).first!.items
     private var notificationToken: NotificationToken?
@@ -192,8 +193,21 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
         tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
     }
     
-    func cellViewDidBeginEditing(view: ToDoItemCellView) {
+    func cellViewDidBeginEditing(cellView: ToDoItemCellView) {
+        let editingOffset = cellView.convertRect(cellView.bounds, toView: tableView).minY
         
+        topConstraint?.constant = -editingOffset
+        
+        NSView.animateWithDuration(0.3, animations: {
+            self.view.layoutSubtreeIfNeeded()
+            
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ToDoItemCellView where view != cellView {
+                    view.alphaValue = 0.3
+                    view.editable = false
+                }
+            }
+        })
     }
     
     func cellViewDidChangeText(view: ToDoItemCellView) {
@@ -210,6 +224,19 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
         try! item.realm?.write {
             item.text = view.text
         }
+        
+        topConstraint?.constant = 0
+        
+        NSView.animateWithDuration(0.3, animations: {
+            self.view.layoutSubtreeIfNeeded()
+            
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ToDoItemCellView {
+                    view.alphaValue = 1.0
+                    view.editable = true
+                }
+            }
+        })
     }
     
     private func findItemForCellView(view: NSView) -> (item: ToDoItem, index: Int)? {
