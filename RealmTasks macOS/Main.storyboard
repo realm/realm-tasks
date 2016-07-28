@@ -410,7 +410,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="50" viewBased="YES" floatsGroupRows="NO" id="uDo-wk-Xbz">
-                                            <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="400" height="0.0"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
@@ -427,30 +427,6 @@
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
-                                                    <prototypeCellViews>
-                                                        <tableCellView identifier="ToDoItemCell" id="Laf-Rh-5bp" customClass="ToDoItemCellView" customModule="Realm_Tasks" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="400" height="50"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                            <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="cR9-OY-5KQ" customClass="ToDoItemTextField" customModule="Realm_Tasks" customModuleProvider="target">
-                                                                    <rect key="frame" x="10" y="14" width="380" height="22"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="left" title="Table View Cell" id="ZeJ-dK-PfI">
-                                                                        <font key="font" metaFont="system" size="18"/>
-                                                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                    </textFieldCell>
-                                                                </textField>
-                                                            </subviews>
-                                                            <constraints>
-                                                                <constraint firstAttribute="trailing" secondItem="cR9-OY-5KQ" secondAttribute="trailing" constant="12" id="Sik-Kb-6Eb"/>
-                                                                <constraint firstItem="cR9-OY-5KQ" firstAttribute="leading" secondItem="Laf-Rh-5bp" secondAttribute="leading" constant="12" id="XSW-Qi-8cz"/>
-                                                                <constraint firstItem="cR9-OY-5KQ" firstAttribute="centerY" secondItem="Laf-Rh-5bp" secondAttribute="centerY" id="v0f-jM-IrA"/>
-                                                            </constraints>
-                                                            <connections>
-                                                                <outlet property="textField" destination="cR9-OY-5KQ" id="cz6-nZ-Oja"/>
-                                                            </connections>
-                                                        </tableCellView>
-                                                    </prototypeCellViews>
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>

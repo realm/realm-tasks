@@ -105,67 +105,19 @@ extension ToDoListViewController: NSTableViewDataSource {
 extension ToDoListViewController: NSTableViewDelegate {
     
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        guard let cell = tableView.makeViewWithIdentifier(toDoCellIdentifier, owner: self) as? ToDoItemCellView else {
-            fatalError("Unknown cell type")
+        let cellView: ToDoItemCellView
+        
+        if let view = tableView.makeViewWithIdentifier(toDoCellIdentifier, owner: self) as? ToDoItemCellView {
+            cellView = view
+        } else {
+            cellView = ToDoItemCellView(identifier: toDoCellIdentifier)
         }
         
-        cell.configureWithToDoItem(items[row])
+        cellView.configureWithToDoItem(items[row])
+        cellView.backgroundColor = self.realmColor(forRow: row)
+        cellView.delegate = self
         
-        return cell
-    }
-    
-    @available(OSX 10.11, *)
-    func tableView(tableView: NSTableView, rowActionsForRow row: Int, edge: NSTableRowActionEdge) -> [NSTableViewRowAction] {
-        switch edge {
-        case .Leading:
-            let completeAction = NSTableViewRowAction(style: .Regular, title: "✔︎") { action, row in
-                let item = self.items[row]
-                
-                try! item.realm?.write {
-                    item.completed = !item.completed
-                    tableView.rowActionsVisible = false
-                    
-                    let sourceRow = row
-                    let destinationRow: Int
-                    
-                    if item.completed {
-                        // move cell to bottom
-                        destinationRow = self.items.count - 1
-                    } else {
-                        // move cell just above the first completed item
-                        let completedCount = self.items.filter("completed = true").count
-                        destinationRow = self.items.count - completedCount - 1
-                    }
-                    delay(0.5) { [weak self] in
-                        try! self?.items.realm?.write {
-                            self!.items.removeAtIndex(sourceRow)
-                            self!.items.insert(item, atIndex: destinationRow)
-                        }
-                        
-                        self?.tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
-                        self?.temporarilyDisableNotifications()
-                    }
-                }
-                
-            }
-            
-            completeAction.backgroundColor = NSColor.blackColor()
-            
-            return [completeAction]
-        case .Trailing:
-            let deleteAction = NSTableViewRowAction(style: .Destructive, title: "✖︎") { action, row in
-                let item = self.items[row]
-                
-                try! item.realm?.write {
-                    item.realm?.delete(item)
-                }
-                
-            }
-            
-            deleteAction.backgroundColor = NSColor.blackColor()
-            
-            return [deleteAction]
-        }
+        return cellView
     }
     
     func tableView(tableView: NSTableView, didAddRowView rowView: NSTableRowView, forRow row: Int) {
@@ -177,13 +129,84 @@ extension ToDoListViewController: NSTableViewDelegate {
     }
     
     private func updateColors() {
-        tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
-            rowView.backgroundColor = self.realmColor(forRow: row)
+        tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+            if let cellView = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ToDoItemCellView {
+                NSView.animateWithDuration(5.0, animations: { 
+                    cellView.backgroundColor = self.realmColor(forRow: row)
+                })
+            }
         }
     }
     
     private func realmColor(forRow row: Int) -> NSColor {
         return NSColor.colorForRealmLogoGradient(Double(row) / Double(max(13, tableView.numberOfRows)))
+    }
+    
+}
+
+extension ToDoListViewController: ToDoItemCellViewDelegate {
+    
+    func cellView(view: ToDoItemCellView, didComplete complete: Bool) {
+        let index = tableView.rowForView(view)
+        
+        guard index >= 0 else {
+            return
+        }
+        
+        let item = items[index]
+        let destinationIndex: Int
+        
+        if complete {
+            // move cell to bottom
+            destinationIndex = items.count - 1
+        } else {
+            // move cell just above the first completed item
+            let completedCount = items.filter("completed = true").count
+            destinationIndex = items.count - completedCount
+        }
+        
+        delay(0.2) {
+            self.temporarilyDisableNotifications()
+            
+            try! item.realm?.write {
+                item.completed = complete
+                
+                if (index != destinationIndex) {
+                    self.items.removeAtIndex(index)
+                    self.items.insert(item, atIndex: destinationIndex)
+                }
+            }
+            
+            self.tableView.moveRowAtIndex(index, toIndex: destinationIndex)
+        }
+    }
+    
+    func cellViewDidDelete(view: ToDoItemCellView) {
+        let index = tableView.rowForView(view)
+        
+        guard index >= 0 else {
+            return
+        }
+        
+        temporarilyDisableNotifications(reloadTable: false)
+        
+        try! items.realm?.write {
+            items.realm?.delete(items[index])
+        }
+        
+        tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
+    }
+    
+    func cellViewDidBeginEditing(editingCell: ToDoItemCellView) {
+        
+    }
+    
+    func cellViewDidEndEditing(editingCell: ToDoItemCellView) {
+        
+    }
+    
+    func cellViewDidChangeText(editingCell: ToDoItemCellView) {
+        
     }
     
 }
