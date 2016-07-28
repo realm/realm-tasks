@@ -52,7 +52,7 @@ class ToDoItemCellView: NSTableCellView {
     
     var editable: Bool {
         set {
-            textView.editable = newValue
+            textView.editable = newValue && !completed
         }
         
         get {
