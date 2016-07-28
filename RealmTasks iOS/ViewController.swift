@@ -90,11 +90,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
     private var currentlyEditingIndexPath: NSIndexPath? = nil
     private var topConstraint: NSLayoutConstraint?
-    private var previousContentOffset = CGPoint.zero
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
-    private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
 
     // Onboard view
     private let onboardView = OnboardView()
@@ -263,7 +261,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         let numberOfRows = tableView.numberOfRowsInSection(0)
-        let hidden = (numberOfRows > 0 || textEditingCell.superview != nil)
+        let hidden = numberOfRows > 0
 
         if animated == false {
             onboardView.alpha = hidden ? 0 : 1
@@ -469,7 +467,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             try! items.realm?.write {
                 items.realm?.delete(itemsToDelete)
             }
-            temporarilyDisableNotifications()
 
             vibrate()
             return
@@ -478,18 +475,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         guard distancePulledDown > tableView.rowHeight else { return }
 
         // exceeds threshold
-        textEditingCell.frame = placeHolderCell.bounds
-        textEditingCell.frame.origin.y = tableView.contentInset.top + (distancePulledDown - tableView.rowHeight)
-        textEditingCell.backgroundView!.backgroundColor = placeHolderCell.backgroundView!.backgroundColor
-        view.addSubview(textEditingCell)
-
-        textEditingCell.item = ToDoItem(text: "")
-        textEditingCell.delegate = self
-
-        textEditingCell.textView.userInteractionEnabled = true
-        textEditingCell.textView.becomeFirstResponder()
-
-        toggleOnboardView()
+        try! items.realm?.write {
+            items.insert(ToDoItem(), atIndex: 0)
+        }
+        temporarilyDisableNotifications(reloadTable: false)
+        tableView.reloadData()
+        visibleTableViewCells.first!.textView.becomeFirstResponder()
     }
 
     // MARK: TableViewCellDelegate
@@ -547,20 +538,20 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
-        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
-        if editingOffset >= tableView.contentSize.height / 2 {
-            topConstraint?.constant = -editingOffset
+        let editingOffset: CGFloat
+        if editingCell.textView.text.isEmpty {
+            editingOffset = 0
         } else {
-            topConstraint?.constant = -(editingOffset + distancePulledDown)
+            editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
         }
-        previousContentOffset = tableView.contentOffset
+        topConstraint?.constant = -editingOffset
+        tableView.contentInset.bottom += editingOffset
 
         placeHolderCell.alpha = 0
         tableView.bounces = false
 
         UIView.animateWithDuration(0.3, animations: { [unowned self] in
             self.view.layoutSubviews()
-            self.textEditingCell.frame.origin.y = 45
             for cell in self.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = self.editingCellAlpha
             }
@@ -573,34 +564,24 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         currentlyEditingCell = nil
         currentlyEditingIndexPath = nil
 
+        tableView.contentInset.bottom = 54
         topConstraint?.constant = 0
-        UIView.animateWithDuration(0.3) { [unowned self] in
-            self.tableView.contentOffset = self.previousContentOffset
-            for cell in self.visibleTableViewCells where cell !== editingCell {
+        UIView.animateWithDuration(0.3) { [weak self] in
+            guard let strongSelf = self else { return }
+            for cell in strongSelf.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 1
             }
         }
 
-        if let item = editingCell.item where editingCell == textEditingCell && !item.text.isEmpty {
-            try! items.realm?.write {
-                items.insert(item, atIndex: 0)
-            }
-
-            UIView.performWithoutAnimation {
-                self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
-            }
-            temporarilyDisableNotifications()
-
-            updateColors()
-        } else {
-            UIView.animateWithDuration(0.3) { [weak self] in
-                guard let strongSelf = self else { return }
-                strongSelf.view.layoutSubviews()
-            }
+        UIView.animateWithDuration(0.3) { [weak self] in
+            self?.view.layoutSubviews()
         }
 
-        if textEditingCell.superview != nil {
-            textEditingCell.removeFromSuperview()
+        if editingCell.item.text.isEmpty {
+            let item = editingCell.item
+            try! item.realm?.write {
+                item.realm!.delete(item)
+            }
         }
 
         toggleOnboardView()
@@ -618,19 +599,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             for cell in visibleTableViewCells where cell !== editingCell {
                 cell.alpha = editingCellAlpha
-            }
-
-            if editingCell == textEditingCell {
-                var frame = textEditingCell.frame
-                frame.size.height = cellHeightForText(textEditingCell.textView.text)
-                textEditingCell.frame = frame
-                textEditingCell.textView.sizeToFit()
-                textEditingCell.layoutSubviews()
-                textEditingCell.setNeedsDisplay()
-
-                let editingOffset = editingCell.convertRect(textEditingCell.bounds, toView: tableView).origin.y
-                topConstraint?.constant = -editingOffset
-                view.layoutSubviews()
             }
         }
     }
