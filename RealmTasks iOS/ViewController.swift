@@ -626,7 +626,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     private func temporarilyDisableNotifications(reloadTable reloadTable: Bool = true) {
         disableNotificationsState = true
-        delay(0.3) {
+        delay(1) {
             self.disableNotificationsState = false
 
             if reloadTable {
