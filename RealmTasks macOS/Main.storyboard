@@ -460,6 +460,7 @@
                     </view>
                     <connections>
                         <outlet property="tableView" destination="uDo-wk-Xbz" id="HFW-Zg-ddr"/>
+                        <outlet property="topConstraint" destination="CoY-k6-hM5" id="sFq-KD-gcj"/>
                     </connections>
                 </viewController>
                 <customObject id="E3E-MH-nnM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
