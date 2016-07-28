@@ -140,7 +140,7 @@ extension ToDoListViewController: NSTableViewDelegate {
     }
     
     private func realmColor(forRow row: Int) -> NSColor {
-        return NSColor.colorForRealmLogoGradient(Double(row) / Double(max(13, tableView.numberOfRows)))
+        return .colorForRealmLogoGradient(Double(row) / Double(max(13, tableView.numberOfRows)))
     }
     
 }
@@ -232,7 +232,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
             
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
                 if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ToDoItemCellView {
-                    view.alphaValue = 1.0
+                    view.alphaValue = 1
                     view.editable = true
                 }
             }

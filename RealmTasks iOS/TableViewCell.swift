@@ -114,13 +114,13 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     private func setupIconViews() {
         doneIconView.center = center
         doneIconView.frame.origin.x = 20
-        doneIconView.alpha = 0.0
+        doneIconView.alpha = 0
         doneIconView.autoresizingMask = [.FlexibleRightMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
         insertSubview(doneIconView, belowSubview: contentView)
 
         deleteIconView.center = center
         deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - 20
-        deleteIconView.alpha = 0.0
+        deleteIconView.alpha = 0
         deleteIconView.autoresizingMask = [.FlexibleLeftMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
         insertSubview(deleteIconView, belowSubview: contentView)
     }
@@ -199,7 +199,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                 deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x - x, y: originalDeleteIconCenter.y)
             }
 
-            if translation.x > 0.0 {
+            if translation.x > 0 {
                 doneIconView.alpha = CGFloat(fractionOfThreshold)
             } else {
                 deleteIconView.alpha = CGFloat(fractionOfThreshold)
@@ -208,7 +208,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             if !item.completed {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
                 overlayView.hidden = releaseAction != .Complete
-                if frame.origin.x > 0 {
+                if contentView.frame.origin.x > 0 {
                     textView.unstrike()
                     textView.strike(fractionOfThreshold)
                 } else {
@@ -217,7 +217,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             } else {
                 overlayView.hidden = releaseAction == .Complete
                 textView.alpha = releaseAction == .Complete ? 1 : 0.3
-                if frame.origin.x > 0 {
+                if contentView.frame.origin.x > 0 {
                     textView.unstrike()
                     textView.strike(1 - fractionOfThreshold)
                 } else {
@@ -233,15 +233,15 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             switch releaseAction {
             case .Complete?:
                 animationBlock = {
-                    self.contentView.frame.origin.x = 0.0
+                    self.contentView.frame.origin.x = 0
                 }
                 completionBlock = {
                     self.setCompleted(!self.item.completed, animated: true)
                 }
             case .Delete?:
                 animationBlock = {
-                    self.alpha = 0.0
-                    self.contentView.alpha = 0.0
+                    self.alpha = 0
+                    self.contentView.alpha = 0
 
                     self.contentView.frame.origin.x = -self.contentView.bounds.width - (self.bounds.size.width / 4)
                     self.deleteIconView.frame.origin.x = -(self.bounds.size.width / 4) + self.deleteIconView.bounds.width + 20
@@ -252,7 +252,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()
                 animationBlock = {
-                    self.contentView.frame.origin.x = 0.0
+                    self.contentView.frame.origin.x = 0
                 }
                 completionBlock = {}
             }
@@ -264,10 +264,10 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                 completionBlock()
 
                 self.doneIconView.frame.origin.x = 20
-                self.doneIconView.alpha = 0.0
+                self.doneIconView.alpha = 0
 
                 self.deleteIconView.frame.origin.x = self.bounds.width - self.deleteIconView.bounds.width - 20
-                self.deleteIconView.alpha = 0.0
+                self.deleteIconView.alpha = 0
             })
         default:
             break
@@ -284,8 +284,8 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        alpha = 1.0
-        contentView.alpha = 1.0
+        alpha = 1
+        contentView.alpha = 1
         temporarilyIgnoreSaveChanges = false
     }
 
