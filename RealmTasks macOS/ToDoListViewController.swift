@@ -147,13 +147,10 @@ extension ToDoListViewController: NSTableViewDelegate {
 extension ToDoListViewController: ToDoItemCellViewDelegate {
     
     func cellView(view: ToDoItemCellView, didComplete complete: Bool) {
-        let index = tableView.rowForView(view)
-        
-        guard index >= 0 else {
+        guard let (item, index) = findItemForCellView(view) else {
             return
         }
         
-        let item = items[index]
         let destinationIndex: Int
         
         if complete {
@@ -182,31 +179,47 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
     }
     
     func cellViewDidDelete(view: ToDoItemCellView) {
-        let index = tableView.rowForView(view)
-        
-        guard index >= 0 else {
+        guard let (item, index) = findItemForCellView(view) else {
             return
         }
         
         temporarilyDisableNotifications(reloadTable: false)
         
-        try! items.realm?.write {
-            items.realm?.delete(items[index])
+        try! item.realm?.write {
+            items.realm?.delete(item)
         }
         
         tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
     }
     
-    func cellViewDidBeginEditing(editingCell: ToDoItemCellView) {
+    func cellViewDidBeginEditing(view: ToDoItemCellView) {
         
     }
     
-    func cellViewDidEndEditing(editingCell: ToDoItemCellView) {
+    func cellViewDidChangeText(view: ToDoItemCellView) {
         
     }
     
-    func cellViewDidChangeText(editingCell: ToDoItemCellView) {
+    func cellViewDidEndEditing(view: ToDoItemCellView) {
+        guard let (item, _) = findItemForCellView(view) else {
+            return
+        }
         
+        temporarilyDisableNotifications(reloadTable: false)
+        
+        try! item.realm?.write {
+            item.text = view.text
+        }
+    }
+    
+    private func findItemForCellView(view: NSView) -> (item: ToDoItem, index: Int)? {
+        let index = tableView.rowForView(view)
+        
+        if index < 0 {
+            return nil
+        }
+        
+        return (items[index], index)
     }
     
 }
