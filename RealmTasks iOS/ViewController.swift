@@ -50,7 +50,7 @@ private func delay(time: Double, block: () -> ()) {
 }
 
 private func degreesToRadians(value: Double) -> Double {
-    return value * M_PI / 180.0
+    return value * M_PI / 180
 }
 
 // MARK: View Controller
@@ -62,16 +62,17 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // Stored Properties
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
-    private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
     private var notificationToken: NotificationToken?
-
     private var disableNotificationsState = false
 
+    // Computed Properties
+    private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
+
     // Scrolling
-    var distancePulledDown: CGFloat {
+    private var distancePulledDown: CGFloat {
         return -tableView.contentOffset.y - tableView.contentInset.top
     }
-    var distancePulledUp: CGFloat {
+    private var distancePulledUp: CGFloat {
         return tableView.contentOffset.y + tableView.bounds.size.height - max(tableView.bounds.size.height, tableView.contentSize.height)
     }
 
@@ -145,7 +146,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
         placeHolderCell.backgroundView!.backgroundColor = UIColor().realmColors[0]
-        placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
+        placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
             placeHolderCell.bottom == placeHolderCell.superview!.topMargin - 7 + 26
@@ -184,7 +185,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             return
         }
 
-        notificationToken = items.addNotificationBlock({ (changes: RealmCollectionChange) in
+        notificationToken = items.addNotificationBlock { changes in
             if self.disableNotificationsState {
                 return
             }
@@ -241,7 +242,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
             }
-        })
+        }
     }
 
     func cellHeightForText(text: NSString) -> CGFloat {
@@ -265,14 +266,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         let hidden = (numberOfRows > 0 || textEditingCell.superview != nil)
 
         if animated == false {
-            onboardView.alpha = hidden ? 0.0 : 1.0
+            onboardView.alpha = hidden ? 0 : 1
             return
         }
 
-        onboardView.alpha = hidden ? 1.0 : 0.0
-        UIView.animateWithDuration(0.3, animations: {
-            self.onboardView.alpha = hidden ? 0.0 : 1.0
-        })
+        UIView.animateWithDuration(0.3) {
+            self.onboardView.alpha = hidden ? 0 : 1
+        }
     }
 
     // MARK: Gesture Recognizers
@@ -425,8 +425,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        cell.contentView.backgroundColor = self.realmColor(forIndexPath: indexPath)
-        cell.alpha = currentlyEditing ? editingCellAlpha : 1.0
+        cell.contentView.backgroundColor = realmColor(forIndexPath: indexPath)
+        cell.alpha = currentlyEditing ? editingCellAlpha : 1
     }
 
     // MARK: UIScrollViewDelegate methods
@@ -441,16 +441,15 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             let angle = CGFloat(degreesToRadians(90)) - tan(distancePulledDown / cellHeight)
 
             var transform = CATransform3DIdentity
-            transform.m34 = 1.0 / -(1000 * 0.2)
-            transform = CATransform3DRotate(transform, angle, 1.0, 0.0, 0.0)
+            transform.m34 = 1 / -(1000 * 0.2)
+            transform = CATransform3DRotate(transform, angle, 1, 0, 0)
 
             placeHolderCell.layer.transform = transform
 
             if tableView.numberOfRowsInSection(0) == 0 {
-                onboardView.alpha = max(0.0, 1.0 - (distancePulledDown / cellHeight))
-            }
-            else {
-                onboardView.alpha = 0.0
+                onboardView.alpha = max(0, 1 - (distancePulledDown / cellHeight))
+            } else {
+                onboardView.alpha = 0
             }
         } else {
             placeHolderCell.layer.transform = CATransform3DIdentity
@@ -556,7 +555,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         previousContentOffset = tableView.contentOffset
 
-        placeHolderCell.alpha = 0.0
+        placeHolderCell.alpha = 0
         tableView.bounces = false
 
         UIView.animateWithDuration(0.3, animations: { [unowned self] in
@@ -587,9 +586,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.insert(item, atIndex: 0)
             }
 
-            UIView.performWithoutAnimation({
+            UIView.performWithoutAnimation {
                 self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
-            })
+            }
             temporarilyDisableNotifications()
 
             updateColors()
@@ -600,7 +599,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             }
         }
 
-        if let _ = textEditingCell.superview {
+        if textEditingCell.superview != nil {
             textEditingCell.removeFromSuperview()
         }
 
@@ -610,20 +609,20 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func cellDidChangeText(editingCell: TableViewCell) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
-        let height = self.cellHeightForText(editingCell.textView.text)
+        let height = cellHeightForText(editingCell.textView.text)
         if Int(height) != Int(editingCell.frame.size.height) {
             UIView.performWithoutAnimation {
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
             }
 
-            for cell in self.visibleTableViewCells where cell !== editingCell {
+            for cell in visibleTableViewCells where cell !== editingCell {
                 cell.alpha = editingCellAlpha
             }
 
             if editingCell == textEditingCell {
                 var frame = textEditingCell.frame
-                frame.size.height = self.cellHeightForText(textEditingCell.textView.text)
+                frame.size.height = cellHeightForText(textEditingCell.textView.text)
                 textEditingCell.frame = frame
                 textEditingCell.textView.sizeToFit()
                 textEditingCell.layoutSubviews()
@@ -631,7 +630,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
                 let editingOffset = editingCell.convertRect(textEditingCell.bounds, toView: tableView).origin.y
                 topConstraint?.constant = -editingOffset
-                self.view.layoutSubviews()
+                view.layoutSubviews()
             }
         }
     }
@@ -639,7 +638,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: Actions
 
     private func realmColor(forIndexPath indexPath: NSIndexPath) -> UIColor {
-        return UIColor.colorForRealmLogoGradient(Double(indexPath.row) / Double(max(13, tableView.numberOfRowsInSection(0))))
+        return .colorForRealmLogoGradient(Double(indexPath.row) / Double(max(13, tableView.numberOfRowsInSection(0))))
     }
 
     private func updateColors(completion completion: (() -> Void)? = nil) {
@@ -656,6 +655,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     // MARK: Sync
+
     private func temporarilyDisableNotifications(reloadTable reloadTable: Bool = true) {
         disableNotificationsState = true
         delay(0.3) {

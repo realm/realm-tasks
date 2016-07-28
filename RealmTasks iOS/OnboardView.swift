@@ -22,33 +22,32 @@ import Foundation
 import Cartography
 import UIKit
 
-class OnboardView: UIView
-{
-    let contentColor = UIColor(white: 0.13, alpha: 1.0)
-    let contentPadding = 15.0
+class OnboardView: UIView {
+    let contentColor = UIColor(white: 0.13, alpha: 1)
+    let contentPadding: CGFloat = 15
 
     let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.imageWithRenderingMode(.AlwaysTemplate))
     let labelView = UILabel()
 
     init() {
         labelView.text = "Pull Down to Start"
-        labelView.font = UIFont.systemFontOfSize(20, weight: UIFontWeightMedium)
+        labelView.font = .systemFontOfSize(20, weight: UIFontWeightMedium)
         labelView.textColor = contentColor
         labelView.textAlignment = .Center
         labelView.sizeToFit()
 
         imageView.tintColor = contentColor
 
-        var frame = CGRectZero
+        var frame = CGRect.zero
         frame.size.width = labelView.frame.size.width
-        frame.size.height = CGRectGetHeight(imageView.frame) + CGFloat(contentPadding) + CGRectGetHeight(labelView.frame)
+        frame.size.height = CGRectGetHeight(imageView.frame) + contentPadding + CGRectGetHeight(labelView.frame)
 
         super.init(frame: frame)
 
-        self.addSubview(imageView)
-        self.addSubview(labelView)
+        addSubview(imageView)
+        addSubview(labelView)
 
-        self.autoresizingMask = [.FlexibleBottomMargin, .FlexibleTopMargin, .FlexibleLeftMargin, .FlexibleRightMargin]
+        autoresizingMask = [.FlexibleBottomMargin, .FlexibleTopMargin, .FlexibleLeftMargin, .FlexibleRightMargin]
 
         setupConstraints()
     }
