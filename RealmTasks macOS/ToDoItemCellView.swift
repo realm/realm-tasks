@@ -232,8 +232,9 @@ class ToDoItemCellView: NSTableCellView {
                 overlayView.hidden = releaseAction == .Complete
                 textView.alphaValue = releaseAction == .Complete ? 1 : 0.3
                 
-                if frame.origin.x > 0 {
-                    textView.strike()
+                if contentView.frame.origin.x > 0 {
+                    textView.unstrike()
+                    textView.strike(1 - fractionOfThreshold)
                 } else {
                     releaseAction == .Complete ? textView.unstrike() : textView.strike()
                 }
@@ -241,8 +242,9 @@ class ToDoItemCellView: NSTableCellView {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
                 overlayView.hidden = releaseAction != .Complete
                 
-                if frame.origin.x > 0 {
-                    textView.strike()
+                if contentView.frame.origin.x > 0 {
+                    textView.unstrike()
+                    textView.strike(fractionOfThreshold)
                 } else {
                     releaseAction == .Complete ? textView.strike() : textView.unstrike()
                 }
@@ -407,17 +409,17 @@ private final class ColorView: NSView {
 
 private extension NSTextField {
     
-    func strike() {
-        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue)
+    func strike(fraction: Double = 1) {
+        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: NSMakeRange(0, Int(fraction * Double(stringValue.characters.count))))
     }
     
     func unstrike() {
         setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleNone.rawValue)
     }
     
-    private func setAttribute(name: String, value: AnyObject) {
+    private func setAttribute(name: String, value: AnyObject, range: NSRange? = nil) {
         let mutableAttributedString = NSMutableAttributedString(attributedString: attributedStringValue)
-        mutableAttributedString.addAttribute(name, value: value, range: NSMakeRange(0, mutableAttributedString.length))
+        mutableAttributedString.addAttribute(name, value: value, range: range ?? NSMakeRange(0, mutableAttributedString.length))
         attributedStringValue = mutableAttributedString
     }
 
