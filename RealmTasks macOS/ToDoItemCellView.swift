@@ -26,9 +26,9 @@ protocol ToDoItemCellViewDelegate: class {
     func cellView(view: ToDoItemCellView, didComplete complete: Bool)
     func cellViewDidDelete(view: ToDoItemCellView)
     
-    func cellViewDidBeginEditing(editingCell: ToDoItemCellView)
-    func cellViewDidEndEditing(editingCell: ToDoItemCellView)
-    func cellViewDidChangeText(editingCell: ToDoItemCellView)
+    func cellViewDidBeginEditing(view: ToDoItemCellView)
+    func cellViewDidChangeText(view: ToDoItemCellView)
+    func cellViewDidEndEditing(view: ToDoItemCellView)
 
 }
 
@@ -44,6 +44,10 @@ class ToDoItemCellView: NSTableCellView {
         get {
             return contentView.backgroundColor
         }
+    }
+    
+    var text: String {
+        return textView.stringValue
     }
     
     private let doneIconView: NSImageView = {
@@ -87,6 +91,21 @@ class ToDoItemCellView: NSTableCellView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureWithToDoItem(item: ToDoItem) {
+        textView.stringValue = item.text
+        completed = item.completed
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        alphaValue = 1.0
+        contentView.frame.origin.x = 0.0
+    }
+    
+    override func acceptsFirstMouse(theEvent: NSEvent?) -> Bool {
+        return true
     }
     
     // MARK: UI
@@ -169,17 +188,6 @@ class ToDoItemCellView: NSTableCellView {
         addGestureRecognizer(recognizer)
     }
     
-    func configureWithToDoItem(item: ToDoItem) {
-        textView.stringValue = item.text
-        completed = item.completed
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        alphaValue = 1.0
-        contentView.frame.origin.x = 0.0
-    }
-    
     private dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
         switch recognizer.state {
         case .Began:
@@ -187,6 +195,8 @@ class ToDoItemCellView: NSTableCellView {
             
             originalDeleteIconOffset = deleteIconView.frame.origin.x
             originalDoneIconOffset = doneIconView.frame.origin.x
+            
+            releaseAction = nil
         case .Changed:
             let translation = recognizer.translationInView(self)
             recognizer.setTranslation(translation, inView: self)
@@ -285,7 +295,17 @@ class ToDoItemCellView: NSTableCellView {
 
 extension ToDoItemCellView: NSTextFieldDelegate {
     
-    // TODO: Implement editing
+    override func controlTextDidBeginEditing(obj: NSNotification) {
+        delegate?.cellViewDidBeginEditing(self)
+    }
+    
+    override func controlTextDidChange(obj: NSNotification) {
+        delegate?.cellViewDidChangeText(self)
+    }
+    
+    override func controlTextDidEndEditing(obj: NSNotification) {
+        delegate?.cellViewDidEndEditing(self)
+    }
     
 }
 
@@ -328,6 +348,10 @@ private final class ToDoItemTextField: NSTextField {
     }
     
     override var acceptsFirstResponder: Bool {
+        return false
+    }
+    
+    override func acceptsFirstMouse(theEvent: NSEvent?) -> Bool {
         return false
     }
     
