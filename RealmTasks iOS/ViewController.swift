@@ -187,16 +187,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             onboardView.center = tableView.center
         }
 
-        let numberOfRows = tableView.numberOfRowsInSection(0)
-        let hidden = numberOfRows > 0
-
-        if animated == false {
-            onboardView.alpha = hidden ? 0 : 1
-            return
+        func updateAlpha() {
+            onboardView.alpha = tableView.numberOfRowsInSection(0) > 0 ? 0 : 1
         }
 
-        UIView.animateWithDuration(0.3) {
-            self.onboardView.alpha = hidden ? 0 : 1
+        if animated {
+            UIView.animateWithDuration(0.3, animations: updateAlpha)
+        } else {
+            updateAlpha()
         }
     }
 
