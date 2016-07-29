@@ -64,6 +64,11 @@ class LogInViewController: UIViewController {
         }
     }
 
+    @IBAction func configureCloudKitButtonTapped(sender: AnyObject?) {
+        let url = NSURL(string: "prefs:root=CASTLE")
+        UIApplication.sharedApplication().openURL(url!)
+    }
+
     private dynamic func updateUI() {
         logInButton.enabled = userInputValid()
     }

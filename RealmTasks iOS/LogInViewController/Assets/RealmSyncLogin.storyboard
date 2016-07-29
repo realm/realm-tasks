@@ -82,6 +82,17 @@
                                     <action selector="cloudKitButtonTapped:" destination="rJr-HE-H8k" eventType="touchUpInside" id="5V2-do-fiE"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5dJ-Or-ZtT">
+                                <rect key="frame" x="212" y="440" width="176" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="176" id="P7l-7l-RnF"/>
+                                    <constraint firstAttribute="height" constant="30" id="ST9-hc-BTz"/>
+                                </constraints>
+                                <state key="normal" title="Configure iCloud Account"/>
+                                <connections>
+                                    <action selector="configureCloudKitButtonTapped:" destination="rJr-HE-H8k" eventType="touchUpInside" id="vh7-qd-BMp"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -89,6 +100,7 @@
                             <constraint firstItem="YY3-Uf-gcE" firstAttribute="centerX" secondItem="7ja-wW-f1E" secondAttribute="centerX" id="4Dp-az-cbL"/>
                             <constraint firstItem="jQh-y8-bZX" firstAttribute="centerX" secondItem="7ja-wW-f1E" secondAttribute="centerX" id="4nD-nE-eR8"/>
                             <constraint firstItem="Bbf-ry-9dU" firstAttribute="top" secondItem="jQh-y8-bZX" secondAttribute="bottom" constant="24" id="6Gl-nQ-Krf"/>
+                            <constraint firstItem="5dJ-Or-ZtT" firstAttribute="centerX" secondItem="7ja-wW-f1E" secondAttribute="centerX" id="7wO-XX-vA7"/>
                             <constraint firstAttribute="trailingMargin" secondItem="LOs-7D-aWq" secondAttribute="trailing" constant="-20" id="8LP-5D-wqO"/>
                             <constraint firstItem="SqV-zr-VDA" firstAttribute="top" secondItem="LU8-e6-soi" secondAttribute="bottom" id="Ah0-3K-ufU"/>
                             <constraint firstItem="jQh-y8-bZX" firstAttribute="top" secondItem="SqV-zr-VDA" secondAttribute="bottom" constant="100" id="K1m-Hr-kWI"/>
@@ -98,6 +110,7 @@
                             <constraint firstItem="Bbf-ry-9dU" firstAttribute="width" secondItem="jQh-y8-bZX" secondAttribute="width" id="VZH-eJ-Nul"/>
                             <constraint firstItem="k8X-f5-PQg" firstAttribute="centerX" secondItem="Bbf-ry-9dU" secondAttribute="centerX" id="Ye8-e9-nzl"/>
                             <constraint firstItem="Bbf-ry-9dU" firstAttribute="centerX" secondItem="jQh-y8-bZX" secondAttribute="centerX" id="Ykw-EF-KbW"/>
+                            <constraint firstItem="5dJ-Or-ZtT" firstAttribute="top" secondItem="YY3-Uf-gcE" secondAttribute="bottom" constant="15" id="dnQ-JV-0tX"/>
                             <constraint firstItem="YY3-Uf-gcE" firstAttribute="top" secondItem="LOs-7D-aWq" secondAttribute="bottom" constant="38.5" id="hxa-Zd-IQO"/>
                             <constraint firstAttribute="trailing" secondItem="SqV-zr-VDA" secondAttribute="trailing" id="p3J-1k-VNN"/>
                         </constraints>
