@@ -31,9 +31,23 @@ class ToDoListViewController: NSViewController {
     private var items = try! Realm().objects(ToDoList).first!.items
     private var notificationToken: NotificationToken?
     private var disableNotificationsState = false
+    
+    private let prototypeCell = PrototypeToDoItemCellView()
+    private var currentlyEditingCellView: ToDoItemCellView?
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let notificationCenter = NSNotificationCenter.defaultCenter()
+        
+        // Handle window resizing to update table view
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidResizeNotification, object: view.window)
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidEnterFullScreenNotification, object: view.window)
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidExitFullScreenNotification, object: view.window)
         
         setupNotifications()
     }
@@ -76,6 +90,8 @@ class ToDoListViewController: NSViewController {
                 self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectFade)
                 self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
                 self.tableView.endUpdates()
+                
+                self.updateTableViewHeightOfRows(modifications.toIndexSet())
             case .Error(let error):
                 fatalError("\(error)")
             }
@@ -91,6 +107,17 @@ class ToDoListViewController: NSViewController {
                 self.tableView.reloadData()
             }
         }
+    }
+    
+    private dynamic func windowDidResize(notification: NSNotification) {
+        updateTableViewHeightOfRows()
+    }
+    
+    private func updateTableViewHeightOfRows(indexes: NSIndexSet? = nil) {
+        // noteHeightOfRows animates by default, disable this
+        NSView.animateWithDuration(0, animations: {
+            self.tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSMakeRange(0, self.tableView.numberOfRows - 1)))
+        })
     }
     
 }
@@ -119,6 +146,16 @@ extension ToDoListViewController: NSTableViewDelegate {
         cellView.delegate = self
         
         return cellView
+    }
+    
+    func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+        if let cellView = currentlyEditingCellView {
+            prototypeCell.configureWithToDoItemCellView(cellView)
+        } else {
+            prototypeCell.configureWithToDoItem(items[row])
+        }
+
+        return prototypeCell.fittingHeightForConstrainedWidth(tableView.bounds.width)
     }
     
     func tableView(tableView: NSTableView, didAddRowView rowView: NSTableRowView, forRow row: Int) {
@@ -209,10 +246,14 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
                 }
             }
         })
+        
+        currentlyEditingCellView = cellView
     }
     
     func cellViewDidChangeText(view: ToDoItemCellView) {
-        
+        if view == currentlyEditingCellView {
+            updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
+        }
     }
     
     func cellViewDidEndEditing(view: ToDoItemCellView) {
@@ -238,6 +279,8 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
                 }
             }
         })
+        
+        currentlyEditingCellView = nil
     }
     
     private func findItemForCellView(view: NSView) -> (item: ToDoItem, index: Int)? {
@@ -271,4 +314,36 @@ private extension CollectionType where Generator.Element == Int {
 private func delay(time: Double, block: () -> ()) {
     let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
     dispatch_after(delayTime, dispatch_get_main_queue(), block)
+}
+
+// MARK: Private Classes
+
+private final class PrototypeToDoItemCellView: ToDoItemCellView {
+    
+    private var widthConstraint: NSLayoutConstraint?
+    
+    convenience init() {
+        self.init(identifier: "Prototype\(toDoCellIdentifier)")
+    }
+    
+    func configureWithToDoItemCellView(cellView: ToDoItemCellView) {
+        text = cellView.text
+    }
+    
+    func fittingHeightForConstrainedWidth(width: CGFloat) -> CGFloat {
+        if let constraint = widthConstraint where constraint.constant != width {
+            removeConstraint(constraint)
+            widthConstraint = nil
+        }
+        
+        if widthConstraint == nil {
+            widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: width)
+            addConstraint(widthConstraint!)
+        }
+        
+        layoutSubtreeIfNeeded()
+        
+        return fittingSize.height
+    }
+    
 }

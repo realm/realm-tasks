@@ -36,18 +36,24 @@ class ToDoItemCellView: NSTableCellView {
     
     weak var delegate: ToDoItemCellViewDelegate?
     
-    var backgroundColor: NSColor {
+    var text: String {
         set {
-            contentView.backgroundColor = newValue
+            textView.stringValue = newValue
         }
         
         get {
-            return contentView.backgroundColor
+            return textView.stringValue
         }
     }
     
-    var text: String {
-        return textView.stringValue
+    var completed = false {
+        didSet {
+            completed ? textView.strike() : textView.unstrike()
+            overlayView.hidden = !completed
+            overlayView.backgroundColor = completed ? .completeDimBackgroundColor() : .completeGreenBackgroundColor()
+            textView.alphaValue = completed ? 0.3 : 1
+            textView.editable = !completed
+        }
     }
     
     var editable: Bool {
@@ -57,6 +63,16 @@ class ToDoItemCellView: NSTableCellView {
         
         get {
             return textView.editable
+        }
+    }
+    
+    var backgroundColor: NSColor {
+        set {
+            contentView.backgroundColor = newValue
+        }
+        
+        get {
+            return contentView.backgroundColor
         }
     }
     
@@ -80,16 +96,6 @@ class ToDoItemCellView: NSTableCellView {
     private var originalDeleteIconOffset: CGFloat = 0
     
     private var releaseAction: ReleaseAction?
-    
-    private var completed = false {
-        didSet {
-            completed ? textView.strike() : textView.unstrike()
-            overlayView.hidden = !completed
-            overlayView.backgroundColor = completed ? .completeDimBackgroundColor() : .completeGreenBackgroundColor()
-            textView.alphaValue = completed ? 0.3 : 1
-            textView.editable = !completed
-        }
-    }
     
     init(identifier: String) {
         super.init(frame: .zero)
@@ -186,9 +192,7 @@ class ToDoItemCellView: NSTableCellView {
         contentView.addSubview(textView)
         
         constrain(textView) { textView in
-            textView.centerY == textView.superview!.centerY
-            textView.left == textView.superview!.left + 8
-            textView.right == textView.superview!.right - 8
+            textView.edges == inset(textView.superview!.edges, 8, 14)
         }
     }
     
@@ -307,7 +311,7 @@ class ToDoItemCellView: NSTableCellView {
 
 extension ToDoItemCellView: ToDoItemTextFieldDelegate {
     
-    private func toDoItemTextFieldDidBecomeFirstResponder(textField: ToDoItemTextField) {
+    func textFieldDidBecomeFirstResponder(textField: NSTextField) {
         delegate?.cellViewDidBeginEditing(self)
     }
     
@@ -343,9 +347,9 @@ private enum ReleaseAction {
     case Complete, Delete
 }
 
-private protocol ToDoItemTextFieldDelegate: NSTextFieldDelegate {
+protocol ToDoItemTextFieldDelegate: NSTextFieldDelegate {
 
-    func toDoItemTextFieldDidBecomeFirstResponder(textField: ToDoItemTextField)
+    func textFieldDidBecomeFirstResponder(textField: NSTextField)
 
 }
 
@@ -359,6 +363,7 @@ private final class ToDoItemTextField: NSTextField {
         font = .systemFontOfSize(18)
         textColor = .whiteColor()
         backgroundColor = .clearColor()
+        lineBreakMode = .ByWordWrapping
     }
     
     required init?(coder: NSCoder) {
@@ -373,14 +378,30 @@ private final class ToDoItemTextField: NSTextField {
         return false
     }
     
-    private override func becomeFirstResponder() -> Bool {
-        (delegate as? ToDoItemTextFieldDelegate)?.toDoItemTextFieldDidBecomeFirstResponder(self)
+    override func becomeFirstResponder() -> Bool {
+        (delegate as? ToDoItemTextFieldDelegate)?.textFieldDidBecomeFirstResponder(self)
         
         return super.becomeFirstResponder()
     }
     
     override func resetCursorRects() {
         addCursorRect(bounds, cursor: .arrowCursor())
+    }
+    
+    override var intrinsicContentSize: NSSize {
+        // By default editable NSTextField doesn't respect wrapping while calculating intrinsic content size,
+        // let's calculate the correct one by ourselves
+        let placeholderFrame = NSRect(origin: .zero, size: NSSize(width: frame.width, height: .max))
+        let calculatedHeight = cell!.cellSizeForBounds(placeholderFrame).height
+        
+        return NSSize(width: frame.width, height: calculatedHeight)
+    }
+    
+    override func textDidChange(notification: NSNotification) {
+        super.textDidChange(notification)
+        
+        // Update height on text change
+        invalidateIntrinsicContentSize()
     }
 
 }
