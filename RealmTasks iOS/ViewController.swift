@@ -483,6 +483,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             guard numberOfItemsToDelete != 0 else { return }
 
             try! items.realm?.write {
+                items.removeLast(numberOfItemsToDelete)
                 items.realm?.delete(itemsToDelete)
             }
             let startingIndex = items.count
