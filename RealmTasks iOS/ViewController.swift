@@ -106,6 +106,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupNotifications()
         setupGestureRecognizers()
     }
 
@@ -119,7 +120,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         setupTableView()
         setupPlaceholderCell()
         setupTitleBar()
-        setupNotifications()
         toggleOnboardView()
     }
 
@@ -178,6 +178,27 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             titleLabel.bottom == titleLabel.superview!.bottom - 5
         }
     }
+
+    private func toggleOnboardView(animated animated: Bool = false) {
+        if onboardView.superview == nil {
+            tableView.addSubview(onboardView)
+            onboardView.center = tableView.center
+        }
+
+        let numberOfRows = tableView.numberOfRowsInSection(0)
+        let hidden = numberOfRows > 0
+
+        if animated == false {
+            onboardView.alpha = hidden ? 0 : 1
+            return
+        }
+
+        UIView.animateWithDuration(0.3) {
+            self.onboardView.alpha = hidden ? 0 : 1
+        }
+    }
+
+    // MARK: Notifications
 
     private func setupNotifications() {
         if notificationToken != nil {
@@ -250,36 +271,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
             }
-        }
-    }
-
-    func cellHeightForText(text: NSString) -> CGFloat {
-        var size = view.bounds.size
-        size.width -= 25
-
-        let height = text.boundingRectWithSize(size,
-                                               options: [.UsesLineFragmentOrigin],
-                                               attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
-                                               context: nil).height
-        return ceil(height) + 33
-    }
-
-    private func toggleOnboardView(animated animated: Bool = false) {
-        if onboardView.superview == nil {
-            tableView.addSubview(onboardView)
-            onboardView.center = tableView.center
-        }
-
-        let numberOfRows = tableView.numberOfRowsInSection(0)
-        let hidden = numberOfRows > 0
-
-        if animated == false {
-            onboardView.alpha = hidden ? 0 : 1
-            return
-        }
-
-        UIView.animateWithDuration(0.3) {
-            self.onboardView.alpha = hidden ? 0 : 1
         }
     }
 
@@ -408,6 +399,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         return cell
+    }
+
+    func cellHeightForText(text: NSString) -> CGFloat {
+        return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
+                                         options: [.UsesLineFragmentOrigin],
+                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
+                                         context: nil).height + 33
     }
 
     // MARK: UITableViewDelegate
