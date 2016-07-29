@@ -31,7 +31,7 @@ class ToDoItemCellView: NSTableCellView {
     func configureWithToDoItem(item: ToDoItem, color: NSColor) {
         textField?.stringValue = item.text
         
-        backgroundColor = item.completed ? NSColor.completeDimBackgroundColor() : color
+        backgroundColor = item.completed ? .completeDimBackgroundColor() : color
     }
     
     override func drawRect(dirtyRect: NSRect) {
