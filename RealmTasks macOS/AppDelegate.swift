@@ -24,15 +24,15 @@ import RealmSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    
+
     private(set) var mainWindowController: NSWindowController!
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
-        
+
         Realm.Configuration.defaultConfiguration = syncRealmConfiguration
         Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
-        
+
         do {
             let realm = try Realm()
             if realm.isEmpty {
@@ -44,10 +44,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } catch {
             fatalError("Could not open or write to the realm: \(error)")
         }
-        
+
         mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
         mainWindowController.showWindow(nil)
-        
+
         if let userRealm = try? Realm(configuration: userRealmConfiguration),
             let token = userRealm.objects(User.self).first?.accessToken {
             try! Realm().open(with: token)
@@ -55,10 +55,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // TODO: log in
         }
     }
-    
+
     func applicationShouldHandleReopen(sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         mainWindowController.showWindow(nil)
-        
+
         return true
     }
 
