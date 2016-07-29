@@ -63,6 +63,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
     private var notificationToken: NotificationToken?
+    private var realmNotificationToken: NotificationToken?
     private var skipNotification = false
     private var reloadOnNotification = false
 
@@ -106,6 +107,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupFirstSyncWorkaround()
         setupNotifications()
         setupGestureRecognizers()
     }
@@ -200,11 +202,39 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Notifications
 
-    private func setupNotifications() {
-        if notificationToken != nil {
-            return
-        }
+    private func setupFirstSyncWorkaround() {
+        // FIXME: Hack to work around sync possibly pulling in a new list.
+        // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
+        realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
+            let lists = realm.objects(ToDoList.self)
+            guard lists.count > 1 else { return }
 
+            self.realmNotificationToken?.stop()
+            self.realmNotificationToken = nil
+
+            guard lists.first!.items != self.items else { return }
+
+            self.items = lists.first!.items
+
+            self.notificationToken?.stop()
+            self.notificationToken = nil
+            self.setupNotifications()
+
+            // Append all other items while deleting their lists, in case they were created locally before sync
+            dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
+                let realm = try! Realm()
+                try! realm.write {
+                    let lists = realm.objects(ToDoList.self)
+                    while lists.count > 1 {
+                        lists.first!.items.appendContentsOf(lists.last!.items)
+                        realm.delete(lists.last!)
+                    }
+                }
+            }
+        }
+    }
+
+    private func setupNotifications() {
         notificationToken = items.addNotificationBlock { changes in
             if self.skipNotification {
                 self.skipNotification = false
@@ -214,27 +244,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.tableView.reloadData()
                 self.reloadOnNotification = false
                 return
-            }
-
-            // FIXME: Hack to work around sync possibly pulling in a new list.
-            // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
-            let realm = self.items.realm!
-            let lists = realm.objects(ToDoList)
-            let hasMultipleLists = lists.count > 1
-            if hasMultipleLists { self.items = lists.first!.items }
-            defer {
-                if hasMultipleLists {
-                    self.notificationToken?.stop()
-                    self.notificationToken = nil
-                    self.setupNotifications()
-                    // Append all other items while deleting their lists, in case they were created locally before sync
-                    try! realm.write {
-                        while lists.count > 1 {
-                            self.items.appendContentsOf(lists.last!.items)
-                            realm.delete(lists.last!)
-                        }
-                    }
-                }
             }
 
             switch changes {
