@@ -49,10 +49,6 @@ private func delay(time: Double, block: () -> ()) {
     dispatch_after(delayTime, dispatch_get_main_queue(), block)
 }
 
-private func degreesToRadians(value: Double) -> Double {
-    return value * M_PI / 180
-}
-
 // MARK: View Controller
 
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
@@ -451,7 +447,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             placeHolderCell.textView.text = "Pull to Create Item"
 
             let cellHeight = tableView.rowHeight
-            let angle = CGFloat(degreesToRadians(90)) - tan(distancePulledDown / cellHeight)
+            let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
 
             var transform = CATransform3DIdentity
             transform.m34 = 1 / -(1000 * 0.2)
