@@ -24,16 +24,16 @@ import RealmSwift
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-    
+
     var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
-    
+
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
+
         RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
-        
+
         Realm.Configuration.defaultConfiguration = syncRealmConfiguration
         Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
-        
+
         do {
             let realm = try Realm()
             if realm.isEmpty {
@@ -45,7 +45,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             fatalError("Could not open or write to the realm: \(error)")
         }
-        
+
         window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
 
@@ -55,13 +55,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             logIn()
         }
-        
+
         return true
     }
-    
+
     func logIn() {
         let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: RLMSyncManager.sharedManager().appID, realmPath: Constants.syncRealmPath)
-        
+
         loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
             if let token = accessToken {
                 dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
