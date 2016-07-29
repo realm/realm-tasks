@@ -291,7 +291,7 @@
 					};
 					E84CF2B01CBC408000082C1A = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = 57LMAT5XPH;
+						DevelopmentTeam = QX5CR2FTN2;
 					};
 				};
 			};
