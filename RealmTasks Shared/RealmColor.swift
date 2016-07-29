@@ -32,30 +32,29 @@ import Foundation
 
 extension Color {
 
-    var realmColors: [Color] {
-        return [Color(red: 231/255, green: 167/255, blue: 118/255, alpha: 1),
-                Color(red: 228/255, green: 125/255, blue: 114/255, alpha: 1),
-                Color(red: 233/255, green: 99/255, blue: 111/255, alpha: 1),
-                Color(red: 242/255, green: 81/255, blue: 145/255, alpha: 1),
-                Color(red: 154/255, green: 80/255, blue: 164/255, alpha: 1),
-                Color(red: 88/255, green: 86/255, blue: 157/255, alpha: 1),
-                Color(red: 56/255, green: 71/255, blue: 126/255, alpha: 1)]
+    private static func realmColors() -> [Color] {
+        return [
+            Color(red: 231/255, green: 167/255, blue: 118/255, alpha: 1),
+            Color(red: 228/255, green: 125/255, blue: 114/255, alpha: 1),
+            Color(red: 233/255, green: 99/255, blue: 111/255, alpha: 1),
+            Color(red: 242/255, green: 81/255, blue: 145/255, alpha: 1),
+            Color(red: 154/255, green: 80/255, blue: 164/255, alpha: 1),
+            Color(red: 88/255, green: 86/255, blue: 157/255, alpha: 1),
+            Color(red: 56/255, green: 71/255, blue: 126/255, alpha: 1)
+        ]
     }
 
     class func colorForRealmLogoGradient(offset: Double) -> Color {
-        var newOffset = offset
-
         // Ensure offset is normalized to 1
-        newOffset = min(newOffset, 1)
-        newOffset = max(newOffset, 0)
+        let normalizedOffset = max(min(offset, 1), 0)
 
-        let realmLogoColors = Color().realmColors
+        let realmLogoColors = realmColors()
 
         // Work out the 'size' that each color stop spans
-        let colorStopRange = 1 / Double(realmLogoColors.count-1)
+        let colorStopRange = 1 / Double(realmLogoColors.count - 1)
 
         // Determine the base stop our offset is within
-        let colorRangeIndex = Int(floor(newOffset / colorStopRange))
+        let colorRangeIndex = Int(floor(normalizedOffset / colorStopRange))
 
         // Get the initial color which will serve as the origin
         let topColor = realmLogoColors[colorRangeIndex]
@@ -68,14 +67,12 @@ extension Color {
         bottomColor.getRed(&toColors[0], green: &toColors[1], blue: &toColors[2], alpha: nil)
 
         // Work out the actual percentage we need to lerp, inside just that stop range
-        let stopOffset = (newOffset - (Double(colorRangeIndex) * colorStopRange)) / colorStopRange
+        let stopOffset = CGFloat((normalizedOffset - (Double(colorRangeIndex) * colorStopRange)) / colorStopRange)
 
         // Perform the interpolation
-        var finalColors: [CGFloat] = [0, 0, 0]
-        finalColors[0] = fromColors[0] + CGFloat(stopOffset) * (toColors[0] - fromColors[0])
-        finalColors[1] = fromColors[1] + CGFloat(stopOffset) * (toColors[1] - fromColors[1])
-        finalColors[2] = fromColors[2] + CGFloat(stopOffset) * (toColors[2] - fromColors[2])
-
+        let finalColors = zip(fromColors, toColors).map { from, to in
+            return from + stopOffset * (to - from)
+        }
         return Color(red: finalColors[0], green: finalColors[1], blue: finalColors[2], alpha: 1)
     }
 
