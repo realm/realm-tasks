@@ -76,8 +76,8 @@ class ToDoItemCellView: NSTableCellView {
     private let overlayView = ColorView()
     private let textView = ToDoItemTextField()
     
-    private var originalDoneIconOffset: CGFloat = 0.0
-    private var originalDeleteIconOffset: CGFloat = 0.0
+    private var originalDoneIconOffset: CGFloat = 0
+    private var originalDeleteIconOffset: CGFloat = 0
     
     private var releaseAction: ReleaseAction?
     
@@ -110,8 +110,8 @@ class ToDoItemCellView: NSTableCellView {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        alphaValue = 1.0
-        contentView.frame.origin.x = 0.0
+        alphaValue = 1
+        contentView.frame.origin.x = 0
     }
     
     override func acceptsFirstMouse(theEvent: NSEvent?) -> Bool {
@@ -128,13 +128,13 @@ class ToDoItemCellView: NSTableCellView {
     }
     
     private func setupIconViews() {
-        doneIconView.alphaValue = 0.0
+        doneIconView.alphaValue = 0
         doneIconView.frame.size.width = 40
         doneIconView.frame.origin.x = 20
         doneIconView.autoresizingMask = [.ViewMaxXMargin, .ViewHeightSizable]
         addSubview(doneIconView, positioned: .Below, relativeTo: contentView)
         
-        deleteIconView.alphaValue = 0.0
+        deleteIconView.alphaValue = 0
         deleteIconView.frame.size.width = 40
         deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - 20
         deleteIconView.autoresizingMask = [.ViewMinXMargin, .ViewHeightSizable]
@@ -222,7 +222,7 @@ class ToDoItemCellView: NSTableCellView {
                 deleteIconView.setFrameOrigin(NSPoint(x: originalDeleteIconOffset - x, y: deleteIconView.frame.origin.y))
             }
             
-            if translation.x > 0.0 {
+            if translation.x > 0 {
                 doneIconView.alphaValue = CGFloat(fractionOfThreshold)
             } else {
                 deleteIconView.alphaValue = CGFloat(fractionOfThreshold)
@@ -258,7 +258,7 @@ class ToDoItemCellView: NSTableCellView {
             switch releaseAction {
             case .Complete?:
                 animationBlock = {
-                    self.contentView.frame.origin.x = 0.0
+                    self.contentView.frame.origin.x = 0
                 }
                 
                 completionBlock = {
@@ -270,7 +270,7 @@ class ToDoItemCellView: NSTableCellView {
                 }
             case .Delete?:
                 animationBlock = {
-                    self.alphaValue = 0.0
+                    self.alphaValue = 0
                     
                     self.contentView.frame.origin.x = -self.contentView.bounds.width - (self.bounds.size.width / 4)
                     self.deleteIconView.frame.origin.x = -(self.bounds.size.width / 4) + self.deleteIconView.bounds.width + 20
@@ -283,7 +283,7 @@ class ToDoItemCellView: NSTableCellView {
                 completed ? textView.strike() : textView.unstrike()
                 
                 animationBlock = {
-                    self.contentView.frame.origin.x = 0.0
+                    self.contentView.frame.origin.x = 0
                 }
                 
                 completionBlock = {}
@@ -293,10 +293,10 @@ class ToDoItemCellView: NSTableCellView {
                 completionBlock()
                 
                 self.doneIconView.frame.origin.x = 20
-                self.doneIconView.alphaValue = 0.0
+                self.doneIconView.alphaValue = 0
                 
                 self.deleteIconView.frame.origin.x = self.bounds.width - self.deleteIconView.bounds.width - 20
-                self.deleteIconView.alphaValue = 0.0
+                self.deleteIconView.alphaValue = 0
             }
         default:
             break
