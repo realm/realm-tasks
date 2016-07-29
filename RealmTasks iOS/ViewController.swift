@@ -417,7 +417,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         var item = items[indexPath.row]
 
-        // If we are dragging an item around, swap those 
+        // If we are dragging an item around, swap those
         // two items for their appropriate height values
         if let startIndexPath = startIndexPath, sourceIndexPath = sourceIndexPath {
             if indexPath.row == sourceIndexPath.row {

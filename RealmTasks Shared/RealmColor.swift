@@ -22,11 +22,11 @@ import Foundation
 
 #if os(iOS)
     import UIKit
-    
+
     typealias Color = UIColor
 #elseif os(OSX)
     import AppKit
-    
+
     typealias Color = NSColor
 #endif
 
@@ -83,9 +83,9 @@ extension Color {
     static func completeDimBackgroundColor() -> Color {
         return Color(white: 0.2, alpha: 1)
     }
-    
+
     static func completeGreenBackgroundColor() -> Color {
         return Color(red: 0, green: 0.6, blue: 0, alpha: 1)
     }
-    
+
 }
