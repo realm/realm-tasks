@@ -297,6 +297,17 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
+        } else {
+            try! items.realm?.write {
+                items.append(ToDoItem())
+            }
+            let indexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+            toggleOnboardView(animated: true)
+            skipNextNotification()
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell
+            cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
+            cell.textView.becomeFirstResponder()
         }
     }
 
