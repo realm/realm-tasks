@@ -203,6 +203,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             if hasMultipleLists { self.items = lists.first!.items }
             defer {
                 if hasMultipleLists {
+                    self.notificationToken?.stop()
+                    self.notificationToken = nil
+                    self.setupNotifications()
                     // Append all other items while deleting their lists, in case they were created locally before sync
                     try! realm.write {
                         while lists.count > 1 {
