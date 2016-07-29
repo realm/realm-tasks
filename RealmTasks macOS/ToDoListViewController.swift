@@ -130,9 +130,10 @@ extension ToDoListViewController: NSTableViewDelegate {
     }
     
     private func updateColors() {
-        tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-            if let cellView = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ToDoItemCellView {
-                NSView.animateWithDuration(5, animations: { 
+        tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
+            // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
+            if let cellView = rowView.subviews.first as? ToDoItemCellView {
+                NSView.animateWithDuration(5, animations: {
                     cellView.backgroundColor = self.realmColor(forRow: row)
                 })
             }
