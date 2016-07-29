@@ -587,7 +587,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             try! item.realm?.write {
                 item.realm!.delete(item)
             }
-            self.tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
+            tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
         }
         skipNextNotification()
         toggleOnboardView()
