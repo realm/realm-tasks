@@ -63,7 +63,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
     private var notificationToken: NotificationToken?
-    private var disableNotificationsState = false
+    private var skipNotification = false
+    private var reloadOnNotification = false
 
     // Computed Properties
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
@@ -184,7 +185,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         notificationToken = items.addNotificationBlock { changes in
-            if self.disableNotificationsState {
+            if self.skipNotification {
+                self.skipNotification = false
+                self.reloadOnNotification = true
+                return
+            } else if self.reloadOnNotification {
+                self.tableView.reloadData()
+                self.reloadOnNotification = false
                 return
             }
 
@@ -347,7 +354,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.removeAtIndex(startIndexPath.row)
                 items.insert(item, atIndex: indexPath.row)
             }
-            temporarilyDisableNotifications(reloadTable: false)
+            skipNextNotification()
 
             self.startIndexPath = nil
             self.sourceIndexPath = nil
@@ -462,11 +469,18 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard distancePulledUp < 160 else {
             let itemsToDelete = items.filter("completed = true")
-            guard !itemsToDelete.isEmpty else { return }
+            let numberOfItemsToDelete = itemsToDelete.count
+            guard numberOfItemsToDelete != 0 else { return }
 
             try! items.realm?.write {
                 items.realm?.delete(itemsToDelete)
             }
+            let startingIndex = items.count
+            let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
+                return NSIndexPath(forRow: index, inSection: 0)
+            }
+            tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
+            skipNextNotification()
 
             vibrate()
             return
@@ -478,7 +492,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         try! items.realm?.write {
             items.insert(ToDoItem(), atIndex: 0)
         }
-        temporarilyDisableNotifications(reloadTable: false)
+        skipNextNotification()
         tableView.reloadData()
         visibleTableViewCells.first!.textView.becomeFirstResponder()
     }
@@ -495,17 +509,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        temporarilyDisableNotifications(reloadTable: false)
-
+        skipNextNotification()
+        updateColors()
         toggleOnboardView()
-
-        delay(0.2) {
-            [weak self] in
-
-            self?.updateColors {
-                self?.tableView.reloadData()
-            }
-        }
     }
 
     func itemCompleted(item: ToDoItem) {
@@ -522,16 +528,15 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             let completedCount = items.filter("completed = true").count
             destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
         }
-        delay(0.2) { [weak self] in
-            try! self?.items.realm?.write {
-                self!.items.removeAtIndex(sourceIndexPath.row)
-                self!.items.insert(item, atIndex: destinationIndexPath.row)
-            }
-
-            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-            self?.temporarilyDisableNotifications()
+        try! items.realm?.write {
+            items.removeAtIndex(sourceIndexPath.row)
+            items.insert(item, atIndex: destinationIndexPath.row)
         }
-        delay(0.6) { [weak self] in self?.updateColors() }
+
+        tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
+        skipNextNotification()
+        updateColors()
+        toggleOnboardView()
     }
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
@@ -582,8 +587,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             try! item.realm?.write {
                 item.realm!.delete(item)
             }
+            self.tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
         }
-
+        skipNextNotification()
         toggleOnboardView()
     }
 
@@ -624,14 +630,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Sync
 
-    private func temporarilyDisableNotifications(reloadTable reloadTable: Bool = true) {
-        disableNotificationsState = true
-        delay(1) {
-            self.disableNotificationsState = false
-
-            if reloadTable {
-                self.tableView.reloadData()
-            }
-        }
+    private func skipNextNotification() {
+        skipNotification = true
+        reloadOnNotification = false
     }
 }
