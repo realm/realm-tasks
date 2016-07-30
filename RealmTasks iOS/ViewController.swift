@@ -49,10 +49,6 @@ private func delay(time: Double, block: () -> ()) {
     dispatch_after(delayTime, dispatch_get_main_queue(), block)
 }
 
-private func degreesToRadians(value: Double) -> Double {
-    return value * M_PI / 180
-}
-
 // MARK: View Controller
 
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
@@ -63,6 +59,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
     private var notificationToken: NotificationToken?
+    private var realmNotificationToken: NotificationToken?
     private var skipNotification = false
     private var reloadOnNotification = false
 
@@ -106,6 +103,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupFirstSyncWorkaround()
+        setupNotifications()
         setupGestureRecognizers()
     }
 
@@ -119,7 +118,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         setupTableView()
         setupPlaceholderCell()
         setupTitleBar()
-        setupNotifications()
         toggleOnboardView()
     }
 
@@ -179,11 +177,58 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    private func setupNotifications() {
-        if notificationToken != nil {
-            return
+    private func toggleOnboardView(animated animated: Bool = false) {
+        if onboardView.superview == nil {
+            tableView.addSubview(onboardView)
+            onboardView.center = tableView.center
         }
 
+        func updateAlpha() {
+            onboardView.alpha = tableView.numberOfRowsInSection(0) > 0 ? 0 : 1
+        }
+
+        if animated {
+            UIView.animateWithDuration(0.3, animations: updateAlpha)
+        } else {
+            updateAlpha()
+        }
+    }
+
+    // MARK: Notifications
+
+    private func setupFirstSyncWorkaround() {
+        // FIXME: Hack to work around sync possibly pulling in a new list.
+        // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
+        realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
+            let lists = realm.objects(ToDoList.self)
+            guard lists.count > 1 else { return }
+
+            self.realmNotificationToken?.stop()
+            self.realmNotificationToken = nil
+
+            guard lists.first!.items != self.items else { return }
+
+            self.items = lists.first!.items
+
+            self.notificationToken?.stop()
+            self.notificationToken = nil
+            self.setupNotifications()
+
+            // Append all other items while deleting their lists, in case they were created locally before sync
+            dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
+                let realm = try! Realm()
+                try! realm.write {
+                    let lists = realm.objects(ToDoList.self)
+                    while lists.count > 1 {
+                        lists.first!.items.appendContentsOf(lists.last!.items)
+                        realm.delete(lists.last!)
+                    }
+                }
+            }
+        }
+    }
+
+    private func setupNotifications() {
         notificationToken = items.addNotificationBlock { changes in
             if self.skipNotification {
                 self.skipNotification = false
@@ -193,24 +238,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.tableView.reloadData()
                 self.reloadOnNotification = false
                 return
-            }
-
-            // FIXME: Hack to work around sync possibly pulling in a new list.
-            // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
-            let realm = self.items.realm!
-            let lists = realm.objects(ToDoList)
-            let hasMultipleLists = lists.count > 1
-            if hasMultipleLists { self.items = lists.first!.items }
-            defer {
-                if hasMultipleLists {
-                    // Append all other items while deleting their lists, in case they were created locally before sync
-                    try! realm.write {
-                        while lists.count > 1 {
-                            self.items.appendContentsOf(lists.last!.items)
-                            realm.delete(lists.last!)
-                        }
-                    }
-                }
             }
 
             switch changes {
@@ -250,36 +277,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    func cellHeightForText(text: NSString) -> CGFloat {
-        var size = view.bounds.size
-        size.width -= 25
-
-        let height = text.boundingRectWithSize(size,
-                                               options: [.UsesLineFragmentOrigin],
-                                               attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
-                                               context: nil).height
-        return ceil(height) + 33
-    }
-
-    private func toggleOnboardView(animated animated: Bool = false) {
-        if onboardView.superview == nil {
-            tableView.addSubview(onboardView)
-            onboardView.center = tableView.center
-        }
-
-        let numberOfRows = tableView.numberOfRowsInSection(0)
-        let hidden = numberOfRows > 0
-
-        if animated == false {
-            onboardView.alpha = hidden ? 0 : 1
-            return
-        }
-
-        UIView.animateWithDuration(0.3) {
-            self.onboardView.alpha = hidden ? 0 : 1
-        }
-    }
-
     // MARK: Gesture Recognizers
 
     private func setupGestureRecognizers() {
@@ -298,6 +295,17 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             view.endEditing(true)
         } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
             cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
+            cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
+            cell.textView.becomeFirstResponder()
+        } else {
+            try! items.realm?.write {
+                items.append(ToDoItem())
+            }
+            let indexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+            toggleOnboardView(animated: true)
+            skipNextNotification()
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         }
@@ -407,6 +415,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
 
+    func cellHeightForText(text: NSString) -> CGFloat {
+        return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
+                                         options: [.UsesLineFragmentOrigin],
+                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
+                                         context: nil).height + 33
+    }
+
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -416,7 +431,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         var item = items[indexPath.row]
 
-        // If we are dragging an item around, swap those 
+        // If we are dragging an item around, swap those
         // two items for their appropriate height values
         if let startIndexPath = startIndexPath, sourceIndexPath = sourceIndexPath {
             if indexPath.row == sourceIndexPath.row {
@@ -443,7 +458,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             placeHolderCell.textView.text = "Pull to Create Item"
 
             let cellHeight = tableView.rowHeight
-            let angle = CGFloat(degreesToRadians(90)) - tan(distancePulledDown / cellHeight)
+            let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
 
             var transform = CATransform3DIdentity
             transform.m34 = 1 / -(1000 * 0.2)
@@ -473,6 +488,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             guard numberOfItemsToDelete != 0 else { return }
 
             try! items.realm?.write {
+                items.removeLast(numberOfItemsToDelete)
                 items.realm?.delete(itemsToDelete)
             }
             let startingIndex = items.count

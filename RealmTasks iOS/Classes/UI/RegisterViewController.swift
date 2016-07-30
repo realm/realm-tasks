@@ -14,32 +14,32 @@ enum RegisterViewControllerReturnCode: Int {
 }
 
 class RegisterViewController: UIViewController {
-    
+
     @IBOutlet private weak var userNameTextField: UITextField!
     @IBOutlet private weak var passwordTextField: UITextField!
     @IBOutlet private weak var confirmationTextField: UITextField!
     @IBOutlet private weak var registerButton: UIButton!
-    
+
     var completionHandler: ((userName: String?, password: String?, returnCode: RegisterViewControllerReturnCode) -> ())?
-    
+
     override func viewDidLoad() {
         userNameTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
         passwordTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
         confirmationTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
-        
+
         updateUI()
     }
-    
+
     @IBAction func register(sender: AnyObject?) {
         guard userInputValid() else {
             return
         }
-        
+
         dismissViewControllerAnimated(true) {
             self.completionHandler?(userName: self.userNameTextField.text, password: self.passwordTextField.text, returnCode: .Register)
         }
     }
-    
+
     @IBAction func cancel(sender: AnyObject?) {
         dismissViewControllerAnimated(true) {
             self.completionHandler?(userName: nil, password: nil, returnCode: .Cancel)
@@ -49,7 +49,7 @@ class RegisterViewController: UIViewController {
     private dynamic func updateUI() {
         registerButton.enabled = userInputValid()
     }
-    
+
     private func userInputValid() -> Bool {
         guard
             let userName = userNameTextField.text where userName.characters.count > 0,
@@ -58,14 +58,14 @@ class RegisterViewController: UIViewController {
         else {
             return false
         }
-        
+
         return true
     }
 
 }
 
 extension RegisterViewController: UITextFieldDelegate {
-    
+
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if textField == userNameTextField {
             passwordTextField.becomeFirstResponder()
@@ -74,16 +74,16 @@ extension RegisterViewController: UITextFieldDelegate {
         } else if textField == confirmationTextField {
             register(nil)
         }
-        
+
         return false
     }
-    
+
 }
 
 extension RegisterViewController: UINavigationBarDelegate {
-    
+
     func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
         return .TopAttached
     }
-    
+
 }

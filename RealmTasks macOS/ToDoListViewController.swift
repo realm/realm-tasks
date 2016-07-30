@@ -24,18 +24,18 @@ import RealmSwift
 let toDoCellIdentifier = "ToDoItemCell"
 
 class ToDoListViewController: NSViewController {
-    
+
     @IBOutlet var tableView: NSTableView!
-    
+
     private var items = try! Realm().objects(ToDoList).first!.items
     private var notificationToken: NotificationToken?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupNotifications()
     }
-    
+
     private func setupNotifications() {
         notificationToken = items.addNotificationBlock { changes in
             // FIXME: Hack to work around sync possibly pulling in a new list.
@@ -43,10 +43,10 @@ class ToDoListViewController: NSViewController {
             let realm = self.items.realm!
             let lists = realm.objects(ToDoList)
             let hasMultipleLists = lists.count > 1
-            
+
             if hasMultipleLists {
                 self.items = lists.first!.items
-                
+
                 defer {
                     // Append all other items while deleting their lists, in case they were created locally before sync
                     try! realm.write {
@@ -55,41 +55,41 @@ class ToDoListViewController: NSViewController {
                             realm.delete(lists.last!)
                         }
                     }
-                    
+
                     // Resubscribe to notifications
                     self.setupNotifications()
                 }
             }
-            
+
             // TODO: add fancy animations
             self.tableView.reloadData()
         }
     }
-    
+
 }
 
 extension ToDoListViewController: NSTableViewDataSource {
-    
+
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return items.count
     }
-    
+
 }
 
 extension ToDoListViewController: NSTableViewDelegate {
-    
+
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let cell = tableView.makeViewWithIdentifier(toDoCellIdentifier, owner: self) as? ToDoItemCellView else {
             fatalError("Unknown cell type")
         }
-        
+
         cell.configureWithToDoItem(items[row], color: realmColor(forRow: row))
-        
+
         return cell
     }
-    
+
     private func realmColor(forRow row: Int) -> NSColor {
         return .colorForRealmLogoGradient(Double(row) / Double(max(13, tableView.numberOfRows)))
     }
-    
+
 }
