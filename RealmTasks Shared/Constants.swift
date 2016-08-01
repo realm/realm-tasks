@@ -26,11 +26,11 @@ struct Constants {
     #else
     static let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
     #endif
-    
+
     static let syncRealmPath = "realmtasks"
-    
+
     static let syncServerURL = NSURL(string: "realm://\(syncHost):7800/private/\(syncRealmPath)")!
     static let syncAuthURL = NSURL(string: "http://\(syncHost):3000/auth")!
-    
+
     static let appID = NSBundle.mainBundle().bundleIdentifier!
 }

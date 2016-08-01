@@ -49,10 +49,6 @@ private func delay(time: Double, block: () -> ()) {
     dispatch_after(delayTime, dispatch_get_main_queue(), block)
 }
 
-private func degreesToRadians(value: Double) -> Double {
-    return value * M_PI / 180
-}
-
 // MARK: View Controller
 
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
@@ -63,7 +59,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var items = try! Realm().objects(ToDoList).first!.items
     private let tableView = UITableView()
     private var notificationToken: NotificationToken?
-    private var disableNotificationsState = false
+    private var realmNotificationToken: NotificationToken?
+    private var skipNotification = false
+    private var reloadOnNotification = false
 
     // Computed Properties
     private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
@@ -90,11 +88,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
     private var currentlyEditingIndexPath: NSIndexPath? = nil
     private var topConstraint: NSLayoutConstraint?
-    private var previousContentOffset = CGPoint.zero
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
-    private let textEditingCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
 
     // Onboard view
     private let onboardView = OnboardView()
@@ -107,6 +103,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupFirstSyncWorkaround()
+        setupNotifications()
         setupGestureRecognizers()
     }
 
@@ -120,7 +118,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         setupTableView()
         setupPlaceholderCell()
         setupTitleBar()
-        setupNotifications()
         toggleOnboardView()
     }
 
@@ -145,7 +142,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
-        placeHolderCell.backgroundView!.backgroundColor = UIColor().realmColors[0]
+        placeHolderCell.backgroundView!.backgroundColor = .colorForRealmLogoGradient(0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -180,32 +177,67 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    private func setupNotifications() {
-        if notificationToken != nil {
-            return
+    private func toggleOnboardView(animated animated: Bool = false) {
+        if onboardView.superview == nil {
+            tableView.addSubview(onboardView)
+            onboardView.center = tableView.center
         }
 
-        notificationToken = items.addNotificationBlock { changes in
-            if self.disableNotificationsState {
-                return
-            }
+        func updateAlpha() {
+            onboardView.alpha = tableView.numberOfRowsInSection(0) > 0 ? 0 : 1
+        }
 
-            // FIXME: Hack to work around sync possibly pulling in a new list.
-            // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
-            let realm = self.items.realm!
-            let lists = realm.objects(ToDoList)
-            let hasMultipleLists = lists.count > 1
-            if hasMultipleLists { self.items = lists.first!.items }
-            defer {
-                if hasMultipleLists {
-                    // Append all other items while deleting their lists, in case they were created locally before sync
-                    try! realm.write {
-                        while lists.count > 1 {
-                            self.items.appendContentsOf(lists.last!.items)
-                            realm.delete(lists.last!)
-                        }
+        if animated {
+            UIView.animateWithDuration(0.3, animations: updateAlpha)
+        } else {
+            updateAlpha()
+        }
+    }
+
+    // MARK: Notifications
+
+    private func setupFirstSyncWorkaround() {
+        // FIXME: Hack to work around sync possibly pulling in a new list.
+        // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
+        realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
+            let lists = realm.objects(ToDoList.self)
+            guard lists.count > 1 else { return }
+
+            self.realmNotificationToken?.stop()
+            self.realmNotificationToken = nil
+
+            guard lists.first!.items != self.items else { return }
+
+            self.items = lists.first!.items
+
+            self.notificationToken?.stop()
+            self.notificationToken = nil
+            self.setupNotifications()
+
+            // Append all other items while deleting their lists, in case they were created locally before sync
+            dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
+                let realm = try! Realm()
+                try! realm.write {
+                    let lists = realm.objects(ToDoList.self)
+                    while lists.count > 1 {
+                        lists.first!.items.appendContentsOf(lists.last!.items)
+                        realm.delete(lists.last!)
                     }
                 }
+            }
+        }
+    }
+
+    private func setupNotifications() {
+        notificationToken = items.addNotificationBlock { changes in
+            if self.skipNotification {
+                self.skipNotification = false
+                self.reloadOnNotification = true
+                return
+            } else if self.reloadOnNotification {
+                self.tableView.reloadData()
+                self.reloadOnNotification = false
+                return
             }
 
             switch changes {
@@ -245,36 +277,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    func cellHeightForText(text: NSString) -> CGFloat {
-        var size = view.bounds.size
-        size.width -= 25
-
-        let height = text.boundingRectWithSize(size,
-                                               options: [.UsesLineFragmentOrigin],
-                                               attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
-                                               context: nil).height
-        return ceil(height) + 33
-    }
-
-    private func toggleOnboardView(animated animated: Bool = false) {
-        if onboardView.superview == nil {
-            tableView.addSubview(onboardView)
-            onboardView.center = tableView.center
-        }
-
-        let numberOfRows = tableView.numberOfRowsInSection(0)
-        let hidden = (numberOfRows > 0 || textEditingCell.superview != nil)
-
-        if animated == false {
-            onboardView.alpha = hidden ? 0 : 1
-            return
-        }
-
-        UIView.animateWithDuration(0.3) {
-            self.onboardView.alpha = hidden ? 0 : 1
-        }
-    }
-
     // MARK: Gesture Recognizers
 
     private func setupGestureRecognizers() {
@@ -293,6 +295,17 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             view.endEditing(true)
         } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
             cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
+            cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
+            cell.textView.becomeFirstResponder()
+        } else {
+            try! items.realm?.write {
+                items.append(ToDoItem())
+            }
+            let indexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+            toggleOnboardView(animated: true)
+            skipNextNotification()
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         }
@@ -349,7 +362,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 items.removeAtIndex(startIndexPath.row)
                 items.insert(item, atIndex: indexPath.row)
             }
-            temporarilyDisableNotifications(reloadTable: false)
+            skipNextNotification()
 
             self.startIndexPath = nil
             self.sourceIndexPath = nil
@@ -402,6 +415,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
 
+    func cellHeightForText(text: NSString) -> CGFloat {
+        return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
+                                         options: [.UsesLineFragmentOrigin],
+                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
+                                         context: nil).height + 33
+    }
+
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -411,7 +431,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         var item = items[indexPath.row]
 
-        // If we are dragging an item around, swap those 
+        // If we are dragging an item around, swap those
         // two items for their appropriate height values
         if let startIndexPath = startIndexPath, sourceIndexPath = sourceIndexPath {
             if indexPath.row == sourceIndexPath.row {
@@ -438,7 +458,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             placeHolderCell.textView.text = "Pull to Create Item"
 
             let cellHeight = tableView.rowHeight
-            let angle = CGFloat(degreesToRadians(90)) - tan(distancePulledDown / cellHeight)
+            let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
 
             var transform = CATransform3DIdentity
             transform.m34 = 1 / -(1000 * 0.2)
@@ -464,12 +484,19 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard distancePulledUp < 160 else {
             let itemsToDelete = items.filter("completed = true")
-            guard !itemsToDelete.isEmpty else { return }
+            let numberOfItemsToDelete = itemsToDelete.count
+            guard numberOfItemsToDelete != 0 else { return }
 
             try! items.realm?.write {
+                items.removeLast(numberOfItemsToDelete)
                 items.realm?.delete(itemsToDelete)
             }
-            temporarilyDisableNotifications()
+            let startingIndex = items.count
+            let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
+                return NSIndexPath(forRow: index, inSection: 0)
+            }
+            tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
+            skipNextNotification()
 
             vibrate()
             return
@@ -478,18 +505,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         guard distancePulledDown > tableView.rowHeight else { return }
 
         // exceeds threshold
-        textEditingCell.frame = placeHolderCell.bounds
-        textEditingCell.frame.origin.y = tableView.contentInset.top + (distancePulledDown - tableView.rowHeight)
-        textEditingCell.backgroundView!.backgroundColor = placeHolderCell.backgroundView!.backgroundColor
-        view.addSubview(textEditingCell)
-
-        textEditingCell.item = ToDoItem(text: "")
-        textEditingCell.delegate = self
-
-        textEditingCell.textView.userInteractionEnabled = true
-        textEditingCell.textView.becomeFirstResponder()
-
-        toggleOnboardView()
+        try! items.realm?.write {
+            items.insert(ToDoItem(), atIndex: 0)
+        }
+        skipNextNotification()
+        tableView.reloadData()
+        visibleTableViewCells.first!.textView.becomeFirstResponder()
     }
 
     // MARK: TableViewCellDelegate
@@ -504,17 +525,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        temporarilyDisableNotifications(reloadTable: false)
-
+        skipNextNotification()
+        updateColors()
         toggleOnboardView()
-
-        delay(0.2) {
-            [weak self] in
-
-            self?.updateColors {
-                self?.tableView.reloadData()
-            }
-        }
     }
 
     func itemCompleted(item: ToDoItem) {
@@ -531,36 +544,35 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             let completedCount = items.filter("completed = true").count
             destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
         }
-        delay(0.2) { [weak self] in
-            try! self?.items.realm?.write {
-                self!.items.removeAtIndex(sourceIndexPath.row)
-                self!.items.insert(item, atIndex: destinationIndexPath.row)
-            }
-
-            self?.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-            self?.temporarilyDisableNotifications()
+        try! items.realm?.write {
+            items.removeAtIndex(sourceIndexPath.row)
+            items.insert(item, atIndex: destinationIndexPath.row)
         }
-        delay(0.6) { [weak self] in self?.updateColors() }
+
+        tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
+        skipNextNotification()
+        updateColors()
+        toggleOnboardView()
     }
 
     func cellDidBeginEditing(editingCell: TableViewCell) {
         currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
-        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y
-        if editingOffset >= tableView.contentSize.height / 2 {
-            topConstraint?.constant = -editingOffset
+        let editingOffset: CGFloat
+        if editingCell.textView.text.isEmpty {
+            editingOffset = 0
         } else {
-            topConstraint?.constant = -(editingOffset + distancePulledDown)
+            editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
         }
-        previousContentOffset = tableView.contentOffset
+        topConstraint?.constant = -editingOffset
+        tableView.contentInset.bottom += editingOffset
 
         placeHolderCell.alpha = 0
         tableView.bounces = false
 
         UIView.animateWithDuration(0.3, animations: { [unowned self] in
             self.view.layoutSubviews()
-            self.textEditingCell.frame.origin.y = 45
             for cell in self.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = self.editingCellAlpha
             }
@@ -573,36 +585,27 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         currentlyEditingCell = nil
         currentlyEditingIndexPath = nil
 
+        tableView.contentInset.bottom = 54
         topConstraint?.constant = 0
-        UIView.animateWithDuration(0.3) { [unowned self] in
-            self.tableView.contentOffset = self.previousContentOffset
-            for cell in self.visibleTableViewCells where cell !== editingCell {
+        UIView.animateWithDuration(0.3) { [weak self] in
+            guard let strongSelf = self else { return }
+            for cell in strongSelf.visibleTableViewCells where cell !== editingCell {
                 cell.alpha = 1
             }
         }
 
-        if let item = editingCell.item where editingCell == textEditingCell && !item.text.isEmpty {
-            try! items.realm?.write {
-                items.insert(item, atIndex: 0)
-            }
-
-            UIView.performWithoutAnimation {
-                self.tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)], withRowAnimation: .None)
-            }
-            temporarilyDisableNotifications()
-
-            updateColors()
-        } else {
-            UIView.animateWithDuration(0.3) { [weak self] in
-                guard let strongSelf = self else { return }
-                strongSelf.view.layoutSubviews()
-            }
+        UIView.animateWithDuration(0.3) { [weak self] in
+            self?.view.layoutSubviews()
         }
 
-        if textEditingCell.superview != nil {
-            textEditingCell.removeFromSuperview()
+        if editingCell.item.text.isEmpty {
+            let item = editingCell.item
+            try! item.realm?.write {
+                item.realm!.delete(item)
+            }
+            tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
         }
-
+        skipNextNotification()
         toggleOnboardView()
     }
 
@@ -618,19 +621,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             for cell in visibleTableViewCells where cell !== editingCell {
                 cell.alpha = editingCellAlpha
-            }
-
-            if editingCell == textEditingCell {
-                var frame = textEditingCell.frame
-                frame.size.height = cellHeightForText(textEditingCell.textView.text)
-                textEditingCell.frame = frame
-                textEditingCell.textView.sizeToFit()
-                textEditingCell.layoutSubviews()
-                textEditingCell.setNeedsDisplay()
-
-                let editingOffset = editingCell.convertRect(textEditingCell.bounds, toView: tableView).origin.y
-                topConstraint?.constant = -editingOffset
-                view.layoutSubviews()
             }
         }
     }
@@ -656,14 +646,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Sync
 
-    private func temporarilyDisableNotifications(reloadTable reloadTable: Bool = true) {
-        disableNotificationsState = true
-        delay(0.3) {
-            self.disableNotificationsState = false
-
-            if reloadTable {
-                self.tableView.reloadData()
-            }
-        }
+    private func skipNextNotification() {
+        skipNotification = true
+        reloadOnNotification = false
     }
 }

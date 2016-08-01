@@ -24,10 +24,10 @@ import RealmSwift
 let toDoCellIdentifier = "ToDoItemCell"
 
 class ToDoListViewController: NSViewController {
-    
+
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var topConstraint: NSLayoutConstraint?
-    
+
     private var items = try! Realm().objects(ToDoList).first!.items
     private var notificationToken: NotificationToken?
     private var disableNotificationsState = false
@@ -48,10 +48,10 @@ class ToDoListViewController: NSViewController {
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidResizeNotification, object: view.window)
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidEnterFullScreenNotification, object: view.window)
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidExitFullScreenNotification, object: view.window)
-        
+
         setupNotifications()
     }
-    
+
     private func setupNotifications() {
         notificationToken = items.addNotificationBlock { changes in
             if self.disableNotificationsState {
@@ -63,10 +63,10 @@ class ToDoListViewController: NSViewController {
             let realm = self.items.realm!
             let lists = realm.objects(ToDoList)
             let hasMultipleLists = lists.count > 1
-            
+
             if hasMultipleLists {
                 self.items = lists.first!.items
-                
+
                 defer {
                     // Append all other items while deleting their lists, in case they were created locally before sync
                     try! realm.write {
@@ -75,12 +75,12 @@ class ToDoListViewController: NSViewController {
                             realm.delete(lists.last!)
                         }
                     }
-                    
+
                     // Resubscribe to notifications
                     self.setupNotifications()
                 }
             }
-            
+
             switch changes {
             case .Initial:
                 self.tableView.reloadData()
@@ -119,19 +119,19 @@ class ToDoListViewController: NSViewController {
             self.tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSMakeRange(0, self.tableView.numberOfRows - 1)))
         })
     }
-    
+
 }
 
 extension ToDoListViewController: NSTableViewDataSource {
-    
+
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return items.count
     }
-    
+
 }
 
 extension ToDoListViewController: NSTableViewDelegate {
-    
+
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let cellView: ToDoItemCellView
         
@@ -140,11 +140,11 @@ extension ToDoListViewController: NSTableViewDelegate {
         } else {
             cellView = ToDoItemCellView(identifier: toDoCellIdentifier)
         }
-        
+
         cellView.configureWithToDoItem(items[row])
         cellView.backgroundColor = self.realmColor(forRow: row)
         cellView.delegate = self
-        
+
         return cellView
     }
     
