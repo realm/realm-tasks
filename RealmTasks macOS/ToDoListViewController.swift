@@ -122,6 +122,29 @@ class ToDoListViewController: NSViewController {
 
 }
 
+extension ToDoListViewController {
+    
+    @IBAction func newToDo(sender: AnyObject?) {
+        try! items.realm?.write {
+            self.items.insert(ToDoItem(), atIndex: 0)
+        }
+        
+        temporarilyDisableNotifications(reloadTable: false)
+
+        tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectNone)
+        tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
+    }
+    
+    override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
+        if theItem.action == #selector(newToDo) && currentlyEditingCellView != nil {
+            return false
+        }
+        
+        return true
+    }
+    
+}
+
 extension ToDoListViewController: NSTableViewDataSource {
 
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
@@ -257,14 +280,22 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
     }
     
     func cellViewDidEndEditing(view: ToDoItemCellView) {
-        guard let (item, _) = findItemForCellView(view) else {
+        guard let (item, index) = findItemForCellView(view) else {
             return
         }
         
         temporarilyDisableNotifications(reloadTable: false)
         
         try! item.realm?.write {
-            item.text = view.text
+            if !view.text.isEmpty {
+                item.text = view.text
+            } else {
+                item.realm!.delete(item)
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+                }
+            }
         }
         
         topConstraint?.constant = 0
