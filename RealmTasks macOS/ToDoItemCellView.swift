@@ -328,6 +328,10 @@ extension ToDoItemCellView: ToDoItemTextFieldDelegate {
 extension ToDoItemCellView: NSGestureRecognizerDelegate {
     
     func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
+        guard ((window?.firstResponder as? NSText)?.delegate as? NSTextField) != textView else {
+            return false
+        }
+        
         guard gestureRecognizer is NSPanGestureRecognizer else {
             return false
         }
