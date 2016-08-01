@@ -231,11 +231,11 @@ class ToDoItemCellView: NSTableCellView {
             } else {
                 deleteIconView.alphaValue = CGFloat(fractionOfThreshold)
             }
-            
+
             if completed {
                 overlayView.hidden = releaseAction == .Complete
                 textView.alphaValue = releaseAction == .Complete ? 1 : 0.3
-                
+
                 if contentView.frame.origin.x > 0 {
                     textView.unstrike()
                     textView.strike(1 - fractionOfThreshold)
@@ -256,7 +256,7 @@ class ToDoItemCellView: NSTableCellView {
         case .Ended:
             let animationBlock: () -> ()
             let completionBlock: () -> ()
-            
+
             // If not deleting, slide it back into the middle
             // If we are deleting, slide it all the way out of the view
             switch releaseAction {
@@ -264,7 +264,7 @@ class ToDoItemCellView: NSTableCellView {
                 animationBlock = {
                     self.contentView.frame.origin.x = 0
                 }
-                
+
                 completionBlock = {
                     NSView.animateWithDuration(0.2, animations: { 
                         self.completed = !self.completed
@@ -279,26 +279,26 @@ class ToDoItemCellView: NSTableCellView {
                     self.contentView.frame.origin.x = -self.contentView.bounds.width - (self.bounds.size.width / 4)
                     self.deleteIconView.frame.origin.x = -(self.bounds.size.width / 4) + self.deleteIconView.bounds.width + 20
                 }
-                
+
                 completionBlock = {
                     self.delegate?.cellViewDidDelete(self)
                 }
             case nil:
                 completed ? textView.strike() : textView.unstrike()
-                
+
                 animationBlock = {
                     self.contentView.frame.origin.x = 0
                 }
-                
+
                 completionBlock = {}
             }
-            
+
             NSView.animateWithDuration(0.2, animations: animationBlock) {
                 completionBlock()
-                
+
                 self.doneIconView.frame.origin.x = 20
                 self.doneIconView.alphaValue = 0
-                
+
                 self.deleteIconView.frame.origin.x = self.bounds.width - self.deleteIconView.bounds.width - 20
                 self.deleteIconView.alphaValue = 0
             }
