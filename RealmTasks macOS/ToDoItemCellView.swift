@@ -124,6 +124,10 @@ class ToDoItemCellView: NSTableCellView {
         return true
     }
     
+    override func becomeFirstResponder() -> Bool {
+        return textView.forceBecomeFirstResponder()
+    }
+    
     // MARK: UI
     
     private func setupUI() {
@@ -359,6 +363,8 @@ protocol ToDoItemTextFieldDelegate: NSTextFieldDelegate {
 
 private final class ToDoItemTextField: NSTextField {
     
+    private var _acceptsFirstResponder = false
+    
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         
@@ -375,7 +381,7 @@ private final class ToDoItemTextField: NSTextField {
     }
     
     override var acceptsFirstResponder: Bool {
-        return false
+        return _acceptsFirstResponder
     }
     
     override func acceptsFirstMouse(theEvent: NSEvent?) -> Bool {
@@ -386,6 +392,14 @@ private final class ToDoItemTextField: NSTextField {
         (delegate as? ToDoItemTextFieldDelegate)?.textFieldDidBecomeFirstResponder(self)
         
         return super.becomeFirstResponder()
+    }
+    
+    func forceBecomeFirstResponder() -> Bool {
+        _acceptsFirstResponder = true
+        becomeFirstResponder()
+        _acceptsFirstResponder = false
+        
+        return true
     }
     
     override func resetCursorRects() {

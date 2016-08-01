@@ -382,10 +382,24 @@
             <objects>
                 <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="CrP-T3-Pfk" sceneMemberID="viewController">
                     <window key="window" title="Realm Tasks" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="UPX-nY-FVZ">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+                        <toolbar key="toolbar" implicitIdentifier="6F2EB22A-AA56-4725-B70A-288A6CE2DA21" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="small" id="nsm-Fv-9B1">
+                            <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="e0G-Eu-e1o"/>
+                                <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New ToDo" paletteLabel="New ToDo" tag="-1" image="NSAddTemplate" id="4CH-Dy-gYb">
+                                    <connections>
+                                        <action selector="newToDo:" target="tRP-hs-BBi" id="vba-GZ-qiZ"/>
+                                    </connections>
+                                </toolbarItem>
+                            </allowedToolbarItems>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="e0G-Eu-e1o"/>
+                                <toolbarItem reference="4CH-Dy-gYb"/>
+                            </defaultToolbarItems>
+                        </toolbar>
                     </window>
                     <connections>
                         <segue destination="uaz-vB-EbV" kind="relationship" relationship="window.shadowedContentViewController" id="t3d-Aw-rfb"/>
@@ -468,4 +482,7 @@
             <point key="canvasLocation" x="75" y="732.5"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="NSAddTemplate" width="11" height="11"/>
+    </resources>
 </document>
