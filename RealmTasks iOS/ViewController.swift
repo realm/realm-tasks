@@ -632,14 +632,15 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     private func updateColors(completion completion: (() -> Void)? = nil) {
-        let visibleIndexPaths = visibleTableViewCells.flatMap(tableView.indexPathForCell)
+        let visibleCellsAndColors = visibleTableViewCells.map { cell in
+            return (cell, realmColor(forIndexPath: tableView.indexPathForCell(cell)!))
+        }
 
         UIView.animateWithDuration(0.5, animations: {
-            for indexPath in visibleIndexPaths {
-                let cell = self.tableView.cellForRowAtIndexPath(indexPath)
-                cell?.contentView.backgroundColor = self.realmColor(forIndexPath: indexPath)
+            for (cell, color) in visibleCellsAndColors {
+                cell.contentView.backgroundColor = color
             }
-        }, completion: { completed in
+        }, completion: { _ in
             completion?()
         })
     }
