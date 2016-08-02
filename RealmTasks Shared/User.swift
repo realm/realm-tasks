@@ -23,8 +23,4 @@ import RealmSwift
 
 final class User: Object {
     dynamic var accessToken = ""
-
-    override class func shouldIncludeInDefaultSchema() -> Bool {
-        return false
-    }
 }
