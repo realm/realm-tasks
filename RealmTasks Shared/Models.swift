@@ -34,3 +34,7 @@ final class ToDoItem: Object {
         self.text = text
     }
 }
+
+final class User: Object {
+    dynamic var accessToken = ""
+}
