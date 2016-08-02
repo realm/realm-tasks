@@ -31,8 +31,7 @@ import Foundation
 #endif
 
 extension Color {
-
-    private static func realmColors() -> [Color] {
+    static func taskColors() -> [Color] {
         return [
             Color(red: 231/255, green: 167/255, blue: 118/255, alpha: 1),
             Color(red: 228/255, green: 125/255, blue: 114/255, alpha: 1),
@@ -43,26 +42,26 @@ extension Color {
             Color(red: 56/255, green: 71/255, blue: 126/255, alpha: 1)
         ]
     }
+}
 
-    class func colorForRealmLogoGradient(offset: Double) -> Color {
+extension CollectionType where Generator.Element == Color, Index == Int {
+    func gradientColorAtFraction(fraction: Double) -> Color {
         // Ensure offset is normalized to 1
-        let normalizedOffset = max(min(offset, 1), 0)
-
-        let realmLogoColors = realmColors()
+        let normalizedOffset = max(min(fraction, 1), 0)
 
         // Work out the 'size' that each color stop spans
-        let colorStopRange = 1 / Double(realmLogoColors.count - 1)
+        let colorStopRange = 1 / Double(count - 1)
 
         // Determine the base stop our offset is within
         let colorRangeIndex = Int(floor(normalizedOffset / colorStopRange))
 
         // Get the initial color which will serve as the origin
-        let topColor = realmLogoColors[colorRangeIndex]
+        let topColor = self[colorRangeIndex]
         var fromColors: [CGFloat] = [0, 0, 0]
         topColor.getRed(&fromColors[0], green: &fromColors[1], blue: &fromColors[2], alpha: nil)
 
         // Get the destination color we will lerp to
-        let bottomColor = realmLogoColors[colorRangeIndex + 1]
+        let bottomColor = self[colorRangeIndex + 1]
         var toColors: [CGFloat] = [0, 0, 0]
         bottomColor.getRed(&toColors[0], green: &toColors[1], blue: &toColors[2], alpha: nil)
 
@@ -75,7 +74,6 @@ extension Color {
         }
         return Color(red: finalColors[0], green: finalColors[1], blue: finalColors[2], alpha: 1)
     }
-
 }
 
 extension Color {
