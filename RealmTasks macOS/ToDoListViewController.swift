@@ -30,7 +30,8 @@ class ToDoListViewController: NSViewController {
 
     private var items = try! Realm().objects(ToDoList).first!.items
     private var notificationToken: NotificationToken?
-    private var disableNotificationsState = false
+    private var skipNotification = false
+    private var reloadOnNotification = false
     
     private let prototypeCell = PrototypeToDoItemCellView()
     private var currentlyEditingCellView: ToDoItemCellView?
@@ -54,7 +55,13 @@ class ToDoListViewController: NSViewController {
 
     private func setupNotifications() {
         notificationToken = items.addNotificationBlock { changes in
-            if self.disableNotificationsState {
+            if self.skipNotification {
+                self.skipNotification = false
+                self.reloadOnNotification = true
+                return
+            } else if self.reloadOnNotification {
+                self.tableView.reloadData()
+                self.reloadOnNotification = false
                 return
             }
             
@@ -98,15 +105,9 @@ class ToDoListViewController: NSViewController {
         }
     }
     
-    private func temporarilyDisableNotifications(reloadTable reloadTable: Bool = true) {
-        disableNotificationsState = true
-        delay(0.6) {
-            self.disableNotificationsState = false
-            
-            if reloadTable {
-                self.tableView.reloadData()
-            }
-        }
+    private func skipNextNotification() {
+        skipNotification = true
+        reloadOnNotification = false
     }
     
     private dynamic func windowDidResize(notification: NSNotification) {
@@ -129,10 +130,14 @@ extension ToDoListViewController {
             self.items.insert(ToDoItem(), atIndex: 0)
         }
         
-        temporarilyDisableNotifications(reloadTable: false)
-
-        tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectNone)
-        tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
+        skipNextNotification()
+        
+        NSAnimationContext.runAnimationGroup({ _ in
+            self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
+        }) {
+            self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
+            self.view.window?.toolbar?.validateVisibleItems()
+        }
     }
     
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
@@ -225,7 +230,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
         }
         
         delay(0.2) {
-            self.temporarilyDisableNotifications()
+            self.skipNextNotification()
             
             try! item.realm?.write {
                 item.completed = complete
@@ -245,7 +250,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
             return
         }
         
-        temporarilyDisableNotifications(reloadTable: false)
+        skipNextNotification()
         
         try! item.realm?.write {
             items.realm?.delete(item)
@@ -284,7 +289,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
             return
         }
         
-        temporarilyDisableNotifications(reloadTable: false)
+        skipNextNotification()
         
         try! item.realm?.write {
             if !view.text.isEmpty {
