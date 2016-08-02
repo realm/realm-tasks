@@ -58,6 +58,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="V3U-rW-rTE">
                                     <items>
+                                        <menuItem title="Log In" id="w5C-HC-ZOn">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <segue destination="Rd6-Qu-x6P" kind="modal" id="ugh-82-JsD"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="New" keyEquivalent="n" id="RlT-1b-HrP">
                                             <connections>
                                                 <action selector="newDocument:" target="VaM-de-JXt" id="6Q4-Ek-0A3"/>
@@ -407,7 +413,7 @@
                 </windowController>
                 <customObject id="tRP-hs-BBi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="250"/>
+            <point key="canvasLocation" x="75" y="254"/>
         </scene>
         <!--To Do List View Controller-->
         <scene sceneID="2sp-wB-1ci">
@@ -424,7 +430,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="50" viewBased="YES" floatsGroupRows="NO" id="uDo-wk-Xbz">
-                                            <rect key="frame" x="0.0" y="0.0" width="400" height="0.0"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
@@ -480,6 +486,133 @@
                 <customObject id="E3E-MH-nnM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="732.5"/>
+        </scene>
+        <!--Log In-->
+        <scene sceneID="LlI-VW-aKs">
+            <objects>
+                <viewController title="Log In" storyboardIdentifier="LogInViewController" showSeguePresentationStyle="single" id="Rd6-Qu-x6P" customClass="LogInViewController" customModule="Realm_Tasks" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="7ed-T9-310">
+                        <rect key="frame" x="0.0" y="0.0" width="440" height="201"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wx6-L4-7bQ">
+                                <rect key="frame" x="349" y="13" width="77" height="32"/>
+                                <buttonCell key="cell" type="push" title="Log In" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="B9O-a1-hTh">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="logIn:" target="Rd6-Qu-x6P" id="mFd-Ib-LCI"/>
+                                    <binding destination="Rd6-Qu-x6P" name="enabled2" keyPath="password" previousBinding="SIu-Z8-YV7" id="iTN-j6-YEc">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="Rd6-Qu-x6P" name="enabled" keyPath="userName" id="SIu-Z8-YV7">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </button>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dnu-R6-dg3">
+                                <rect key="frame" x="20" y="105" width="400" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="400" id="3DH-iz-9f5"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="User Name" drawsBackground="YES" id="XnQ-p4-J1E">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="Rd6-Qu-x6P" name="value" keyPath="userName" id="Yvd-FY-3cp">
+                                        <dictionary key="options">
+                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            <bool key="NSConditionallySetsEditable" value="NO"/>
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                            <string key="NSNullPlaceholder">User Name</string>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sj3-Pv-mbY">
+                                <rect key="frame" x="14" y="13" width="101" height="32"/>
+                                <buttonCell key="cell" type="push" title="Register..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LgT-dU-qKE">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="register:" target="Rd6-Qu-x6P" id="NZz-6I-fBi"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q30-0U-JD1">
+                                <rect key="frame" x="84" y="159" width="273" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Log In or Register a New Account" id="2N0-Ax-pEB">
+                                    <font key="font" metaFont="system" size="18"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3WT-Fq-edH">
+                                <rect key="frame" x="20" y="73" width="400" height="22"/>
+                                <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Password" drawsBackground="YES" usesSingleLineMode="YES" id="6co-ML-XIY">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <allowedInputSourceLocales>
+                                        <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                                    </allowedInputSourceLocales>
+                                </secureTextFieldCell>
+                                <connections>
+                                    <binding destination="Rd6-Qu-x6P" name="value" keyPath="password" id="scx-3d-CY4">
+                                        <dictionary key="options">
+                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            <bool key="NSConditionallySetsEditable" value="NO"/>
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                            <string key="NSNullPlaceholder">Password</string>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </secureTextField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="wx6-L4-7bQ" firstAttribute="top" secondItem="3WT-Fq-edH" secondAttribute="bottom" constant="32" id="1tk-gG-PF3"/>
+                            <constraint firstItem="3WT-Fq-edH" firstAttribute="centerX" secondItem="dnu-R6-dg3" secondAttribute="centerX" id="5H1-O6-riW"/>
+                            <constraint firstAttribute="bottom" secondItem="sj3-Pv-mbY" secondAttribute="bottom" constant="20" id="6iE-Pb-xG8"/>
+                            <constraint firstAttribute="trailing" secondItem="dnu-R6-dg3" secondAttribute="trailing" constant="20" id="JvU-cI-MUz"/>
+                            <constraint firstItem="dnu-R6-dg3" firstAttribute="leading" secondItem="7ed-T9-310" secondAttribute="leading" constant="20" id="ODG-5v-nEY"/>
+                            <constraint firstAttribute="trailing" secondItem="wx6-L4-7bQ" secondAttribute="trailing" constant="20" id="Oi2-l9-pTF"/>
+                            <constraint firstItem="q30-0U-JD1" firstAttribute="top" secondItem="7ed-T9-310" secondAttribute="top" constant="20" id="S3z-Sb-RZD"/>
+                            <constraint firstAttribute="bottom" secondItem="wx6-L4-7bQ" secondAttribute="bottom" constant="20" id="Ttz-YP-efs"/>
+                            <constraint firstItem="dnu-R6-dg3" firstAttribute="top" secondItem="q30-0U-JD1" secondAttribute="bottom" constant="32" id="VCx-Eh-D76"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="q30-0U-JD1" secondAttribute="trailing" constant="20" symbolic="YES" id="ZSl-oB-wjC"/>
+                            <constraint firstItem="q30-0U-JD1" firstAttribute="centerX" secondItem="7ed-T9-310" secondAttribute="centerX" id="iOi-iu-ql8"/>
+                            <constraint firstItem="sj3-Pv-mbY" firstAttribute="leading" secondItem="7ed-T9-310" secondAttribute="leading" constant="20" id="k7j-MI-YcO"/>
+                            <constraint firstItem="3WT-Fq-edH" firstAttribute="top" secondItem="dnu-R6-dg3" secondAttribute="bottom" constant="10" symbolic="YES" id="lnb-MR-Pvg"/>
+                            <constraint firstItem="3WT-Fq-edH" firstAttribute="width" secondItem="dnu-R6-dg3" secondAttribute="width" id="n52-T3-vXK"/>
+                            <constraint firstItem="q30-0U-JD1" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="7ed-T9-310" secondAttribute="leading" constant="20" symbolic="YES" id="wx5-jQ-ChF"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="qap-tE-UxI" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="746" y="625"/>
         </scene>
     </scenes>
     <resources>
