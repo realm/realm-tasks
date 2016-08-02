@@ -382,10 +382,24 @@
             <objects>
                 <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="CrP-T3-Pfk" sceneMemberID="viewController">
                     <window key="window" title="Realm Tasks" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="UPX-nY-FVZ">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+                        <toolbar key="toolbar" implicitIdentifier="6F2EB22A-AA56-4725-B70A-288A6CE2DA21" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="small" id="nsm-Fv-9B1">
+                            <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="e0G-Eu-e1o"/>
+                                <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New ToDo" paletteLabel="New ToDo" tag="-1" image="NSAddTemplate" id="4CH-Dy-gYb">
+                                    <connections>
+                                        <action selector="newToDo:" target="tRP-hs-BBi" id="vba-GZ-qiZ"/>
+                                    </connections>
+                                </toolbarItem>
+                            </allowedToolbarItems>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="e0G-Eu-e1o"/>
+                                <toolbarItem reference="4CH-Dy-gYb"/>
+                            </defaultToolbarItems>
+                        </toolbar>
                     </window>
                     <connections>
                         <segue destination="uaz-vB-EbV" kind="relationship" relationship="window.shadowedContentViewController" id="t3d-Aw-rfb"/>
@@ -400,22 +414,22 @@
             <objects>
                 <viewController id="uaz-vB-EbV" customClass="ToDoListViewController" customModule="Realm_Tasks" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="LWL-J7-uyt">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="425"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="50" horizontalPageScroll="10" verticalLineScroll="50" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhc-0C-8yh">
-                                <rect key="frame" x="0.0" y="0.0" width="480" height="425"/>
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
                                 <clipView key="contentView" copiesOnScroll="NO" id="OMr-Gz-NZa">
-                                    <rect key="frame" x="0.0" y="0.0" width="480" height="425"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="50" viewBased="YES" floatsGroupRows="NO" id="uDo-wk-Xbz">
-                                            <rect key="frame" x="0.0" y="0.0" width="480" height="425"/>
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="50" viewBased="YES" floatsGroupRows="NO" id="uDo-wk-Xbz">
+                                            <rect key="frame" x="0.0" y="0.0" width="400" height="0.0"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn width="477" minWidth="40" maxWidth="1000" id="3DS-pu-CHQ">
+                                                <tableColumn width="400" maxWidth="999999" id="3DS-pu-CHQ">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -426,31 +440,7 @@
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
-                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                                    <prototypeCellViews>
-                                                        <tableCellView identifier="ToDoItemCell" id="Laf-Rh-5bp" customClass="ToDoItemCellView" customModule="Realm_Tasks" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="0.0" width="477" height="50"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                            <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="cR9-OY-5KQ">
-                                                                    <rect key="frame" x="10" y="14" width="457" height="22"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="left" title="Table View Cell" id="ZeJ-dK-PfI">
-                                                                        <font key="font" metaFont="system" size="18"/>
-                                                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                    </textFieldCell>
-                                                                </textField>
-                                                            </subviews>
-                                                            <constraints>
-                                                                <constraint firstAttribute="trailing" secondItem="cR9-OY-5KQ" secondAttribute="trailing" constant="12" id="Sik-Kb-6Eb"/>
-                                                                <constraint firstItem="cR9-OY-5KQ" firstAttribute="leading" secondItem="Laf-Rh-5bp" secondAttribute="leading" constant="12" id="XSW-Qi-8cz"/>
-                                                                <constraint firstItem="cR9-OY-5KQ" firstAttribute="centerY" secondItem="Laf-Rh-5bp" secondAttribute="centerY" id="v0f-jM-IrA"/>
-                                                            </constraints>
-                                                            <connections>
-                                                                <outlet property="textField" destination="cR9-OY-5KQ" id="cz6-nZ-Oja"/>
-                                                            </connections>
-                                                        </tableCellView>
-                                                    </prototypeCellViews>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>
@@ -484,6 +474,7 @@
                     </view>
                     <connections>
                         <outlet property="tableView" destination="uDo-wk-Xbz" id="HFW-Zg-ddr"/>
+                        <outlet property="topConstraint" destination="CoY-k6-hM5" id="sFq-KD-gcj"/>
                     </connections>
                 </viewController>
                 <customObject id="E3E-MH-nnM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -491,4 +482,7 @@
             <point key="canvasLocation" x="75" y="732.5"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="NSAddTemplate" width="11" height="11"/>
+    </resources>
 </document>
