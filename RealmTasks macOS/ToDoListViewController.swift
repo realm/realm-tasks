@@ -115,6 +115,10 @@ class ToDoListViewController: NSViewController {
     }
     
     private func updateTableViewHeightOfRows(indexes: NSIndexSet? = nil) {
+        guard tableView.numberOfRows > 0 else {
+            return
+        }
+
         // noteHeightOfRows animates by default, disable this
         NSView.animateWithDuration(0, animations: {
             self.tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSMakeRange(0, self.tableView.numberOfRows - 1)))
