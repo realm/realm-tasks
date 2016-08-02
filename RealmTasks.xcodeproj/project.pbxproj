@@ -36,6 +36,7 @@
 		C23EB05D1D4A028A00D3E0AC /* NSView+Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */; };
 		C28A34021D50A0C500EE8F1A /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28A34011D50A0C500EE8F1A /* LogInViewController.swift */; };
 		C28A34031D50C3B900EE8F1A /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6861D409D3500BB4521 /* HTTPClient.swift */; };
+		C28A34051D50D19B00EE8F1A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28A34041D50D19B00EE8F1A /* RegisterViewController.swift */; };
 		C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */; };
 		E89CE6681D409AB200BB4521 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6671D409AB200BB4521 /* User.swift */; };
 		E89CE68B1D409D3500BB4521 /* RealmSyncLogin.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */; };
@@ -75,6 +76,7 @@
 		C23EB05A1D4655A900D3E0AC /* ToDoItemCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoItemCellView.swift; sourceTree = "<group>"; };
 		C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSView+Animations.swift"; sourceTree = "<group>"; };
 		C28A34011D50A0C500EE8F1A /* LogInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
+		C28A34041D50D19B00EE8F1A /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIPAddress.swift; sourceTree = "<group>"; };
 		E84CF2B11CBC408000082C1A /* Realm Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Realm Tasks.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E89CE6671D409AB200BB4521 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				C23EB05A1D4655A900D3E0AC /* ToDoItemCellView.swift */,
 				C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */,
 				C28A34011D50A0C500EE8F1A /* LogInViewController.swift */,
+				C28A34041D50D19B00EE8F1A /* RegisterViewController.swift */,
 			);
 			path = "RealmTasks macOS";
 			sourceTree = "<group>";
@@ -482,6 +485,7 @@
 				C23EB02F1D46364000D3E0AC /* User.swift in Sources */,
 				C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */,
 				C23EB0391D4643B900D3E0AC /* Constants.swift in Sources */,
+				C28A34051D50D19B00EE8F1A /* RegisterViewController.swift in Sources */,
 				C23EB0301D46364000D3E0AC /* ToDoItem.swift in Sources */,
 				C23EB0321D46364000D3E0AC /* LocalIPAddress.swift in Sources */,
 			);
