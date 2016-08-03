@@ -101,7 +101,7 @@ class ToDoListViewController: NSViewController {
                 
                 self.updateTableViewHeightOfRows(modifications.toIndexSet())
             case .Error(let error):
-                fatalError("\(error)")
+                fatalError(String(error))
             }
         }
     }
