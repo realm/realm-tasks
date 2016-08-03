@@ -342,7 +342,3 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
         cellDidChangeText?(self)
     }
 }
-
-// MARK: Task Cell
-
-typealias TaskCell = TableViewCell<ToDoItem>
