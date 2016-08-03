@@ -21,16 +21,37 @@
 import Foundation
 import RealmSwift
 
+protocol CellPresentable {
+    var realm: Realm? { get }
+    var cellText: String { get set }
+    var isCompletable: Bool { get }
+    var completed: Bool { get set }
+}
+
 final class ToDoList: Object {
     let items = List<ToDoItem>()
 }
 
-final class ToDoItem: Object {
+final class ToDoItem: Object, CellPresentable {
     dynamic var text = ""
     dynamic var completed = false
+
+    var cellText: String {
+        get { return text }
+        set { text = newValue }
+    }
+    var isCompletable: Bool { return true }
+
+    override class func ignoredProperties() -> [String] {
+        return ["cellText"]
+    }
 
     convenience init(text: String) {
         self.init()
         self.text = text
     }
+}
+
+final class User: Object {
+    dynamic var accessToken = ""
 }
