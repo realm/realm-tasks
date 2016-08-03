@@ -63,9 +63,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var skipNotification = false
     private var reloadOnNotification = false
 
-    // Computed Properties
-    private var visibleTableViewCells: [TableViewCell] { return tableView.visibleCells as! [TableViewCell] }
-
     // Scrolling
     private var distancePulledDown: CGFloat {
         return -tableView.contentOffset.y - tableView.contentInset.top
@@ -510,7 +507,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         skipNextNotification()
         tableView.reloadData()
-        visibleTableViewCells.first!.textView.becomeFirstResponder()
+        (tableView.visibleCells.first as! TableViewCell).textView.becomeFirstResponder()
     }
 
     // MARK: TableViewCellDelegate
@@ -573,7 +570,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         UIView.animateWithDuration(0.3, animations: { [unowned self] in
             self.view.layoutSubviews()
-            for cell in self.visibleTableViewCells where cell !== editingCell {
+            for cell in self.tableView.visibleCells where cell !== editingCell {
                 cell.alpha = self.editingCellAlpha
             }
         }, completion: { [unowned self] finished in
@@ -589,7 +586,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         topConstraint?.constant = 0
         UIView.animateWithDuration(0.3) { [weak self] in
             guard let strongSelf = self else { return }
-            for cell in strongSelf.visibleTableViewCells where cell !== editingCell {
+            for cell in strongSelf.tableView.visibleCells where cell !== editingCell {
                 cell.alpha = 1
             }
         }
@@ -619,7 +616,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.tableView.endUpdates()
             }
 
-            for cell in visibleTableViewCells where cell !== editingCell {
+            for cell in tableView.visibleCells where cell !== editingCell {
                 cell.alpha = editingCellAlpha
             }
         }
@@ -633,7 +630,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     private func updateColors(completion completion: (() -> Void)? = nil) {
-        let visibleCellsAndColors = visibleTableViewCells.map { cell in
+        let visibleCellsAndColors = tableView.visibleCells.map { cell in
             return (cell, rowColor(atIndex: tableView.indexPathForCell(cell)!.row))
         }
 
