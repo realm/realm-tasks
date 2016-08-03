@@ -28,9 +28,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Properties
 
-    // Stored Properties
+    // Items
     private var items = try! Realm().objects(ToDoList.self).first!.items
+
+    // Table View
     private let tableView = UITableView()
+
+    // Notifications
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?
     private var skipNotification = false
@@ -57,6 +61,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     private var currentlyEditingIndexPath: NSIndexPath? = nil
+
+    // Auto Layout
     private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
@@ -66,7 +72,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private let onboardView = OnboardView()
 
     // Constants
-    let editingCellAlpha: CGFloat = 0.3
+    private let editingCellAlpha: CGFloat = 0.3
 
     // MARK: View Lifecycle
 
