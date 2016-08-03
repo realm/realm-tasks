@@ -259,6 +259,9 @@ extension ToDoItemCellView: NSGestureRecognizerDelegate {
             if abs(translation.x) > swipeThreshold {
                 doneIconView.frame.origin.x = originalDoneIconOffset + translation.x - swipeThreshold
                 deleteIconView.frame.origin.x = originalDeleteIconOffset + translation.x + swipeThreshold
+            } else {
+                doneIconView.frame.origin.x = originalDoneIconOffset
+                deleteIconView.frame.origin.x = originalDeleteIconOffset
             }
             
             let fractionOfThreshold = min(1, Double(abs(translation.x) / swipeThreshold))
