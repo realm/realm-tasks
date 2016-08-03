@@ -21,7 +21,8 @@
 import Cocoa
 import RealmSwift
 
-let toDoCellIdentifier = "ToDoItemCell"
+private let toDoCellIdentifier = "ToDoItemCell"
+private let toDoCellPrototypeIdentifier = "ToDoItemCellPrototype"
 
 class ToDoListViewController: NSViewController {
 
@@ -33,7 +34,7 @@ class ToDoListViewController: NSViewController {
     private var skipNotification = false
     private var reloadOnNotification = false
     
-    private let prototypeCell = PrototypeToDoItemCellView()
+    private let prototypeCell = PrototypeToDoItemCellView(identifier: toDoCellPrototypeIdentifier)
     private var currentlyEditingCellView: ToDoItemCellView?
     
     deinit {
@@ -354,10 +355,6 @@ private func delay(time: Double, block: () -> ()) {
 private final class PrototypeToDoItemCellView: ToDoItemCellView {
     
     private var widthConstraint: NSLayoutConstraint?
-    
-    convenience init() {
-        self.init(identifier: "Prototype\(toDoCellIdentifier)")
-    }
     
     func configureWithToDoItemCellView(cellView: ToDoItemCellView) {
         text = cellView.text
