@@ -154,7 +154,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         func updateAlpha() {
-            onboardView.alpha = tableView.numberOfRowsInSection(0) > 0 ? 0 : 1
+            onboardView.alpha = items.isEmpty ? 1 : 0
         }
 
         if animated {
@@ -242,7 +242,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.toggleOnboardView(animated: true)
             case .Error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
+                fatalError(String(error))
             }
         }
     }
@@ -402,7 +402,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
 
-    func cellHeightForText(text: NSString) -> CGFloat {
+    private func cellHeightForText(text: String) -> CGFloat {
         return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
                                          options: [.UsesLineFragmentOrigin],
                                          attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
@@ -427,7 +427,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 item = items[sourceIndexPath.row]
             }
         }
-
         return cellHeightForText(item.text)
     }
 
@@ -500,9 +499,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         (tableView.visibleCells.first as! TableViewCell<ToDoItem>).textView.becomeFirstResponder()
     }
 
-    // MARK: TableViewCellDelegate
+    // MARK: Cell Callbacks
 
-    func itemDeleted(item: ToDoItem) {
+    private func itemDeleted(item: ToDoItem) {
         guard let index = items.indexOf(item) else {
             return
         }
@@ -517,7 +516,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    func itemCompleted(item: ToDoItem) {
+    private func itemCompleted(item: ToDoItem) {
         guard let index = items.indexOf(item) else {
             return
         }
@@ -542,7 +541,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    func cellDidBeginEditing(editingCell: TableViewCell<ToDoItem>) {
+    private func cellDidBeginEditing(editingCell: TableViewCell<ToDoItem>) {
         currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
@@ -568,7 +567,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         })
     }
 
-    func cellDidEndEditing(editingCell: TableViewCell<ToDoItem>) {
+    private func cellDidEndEditing(editingCell: TableViewCell<ToDoItem>) {
         currentlyEditingCell = nil
         currentlyEditingIndexPath = nil
 
@@ -596,7 +595,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    func cellDidChangeText(editingCell: TableViewCell<ToDoItem>) {
+    private func cellDidChangeText(editingCell: TableViewCell<ToDoItem>) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
         let height = cellHeightForText(editingCell.textView.text)
@@ -612,7 +611,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    // MARK: Actions
+    // MARK: Colors
 
     private func colorForRow(row: Int) -> UIColor {
         let fraction = Double(row) / Double(max(13, tableView.numberOfRowsInSection(0)))
