@@ -51,7 +51,7 @@ private func delay(time: Double, block: () -> ()) {
 
 // MARK: View Controller
 
-final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, TableViewCellDelegate, UIGestureRecognizerDelegate {
+final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
@@ -78,7 +78,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // Editing
     private var currentlyEditing: Bool { return currentlyEditingCell != nil }
-    private var currentlyEditingCell: TableViewCell? {
+    private var currentlyEditingCell: TaskCell? {
         didSet {
             tableView.scrollEnabled = !currentlyEditing
         }
@@ -87,7 +87,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
-    private let placeHolderCell = TableViewCell(style: .Default, reuseIdentifier: "cell")
+    private let placeHolderCell = TaskCell(style: .Default, reuseIdentifier: "cell")
 
     // Onboard view
     private let onboardView = OnboardView()
@@ -128,7 +128,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.registerClass(TableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(TaskCell.self, forCellReuseIdentifier: "cell")
         tableView.separatorStyle = .None
         tableView.backgroundColor = .blackColor()
         tableView.rowHeight = 54
@@ -257,7 +257,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                         // If editing, unintended input state is committed and sync.
                         self.currentlyEditingCell?.temporarilyIgnoreSaveChanges = true
                         updateTableView()
-                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell
+                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TaskCell
                         currentlyEditingCell.temporarilyIgnoreSaveChanges = false
                         currentlyEditingCell.textView.becomeFirstResponder()
                     }
@@ -291,7 +291,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if currentlyEditing {
             view.endEditing(true)
         } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? TaskCell {
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         } else {
@@ -302,7 +302,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
             toggleOnboardView(animated: true)
             skipNextNotification()
-            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TaskCell
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         }
@@ -388,7 +388,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
         let location = gestureRecognizer.locationInView(tableView)
         if let indexPath = tableView.indexPathForRowAtPoint(location),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell {
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? TaskCell {
             return !cell.item.completed
         }
         return true
@@ -401,9 +401,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell") as! TableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TaskCell
         cell.item = items[indexPath.row]
-        cell.delegate = self
+        cell.itemCompleted = itemCompleted
+        cell.itemDeleted = itemDeleted
+        cell.cellDidChangeText = cellDidChangeText
+        cell.cellDidBeginEditing = cellDidBeginEditing
+        cell.cellDidEndEditing = cellDidEndEditing
 
         if let editingIndexPath = currentlyEditingIndexPath {
             if editingIndexPath.row != indexPath.row { cell.alpha = editingCellAlpha }
@@ -507,7 +511,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         skipNextNotification()
         tableView.reloadData()
-        (tableView.visibleCells.first as! TableViewCell).textView.becomeFirstResponder()
+        (tableView.visibleCells.first as! TaskCell).textView.becomeFirstResponder()
     }
 
     // MARK: TableViewCellDelegate
@@ -552,7 +556,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    func cellDidBeginEditing(editingCell: TableViewCell) {
+    func cellDidBeginEditing(editingCell: TaskCell) {
         currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
@@ -578,7 +582,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         })
     }
 
-    func cellDidEndEditing(editingCell: TableViewCell) {
+    func cellDidEndEditing(editingCell: TaskCell) {
         currentlyEditingCell = nil
         currentlyEditingIndexPath = nil
 
@@ -606,7 +610,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    func cellDidChangeText(editingCell: TableViewCell) {
+    func cellDidChangeText(editingCell: TaskCell) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
         let height = cellHeightForText(editingCell.textView.text)
