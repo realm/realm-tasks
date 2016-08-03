@@ -22,33 +22,6 @@ import Cartography
 import RealmSwift
 import UIKit
 
-// MARK: Private Extensions
-
-extension UIView {
-    private var snapshot: UIView {
-        UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
-        layer.renderInContext(UIGraphicsGetCurrentContext()!)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        // Create an image view
-        let snapshot = UIImageView(image: image)
-        snapshot.layer.masksToBounds = false
-        snapshot.layer.cornerRadius = 0
-        snapshot.layer.shadowOffset = CGSizeMake(-5, 0)
-        snapshot.layer.shadowRadius = 5
-        snapshot.layer.shadowOpacity = 0
-        return snapshot
-    }
-}
-
-// MARK: Private Functions
-
-private func delay(time: Double, block: () -> ()) {
-    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
-    dispatch_after(delayTime, dispatch_get_main_queue(), block)
-}
-
 // MARK: View Controller
 
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
@@ -320,18 +293,25 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             // Add the snapshot as subview, aligned with the cell
             var center = cell.center
-            snapshot = cell.snapshot
+            snapshot = cell.snapshotViewAfterScreenUpdates(false)
+            snapshot.layer.shadowColor = UIColor.blackColor().CGColor
+            snapshot.layer.shadowOffset = CGSizeMake(-5, 0)
+            snapshot.layer.shadowRadius = 5
             snapshot.center = center
             cell.hidden = true
             tableView.addSubview(snapshot)
 
             // Animate
+            let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
+            shadowAnimation.fromValue = 0
+            shadowAnimation.toValue = 1
+            shadowAnimation.duration = 0.3
+            snapshot.layer.addAnimation(shadowAnimation, forKey: shadowAnimation.keyPath)
+            snapshot.layer.shadowOpacity = 1
             UIView.animateWithDuration(0.3) { [unowned self] in
                 center.y = location.y
                 self.snapshot.center = center
                 self.snapshot.transform = CGAffineTransformMakeScale(1.05, 1.05)
-                self.snapshot.layer.shadowColor = UIColor.blackColor().CGColor
-                self.snapshot.layer.shadowOpacity = 1
             }
             break
         case .Changed:
@@ -366,10 +346,16 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
 
+            let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
+            shadowAnimation.fromValue = 1
+            shadowAnimation.toValue = 0
+            shadowAnimation.duration = 0.3
+            snapshot.layer.addAnimation(shadowAnimation, forKey: shadowAnimation.keyPath)
+            snapshot.layer.shadowOpacity = 0
+
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
                 self.snapshot.transform = CGAffineTransformIdentity
-                self.snapshot.layer.shadowOpacity = 0
             }, completion: { [unowned self] _ in
                 cell.hidden = false
                 self.snapshot.removeFromSuperview()
