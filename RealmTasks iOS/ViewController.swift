@@ -112,7 +112,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
-        placeHolderCell.backgroundView!.backgroundColor = rowColor(atIndex: 0)
+        placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -432,7 +432,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        cell.contentView.backgroundColor = rowColor(atIndex: indexPath.row)
+        cell.contentView.backgroundColor = colorForRow(indexPath.row)
         cell.alpha = currentlyEditing ? editingCellAlpha : 1
     }
 
@@ -614,14 +614,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Actions
 
-    private func rowColor(atIndex index: Int) -> UIColor {
-        let fraction = Double(index) / Double(max(13, tableView.numberOfRowsInSection(0)))
+    private func colorForRow(row: Int) -> UIColor {
+        let fraction = Double(row) / Double(max(13, tableView.numberOfRowsInSection(0)))
         return UIColor.taskColors().gradientColorAtFraction(fraction)
     }
 
     private func updateColors(completion completion: (() -> Void)? = nil) {
         let visibleCellsAndColors = tableView.visibleCells.map { cell in
-            return (cell, rowColor(atIndex: tableView.indexPathForCell(cell)!.row))
+            return (cell, colorForRow(tableView.indexPathForCell(cell)!.row))
         }
 
         UIView.animateWithDuration(0.5, animations: {
