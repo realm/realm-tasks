@@ -56,7 +56,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: Properties
 
     // Stored Properties
-    private var items = try! Realm().objects(ToDoList).first!.items
+    private var items = try! Realm().objects(ToDoList.self).first!.items
     private let tableView = UITableView()
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?
