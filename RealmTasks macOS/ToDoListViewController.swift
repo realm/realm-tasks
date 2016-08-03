@@ -174,7 +174,7 @@ extension ToDoListViewController: NSTableViewDelegate {
         }
 
         cellView.configureWithToDoItem(items[row])
-        cellView.backgroundColor = rowColor(atIndex: row)
+        cellView.backgroundColor = colorForRow(row)
         cellView.delegate = self
 
         return cellView
@@ -203,14 +203,14 @@ extension ToDoListViewController: NSTableViewDelegate {
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ToDoItemCellView {
                 NSView.animateWithDuration(5, animations: {
-                    cellView.backgroundColor = self.rowColor(atIndex: row)
+                    cellView.backgroundColor = self.colorForRow(row)
                 })
             }
         }
     }
     
-    private func rowColor(atIndex index: Int) -> NSColor {
-        let fraction = Double(index) / Double(max(13, tableView.numberOfRows))
+    private func colorForRow(row: Int) -> NSColor {
+        let fraction = Double(row) / Double(max(13, tableView.numberOfRows))
         return NSColor.taskColors().gradientColorAtFraction(fraction)
     }
     
