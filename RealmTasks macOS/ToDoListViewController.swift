@@ -46,7 +46,7 @@ class ToDoListViewController: NSViewController {
         
         let notificationCenter = NSNotificationCenter.defaultCenter()
         
-        // Handle window resizing to update table view
+        // Handle window resizing to update table view rows height
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidResizeNotification, object: view.window)
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidEnterFullScreenNotification, object: view.window)
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidExitFullScreenNotification, object: view.window)
@@ -124,6 +124,8 @@ class ToDoListViewController: NSViewController {
 
 }
 
+// MARK: Actions
+
 extension ToDoListViewController {
     
     @IBAction func newToDo(sender: AnyObject?) {
@@ -152,6 +154,8 @@ extension ToDoListViewController {
     
 }
 
+// MARK: NSTableViewDataSource
+
 extension ToDoListViewController: NSTableViewDataSource {
 
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
@@ -159,6 +163,8 @@ extension ToDoListViewController: NSTableViewDataSource {
     }
 
 }
+
+// MARK: NSTableViewDelegate
 
 extension ToDoListViewController: NSTableViewDelegate {
 
@@ -213,6 +219,8 @@ extension ToDoListViewController: NSTableViewDelegate {
     }
     
 }
+
+// MARK: ToDoItemCellViewDelegate
 
 extension ToDoListViewController: ToDoItemCellViewDelegate {
     
