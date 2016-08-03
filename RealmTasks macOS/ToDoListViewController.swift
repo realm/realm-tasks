@@ -29,7 +29,7 @@ class ToDoListViewController: NSViewController {
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var topConstraint: NSLayoutConstraint?
 
-    private var items = try! Realm().objects(ToDoList).first!.items
+    private var items = try! Realm().objects(ToDoList.self).first!.items
     private var notificationToken: NotificationToken?
     private var skipNotification = false
     private var reloadOnNotification = false
@@ -69,7 +69,7 @@ class ToDoListViewController: NSViewController {
             // FIXME: Hack to work around sync possibly pulling in a new list.
             // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
             let realm = self.items.realm!
-            let lists = realm.objects(ToDoList)
+            let lists = realm.objects(ToDoList.self)
             let hasMultipleLists = lists.count > 1
 
             if hasMultipleLists {
