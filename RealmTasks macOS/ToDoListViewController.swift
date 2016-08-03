@@ -337,11 +337,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
 private extension CollectionType where Generator.Element == Int {
     
     func toIndexSet() -> NSIndexSet {
-        let indexSet = NSMutableIndexSet()
-        
-        forEach { indexSet.addIndex($0) }
-        
-        return indexSet
+        return reduce(NSMutableIndexSet()) { $0.addIndex($1); return $0 }
     }
     
 }
