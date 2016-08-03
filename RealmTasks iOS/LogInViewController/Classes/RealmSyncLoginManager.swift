@@ -108,19 +108,77 @@ public class RealmSyncLoginManager: NSObject {
     }
 
     public func connectToCloudKit(completion completion: RealmSyncLoginCompletionHandler?) {
-
         let container = CKContainer.defaultContainer()
-        container.fetchUserRecordIDWithCompletionHandler { (recordID, error) in
+
+        // Query the private database for an existing access token
+        let privateDatabase = container.privateCloudDatabase
+        let realmZoneID = CKRecordZoneID(zoneName: "Realm", ownerName: CKOwnerDefaultName)
+        let realmTokenRecordID = CKRecordID(recordName: "AccessToken", zoneID: realmZoneID)
+
+        privateDatabase.fetchRecordWithID(realmTokenRecordID) { (record, error) in
+            if let error = error {
+                switch CKErrorCode(rawValue: error.code)! {
+                case .ZoneNotFound: // A Realm specific record zone doesn't exist yet
+                    self.registerNewCloudKitUser(completion)
+                case .UnknownItem: // The zone exists, but there is no token in it
+                    self.registerNewCloudKitUser(completion)
+                default:
+                    completion?(accessToken: nil, error: error)
+                }
+                return
+            }
+        }
+
+//        privateDatabase.fetchRecordZoneWithID(realmZoneID) { (recordZone, error) in
+//            if let error = error {
+//                completion?(accessToken: nil, error: error)
+//                return
+//            }
+//        }
+
+//        container.fetchUserRecordIDWithCompletionHandler { (recordID, error) in
+//            if let error = error {
+//                completion?(accessToken: nil, error: error)
+//                return
+//            }
+//
+//            self.authenticateCloudKit(recordID?.recordName, completion: completion)
+//        }
+    }
+
+    public func registerNewCloudKitUser(completion: RealmSyncLoginCompletionHandler?) {
+        let container = CKContainer.defaultContainer()
+
+        let authenticationSuccessfulHandler = { (accessToken: String?, error: NSError?) in
+
+            let privateDatabase = container.privateCloudDatabase
+
+            let realmRecordID = CKRecordID(recordName: "DefaultUser")
+            let realmRecord = CKRecord(recordType: "RealmSyncSettings", recordID: realmRecordID)
+            realmRecord["access_token"] = accessToken
+
+            privateDatabase.saveRecord(realmRecord, completionHandler: { (record, error) in
+                completion?(accessToken: accessToken, error: error)
+            })
+        }
+
+        //First, download our user record name
+        let userRecordIDCompletionHandler = { (recordID: CKRecordID?, error: NSError?) in
             if let error = error {
                 completion?(accessToken: nil, error: error)
                 return
             }
 
-            self.authenticateCloudKit(recordID?.recordName, completion: completion)
+            self.authenticateCloudKit(recordID?.recordName, completion: authenticationSuccessfulHandler)
         }
+
+        container.fetchUserRecordIDWithCompletionHandler(userRecordIDCompletionHandler)
     }
 
     public func authenticateCloudKit(userRecordID: String?, completion: RealmSyncLoginCompletionHandler?) {
+        completion?(accessToken: "0000-0000-0000-0000", error: nil)
+        return
+
         guard let userRecordID = userRecordID else {
             let errorDescription = "iCloud returned a nil user record ID value"
             completion?(accessToken: nil, error: NSError(domain: "io.realm.sync.auth", code: 0, userInfo: [NSLocalizedDescriptionKey: errorDescription]))
