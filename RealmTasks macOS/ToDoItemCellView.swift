@@ -32,6 +32,10 @@ protocol ToDoItemCellViewDelegate: class {
 
 }
 
+private let iconWidth: CGFloat = 40
+private let iconOffset = iconWidth / 2
+private let swipeThreshold = iconWidth * 2
+
 class ToDoItemCellView: NSTableCellView {
     
     weak var delegate: ToDoItemCellViewDelegate?
@@ -92,9 +96,6 @@ class ToDoItemCellView: NSTableCellView {
     private let overlayView = ColorView()
     private let textView = ToDoItemTextField()
     
-    private var originalDoneIconOffset: CGFloat = 0
-    private var originalDeleteIconOffset: CGFloat = 0
-    
     private var releaseAction: ReleaseAction?
     
     init(identifier: String) {
@@ -128,8 +129,6 @@ class ToDoItemCellView: NSTableCellView {
         return textView.forceBecomeFirstResponder()
     }
     
-    // MARK: UI
-    
     private func setupUI() {
         setupIconViews()
         setupContentView()
@@ -138,15 +137,13 @@ class ToDoItemCellView: NSTableCellView {
     }
     
     private func setupIconViews() {
-        doneIconView.alphaValue = 0
-        doneIconView.frame.size.width = 40
-        doneIconView.frame.origin.x = 20
+        doneIconView.frame.size.width = iconWidth
+        doneIconView.frame.origin.x = iconOffset
         doneIconView.autoresizingMask = [.ViewMaxXMargin, .ViewHeightSizable]
         addSubview(doneIconView, positioned: .Below, relativeTo: contentView)
         
-        deleteIconView.alphaValue = 0
-        deleteIconView.frame.size.width = 40
-        deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - 20
+        deleteIconView.frame.size.width = iconWidth
+        deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - iconOffset
         deleteIconView.autoresizingMask = [.ViewMinXMargin, .ViewHeightSizable]
         addSubview(deleteIconView, positioned: .Below, relativeTo: contentView)
     }
@@ -205,43 +202,77 @@ class ToDoItemCellView: NSTableCellView {
         recognizer.delegate = self
         addGestureRecognizer(recognizer)
     }
+
+}
+
+// MARK: ToDoItemTextFieldDelegate
+
+extension ToDoItemCellView: ToDoItemTextFieldDelegate {
+    
+    func textFieldDidBecomeFirstResponder(textField: NSTextField) {
+        delegate?.cellViewDidBeginEditing(self)
+    }
+    
+    override func controlTextDidChange(obj: NSNotification) {
+        delegate?.cellViewDidChangeText(self)
+    }
+    
+    override func controlTextDidEndEditing(obj: NSNotification) {
+        delegate?.cellViewDidEndEditing(self)
+    }
+    
+}
+
+// MARK: NSGestureRecognizerDelegate
+
+extension ToDoItemCellView: NSGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
+        guard gestureRecognizer is NSPanGestureRecognizer else {
+            return false
+        }
+        
+        let currentlyEditingTextField = ((window?.firstResponder as? NSText)?.delegate as? NSTextField)
+        
+        guard let event = NSApp.currentEvent where currentlyEditingTextField != textView else {
+            return false
+        }
+        
+        return fabs(event.deltaX) > fabs(event.deltaY)
+    }
     
     private dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
+        let originalDoneIconOffset = iconOffset
+        let originalDeleteIconOffset = bounds.width - deleteIconView.bounds.width - iconOffset
+        
         switch recognizer.state {
         case .Began:
             window?.makeFirstResponder(nil)
-            
-            originalDeleteIconOffset = deleteIconView.frame.origin.x
-            originalDoneIconOffset = doneIconView.frame.origin.x
-            
+
             releaseAction = nil
         case .Changed:
             let translation = recognizer.translationInView(self)
             recognizer.setTranslation(translation, inView: self)
             
             contentView.frame.origin.x = translation.x
-            
-            let fractionOfThreshold = min(1, Double(abs(translation.x) / (bounds.size.width / 4)))
-            releaseAction = fractionOfThreshold >= 1 ? (translation.x > 0 ? .Complete : .Delete) : nil
-            
-            if abs(translation.x) > (frame.size.width / 4) {
-                let x = abs(translation.x) - (frame.size.width / 4)
-                doneIconView.setFrameOrigin(NSPoint(x: originalDoneIconOffset + x, y: doneIconView.frame.origin.y))
-                deleteIconView.setFrameOrigin(NSPoint(x: originalDeleteIconOffset - x, y: deleteIconView.frame.origin.y))
+
+            if abs(translation.x) > swipeThreshold {
+                doneIconView.frame.origin.x = originalDoneIconOffset + translation.x - swipeThreshold
+                deleteIconView.frame.origin.x = originalDeleteIconOffset + translation.x + swipeThreshold
             }
             
-            if translation.x > 0 {
-                doneIconView.alphaValue = CGFloat(fractionOfThreshold)
-            } else {
-                deleteIconView.alphaValue = CGFloat(fractionOfThreshold)
-            }
+            let fractionOfThreshold = min(1, Double(abs(translation.x) / swipeThreshold))
+
+            doneIconView.alphaValue = CGFloat(fractionOfThreshold)
+            deleteIconView.alphaValue = CGFloat(fractionOfThreshold)
+            
+            releaseAction = fractionOfThreshold == 1 ? (translation.x > 0 ? .Complete : .Delete) : nil
 
             if completed {
                 overlayView.hidden = releaseAction == .Complete
                 textView.alphaValue = releaseAction == .Complete ? 1 : 0.3
 
                 if contentView.frame.origin.x > 0 {
-                    textView.unstrike()
                     textView.strike(1 - fractionOfThreshold)
                 } else {
                     releaseAction == .Complete ? textView.unstrike() : textView.strike()
@@ -251,7 +282,6 @@ class ToDoItemCellView: NSTableCellView {
                 overlayView.hidden = releaseAction != .Complete
                 
                 if contentView.frame.origin.x > 0 {
-                    textView.unstrike()
                     textView.strike(fractionOfThreshold)
                 } else {
                     releaseAction == .Complete ? textView.strike() : textView.unstrike()
@@ -270,9 +300,9 @@ class ToDoItemCellView: NSTableCellView {
                 }
 
                 completionBlock = {
-                    NSView.animateWithDuration(0.2, animations: { 
+                    NSView.animateWithDuration(0.2, animations: {
                         self.completed = !self.completed
-                    }, completion: { 
+                    }, completion: {
                         self.delegate?.cellView(self, didComplete: self.completed)
                     })
                 }
@@ -280,8 +310,8 @@ class ToDoItemCellView: NSTableCellView {
                 animationBlock = {
                     self.alphaValue = 0
                     
-                    self.contentView.frame.origin.x = -self.contentView.bounds.width - (self.bounds.size.width / 4)
-                    self.deleteIconView.frame.origin.x = -(self.bounds.size.width / 4) + self.deleteIconView.bounds.width + 20
+                    self.contentView.frame.origin.x = -self.contentView.bounds.width - swipeThreshold
+                    self.deleteIconView.frame.origin.x = -swipeThreshold + self.deleteIconView.bounds.width + iconOffset
                 }
 
                 completionBlock = {
@@ -300,51 +330,12 @@ class ToDoItemCellView: NSTableCellView {
             NSView.animateWithDuration(0.2, animations: animationBlock) {
                 completionBlock()
 
-                self.doneIconView.frame.origin.x = 20
-                self.doneIconView.alphaValue = 0
-
-                self.deleteIconView.frame.origin.x = self.bounds.width - self.deleteIconView.bounds.width - 20
-                self.deleteIconView.alphaValue = 0
+                self.doneIconView.frame.origin.x = originalDoneIconOffset
+                self.deleteIconView.frame.origin.x = originalDeleteIconOffset
             }
         default:
             break
         }
-    }
-
-}
-
-extension ToDoItemCellView: ToDoItemTextFieldDelegate {
-    
-    func textFieldDidBecomeFirstResponder(textField: NSTextField) {
-        delegate?.cellViewDidBeginEditing(self)
-    }
-    
-    override func controlTextDidChange(obj: NSNotification) {
-        delegate?.cellViewDidChangeText(self)
-    }
-    
-    override func controlTextDidEndEditing(obj: NSNotification) {
-        delegate?.cellViewDidEndEditing(self)
-    }
-    
-}
-
-extension ToDoItemCellView: NSGestureRecognizerDelegate {
-    
-    func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
-        guard ((window?.firstResponder as? NSText)?.delegate as? NSTextField) != textView else {
-            return false
-        }
-        
-        guard gestureRecognizer is NSPanGestureRecognizer else {
-            return false
-        }
-        
-        guard let event = NSApp.currentEvent else {
-            return false
-        }
-        
-        return fabs(event.deltaX) > fabs(event.deltaY)
     }
     
 }
@@ -449,6 +440,10 @@ private final class ColorView: NSView {
 private extension NSTextField {
     
     func strike(fraction: Double = 1) {
+        if fraction < 1 {
+            unstrike()
+        }
+        
         setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: NSMakeRange(0, Int(fraction * Double(stringValue.characters.count))))
     }
     

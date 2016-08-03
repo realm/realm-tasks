@@ -21,7 +21,8 @@
 import Cocoa
 import RealmSwift
 
-let toDoCellIdentifier = "ToDoItemCell"
+private let toDoCellIdentifier = "ToDoItemCell"
+private let toDoCellPrototypeIdentifier = "ToDoItemCellPrototype"
 
 class ToDoListViewController: NSViewController {
 
@@ -33,7 +34,7 @@ class ToDoListViewController: NSViewController {
     private var skipNotification = false
     private var reloadOnNotification = false
     
-    private let prototypeCell = PrototypeToDoItemCellView()
+    private let prototypeCell = PrototypeToDoItemCellView(identifier: toDoCellPrototypeIdentifier)
     private var currentlyEditingCellView: ToDoItemCellView?
     
     deinit {
@@ -45,7 +46,7 @@ class ToDoListViewController: NSViewController {
         
         let notificationCenter = NSNotificationCenter.defaultCenter()
         
-        // Handle window resizing to update table view
+        // Handle window resizing to update table view rows height
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidResizeNotification, object: view.window)
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidEnterFullScreenNotification, object: view.window)
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidExitFullScreenNotification, object: view.window)
@@ -115,17 +116,15 @@ class ToDoListViewController: NSViewController {
     }
     
     private func updateTableViewHeightOfRows(indexes: NSIndexSet? = nil) {
-        guard tableView.numberOfRows > 0 else {
-            return
-        }
-
         // noteHeightOfRows animates by default, disable this
         NSView.animateWithDuration(0, animations: {
-            self.tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSMakeRange(0, self.tableView.numberOfRows - 1)))
+            self.tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSRange(0...self.tableView.numberOfRows)))
         })
     }
 
 }
+
+// MARK: Actions
 
 extension ToDoListViewController {
     
@@ -136,7 +135,8 @@ extension ToDoListViewController {
         
         skipNextNotification()
         
-        NSAnimationContext.runAnimationGroup({ _ in
+        NSView.animateWithDuration(0.2, animations: {
+            NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
         }) {
             self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
@@ -154,6 +154,8 @@ extension ToDoListViewController {
     
 }
 
+// MARK: NSTableViewDataSource
+
 extension ToDoListViewController: NSTableViewDataSource {
 
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
@@ -161,6 +163,8 @@ extension ToDoListViewController: NSTableViewDataSource {
     }
 
 }
+
+// MARK: NSTableViewDelegate
 
 extension ToDoListViewController: NSTableViewDelegate {
 
@@ -174,7 +178,7 @@ extension ToDoListViewController: NSTableViewDelegate {
         }
 
         cellView.configureWithToDoItem(items[row])
-        cellView.backgroundColor = rowColor(atIndex: row)
+        cellView.backgroundColor = colorForRow(row)
         cellView.delegate = self
 
         return cellView
@@ -203,18 +207,20 @@ extension ToDoListViewController: NSTableViewDelegate {
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ToDoItemCellView {
                 NSView.animateWithDuration(5, animations: {
-                    cellView.backgroundColor = self.rowColor(atIndex: row)
+                    cellView.backgroundColor = self.colorForRow(row)
                 })
             }
         }
     }
     
-    private func rowColor(atIndex index: Int) -> NSColor {
-        let fraction = Double(index) / Double(max(13, tableView.numberOfRows))
+    private func colorForRow(row: Int) -> NSColor {
+        let fraction = Double(row) / Double(max(13, tableView.numberOfRows))
         return NSColor.taskColors().gradientColorAtFraction(fraction)
     }
     
 }
+
+// MARK: ToDoItemCellViewDelegate
 
 extension ToDoListViewController: ToDoItemCellViewDelegate {
     
@@ -341,11 +347,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
 private extension CollectionType where Generator.Element == Int {
     
     func toIndexSet() -> NSIndexSet {
-        let indexSet = NSMutableIndexSet()
-        
-        forEach { indexSet.addIndex($0) }
-        
-        return indexSet
+        return reduce(NSMutableIndexSet()) { $0.addIndex($1); return $0 }
     }
     
 }
@@ -362,10 +364,6 @@ private func delay(time: Double, block: () -> ()) {
 private final class PrototypeToDoItemCellView: ToDoItemCellView {
     
     private var widthConstraint: NSLayoutConstraint?
-    
-    convenience init() {
-        self.init(identifier: "Prototype\(toDoCellIdentifier)")
-    }
     
     func configureWithToDoItemCellView(cellView: ToDoItemCellView) {
         text = cellView.text

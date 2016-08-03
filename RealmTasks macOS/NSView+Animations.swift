@@ -28,7 +28,7 @@ extension NSView {
             context.allowsImplicitAnimation = true
             
             animations()
-            }, completionHandler: completion)
+        }, completionHandler: completion)
     }
     
 }
