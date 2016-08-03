@@ -36,7 +36,7 @@ private enum ReleaseAction {
     case Complete, Delete
 }
 
-let isDevice = TARGET_OS_SIMULATOR == 0
+private let isDevice = TARGET_OS_SIMULATOR == 0
 
 // MARK: Table View Cell
 
