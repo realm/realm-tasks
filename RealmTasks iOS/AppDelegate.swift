@@ -39,15 +39,19 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             if realm.isEmpty {
                 // Create a default list if none exist
                 try realm.write {
-                    realm.add(ToDoList())
+                    let list = ToDoList()
+                    list.name = "My Tasks"
+                    realm.add(list)
                 }
             }
         } catch {
             fatalError("Could not open or write to the realm: \(error)")
         }
 
+        let firstList = try! Realm().objects(ToDoList.self).first!
         window?.rootViewController = ViewController(
-            items: try! Realm().objects(ToDoList.self).first!.items,
+            items: firstList.items,
+            title: firstList.name,
             getList: { $0.items }
         )
         window?.makeKeyAndVisible()

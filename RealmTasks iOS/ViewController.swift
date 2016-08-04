@@ -81,10 +81,11 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
 
     // MARK: View Lifecycle
 
-    init(items: List<Item>, getList: (ToDoList) -> (List<Item>)) {
+    init(items: List<Item>, title: String? = nil, getList: (ToDoList) -> (List<Item>)) {
         self.items = items
         self.getList = getList
         super.init(nibName: nil, bundle: nil)
+        self.title = title
     }
 
     deinit {
@@ -127,7 +128,7 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
         tableView.separatorStyle = .None
         tableView.backgroundColor = .blackColor()
         tableView.rowHeight = 54
-        tableView.contentInset = UIEdgeInsets(top: 45, left: 0, bottom: 54, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: (title != nil) ? 45 : 20, left: 0, bottom: 54, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
         tableView.showsVerticalScrollIndicator = false
     }
@@ -153,13 +154,15 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
             titleBar.left == titleBar.superview!.left
             titleBar.top == titleBar.superview!.top
             titleBar.right == titleBar.superview!.right
-            titleBar.height == 45
+            titleBar.height == ((title != nil) ? 45 : 20)
         }
+
+        guard let title = title else { return }
 
         let titleLabel = UILabel()
         titleLabel.font = .boldSystemFontOfSize(13)
         titleLabel.textAlignment = .Center
-        titleLabel.text = "My Items"
+        titleLabel.text = title
         titleLabel.textColor = .whiteColor()
         titleBar.addSubview(titleLabel)
         constrain(titleLabel) { titleLabel in
