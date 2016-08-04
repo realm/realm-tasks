@@ -341,10 +341,17 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         }
         if currentlyEditing {
             view.endEditing(true)
-        } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
-            cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
-            cell.textView.becomeFirstResponder()
+            return
+        }
+        let location = recognizer.locationInView(tableView)
+        let cell: TableViewCell<Item>!
+        if let indexPath = tableView.indexPathForRowAtPoint(location),
+            typedCell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
+            cell = typedCell
+            if createBottomViewController != nil && location.x > tableView.bounds.width / 2 {
+                // TODO: Navigate to bottom view controller
+                return
+            }
         } else {
             let row = items.filter("completed = false").count
             try! items.realm?.write {
@@ -354,10 +361,11 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
             toggleOnboardView(animated: true)
             skipNextNotification()
-            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
-            cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
-            cell.textView.becomeFirstResponder()
+            cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
         }
+        let textView = cell.textView
+        textView.userInteractionEnabled = !textView.userInteractionEnabled
+        textView.becomeFirstResponder()
     }
 
     func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
