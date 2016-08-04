@@ -28,6 +28,10 @@ protocol CellPresentable {
     var completed: Bool { get set }
 }
 
+final class ToDoListLists: Object {
+    let items = List<ToDoList>()
+}
+
 final class ToDoList: Object {
     dynamic var name = ""
     let items = List<ToDoItem>()
