@@ -24,7 +24,7 @@ import RealmSwift
 protocol CellPresentable {
     var realm: Realm? { get }
     var cellText: String { get set }
-    var isCompletable: Bool { get }
+    static var isCompletable: Bool { get }
     var completed: Bool { get set }
 }
 
@@ -40,7 +40,7 @@ final class ToDoItem: Object, CellPresentable {
         get { return text }
         set { text = newValue }
     }
-    var isCompletable: Bool { return true }
+    static var isCompletable: Bool { return true }
 
     override class func ignoredProperties() -> [String] {
         return ["cellText"]
