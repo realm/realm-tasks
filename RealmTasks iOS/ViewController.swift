@@ -196,7 +196,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             var lists = realm.objects(ParentType.self)
             if ParentType.self == ToDoList.self {
                 // only merge the default list
-                lists = lists.filter("name == %@", "My Tasks")
+                lists = lists.filter("name == %@", Constants.defaultListName)
             }
             guard lists.count > 1 else { return }
 
@@ -222,7 +222,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                     var lists = realm.objects(ParentType.self)
                     if ParentType.self == ToDoList.self {
                         // only merge the default list
-                        lists = lists.filter("name == %@", "My Tasks")
+                        lists = lists.filter("name == %@", Constants.defaultListName)
                     }
                     while lists.count > 1 {
                         self.getList(lists.first!).appendContentsOf(self.getList(lists.last!))

@@ -60,7 +60,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 // Create a default list if none exist
                 try realm.write {
                     let list = ToDoList()
-                    list.name = "My Tasks"
+                    list.name = Constants.defaultListName
                     let listLists = ToDoListLists()
                     listLists.items.append(list)
                     realm.add(listLists)
