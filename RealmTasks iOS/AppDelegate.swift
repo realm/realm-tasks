@@ -28,6 +28,7 @@ class ContainerViewController: UIViewController {
         let firstList = try! Realm().objects(ToDoList.self).first!
         let vc = ViewController(
             items: firstList.items,
+            colors: UIColor.taskColors(),
             title: firstList.name,
             getList: { $0.items }
         )

@@ -75,14 +75,16 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
 
     // Constants
     private let editingCellAlpha: CGFloat = 0.3
+    private let colors: [UIColor]
 
     // Closures
     private let getList: (ToDoList) -> (List<Item>)
 
     // MARK: View Lifecycle
 
-    init(items: List<Item>, title: String? = nil, getList: (ToDoList) -> (List<Item>)) {
+    init(items: List<Item>, colors: [UIColor], title: String? = nil, getList: (ToDoList) -> (List<Item>)) {
         self.items = items
+        self.colors = colors
         self.getList = getList
         super.init(nibName: nil, bundle: nil)
         self.title = title
@@ -637,7 +639,7 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
 
     private func colorForRow(row: Int) -> UIColor {
         let fraction = Double(row) / Double(max(13, items.count))
-        return UIColor.taskColors().gradientColorAtFraction(fraction)
+        return colors.gradientColorAtFraction(fraction)
     }
 
     private func updateColors(completion completion: (() -> Void)? = nil) {
