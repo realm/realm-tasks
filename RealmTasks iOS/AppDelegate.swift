@@ -22,6 +22,25 @@ import UIKit
 import Realm
 import RealmSwift
 
+class ContainerViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let firstList = try! Realm().objects(ToDoList.self).first!
+        let vc = ViewController(
+            items: firstList.items,
+            title: firstList.name,
+            getList: { $0.items }
+        )
+        addChildViewController(vc)
+        view.addSubview(vc.view)
+        vc.didMoveToParentViewController(self)
+    }
+
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
+    }
+}
+
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -48,12 +67,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Could not open or write to the realm: \(error)")
         }
 
-        let firstList = try! Realm().objects(ToDoList.self).first!
-        window?.rootViewController = ViewController(
-            items: firstList.items,
-            title: firstList.name,
-            getList: { $0.items }
-        )
+        window?.rootViewController = ContainerViewController()
         window?.makeKeyAndVisible()
 
         if let userRealm = try? Realm(configuration: userRealmConfiguration),
