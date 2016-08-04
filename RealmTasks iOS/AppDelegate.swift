@@ -60,7 +60,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func logIn() {
-        let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: RLMSyncManager.sharedManager().appID, realmPath: Constants.syncRealmPath)
+        let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: RLMSyncManager.sharedManager().appID ?? "", realmPath: Constants.syncRealmPath)
 
         loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
             if let token = accessToken {

@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
+        mainWindowController.window?.titleVisibility = .Hidden
         mainWindowController.showWindow(nil)
 
         if let userRealm = try? Realm(configuration: userRealmConfiguration),

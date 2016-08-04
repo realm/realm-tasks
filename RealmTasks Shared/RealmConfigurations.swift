@@ -27,5 +27,6 @@ let userRealmConfiguration = Realm.Configuration(
 )
 
 let syncRealmConfiguration = Realm.Configuration(
-    syncServerURL: Constants.syncServerURL
+    syncServerURL: Constants.syncServerURL,
+    objectTypes: [ToDoList.self, ToDoItem.self]
 )

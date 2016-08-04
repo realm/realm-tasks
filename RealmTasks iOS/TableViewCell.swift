@@ -30,16 +30,6 @@ func vibrate() {
     }
 }
 
-// MARK: Protocols
-
-protocol TableViewCellDelegate {
-    func itemCompleted(item: ToDoItem)
-    func itemDeleted(item: ToDoItem)
-    func cellDidBeginEditing(editingCell: TableViewCell)
-    func cellDidEndEditing(editingCell: TableViewCell)
-    func cellDidChangeText(editingCell: TableViewCell)
-}
-
 // MARK: Private Declarations
 
 private enum ReleaseAction {
@@ -50,23 +40,28 @@ private let isDevice = TARGET_OS_SIMULATOR == 0
 
 // MARK: Table View Cell
 
-final class TableViewCell: UITableViewCell, UITextViewDelegate {
+final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
 
-    // Properties
+    // MARK: Properties
 
-    var item: ToDoItem! {
+    // Stored Properties
+    let textView = ToDoItemTextView()
+    var temporarilyIgnoreSaveChanges = false
+    var item: Item! {
         didSet {
-            textView.text = item.text
+            textView.text = item.cellText
             setCompleted(item.completed)
         }
     }
-    var delegate: TableViewCellDelegate?
-    let textView = ToDoItemTextView()
 
-    var temporarilyIgnoreSaveChanges = false
+    // Callbacks
+    var itemCompleted: ((Item) -> ())? = nil
+    var itemDeleted: ((Item) -> ())? = nil
+    var cellDidBeginEditing: ((TableViewCell) -> ())? = nil
+    var cellDidEndEditing: ((TableViewCell) -> ())? = nil
+    var cellDidChangeText: ((TableViewCell) -> ())? = nil
 
     // Private Properties
-
     private var originalDoneIconCenter = CGPoint()
     private var originalDeleteIconCenter = CGPoint()
 
@@ -74,7 +69,6 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     private let overlayView = UIView()
 
     // Assets
-
     private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
     private let deleteIconView = UIImageView(image: UIImage(named: "DeleteIcon"))
 
@@ -200,9 +194,16 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             }
 
             if translation.x > 0 {
-                doneIconView.alpha = CGFloat(fractionOfThreshold)
+                if item.isCompletable {
+                    doneIconView.alpha = CGFloat(fractionOfThreshold)
+                }
             } else {
                 deleteIconView.alpha = CGFloat(fractionOfThreshold)
+            }
+
+            guard item.isCompletable else {
+                if releaseAction == .Complete { releaseAction = nil }
+                break
             }
 
             if !item.completed {
@@ -247,7 +248,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                     self.deleteIconView.frame.origin.x = -(self.bounds.size.width / 4) + self.deleteIconView.bounds.width + 20
                 }
                 completionBlock = {
-                    self.delegate?.itemDeleted(self.item)
+                    self.itemDeleted?(self.item)
                 }
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()
@@ -257,10 +258,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
                 completionBlock = {}
             }
 
-            UIView.animateWithDuration(0.2, animations: {
-                animationBlock()
-            },
-            completion: { finished in
+            UIView.animateWithDuration(0.2, animations: animationBlock) { _ in
                 completionBlock()
 
                 self.doneIconView.frame.origin.x = 20
@@ -268,7 +266,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
 
                 self.deleteIconView.frame.origin.x = self.bounds.width - self.deleteIconView.bounds.width - 20
                 self.deleteIconView.alpha = 0
-            })
+            }
         default:
             break
         }
@@ -305,7 +303,7 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
             }
             vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
-            delegate?.itemCompleted(item)
+            itemCompleted?(item)
         } else {
             updateColor()
         }
@@ -327,24 +325,20 @@ final class TableViewCell: UITableViewCell, UITextViewDelegate {
     }
 
     func textViewDidBeginEditing(textView: UITextView) {
-        delegate?.cellDidBeginEditing(self)
+        cellDidBeginEditing?(self)
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        if let realm = item.realm {
-            if !temporarilyIgnoreSaveChanges {
-                try! realm.write {
-                    item.text = textView.text
-                }
+        if !temporarilyIgnoreSaveChanges {
+            try! item.realm!.write {
+                item.cellText = textView.text
             }
-        } else {
-            item.text = textView.text
         }
         textView.userInteractionEnabled = false
-        delegate?.cellDidEndEditing(self)
+        cellDidEndEditing?(self)
     }
 
     func textViewDidChange(textView: UITextView) {
-        delegate?.cellDidChangeText(self)
+        cellDidChangeText?(self)
     }
 }
