@@ -53,6 +53,16 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
         didSet {
             textView.text = item.cellText
             setCompleted(item.completed)
+            if let item = item as? ToDoList {
+                let count = item.items.filter("completed == false").count
+                countLabel.text = String(count)
+                if count == 0 {
+                    textView.alpha = 0.3
+                    countLabel.alpha = 0.3
+                } else {
+                    countLabel.alpha = 1
+                }
+            }
         }
     }
 
@@ -69,6 +79,7 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
 
     private var releaseAction: ReleaseAction?
     private let overlayView = UIView()
+    private let countLabel = UILabel()
 
     // Assets
     private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
@@ -96,6 +107,9 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
         setupOverlayView()
         setupTextView()
         setupBorders()
+        if Item.self == ToDoList.self {
+            setupCountBadge()
+        }
     }
 
     private func setupBackgroundView() {
@@ -137,7 +151,11 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
             textView.left == textView.superview!.left + 8
             textView.top == textView.superview!.top + 8
             textView.bottom == textView.superview!.bottom - 8
-            textView.right == textView.superview!.right - 8
+            if Item.self == ToDoList.self {
+                textView.right == textView.superview!.right - 68
+            } else {
+                textView.right == textView.superview!.right - 8
+            }
         }
     }
 
@@ -162,6 +180,26 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
             shadowLine.left == shadowLine.superview!.left
             shadowLine.right == shadowLine.superview!.right
             shadowLine.height == singlePixelInPoints
+        }
+    }
+
+    private func setupCountBadge() {
+        let badgeBackground = UIView()
+        badgeBackground.backgroundColor = UIColor(white: 1, alpha: 0.15)
+        contentView.addSubview(badgeBackground)
+        constrain(badgeBackground) { badgeBackground in
+            badgeBackground.top == badgeBackground.superview!.top
+            badgeBackground.bottom == badgeBackground.superview!.bottom
+            badgeBackground.right == badgeBackground.superview!.right
+            badgeBackground.width == 60
+        }
+
+        badgeBackground.addSubview(countLabel)
+        countLabel.backgroundColor = .clearColor()
+        countLabel.textColor = .whiteColor()
+        countLabel.font = .systemFontOfSize(18)
+        constrain(countLabel) { countLabel in
+            countLabel.center == countLabel.superview!.center
         }
     }
 
