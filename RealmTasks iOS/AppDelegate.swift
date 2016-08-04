@@ -26,7 +26,7 @@ class ContainerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let firstList = try! Realm().objects(ToDoList.self).first!
-        let vc = ViewController(
+        let vc = ViewController<ToDoItem, ToDoList>(
             items: firstList.items,
             colors: UIColor.taskColors(),
             title: firstList.name,
