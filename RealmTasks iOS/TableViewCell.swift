@@ -38,6 +38,8 @@ private enum ReleaseAction {
 
 private let isDevice = TARGET_OS_SIMULATOR == 0
 
+private let iconWidth: CGFloat = 60
+
 // MARK: Table View Cell
 
 final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
@@ -180,30 +182,36 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
             releaseAction = nil
         case .Changed:
             let translation = recognizer.translationInView(self)
-            recognizer.setTranslation(translation, inView: self)
 
-            contentView.frame.origin.x = translation.x
-
-            let fractionOfThreshold = min(1, Double(abs(translation.x) / (bounds.size.width / 4)))
-            releaseAction = fractionOfThreshold >= 1 ? (translation.x > 0 ? .Complete : .Delete) : nil
-
-            if abs(translation.x) > (frame.size.width / 4) {
-                let x = abs(translation.x) - (frame.size.width / 4)
-                doneIconView.center = CGPoint(x: originalDoneIconCenter.x + x, y: originalDoneIconCenter.y)
-                deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x - x, y: originalDeleteIconCenter.y)
+            if !item.isCompletable && translation.x > 0 {
+                releaseAction = nil
+                return
             }
 
-            if translation.x > 0 {
-                if item.isCompletable {
-                    doneIconView.alpha = CGFloat(fractionOfThreshold)
+            let x: CGFloat
+            // Slow down translation
+            if translation.x < 0 {
+                x = translation.x / 2
+                if x < -iconWidth {
+                    deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x + iconWidth + x, y: originalDeleteIconCenter.y)
                 }
+            } else if translation.x > iconWidth {
+                let offset = (translation.x - iconWidth) / 3
+                doneIconView.center = CGPoint(x: originalDoneIconCenter.x + offset, y: originalDoneIconCenter.y)
+                x = iconWidth + offset
+            } else {
+                x = translation.x
+            }
+
+            contentView.frame.origin.x = x
+
+            let fractionOfThreshold = min(1, Double(abs(x) / iconWidth))
+            releaseAction = fractionOfThreshold >= 1 ? (x > 0 ? .Complete : .Delete) : nil
+
+            if x > 0 {
+                doneIconView.alpha = CGFloat(fractionOfThreshold)
             } else {
                 deleteIconView.alpha = CGFloat(fractionOfThreshold)
-            }
-
-            guard item.isCompletable else {
-                if releaseAction == .Complete { releaseAction = nil }
-                break
             }
 
             if !item.completed {
@@ -244,8 +252,8 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
                     self.alpha = 0
                     self.contentView.alpha = 0
 
-                    self.contentView.frame.origin.x = -self.contentView.bounds.width - (self.bounds.size.width / 4)
-                    self.deleteIconView.frame.origin.x = -(self.bounds.size.width / 4) + self.deleteIconView.bounds.width + 20
+                    self.contentView.frame.origin.x = -self.contentView.bounds.width - iconWidth
+                    self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
                 }
                 completionBlock = {
                     self.itemDeleted?(self.item)
