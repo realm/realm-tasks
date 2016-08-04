@@ -26,7 +26,7 @@ private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
 // MARK: View Controller
 
-final class ViewController<Item: Object where Item: CellPresentable>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+final class ViewController<Item: Object, ParentType: Object where Item: CellPresentable>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
@@ -78,11 +78,11 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
     private let colors: [UIColor]
 
     // Closures
-    private let getList: (ToDoList) -> (List<Item>)
+    private let getList: (ParentType) -> (List<Item>)
 
     // MARK: View Lifecycle
 
-    init(items: List<Item>, colors: [UIColor], title: String? = nil, getList: (ToDoList) -> (List<Item>)) {
+    init(items: List<Item>, colors: [UIColor], title: String? = nil, getList: (ParentType) -> (List<Item>)) {
         self.items = items
         self.colors = colors
         self.getList = getList
@@ -191,9 +191,13 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
 
     private func setupFirstSyncWorkaround() {
         // FIXME: Hack to work around sync possibly pulling in a new list.
-        // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
+        // Ideally we'd use ParentType's with primary keys, but those aren't currently supported by sync.
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
-            let lists = realm.objects(ToDoList.self)
+            var lists = realm.objects(ParentType.self)
+            if ParentType.self == ToDoList.self {
+                // only merge the default list
+                lists = lists.filter("name == %@", "My Tasks")
+            }
             guard lists.count > 1 else { return }
 
             self.realmNotificationToken?.stop()
@@ -209,11 +213,17 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
             self.notificationToken = nil
             self.setupNotifications()
 
+            let configuration = realm.configuration
+
             // Append all other items while deleting their lists, in case they were created locally before sync
             dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-                let realm = try! Realm()
+                let realm = try! Realm(configuration: configuration)
                 try! realm.write {
-                    let lists = realm.objects(ToDoList.self)
+                    var lists = realm.objects(ParentType.self)
+                    if ParentType.self == ToDoList.self {
+                        // only merge the default list
+                        lists = lists.filter("name == %@", "My Tasks")
+                    }
                     while lists.count > 1 {
                         self.getList(lists.first!).appendContentsOf(self.getList(lists.last!))
                         realm.delete(lists.last!)
