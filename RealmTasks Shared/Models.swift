@@ -29,6 +29,7 @@ protocol CellPresentable {
 }
 
 final class ToDoList: Object {
+    dynamic var name = ""
     let items = List<ToDoItem>()
 }
 
