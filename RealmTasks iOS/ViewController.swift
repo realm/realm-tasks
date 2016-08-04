@@ -349,7 +349,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             typedCell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
             cell = typedCell
             if createBottomViewController != nil && location.x > tableView.bounds.width / 2 {
-                // TODO: Navigate to bottom view controller
+                navigateToBottomViewController(cell.item)
                 return
             }
         } else {
@@ -518,6 +518,43 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         cell.contentView.backgroundColor = colorForRow(indexPath.row)
         cell.alpha = currentlyEditing ? editingCellAlpha : 1
+    }
+
+    private func navigateToBottomViewController(item: Item) {
+        bottomViewController = ViewController<ToDoItem, ToDoList>(
+            items: item["items"] as! List<ToDoItem>,
+            colors: UIColor.taskColors(),
+            title: item.cellText,
+            getList: { $0.items }
+        )
+
+        let bottomVC = bottomViewController!
+        let parentVC = parentViewController!
+        parentVC.addChildViewController(bottomVC)
+        parentVC.view.addSubview(bottomVC.view)
+        let bottomConstraints = constrain(bottomVC.view) { bottomView in
+            bottomView.size == bottomView.superview!.size
+            bottomView.left == bottomView.superview!.left
+            bottomView.top == bottomView.superview!.bottom
+        }
+        bottomVC.didMoveToParentViewController(parentVC)
+
+        // Navigate to bottom
+        willMoveToParentViewController(nil)
+        parentVC.view.layoutIfNeeded()
+        constrain(bottomVC.view, view, replace: bottomConstraints) { bottomView, currentView in
+            bottomView.edges == bottomView.superview!.edges
+            currentView.bottom == bottomView.top
+            currentView.size == bottomView.size
+            currentView.left == bottomView.left
+        }
+        UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
+            parentVC.view.layoutIfNeeded()
+        }, completion: { _ in
+            self.view.removeFromSuperview()
+            bottomVC.didMoveToParentViewController(parentVC)
+            self.removeFromParentViewController()
+        })
     }
 
     // MARK: UIScrollViewDelegate methods
