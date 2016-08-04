@@ -82,12 +82,39 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     // Closures
     private let getList: (ParentType) -> (List<Item>)
 
+    // Top/Bottom View Controllers
+    private let createTopViewController: (() -> (UIViewController))?
+    private var topViewController: UIViewController?
+    private let createBottomViewController: (() -> (UIViewController))?
+    private var bottomViewController: UIViewController?
+
     // MARK: View Lifecycle
 
     init(items: List<Item>, colors: [UIColor], title: String? = nil, getList: (ParentType) -> (List<Item>)) {
         self.items = items
         self.colors = colors
         self.getList = getList
+        if Item.isCompletable == true {
+            createTopViewController = {
+                ViewController<ToDoList, ToDoListLists>(
+                    items: try! Realm().objects(ToDoListLists.self).first!.items,
+                    colors: UIColor.listColors(),
+                    getList: { $0.items }
+                )
+            }
+            createBottomViewController = nil
+        } else {
+            createTopViewController = nil
+            createBottomViewController = {
+                let firstList = try! Realm().objects(ToDoList.self).first!
+                return ViewController<ToDoItem, ToDoList>(
+                    items: firstList.items,
+                    colors: UIColor.taskColors(),
+                    title: firstList.name,
+                    getList: { $0.items }
+                )
+            }
+        }
         super.init(nibName: nil, bundle: nil)
         self.title = title
     }
