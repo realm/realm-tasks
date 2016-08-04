@@ -22,6 +22,7 @@ import Cartography
 import RealmSwift
 import UIKit
 
+private var tableViewBoundsKVOContext = 0
 private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
 // MARK: View Controller
@@ -35,6 +36,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
     // Table View
     private let tableView = UITableView()
+    private let tableViewContentView = UIView()
 
     // Notifications
     private var notificationToken: NotificationToken?
@@ -93,6 +95,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     deinit {
         notificationToken?.stop()
         realmNotificationToken?.stop()
+        tableView.removeObserver(self, forKeyPath: "bounds")
     }
 
     override func viewDidLoad() {
@@ -129,6 +132,19 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         tableView.contentInset = UIEdgeInsets(top: (title != nil) ? 45 : 20, left: 0, bottom: 54, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
         tableView.showsVerticalScrollIndicator = false
+
+        view.addSubview(tableViewContentView)
+        tableViewContentView.hidden = true
+        tableView.addObserver(self, forKeyPath: "bounds", options: .New, context: &tableViewBoundsKVOContext)
+    }
+
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard context == &tableViewBoundsKVOContext else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            return
+        }
+        let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
+        tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
     }
 
     private func setupPlaceholderCell() {
