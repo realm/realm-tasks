@@ -183,7 +183,7 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
         case .Changed:
             let translation = recognizer.translationInView(self)
 
-            if !item.isCompletable && translation.x > 0 {
+            if !Item.isCompletable && translation.x > 0 {
                 releaseAction = nil
                 return
             }
