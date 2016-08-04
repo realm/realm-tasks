@@ -32,6 +32,7 @@ final class ToDoItemTextView: UITextView {
         backgroundColor = .clearColor()
         userInteractionEnabled = false
         keyboardAppearance = .Dark
+        autocapitalizationType = .Words
         returnKeyType = .Done
         scrollEnabled = false
     }
