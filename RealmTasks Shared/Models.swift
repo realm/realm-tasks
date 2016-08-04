@@ -32,9 +32,23 @@ final class ToDoListLists: Object {
     let items = List<ToDoList>()
 }
 
-final class ToDoList: Object {
+final class ToDoList: Object, CellPresentable {
     dynamic var name = ""
     let items = List<ToDoItem>()
+
+    var cellText: String {
+        get { return name }
+        set { name = newValue }
+    }
+    static var isCompletable: Bool { return false }
+    var completed: Bool {
+        get { return false }
+        set { /* no-op because isCompletable is false */ }
+    }
+
+    override class func ignoredProperties() -> [String] {
+        return ["cellText", "completed"]
+    }
 }
 
 final class ToDoItem: Object, CellPresentable {
