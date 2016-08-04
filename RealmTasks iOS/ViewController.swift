@@ -26,12 +26,12 @@ private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
 // MARK: View Controller
 
-final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+final class ViewController<Item: Object where Item: CellPresentable>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
     // Items
-    private var items = try! Realm().objects(ToDoList.self).first!.items
+    private var items: List<Item>
 
     // Table View
     private let tableView = UITableView()
@@ -57,7 +57,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // Editing
     private var currentlyEditing: Bool { return currentlyEditingCell != nil }
-    private var currentlyEditingCell: TableViewCell<ToDoItem>? {
+    private var currentlyEditingCell: TableViewCell<Item>? {
         didSet {
             tableView.scrollEnabled = !currentlyEditing
         }
@@ -68,7 +68,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
-    private let placeHolderCell = TableViewCell<ToDoItem>(style: .Default, reuseIdentifier: "cell")
+    private let placeHolderCell = TableViewCell<Item>(style: .Default, reuseIdentifier: "cell")
 
     // Onboard view
     private let onboardView = OnboardView()
@@ -76,7 +76,21 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // Constants
     private let editingCellAlpha: CGFloat = 0.3
 
+    // Closures
+    private let getList: (ToDoList) -> (List<Item>)
+
     // MARK: View Lifecycle
+
+    init(items: List<Item>, getList: (ToDoList) -> (List<Item>)) {
+        self.items = items
+        self.getList = getList
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    deinit {
+        notificationToken?.stop()
+        realmNotificationToken?.stop()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,11 +98,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         dispatch_once(&firstSyncWorkaroundToken, setupFirstSyncWorkaround)
         setupNotifications()
         setupGestureRecognizers()
-    }
-
-    deinit {
-        notificationToken?.stop()
-        realmNotificationToken?.stop()
     }
 
     // MARK: UI
@@ -114,7 +123,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.registerClass(TableViewCell<ToDoItem>.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(TableViewCell<Item>.self, forCellReuseIdentifier: "cell")
         tableView.separatorStyle = .None
         tableView.backgroundColor = .blackColor()
         tableView.rowHeight = 54
@@ -189,9 +198,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             self.realmNotificationToken?.stop()
             self.realmNotificationToken = nil
 
-            guard lists.first!.items != self.items else { return }
+            let items = self.getList(lists.first!)
 
-            self.items = lists.first!.items
+            guard self.items != items else { return }
+
+            self.items = items
 
             self.notificationToken?.stop()
             self.notificationToken = nil
@@ -203,7 +214,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 try! realm.write {
                     let lists = realm.objects(ToDoList.self)
                     while lists.count > 1 {
-                        lists.first!.items.appendContentsOf(lists.last!.items)
+                        self.getList(lists.first!).appendContentsOf(self.getList(lists.last!))
                         realm.delete(lists.last!)
                     }
                 }
@@ -243,7 +254,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                         // If editing, unintended input state is committed and sync.
                         self.currentlyEditingCell?.temporarilyIgnoreSaveChanges = true
                         updateTableView()
-                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell<ToDoItem>
+                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell<Item>
                         currentlyEditingCell.temporarilyIgnoreSaveChanges = false
                         currentlyEditingCell.textView.becomeFirstResponder()
                     }
@@ -277,19 +288,19 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if currentlyEditing {
             view.endEditing(true)
         } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<ToDoItem> {
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         } else {
             let row = items.filter("completed = false").count
             try! items.realm?.write {
-                items.insert(ToDoItem(), atIndex: row)
+                items.insert(Item(), atIndex: row)
             }
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
             toggleOnboardView(animated: true)
             skipNextNotification()
-            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<ToDoItem>
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         }
@@ -386,7 +397,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
         let location = gestureRecognizer.locationInView(tableView)
         if let indexPath = tableView.indexPathForRowAtPoint(location),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<ToDoItem> {
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
             return !cell.item.completed
         }
         return gestureRecognizer.isKindOfClass(UITapGestureRecognizer.self)
@@ -399,7 +410,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<ToDoItem>
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Item>
         cell.item = items[indexPath.row]
         cell.itemCompleted = itemCompleted
         cell.itemDeleted = itemDeleted
@@ -439,7 +450,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 item = items[destinationIndexPath.row]
             }
         }
-        return cellHeightForText(item.text)
+        return cellHeightForText(item.cellText)
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -504,16 +515,16 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         // exceeds threshold
         try! items.realm?.write {
-            items.insert(ToDoItem(), atIndex: 0)
+            items.insert(Item(), atIndex: 0)
         }
         skipNextNotification()
         tableView.reloadData()
-        (tableView.visibleCells.first as! TableViewCell<ToDoItem>).textView.becomeFirstResponder()
+        (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
 
     // MARK: Cell Callbacks
 
-    private func itemDeleted(item: ToDoItem) {
+    private func itemDeleted(item: Item) {
         guard let index = items.indexOf(item) else {
             return
         }
@@ -528,7 +539,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    private func itemCompleted(item: ToDoItem) {
+    private func itemCompleted(item: Item) {
         guard let index = items.indexOf(item) else {
             return
         }
@@ -553,7 +564,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    private func cellDidBeginEditing(editingCell: TableViewCell<ToDoItem>) {
+    private func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
         currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
@@ -579,7 +590,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         })
     }
 
-    private func cellDidEndEditing(editingCell: TableViewCell<ToDoItem>) {
+    private func cellDidEndEditing(editingCell: TableViewCell<Item>) {
         currentlyEditingCell = nil
         currentlyEditingIndexPath = nil
 
@@ -596,8 +607,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             self?.view.layoutSubviews()
         }
 
-        if editingCell.item.text.isEmpty {
-            let item = editingCell.item
+        if editingCell.item.cellText.isEmpty {
+            let item = editingCell.item as Object
             try! item.realm?.write {
                 item.realm!.delete(item)
             }
@@ -607,7 +618,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    private func cellDidChangeText(editingCell: TableViewCell<ToDoItem>) {
+    private func cellDidChangeText(editingCell: TableViewCell<Item>) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
         let height = cellHeightForText(editingCell.textView.text)

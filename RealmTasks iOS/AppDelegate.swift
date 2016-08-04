@@ -46,7 +46,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Could not open or write to the realm: \(error)")
         }
 
-        window?.rootViewController = ViewController()
+        window?.rootViewController = ViewController(
+            items: try! Realm().objects(ToDoList.self).first!.items,
+            getList: { $0.items }
+        )
         window?.makeKeyAndVisible()
 
         if let userRealm = try? Realm(configuration: userRealmConfiguration),
