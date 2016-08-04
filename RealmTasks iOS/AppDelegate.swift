@@ -61,7 +61,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 try realm.write {
                     let list = ToDoList()
                     list.name = "My Tasks"
-                    realm.add(list)
+                    let listLists = ToDoListLists()
+                    listLists.items.append(list)
+                    realm.add(listLists)
                 }
             }
         } catch {
