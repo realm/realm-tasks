@@ -103,10 +103,6 @@ final class ViewController<Item: Object where Item: CellPresentable>: UIViewCont
 
     // MARK: UI
 
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
-
     private func setupUI() {
         setupTableView()
         setupPlaceholderCell()
