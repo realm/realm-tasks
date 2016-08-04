@@ -68,6 +68,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
     // Auto Layout
     private var topConstraint: NSLayoutConstraint?
+    private var bottomConstraints: ConstraintGroup?
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell<Item>(style: .Default, reuseIdentifier: "cell")
@@ -560,6 +561,33 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     // MARK: UIScrollViewDelegate methods
 
     func scrollViewDidScroll(scrollView: UIScrollView)  {
+        func removeLastVCIfNecessary() {
+            if let lastVC = parentViewController?.childViewControllers.last where lastVC != self {
+                lastVC.view.removeFromSuperview()
+                lastVC.removeFromParentViewController()
+            }
+        }
+
+        if distancePulledUp > tableView.rowHeight, let createBottomViewController = createBottomViewController {
+            if parentViewController?.childViewControllers.count > 1 { return }
+
+            if bottomViewController == nil {
+                bottomViewController = createBottomViewController()
+            }
+
+            let bottomVC = bottomViewController!
+            let parentVC = parentViewController!
+            parentVC.addChildViewController(bottomVC)
+            parentVC.view.addSubview(bottomVC.view)
+            bottomConstraints = constrain(bottomVC.view, tableViewContentView) { bottomView, tableViewContentView in
+                bottomView.size == bottomView.superview!.size
+                bottomView.left == bottomView.superview!.left
+                bottomView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
+            }
+            bottomVC.didMoveToParentViewController(parentVC)
+            return
+        }
+
         guard distancePulledDown > 0 else { return }
 
         if distancePulledDown <= tableView.rowHeight {
@@ -590,6 +618,27 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if distancePulledUp > tableView.rowHeight,
+            let parentVC = parentViewController,
+            let bottomVC = bottomViewController where bottomVC === parentVC.childViewControllers.last {
+            // Navigate to bottom
+            willMoveToParentViewController(nil)
+            constrain(bottomVC.view, view, replace: bottomConstraints!) { bottomView, currentView in
+                bottomView.edges == bottomView.superview!.edges
+                currentView.bottom == bottomView.top
+                currentView.size == bottomView.size
+                currentView.left == bottomView.left
+            }
+            UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
+                parentVC.view.layoutIfNeeded()
+            }, completion: { _ in
+                self.view.removeFromSuperview()
+                bottomVC.didMoveToParentViewController(parentVC)
+                self.removeFromParentViewController()
+            })
+            return
+        }
+
         guard distancePulledUp < 160 else {
             let itemsToDelete = items.filter("completed = true")
             let numberOfItemsToDelete = itemsToDelete.count
