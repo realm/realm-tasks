@@ -22,6 +22,8 @@ import Cartography
 import RealmSwift
 import UIKit
 
+private var firstSyncWorkaroundToken: dispatch_once_t = 0
+
 // MARK: View Controller
 
 final class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
@@ -49,9 +51,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     // Moving
-    private var snapshot: UIView! = nil
-    private var startIndexPath: NSIndexPath? = nil
-    private var sourceIndexPath: NSIndexPath? = nil
+    private var snapshot: UIView!
+    private var startIndexPath: NSIndexPath?
+    private var sourceIndexPath: NSIndexPath?
 
     // Editing
     private var currentlyEditing: Bool { return currentlyEditingCell != nil }
@@ -60,7 +62,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             tableView.scrollEnabled = !currentlyEditing
         }
     }
-    private var currentlyEditingIndexPath: NSIndexPath? = nil
+    private var currentlyEditingIndexPath: NSIndexPath?
 
     // Auto Layout
     private var topConstraint: NSLayoutConstraint?
@@ -79,9 +81,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupFirstSyncWorkaround()
+        dispatch_once(&firstSyncWorkaroundToken, setupFirstSyncWorkaround)
         setupNotifications()
         setupGestureRecognizers()
+    }
+
+    deinit {
+        notificationToken?.stop()
+        realmNotificationToken?.stop()
     }
 
     // MARK: UI
@@ -383,7 +390,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<ToDoItem> {
             return !cell.item.completed
         }
-        return true
+        return gestureRecognizer.isKindOfClass(UITapGestureRecognizer.self)
     }
 
     // MARK: UITableViewDataSource
@@ -458,7 +465,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             placeHolderCell.layer.transform = transform
 
-            if tableView.numberOfRowsInSection(0) == 0 {
+            if items.isEmpty {
                 onboardView.alpha = max(0, 1 - (distancePulledDown / cellHeight))
             } else {
                 onboardView.alpha = 0
@@ -620,7 +627,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: Colors
 
     private func colorForRow(row: Int) -> UIColor {
-        let fraction = Double(row) / Double(max(13, tableView.numberOfRowsInSection(0)))
+        let fraction = Double(row) / Double(max(13, items.count))
         return UIColor.taskColors().gradientColorAtFraction(fraction)
     }
 
