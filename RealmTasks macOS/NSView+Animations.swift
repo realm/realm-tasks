@@ -21,14 +21,14 @@
 import Cocoa
 
 extension NSView {
-    
+
     static func animateWithDuration(duration: NSTimeInterval, animations: () -> Void, completion: (() -> Void)? = nil) {
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = duration
             context.allowsImplicitAnimation = true
-            
+
             animations()
             }, completionHandler: completion)
     }
-    
+
 }

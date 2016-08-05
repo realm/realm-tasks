@@ -21,39 +21,39 @@
 import Cocoa
 
 protocol RegisterViewControllerDelegate: class {
-    
+
     func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String)
     func registerViewControllerDidCancel(viewController: RegisterViewController)
-    
+
 }
 
 class RegisterViewController: NSViewController {
-    
+
     weak var delegate: RegisterViewControllerDelegate?
 
     var userName: String?
     var password: String?
     var confirmation: String?
-    
+
     var confirmationMatchesPassword: Bool {
         return password == confirmation
     }
-    
+
     // Some KVO magic, see https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVODependentKeys.html
     static func keyPathsForValuesAffectingConfirmationMatchesPassword() -> NSSet {
         return NSSet(array: ["password", "confirmation"])
     }
-    
+
     @IBAction func register(sender: AnyObject?) {
         guard let userName = userName, let password = password where confirmationMatchesPassword else {
             return
         }
-        
+
         delegate?.registerViewController(self, didRegisterWithUserName: userName, password: password)
     }
-    
+
     @IBAction func cancel(sender: AnyObject?) {
         delegate?.registerViewControllerDidCancel(self)
     }
-    
+
 }

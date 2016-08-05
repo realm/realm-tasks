@@ -21,27 +21,27 @@
 import Cocoa
 
 protocol LogInViewControllerDelegate: class {
-    
+
     func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String)
     func logInViewControllerDidRegister(viewController: LogInViewController)
-    
+
 }
 
 class LogInViewController: NSViewController {
-    
+
     weak var delelegate: LogInViewControllerDelegate?
-    
+
     var userName: String?
     var password: String?
-    
+
     @IBAction func logIn(sender: AnyObject?) {
         guard let userName = userName, let password = password else {
             return
         }
-        
+
         delelegate?.logInViewController(self, didLogInWithUserName: userName, password: password)
     }
-    
+
     @IBAction func register(sender: AnyObject?) {
         delelegate?.logInViewControllerDidRegister(self)
     }
