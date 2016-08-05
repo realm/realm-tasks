@@ -22,6 +22,19 @@ import Cartography
 import RealmSwift
 import UIKit
 
+extension UIView {
+    private func removeAllConstraints() {
+        var view: UIView? = self
+        while let superview = view?.superview {
+            for c in superview.constraints where c.firstItem === self || c.secondItem === self {
+                superview.removeConstraint(c)
+            }
+            view = superview.superview
+        }
+        translatesAutoresizingMaskIntoConstraints = true
+    }
+}
+
 private var tableViewBoundsKVOContext = 0
 private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
@@ -69,6 +82,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     // Auto Layout
     private var topConstraint: NSLayoutConstraint?
     private var bottomConstraints: ConstraintGroup?
+    private var topConstraints: ConstraintGroup?
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell<Item>(style: .Default, reuseIdentifier: "cell")
@@ -533,6 +547,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         let parentVC = parentViewController!
         parentVC.addChildViewController(bottomVC)
         parentVC.view.addSubview(bottomVC.view)
+        view.removeAllConstraints()
         let bottomConstraints = constrain(bottomVC.view) { bottomView in
             bottomView.size == bottomView.superview!.size
             bottomView.left == bottomView.superview!.left
@@ -561,15 +576,15 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     // MARK: UIScrollViewDelegate methods
 
     func scrollViewDidScroll(scrollView: UIScrollView)  {
-        func removeLastVCIfNecessary() {
-            if let lastVC = parentViewController?.childViewControllers.last where lastVC != self {
-                lastVC.view.removeFromSuperview()
-                lastVC.removeFromParentViewController()
+        func removeVC(vc: UIViewController?) {
+            if scrollView.dragging {
+                vc?.view.removeFromSuperview()
+                vc?.removeFromParentViewController()
             }
         }
 
         if distancePulledUp > tableView.rowHeight, let createBottomViewController = createBottomViewController {
-            if parentViewController?.childViewControllers.count > 1 { return }
+            if bottomViewController === parentViewController?.childViewControllers.last { return }
 
             if bottomViewController == nil {
                 bottomViewController = createBottomViewController()
@@ -579,6 +594,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             let parentVC = parentViewController!
             parentVC.addChildViewController(bottomVC)
             parentVC.view.addSubview(bottomVC.view)
+            view.removeAllConstraints()
             bottomConstraints = constrain(bottomVC.view, tableViewContentView) { bottomView, tableViewContentView in
                 bottomView.size == bottomView.superview!.size
                 bottomView.left == bottomView.superview!.left
@@ -586,9 +602,14 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             }
             bottomVC.didMoveToParentViewController(parentVC)
             return
+        } else {
+            removeVC(bottomViewController)
         }
 
-        guard distancePulledDown > 0 else { return }
+        guard distancePulledDown > 0 else {
+            removeVC(topViewController)
+            return
+        }
 
         if distancePulledDown <= tableView.rowHeight {
             placeHolderCell.textView.text = "Pull to Create Item"
@@ -607,12 +628,33 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             } else {
                 onboardView.alpha = 0
             }
-        } else {
+        } else if distancePulledDown <= tableView.rowHeight * 2 {
             placeHolderCell.layer.transform = CATransform3DIdentity
             placeHolderCell.textView.text = "Release to Create Item"
+        } else if let createTopViewController = createTopViewController {
+            if topViewController === parentViewController?.childViewControllers.last { return }
+
+            if topViewController == nil {
+                topViewController = createTopViewController()
+            }
+
+            let topVC = topViewController!
+            let parentVC = parentViewController!
+            parentVC.addChildViewController(topVC)
+            parentVC.view.addSubview(topVC.view)
+            view.removeAllConstraints()
+            topConstraints = constrain(topVC.view, tableViewContentView) { topView, tableViewContentView in
+                topView.size == topView.superview!.size
+                topView.left == topView.superview!.left
+                topView.bottom == tableViewContentView.top - 200
+            }
+            topVC.didMoveToParentViewController(parentVC)
+            placeHolderCell.textView.text = "^Switch to Lists^"
+            return
         }
 
         if scrollView.dragging {
+            removeVC(topViewController)
             placeHolderCell.alpha = min(1, distancePulledDown / tableView.rowHeight)
         }
     }
@@ -639,35 +681,35 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             return
         }
 
-        guard distancePulledUp < 160 else {
-            let itemsToDelete = items.filter("completed = true")
-            let numberOfItemsToDelete = itemsToDelete.count
-            guard numberOfItemsToDelete != 0 else { return }
-
-            try! items.realm?.write {
-                items.removeLast(numberOfItemsToDelete)
-                items.realm?.delete(itemsToDelete)
-            }
-            let startingIndex = items.count
-            let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
-                return NSIndexPath(forRow: index, inSection: 0)
-            }
-            tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
-            skipNextNotification()
-
-            vibrate()
-            return
-        }
-
         guard distancePulledDown > tableView.rowHeight else { return }
 
-        // exceeds threshold
-        try! items.realm?.write {
-            items.insert(Item(), atIndex: 0)
+        if distancePulledDown > tableView.rowHeight * 2,
+            let parentVC = parentViewController,
+            let topVC = topViewController where topVC === parentVC.childViewControllers.last {
+            // Navigate to top
+            willMoveToParentViewController(nil)
+            constrain(topVC.view, view, replace: topConstraints!) { topView, currentView in
+                topView.edges == topView.superview!.edges
+                currentView.top == topView.bottom
+                currentView.size == topView.size
+                currentView.left == topView.left
+            }
+            UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
+                parentVC.view.layoutIfNeeded()
+            }, completion: { _ in
+                self.view.removeFromSuperview()
+                topVC.didMoveToParentViewController(parentVC)
+                self.removeFromParentViewController()
+            })
+        } else {
+            // Create new item
+            try! items.realm?.write {
+                items.insert(Item(), atIndex: 0)
+            }
+            skipNextNotification()
+            tableView.reloadData()
+            (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
         }
-        skipNextNotification()
-        tableView.reloadData()
-        (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
 
     // MARK: Cell Callbacks
