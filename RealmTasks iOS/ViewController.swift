@@ -22,32 +22,7 @@ import Cartography
 import RealmSwift
 import UIKit
 
-// MARK: Private Extensions
-
-extension UIView {
-    private var snapshot: UIView {
-        UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
-        layer.renderInContext(UIGraphicsGetCurrentContext()!)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        // Create an image view
-        let snapshot = UIImageView(image: image)
-        snapshot.layer.masksToBounds = false
-        snapshot.layer.cornerRadius = 0
-        snapshot.layer.shadowOffset = CGSizeMake(-5, 0)
-        snapshot.layer.shadowRadius = 5
-        snapshot.layer.shadowOpacity = 0
-        return snapshot
-    }
-}
-
-// MARK: Private Functions
-
-private func delay(time: Double, block: () -> ()) {
-    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
-    dispatch_after(delayTime, dispatch_get_main_queue(), block)
-}
+private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
 // MARK: View Controller
 
@@ -55,9 +30,13 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     // MARK: Properties
 
-    // Stored Properties
-    private var items = try! Realm().objects(ToDoList).first!.items
+    // Items
+    private var items = try! Realm().objects(ToDoList.self).first!.items
+
+    // Table View
     private let tableView = UITableView()
+
+    // Notifications
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?
     private var skipNotification = false
@@ -72,37 +51,44 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     // Moving
-    private var snapshot: UIView! = nil
-    private var startIndexPath: NSIndexPath? = nil
-    private var sourceIndexPath: NSIndexPath? = nil
+    private var snapshot: UIView!
+    private var startIndexPath: NSIndexPath?
+    private var sourceIndexPath: NSIndexPath?
 
     // Editing
     private var currentlyEditing: Bool { return currentlyEditingCell != nil }
-    private var currentlyEditingCell: TaskCell? {
+    private var currentlyEditingCell: TableViewCell<ToDoItem>? {
         didSet {
             tableView.scrollEnabled = !currentlyEditing
         }
     }
-    private var currentlyEditingIndexPath: NSIndexPath? = nil
+    private var currentlyEditingIndexPath: NSIndexPath?
+
+    // Auto Layout
     private var topConstraint: NSLayoutConstraint?
 
     // Placeholder cell to use before being adding to the table view
-    private let placeHolderCell = TaskCell(style: .Default, reuseIdentifier: "cell")
+    private let placeHolderCell = TableViewCell<ToDoItem>(style: .Default, reuseIdentifier: "cell")
 
     // Onboard view
     private let onboardView = OnboardView()
 
     // Constants
-    let editingCellAlpha: CGFloat = 0.3
+    private let editingCellAlpha: CGFloat = 0.3
 
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupFirstSyncWorkaround()
+        dispatch_once(&firstSyncWorkaroundToken, setupFirstSyncWorkaround)
         setupNotifications()
         setupGestureRecognizers()
+    }
+
+    deinit {
+        notificationToken?.stop()
+        realmNotificationToken?.stop()
     }
 
     // MARK: UI
@@ -128,7 +114,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.registerClass(TaskCell.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(TableViewCell<ToDoItem>.self, forCellReuseIdentifier: "cell")
         tableView.separatorStyle = .None
         tableView.backgroundColor = .blackColor()
         tableView.rowHeight = 54
@@ -139,7 +125,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
-        placeHolderCell.backgroundView!.backgroundColor = rowColor(atIndex: 0)
+        placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -181,7 +167,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
 
         func updateAlpha() {
-            onboardView.alpha = tableView.numberOfRowsInSection(0) > 0 ? 0 : 1
+            onboardView.alpha = items.isEmpty ? 1 : 0
         }
 
         if animated {
@@ -247,7 +233,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                     self.tableView.beginUpdates()
                     self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
                     self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                    self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },withRowAnimation: .Automatic)
+                    self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
                     self.tableView.endUpdates()
                 }
 
@@ -257,7 +243,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                         // If editing, unintended input state is committed and sync.
                         self.currentlyEditingCell?.temporarilyIgnoreSaveChanges = true
                         updateTableView()
-                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TaskCell
+                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell<ToDoItem>
                         currentlyEditingCell.temporarilyIgnoreSaveChanges = false
                         currentlyEditingCell.textView.becomeFirstResponder()
                     }
@@ -269,7 +255,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.toggleOnboardView(animated: true)
             case .Error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
+                fatalError(String(error))
             }
         }
     }
@@ -291,7 +277,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         if currentlyEditing {
             view.endEditing(true)
         } else if let indexPath = tableView.indexPathForRowAtPoint(recognizer.locationInView(tableView)),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TaskCell {
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<ToDoItem> {
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         } else {
@@ -302,7 +288,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
             toggleOnboardView(animated: true)
             skipNextNotification()
-            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TaskCell
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<ToDoItem>
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         }
@@ -320,18 +306,25 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             // Add the snapshot as subview, aligned with the cell
             var center = cell.center
-            snapshot = cell.snapshot
+            snapshot = cell.snapshotViewAfterScreenUpdates(false)
+            snapshot.layer.shadowColor = UIColor.blackColor().CGColor
+            snapshot.layer.shadowOffset = CGSizeMake(-5, 0)
+            snapshot.layer.shadowRadius = 5
             snapshot.center = center
             cell.hidden = true
             tableView.addSubview(snapshot)
 
             // Animate
+            let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
+            shadowAnimation.fromValue = 0
+            shadowAnimation.toValue = 1
+            shadowAnimation.duration = 0.3
+            snapshot.layer.addAnimation(shadowAnimation, forKey: shadowAnimation.keyPath)
+            snapshot.layer.shadowOpacity = 1
             UIView.animateWithDuration(0.3) { [unowned self] in
                 center.y = location.y
                 self.snapshot.center = center
                 self.snapshot.transform = CGAffineTransformMakeScale(1.05, 1.05)
-                self.snapshot.layer.shadowColor = UIColor.blackColor().CGColor
-                self.snapshot.layer.shadowOpacity = 1
             }
             break
         case .Changed:
@@ -366,10 +359,16 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
 
+            let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
+            shadowAnimation.fromValue = 1
+            shadowAnimation.toValue = 0
+            shadowAnimation.duration = 0.3
+            snapshot.layer.addAnimation(shadowAnimation, forKey: shadowAnimation.keyPath)
+            snapshot.layer.shadowOpacity = 0
+
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
                 self.snapshot.transform = CGAffineTransformIdentity
-                self.snapshot.layer.shadowOpacity = 0
             }, completion: { [unowned self] _ in
                 cell.hidden = false
                 self.snapshot.removeFromSuperview()
@@ -388,10 +387,10 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
         let location = gestureRecognizer.locationInView(tableView)
         if let indexPath = tableView.indexPathForRowAtPoint(location),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TaskCell {
+            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<ToDoItem> {
             return !cell.item.completed
         }
-        return true
+        return gestureRecognizer.isKindOfClass(UITapGestureRecognizer.self)
     }
 
     // MARK: UITableViewDataSource
@@ -401,7 +400,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TaskCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<ToDoItem>
         cell.item = items[indexPath.row]
         cell.itemCompleted = itemCompleted
         cell.itemDeleted = itemDeleted
@@ -416,7 +415,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
 
-    func cellHeightForText(text: NSString) -> CGFloat {
+    private func cellHeightForText(text: String) -> CGFloat {
         return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
                                          options: [.UsesLineFragmentOrigin],
                                          attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
@@ -441,12 +440,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 item = items[sourceIndexPath.row]
             }
         }
-
         return cellHeightForText(item.text)
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        cell.contentView.backgroundColor = rowColor(atIndex: indexPath.row)
+        cell.contentView.backgroundColor = colorForRow(indexPath.row)
         cell.alpha = currentlyEditing ? editingCellAlpha : 1
     }
 
@@ -467,7 +465,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             placeHolderCell.layer.transform = transform
 
-            if tableView.numberOfRowsInSection(0) == 0 {
+            if items.isEmpty {
                 onboardView.alpha = max(0, 1 - (distancePulledDown / cellHeight))
             } else {
                 onboardView.alpha = 0
@@ -511,12 +509,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
         skipNextNotification()
         tableView.reloadData()
-        (tableView.visibleCells.first as! TaskCell).textView.becomeFirstResponder()
+        (tableView.visibleCells.first as! TableViewCell<ToDoItem>).textView.becomeFirstResponder()
     }
 
-    // MARK: TableViewCellDelegate
+    // MARK: Cell Callbacks
 
-    func itemDeleted(item: ToDoItem) {
+    private func itemDeleted(item: ToDoItem) {
         guard let index = items.indexOf(item) else {
             return
         }
@@ -531,7 +529,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    func itemCompleted(item: ToDoItem) {
+    private func itemCompleted(item: ToDoItem) {
         guard let index = items.indexOf(item) else {
             return
         }
@@ -556,7 +554,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    func cellDidBeginEditing(editingCell: TaskCell) {
+    private func cellDidBeginEditing(editingCell: TableViewCell<ToDoItem>) {
         currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
@@ -582,7 +580,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         })
     }
 
-    func cellDidEndEditing(editingCell: TaskCell) {
+    private func cellDidEndEditing(editingCell: TableViewCell<ToDoItem>) {
         currentlyEditingCell = nil
         currentlyEditingIndexPath = nil
 
@@ -610,7 +608,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         toggleOnboardView()
     }
 
-    func cellDidChangeText(editingCell: TaskCell) {
+    private func cellDidChangeText(editingCell: TableViewCell<ToDoItem>) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
         let height = cellHeightForText(editingCell.textView.text)
@@ -626,16 +624,16 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    // MARK: Actions
+    // MARK: Colors
 
-    private func rowColor(atIndex index: Int) -> UIColor {
-        let fraction = Double(index) / Double(max(13, tableView.numberOfRowsInSection(0)))
+    private func colorForRow(row: Int) -> UIColor {
+        let fraction = Double(row) / Double(max(13, items.count))
         return UIColor.taskColors().gradientColorAtFraction(fraction)
     }
 
     private func updateColors(completion completion: (() -> Void)? = nil) {
         let visibleCellsAndColors = tableView.visibleCells.map { cell in
-            return (cell, rowColor(atIndex: tableView.indexPathForCell(cell)!.row))
+            return (cell, colorForRow(tableView.indexPathForCell(cell)!.row))
         }
 
         UIView.animateWithDuration(0.5, animations: {
