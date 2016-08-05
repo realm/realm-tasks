@@ -564,7 +564,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             currentView.size == bottomView.size
             currentView.left == bottomView.left
         }
-        UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
+        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
             parentVC.view.layoutIfNeeded()
         }, completion: { _ in
             self.view.removeFromSuperview()
@@ -671,7 +671,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 currentView.size == bottomView.size
                 currentView.left == bottomView.left
             }
-            UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
+            UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
                 parentVC.view.layoutIfNeeded()
             }, completion: { _ in
                 self.view.removeFromSuperview()
@@ -694,7 +694,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 currentView.size == topView.size
                 currentView.left == topView.left
             }
-            UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
+            UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
                 parentVC.view.layoutIfNeeded()
             }, completion: { _ in
                 self.view.removeFromSuperview()
