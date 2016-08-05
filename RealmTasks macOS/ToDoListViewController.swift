@@ -253,6 +253,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
             }
 
             self.tableView.moveRowAtIndex(index, toIndex: destinationIndex)
+            self.updateColors()
         }
     }
 
