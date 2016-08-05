@@ -25,21 +25,21 @@ import RealmSwift
 class AppDelegate: NSObject {
 
     private(set) var mainWindowController: NSWindowController!
-    
+
     func logIn() {
         let logInViewController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("LogInViewController") as! LogInViewController
         logInViewController.delelegate = self
-        
+
         mainWindowController.contentViewController?.presentViewControllerAsSheet(logInViewController)
     }
-    
+
     func register() {
         let registerViewController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("RegisterViewController") as! RegisterViewController
         registerViewController.delegate = self
-        
+
         mainWindowController.contentViewController?.presentViewControllerAsSheet(registerViewController)
     }
-    
+
     private func persistRealmUserWithToken(token: String) {
         dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
             let userRealm = try! Realm(configuration: userRealmConfiguration)
@@ -50,12 +50,12 @@ class AppDelegate: NSObject {
             }
         }
     }
-    
+
     private func restorePersistedRealmUser() -> Bool {
         guard let userRealm = try? Realm(configuration: userRealmConfiguration), let token = userRealm.objects(User.self).first?.accessToken else {
             return false
         }
-        
+
         do {
             try Realm().open(with: token)
             return true
@@ -67,13 +67,13 @@ class AppDelegate: NSObject {
 }
 
 extension AppDelegate: NSApplicationDelegate {
-    
+
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         SyncManager.sharedManager().configureWithAppID(Constants.appID)
-        
+
         Realm.Configuration.defaultConfiguration = syncRealmConfiguration
         Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
-        
+
         do {
             let realm = try Realm()
             if realm.isEmpty {
@@ -85,28 +85,28 @@ extension AppDelegate: NSApplicationDelegate {
         } catch {
             fatalError("Could not open or write to the realm: \(error)")
         }
-        
+
         mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
         mainWindowController.window?.titleVisibility = .Hidden
         mainWindowController.showWindow(nil)
-        
+
         if !restorePersistedRealmUser() {
             dispatch_async(dispatch_get_main_queue()) {
                 self.logIn()
             }
         }
     }
-    
+
     func applicationShouldHandleReopen(sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         mainWindowController.showWindow(nil)
-        
+
         return true
     }
-    
+
 }
 
 extension AppDelegate: LogInViewControllerDelegate {
-    
+
     func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
         // FIXME: Use Realm convinience auth API insead (https://github.com/realm/realm-cocoa-private/issues/187)
         logIn(userName: userName, password: password, register: false) { accessToken, error in
@@ -115,7 +115,7 @@ extension AppDelegate: LogInViewControllerDelegate {
             } else {
                 if let token = accessToken {
                     self.persistRealmUserWithToken(token)
-                    
+
                     do {
                         try Realm().open(with: token)
                         viewController.dismissController(nil)
@@ -125,7 +125,7 @@ extension AppDelegate: LogInViewControllerDelegate {
                 }
             }
         }
-        
+
 //        try! Realm().open(for: userName, password: password, newAccount: false) { error, session in
 //            // FIXME: Completion handler is executed on the background thread
 //            dispatch_async(dispatch_get_main_queue()) {
@@ -137,16 +137,16 @@ extension AppDelegate: LogInViewControllerDelegate {
 //            }
 //        }
     }
-    
+
     func logInViewControllerDidRegister(viewController: LogInViewController) {
         viewController.dismissController(nil)
         register()
     }
-    
+
 }
 
 extension AppDelegate: RegisterViewControllerDelegate {
-    
+
     func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
         // FIXME: Use Realm convinience auth API insead (https://github.com/realm/realm-cocoa-private/issues/187)
         logIn(userName: userName, password: password, register: true) { accessToken, error in
@@ -155,7 +155,7 @@ extension AppDelegate: RegisterViewControllerDelegate {
             } else {
                 if let token = accessToken {
                     self.persistRealmUserWithToken(token)
-                    
+
                     do {
                         try Realm().open(with: token)
                         viewController.dismissController(nil)
@@ -165,7 +165,7 @@ extension AppDelegate: RegisterViewControllerDelegate {
                 }
             }
         }
-        
+
 //        try! Realm().open(for: userName, password: password, newAccount: true) { error, session in
 //            // FIXME: Completion handler is executed on the background thread
 //            dispatch_async(dispatch_get_main_queue()) {
@@ -177,16 +177,16 @@ extension AppDelegate: RegisterViewControllerDelegate {
 //            }
 //        }
     }
-    
+
     func registerViewControllerDidCancel(viewController: RegisterViewController) {
         viewController.dismissController(nil)
         logIn()
     }
-    
+
 }
 
 private extension AppDelegate {
-    
+
     private func logIn(userName userName: String, password: String, register: Bool, completion: ((accessToken: String?, error: NSError?) -> Void)?) {
         let json = [
             "provider": "password",
@@ -196,12 +196,12 @@ private extension AppDelegate {
             "app_id": Constants.appID,
             "path": Constants.syncRealmPath
         ]
-        
+
         try! HTTPClient.post(Constants.syncAuthURL, json: json) { data, response, error in
             if let data = data {
                 do {
                     let token = try self.parseResponseData(data)
-                    
+
                     completion?(accessToken: token, error: nil)
                 } catch let error as NSError {
                     completion?(accessToken: nil, error: error)
@@ -211,17 +211,17 @@ private extension AppDelegate {
             }
         }
     }
-    
+
     private func parseResponseData(data: NSData) throws -> String {
         let json = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String: AnyObject]
-        
+
         guard let token = json?["token"] as? String else {
             let errorDescription = json?["error"] as? String ?? "Failed getting token"
-            
+
             throw NSError(domain: "io.realm.sync.auth", code: 0, userInfo: [NSLocalizedDescriptionKey: errorDescription])
         }
-        
+
         return token
     }
-    
+
 }
