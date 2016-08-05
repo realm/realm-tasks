@@ -43,6 +43,8 @@ class ToDoListViewController: NSViewController {
     private var currentlyMovingRowSnapshotView: SnapshotView?
     private var movingStarted = false
 
+    private var autoscrollTimer: NSTimer?
+
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
@@ -234,6 +236,7 @@ extension ToDoListViewController {
         switch recognizer.state {
         case .Began:
             movingStarted = true
+            startAutoscrolling()
         case .Changed:
             if let snapshotView = currentlyMovingRowSnapshotView {
                 snapshotView.frame.origin.y = recognizer.locationInView(snapshotView.superview!).y - snapshotView.frame.height / 2
@@ -255,9 +258,29 @@ extension ToDoListViewController {
             }
         case .Ended:
             endReordering()
+            stopAutoscrolling()
         default:
             ()
         }
+    }
+
+    private func startAutoscrolling() {
+        guard autoscrollTimer == nil else {
+            return
+        }
+
+        autoscrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: #selector(handleAutoscrolling), userInfo: nil, repeats: true)
+    }
+
+    private dynamic func handleAutoscrolling(timer: NSTimer) {
+        if let event = NSApp.currentEvent {
+            tableView.autoscroll(event)
+        }
+    }
+
+    private func stopAutoscrolling() {
+        autoscrollTimer?.invalidate()
+        autoscrollTimer = nil
     }
 
 }
