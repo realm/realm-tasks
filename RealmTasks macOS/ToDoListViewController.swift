@@ -528,16 +528,13 @@ private final class SnapshotView: NSView {
         super.init(frame: sourceView.frame)
 
         wantsLayer = true
+        shadow = NSShadow() // Workaround to activate layer-backed shadow
+
         layer?.contents = NSImage(data: sourceView.dataWithPDFInsideRect(sourceView.bounds))!
-        shadow = {
-            let shadow = NSShadow()
-
-            shadow.shadowColor = NSColor.blackColor()
-            shadow.shadowOffset = NSSize(width: -5, height: 0)
-            shadow.shadowBlurRadius = 5
-
-            return shadow
-        }()
+        layer?.shadowColor = NSColor.blackColor().CGColor
+        layer?.shadowOpacity = 1
+        layer?.shadowRadius = 5
+        layer?.shadowOffset = CGSize(width: -5, height: 0)
     }
 
     required init?(coder: NSCoder) {
