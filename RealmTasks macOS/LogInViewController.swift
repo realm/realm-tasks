@@ -20,15 +20,30 @@
 
 import Cocoa
 
-extension NSView {
+protocol LogInViewControllerDelegate: class {
 
-    static func animateWithDuration(duration: NSTimeInterval, animations: () -> Void, completion: (() -> Void)? = nil) {
-        NSAnimationContext.runAnimationGroup({ context in
-            context.duration = duration
-            context.allowsImplicitAnimation = true
+    func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String)
+    func logInViewControllerDidRegister(viewController: LogInViewController)
 
-            animations()
-        }, completionHandler: completion)
+}
+
+class LogInViewController: NSViewController {
+
+    weak var delelegate: LogInViewControllerDelegate?
+
+    var userName: String?
+    var password: String?
+
+    @IBAction func logIn(sender: AnyObject?) {
+        guard let userName = userName, let password = password else {
+            return
+        }
+
+        delelegate?.logInViewController(self, didLogInWithUserName: userName, password: password)
+    }
+
+    @IBAction func register(sender: AnyObject?) {
+        delelegate?.logInViewControllerDidRegister(self)
     }
 
 }

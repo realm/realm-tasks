@@ -35,6 +35,9 @@
 		C23EB0591D46535F00D3E0AC /* ToDoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0581D46535F00D3E0AC /* ToDoListViewController.swift */; };
 		C23EB05B1D4655A900D3E0AC /* ToDoItemCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB05A1D4655A900D3E0AC /* ToDoItemCellView.swift */; };
 		C23EB05D1D4A028A00D3E0AC /* NSView+Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */; };
+		C28A34021D50A0C500EE8F1A /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28A34011D50A0C500EE8F1A /* LogInViewController.swift */; };
+		C28A34031D50C3B900EE8F1A /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6861D409D3500BB4521 /* HTTPClient.swift */; };
+		C28A34051D50D19B00EE8F1A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28A34041D50D19B00EE8F1A /* RegisterViewController.swift */; };
 		C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */; };
 		E89CE68B1D409D3500BB4521 /* RealmSyncLogin.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */; };
 		E89CE68C1D409D3500BB4521 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6861D409D3500BB4521 /* HTTPClient.swift */; };
@@ -75,6 +78,8 @@
 		C23EB0581D46535F00D3E0AC /* ToDoListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoListViewController.swift; sourceTree = "<group>"; };
 		C23EB05A1D4655A900D3E0AC /* ToDoItemCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoItemCellView.swift; sourceTree = "<group>"; };
 		C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSView+Animations.swift"; sourceTree = "<group>"; };
+		C28A34011D50A0C500EE8F1A /* LogInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
+		C28A34041D50D19B00EE8F1A /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIPAddress.swift; sourceTree = "<group>"; };
 		E84CF2B11CBC408000082C1A /* Realm Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Realm Tasks.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RealmSyncLogin.storyboard; sourceTree = "<group>"; };
@@ -149,6 +154,8 @@
 				C23EB0581D46535F00D3E0AC /* ToDoListViewController.swift */,
 				C23EB05A1D4655A900D3E0AC /* ToDoItemCellView.swift */,
 				C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */,
+				C28A34011D50A0C500EE8F1A /* LogInViewController.swift */,
+				C28A34041D50D19B00EE8F1A /* RegisterViewController.swift */,
 			);
 			path = "RealmTasks macOS";
 			sourceTree = "<group>";
@@ -161,6 +168,7 @@
 				2252019B1D3DD648009E45FA /* Models.swift */,
 				225201991D3DD648009E45FA /* RealmColor.swift */,
 				C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */,
+				E89CE6861D409D3500BB4521 /* HTTPClient.swift */,
 				C23EB02C1D4635C400D3E0AC /* Shared.xcassets */,
 			);
 			path = "RealmTasks Shared";
@@ -207,7 +215,6 @@
 		E89CE6851D409D3500BB4521 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				E89CE6861D409D3500BB4521 /* HTTPClient.swift */,
 				E89CE6871D409D3500BB4521 /* RealmSyncLoginManager.swift */,
 				E89CE6881D409D3500BB4521 /* UI */,
 			);
@@ -484,11 +491,14 @@
 			files = (
 				C23EB05B1D4655A900D3E0AC /* ToDoItemCellView.swift in Sources */,
 				C23EB0591D46535F00D3E0AC /* ToDoListViewController.swift in Sources */,
+				C28A34031D50C3B900EE8F1A /* HTTPClient.swift in Sources */,
+				C28A34021D50A0C500EE8F1A /* LogInViewController.swift in Sources */,
 				C23EB05D1D4A028A00D3E0AC /* NSView+Animations.swift in Sources */,
 				C23EB0361D46421C00D3E0AC /* RealmConfigurations.swift in Sources */,
 				C23EB0331D463A2C00D3E0AC /* RealmColor.swift in Sources */,
 				C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */,
 				C23EB0391D4643B900D3E0AC /* Constants.swift in Sources */,
+				C28A34051D50D19B00EE8F1A /* RegisterViewController.swift in Sources */,
 				C23EB0301D46364000D3E0AC /* Models.swift in Sources */,
 				C23EB0321D46364000D3E0AC /* LocalIPAddress.swift in Sources */,
 			);
