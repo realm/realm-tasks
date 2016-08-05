@@ -108,7 +108,7 @@ extension AppDelegate: NSApplicationDelegate {
 extension AppDelegate: LogInViewControllerDelegate {
 
     func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
-        // FIXME: Use Realm convinience auth API insead (https://github.com/realm/realm-cocoa-private/issues/187)
+        // FIXME: Use Realm convenience auth API insead (https://github.com/realm/realm-cocoa-private/issues/187)
         logIn(userName: userName, password: password, register: false) { accessToken, error in
             if let error = error {
                 NSApp.presentError(error)
@@ -148,7 +148,7 @@ extension AppDelegate: LogInViewControllerDelegate {
 extension AppDelegate: RegisterViewControllerDelegate {
 
     func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
-        // FIXME: Use Realm convinience auth API insead (https://github.com/realm/realm-cocoa-private/issues/187)
+        // FIXME: Use Realm convenience auth API insead (https://github.com/realm/realm-cocoa-private/issues/187)
         logIn(userName: userName, password: password, register: true) { accessToken, error in
             if let error = error {
                 NSApp.presentError(error)
