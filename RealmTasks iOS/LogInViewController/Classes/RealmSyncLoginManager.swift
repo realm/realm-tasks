@@ -155,9 +155,19 @@ public class RealmSyncLoginManager: NSObject {
             let realmRecord = CKRecord(recordType: self.cloudKitRecordType, recordID: realmRecordID)
             realmRecord[self.cloudKitTokenPropertyName] = accessToken
 
-            privateDatabase.saveRecord(realmRecord, completionHandler: { (record, error) in
+            let saveRecordsOperation = CKModifyRecordsOperation()
+            saveRecordsOperation.recordsToSave = [realmRecord]
+            saveRecordsOperation.savePolicy = .IfServerRecordUnchanged
+            saveRecordsOperation.modifyRecordsCompletionBlock = { (record, recordID, error) in
+                if let error = error {
+                    completion?(accessToken: nil, error: error)
+                    return
+                }
+
                 completion?(accessToken: accessToken, error: error)
-            })
+            }
+
+            privateDatabase.addOperation(saveRecordsOperation)
         }
 
         // First, download our user record name
