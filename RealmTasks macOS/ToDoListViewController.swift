@@ -181,7 +181,7 @@ extension ToDoListViewController {
         return currentlyMovingRowView != nil
     }
 
-    func beginReorderingRow(row: Int, recognizer: NSGestureRecognizer) {
+    private func beginReorderingRow(row: Int, screenPoint point: NSPoint) {
         currentlyMovingRowView = tableView.rowViewAtRow(row, makeIfNecessary: false)
 
         if currentlyMovingRowView == nil {
@@ -191,7 +191,7 @@ extension ToDoListViewController {
         currentlyMovingRowSnapshotView = SnapshotView(sourceView: currentlyMovingRowView!)
         currentlyMovingRowView!.alphaValue = 0
 
-        currentlyMovingRowSnapshotView?.frame.origin.y = recognizer.locationInView(view).y - currentlyMovingRowSnapshotView!.frame.height / 2
+        currentlyMovingRowSnapshotView?.frame.origin.y = view.convertPoint(point, fromView: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
         view.addSubview(currentlyMovingRowSnapshotView!)
 
         NSView.animateWithDuration(0.2, animations: {
@@ -202,7 +202,38 @@ extension ToDoListViewController {
         movingStarted = false
     }
 
-    func endReordering() {
+    private func handleReorderingForScreenPoint(point: NSPoint) {
+        if let snapshotView = currentlyMovingRowSnapshotView {
+            snapshotView.frame.origin.y = snapshotView.superview!.convertPoint(point, fromView: nil).y - snapshotView.frame.height / 2
+        }
+
+        let sourceRow = tableView.rowForView(currentlyMovingRowView!)
+        let targetRow: Int
+
+        let pointInTableView = tableView.convertPoint(point, fromView: nil)
+
+        if pointInTableView.y < tableView.bounds.minY {
+            targetRow = 0
+        } else if pointInTableView.y > tableView.bounds.maxY {
+            targetRow = tableView.numberOfRows - 1
+        } else {
+            targetRow = tableView.rowAtPoint(pointInTableView)
+        }
+
+        if targetRow >= 0 && targetRow != sourceRow  {
+            try! items.realm?.write {
+                let item = items[sourceRow]
+                items.removeAtIndex(sourceRow)
+                items.insert(item, atIndex: targetRow)
+            }
+
+            skipNextNotification()
+
+            tableView.moveRowAtIndex(sourceRow, toIndex: targetRow)
+        }
+    }
+
+    private func endReordering() {
         NSView.animateWithDuration(0.2, animations: { 
             self.currentlyMovingRowSnapshotView?.frame = self.view.convertRect(self.currentlyMovingRowView!.frame, fromView: self.tableView)
         }) {
@@ -219,7 +250,7 @@ extension ToDoListViewController {
     private dynamic func handlePressGestureRecognizer(recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .Began:
-            beginReorderingRow(tableView.rowAtPoint(recognizer.locationInView(tableView)), recognizer: recognizer)
+            beginReorderingRow(tableView.rowAtPoint(recognizer.locationInView(tableView)), screenPoint: recognizer.locationInView(nil))
         case .Ended:
             endReordering()
         case .Cancelled:
@@ -238,24 +269,7 @@ extension ToDoListViewController {
             movingStarted = true
             startAutoscrolling()
         case .Changed:
-            if let snapshotView = currentlyMovingRowSnapshotView {
-                snapshotView.frame.origin.y = recognizer.locationInView(snapshotView.superview!).y - snapshotView.frame.height / 2
-            }
-
-            let sourceRow = tableView.rowForView(currentlyMovingRowView!)
-            let targetRow = tableView.rowAtPoint(recognizer.locationInView(tableView))
-
-            if targetRow >= 0 && targetRow != sourceRow  {
-                try! items.realm?.write {
-                    let item = items[sourceRow]
-                    items.removeAtIndex(sourceRow)
-                    items.insert(item, atIndex: targetRow)
-                }
-
-                skipNextNotification()
-
-                tableView.moveRowAtIndex(sourceRow, toIndex: targetRow)
-            }
+            handleReorderingForScreenPoint(recognizer.locationInView(nil))
         case .Ended:
             endReordering()
             stopAutoscrolling()
@@ -272,9 +286,11 @@ extension ToDoListViewController {
         autoscrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: #selector(handleAutoscrolling), userInfo: nil, repeats: true)
     }
 
-    private dynamic func handleAutoscrolling(timer: NSTimer) {
+    private dynamic func handleAutoscrolling() {
         if let event = NSApp.currentEvent {
-            tableView.autoscroll(event)
+            if tableView.autoscroll(event) {
+                handleReorderingForScreenPoint(event.locationInWindow)
+            }
         }
     }
 
