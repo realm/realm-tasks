@@ -665,6 +665,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             let bottomVC = bottomViewController where bottomVC === parentVC.childViewControllers.last {
             // Navigate to bottom
             willMoveToParentViewController(nil)
+            parentVC.view.layoutIfNeeded()
             constrain(bottomVC.view, view, replace: bottomConstraints!) { bottomView, currentView in
                 bottomView.edges == bottomView.superview!.edges
                 currentView.bottom == bottomView.top
@@ -688,6 +689,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             let topVC = topViewController where topVC === parentVC.childViewControllers.last {
             // Navigate to top
             willMoveToParentViewController(nil)
+            parentVC.view.layoutIfNeeded()
             constrain(topVC.view, view, replace: topConstraints!) { topView, currentView in
                 topView.edges == topView.superview!.edges
                 currentView.top == topView.bottom
