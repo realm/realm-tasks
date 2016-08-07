@@ -109,7 +109,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         self.items = items
         self.colors = colors
         self.getList = getList
-        if Item.isCompletable == true {
+        if Item.isCompletable {
             createTopViewController = {
                 ViewController<ToDoList, ToDoListLists>(
                     items: try! Realm().objects(ToDoListLists.self).first!.items,
@@ -368,7 +368,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 return
             }
         } else {
-            let row = items.filter("completed = false").count
+            let row = Item.isCompletable ? items.filter("completed = false").count : items.count
             try! items.realm?.write {
                 items.insert(Item(), atIndex: row)
             }
