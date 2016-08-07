@@ -281,10 +281,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             cell.textView.userInteractionEnabled = !cell.textView.userInteractionEnabled
             cell.textView.becomeFirstResponder()
         } else {
+            let row = items.filter("completed = false").count
             try! items.realm?.write {
-                items.append(ToDoItem())
+                items.insert(ToDoItem(), atIndex: row)
             }
-            let indexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+            let indexPath = NSIndexPath(forRow: row, inSection: 0)
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
             toggleOnboardView(animated: true)
             skipNextNotification()
