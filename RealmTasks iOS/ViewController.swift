@@ -612,6 +612,9 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         }
 
         if distancePulledDown <= tableView.rowHeight {
+            UIView.animateWithDuration(0.1) {
+                self.placeHolderCell.navHintLabel.alpha = 0
+            }
             placeHolderCell.textView.text = "Pull to Create Item"
 
             let cellHeight = tableView.rowHeight
@@ -629,6 +632,9 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 onboardView.alpha = 0
             }
         } else if distancePulledDown <= tableView.rowHeight * 2 {
+            UIView.animateWithDuration(0.1) {
+                self.placeHolderCell.navHintLabel.alpha = 0
+            }
             placeHolderCell.layer.transform = CATransform3DIdentity
             placeHolderCell.textView.text = "Release to Create Item"
         } else if let createTopViewController = createTopViewController {
@@ -649,7 +655,10 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 topView.bottom == tableViewContentView.top - 200
             }
             topVC.didMoveToParentViewController(parentVC)
-            placeHolderCell.textView.text = "^Switch to Lists^"
+            placeHolderCell.navHintLabel.text = "Switch to Lists"
+            UIView.animateWithDuration(0.1) {
+                self.placeHolderCell.navHintLabel.alpha = 1
+            }
             return
         }
 
