@@ -760,12 +760,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
-        let editingOffset: CGFloat
-        if editingCell.textView.text.isEmpty {
-            editingOffset = 0
-        } else {
-            editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
-        }
+        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
         topConstraint?.constant = -editingOffset
         tableView.contentInset.bottom += editingOffset
 
