@@ -9,6 +9,10 @@ abstract_target 'RealmTasks' do
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
+        
+        pod 'Bolts'
+        pod 'FBSDKCoreKit'
+        pod 'FBSDKLoginKit'
     end
     
     target 'RealmTasks macOS' do
