@@ -153,7 +153,6 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     private func setupUI() {
         setupTableView()
         setupPlaceholderCell()
-        setupTitleBar()
         toggleOnboardView()
     }
 
@@ -171,7 +170,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         tableView.separatorStyle = .None
         tableView.backgroundColor = .blackColor()
         tableView.rowHeight = 54
-        tableView.contentInset = UIEdgeInsets(top: (title != nil) ? 45 : 20, left: 0, bottom: 54, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: (title != nil) ? 41 : 20, left: 0, bottom: 54, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
         tableView.showsVerticalScrollIndicator = false
 
@@ -199,32 +198,6 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             placeHolderCell.left == placeHolderCell.superview!.superview!.left
             placeHolderCell.right == placeHolderCell.superview!.superview!.right
             placeHolderCell.height == tableView.rowHeight
-        }
-    }
-
-    private func setupTitleBar() {
-        let titleBar = UIToolbar()
-        titleBar.barStyle = .BlackTranslucent
-        view.addSubview(titleBar)
-        constrain(titleBar) { titleBar in
-            titleBar.left == titleBar.superview!.left
-            titleBar.top == titleBar.superview!.top
-            titleBar.right == titleBar.superview!.right
-            titleBar.height == ((title != nil) ? 45 : 20)
-        }
-
-        guard let title = title else { return }
-
-        let titleLabel = UILabel()
-        titleLabel.font = .boldSystemFontOfSize(13)
-        titleLabel.textAlignment = .Center
-        titleLabel.text = title
-        titleLabel.textColor = .whiteColor()
-        titleBar.addSubview(titleLabel)
-        constrain(titleLabel) { titleLabel in
-            titleLabel.left == titleLabel.superview!.left
-            titleLabel.right == titleLabel.superview!.right
-            titleLabel.bottom == titleLabel.superview!.bottom - 5
         }
     }
 
@@ -546,7 +519,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         let bottomVC = bottomViewController!
         let parentVC = parentViewController!
         parentVC.addChildViewController(bottomVC)
-        parentVC.view.addSubview(bottomVC.view)
+        parentVC.view.insertSubview(bottomVC.view, atIndex: 1)
         view.removeAllConstraints()
         let bottomConstraints = constrain(bottomVC.view) { bottomView in
             bottomView.size == bottomView.superview!.size
@@ -554,6 +527,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             bottomView.top == bottomView.superview!.bottom
         }
         bottomVC.didMoveToParentViewController(parentVC)
+        parentViewController?.title = bottomVC.title
 
         // Navigate to bottom
         willMoveToParentViewController(nil)
@@ -593,7 +567,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             let bottomVC = bottomViewController!
             let parentVC = parentViewController!
             parentVC.addChildViewController(bottomVC)
-            parentVC.view.addSubview(bottomVC.view)
+            parentVC.view.insertSubview(bottomVC.view, atIndex: 1)
             view.removeAllConstraints()
             bottomConstraints = constrain(bottomVC.view, tableViewContentView) { bottomView, tableViewContentView in
                 bottomView.size == bottomView.superview!.size
@@ -647,7 +621,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             let topVC = topViewController!
             let parentVC = parentViewController!
             parentVC.addChildViewController(topVC)
-            parentVC.view.addSubview(topVC.view)
+            parentVC.view.insertSubview(topVC.view, atIndex: 1)
             view.removeAllConstraints()
             topConstraints = constrain(topVC.view, tableViewContentView) { topView, tableViewContentView in
                 topView.size == topView.superview!.size
@@ -674,6 +648,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             let bottomVC = bottomViewController where bottomVC === parentVC.childViewControllers.last {
             // Navigate to bottom
             willMoveToParentViewController(nil)
+            parentVC.title = bottomVC.title
             parentVC.view.layoutIfNeeded()
             constrain(bottomVC.view, view, replace: bottomConstraints!) { bottomView, currentView in
                 bottomView.edges == bottomView.superview!.edges
@@ -698,6 +673,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             let topVC = topViewController where topVC === parentVC.childViewControllers.last {
             // Navigate to top
             willMoveToParentViewController(nil)
+            parentVC.title = topVC.title
             parentVC.view.layoutIfNeeded()
             constrain(topVC.view, view, replace: topConstraints!) { topView, currentView in
                 topView.edges == topView.superview!.edges
