@@ -44,7 +44,7 @@ private enum NavDirection {
 
 // MARK: View Controller
 
-final class ViewController<Item: Object, ParentType: Object where Item: CellPresentable>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+final class ViewController<Item: Object, ParentType: Object where Item: CellPresentable, ParentType: ListPresentable, ParentType.Item == Item>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
@@ -98,7 +98,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     private let colors: [UIColor]
 
     // Closures
-    private let getList: (ParentType) -> (List<Item>)
+    // private let getList: (ParentType) -> (List<Item>)
 
     // Top/Bottom View Controllers
     private let createTopViewController: (() -> (UIViewController))?
@@ -108,16 +108,14 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
     // MARK: View Lifecycle
 
-    init(items: List<Item>, colors: [UIColor], title: String? = nil, getList: (ParentType) -> (List<Item>)) {
+    init(items: List<Item>, colors: [UIColor], title: String? = nil) {
         self.items = items
         self.colors = colors
-        self.getList = getList
-        if Item.isCompletable {
+        if Item.self == ToDoItem.self {
             createTopViewController = {
                 ViewController<ToDoList, ToDoListLists>(
                     items: try! Realm().objects(ToDoListLists.self).first!.items,
-                    colors: UIColor.listColors(),
-                    getList: { $0.items }
+                    colors: UIColor.listColors()
                 )
             }
             createBottomViewController = nil
@@ -128,8 +126,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 return ViewController<ToDoItem, ToDoList>(
                     items: firstList.items,
                     colors: UIColor.taskColors(),
-                    title: firstList.name,
-                    getList: { $0.items }
+                    title: firstList.text
                 )
             }
         }
@@ -230,14 +227,14 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             var lists = realm.objects(ParentType.self)
             if ParentType.self == ToDoList.self {
                 // only merge the default list
-                lists = lists.filter("name == %@", Constants.defaultListName)
+                lists = lists.filter("text == %@", Constants.defaultListName)
             }
             guard lists.count > 1 else { return }
 
             self.realmNotificationToken?.stop()
             self.realmNotificationToken = nil
 
-            let items = self.getList(lists.first!)
+            let items = lists.first!.items
 
             guard self.items != items else { return }
 
@@ -256,10 +253,10 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                     var lists = realm.objects(ParentType.self)
                     if ParentType.self == ToDoList.self {
                         // only merge the default list
-                        lists = lists.filter("name == %@", Constants.defaultListName)
+                        lists = lists.filter("text == %@", Constants.defaultListName)
                     }
                     while lists.count > 1 {
-                        self.getList(lists.first!).appendContentsOf(self.getList(lists.last!))
+                        lists.first!.items.appendContentsOf(lists.last!.items)
                         realm.delete(lists.last!)
                     }
                 }
@@ -344,7 +341,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 return
             }
         } else {
-            let row = Item.isCompletable ? items.filter("completed = false").count : items.count
+            let row = items.filter("completed = false").count
             try! items.realm?.write {
                 items.insert(Item(), atIndex: row)
             }
@@ -503,7 +500,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 item = items[destinationIndexPath.row]
             }
         }
-        return cellHeightForText(item.cellText)
+        return cellHeightForText(item.text)
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -515,8 +512,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         bottomViewController = ViewController<ToDoItem, ToDoList>(
             items: item["items"] as! List<ToDoItem>,
             colors: UIColor.taskColors(),
-            title: item.cellText,
-            getList: { $0.items }
+            title: item.text
         )
         startMovingToNextViewController(.Down)
         finishMovingToNextViewController(.Down)
@@ -738,8 +734,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             self?.view.layoutSubviews()
         }
 
-        if editingCell.item.cellText.isEmpty {
-            let item = editingCell.item as Object
+        let item = editingCell.item
+        if item.text.isEmpty {
             try! item.realm?.write {
                 item.realm!.delete(item)
             }

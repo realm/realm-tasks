@@ -54,10 +54,9 @@ class ContainerViewController: UIViewController {
         let vc = ViewController<ToDoItem, ToDoList>(
             items: firstList.items,
             colors: UIColor.taskColors(),
-            title: firstList.name,
-            getList: { $0.items }
+            title: firstList.text
         )
-        title = firstList.name
+        title = firstList.text
         addChildViewController(vc)
         view.addSubview(vc.view)
         vc.didMoveToParentViewController(self)
@@ -106,7 +105,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 // Create a default list if none exist
                 try realm.write {
                     let list = ToDoList()
-                    list.name = Constants.defaultListName
+                    list.text = Constants.defaultListName
                     let listLists = ToDoListLists()
                     listLists.items.append(list)
                     realm.add(listLists)
