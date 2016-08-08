@@ -32,22 +32,22 @@ protocol CellPresentable {
     var isCompletable: Bool { get }
 }
 
-final class ToDoListLists: Object, ListPresentable {
-    let items = List<ToDoList>()
+final class TaskListList: Object, ListPresentable {
+    let items = List<TaskList>()
 }
 
-final class ToDoList: Object, CellPresentable, ListPresentable {
+final class TaskList: Object, CellPresentable, ListPresentable {
     dynamic var text = ""
     dynamic var completed = false
     dynamic var initial = false
-    let items = List<ToDoItem>()
+    let items = List<Task>()
 
     var isCompletable: Bool {
         return !items.filter("completed == false").isEmpty
     }
 }
 
-final class ToDoItem: Object, CellPresentable {
+final class Task: Object, CellPresentable {
     dynamic var text = ""
     dynamic var completed = false
 

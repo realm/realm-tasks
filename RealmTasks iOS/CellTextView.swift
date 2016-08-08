@@ -20,7 +20,7 @@
 
 import UIKit
 
-final class ToDoItemTextView: UITextView {
+final class CellTextView: UITextView {
 
     // MARK: Initializers
 
