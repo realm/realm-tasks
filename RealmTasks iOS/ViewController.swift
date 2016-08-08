@@ -226,8 +226,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
             var lists = realm.objects(ParentType.self)
             if ParentType.self == ToDoList.self {
-                // only merge the default list
-                lists = lists.filter("text == %@", Constants.defaultListName)
+                // only merge the initial list
+                lists = lists.filter("initial == true")
             }
             guard lists.count > 1 else { return }
 
@@ -252,8 +252,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 try! realm.write {
                     var lists = realm.objects(ParentType.self)
                     if ParentType.self == ToDoList.self {
-                        // only merge the default list
-                        lists = lists.filter("text == %@", Constants.defaultListName)
+                        // only merge the initial list
+                        lists = lists.filter("initial == true")
                     }
                     while lists.count > 1 {
                         lists.first!.items.appendContentsOf(lists.last!.items)

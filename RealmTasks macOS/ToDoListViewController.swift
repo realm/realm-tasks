@@ -72,8 +72,8 @@ class ToDoListViewController: NSViewController {
         // FIXME: Hack to work around sync possibly pulling in a new list.
         // Ideally we'd use ToDoList's with primary keys, but those aren't currently supported by sync.
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
-            // only merge the default list
-            let lists = realm.objects(ToDoList.self).filter("text == %@", Constants.defaultListName)
+            // only merge the initial list
+            let lists = realm.objects(ToDoList.self).filter("initial == true")
 
             guard lists.count > 1 else { return }
 
@@ -96,8 +96,8 @@ class ToDoListViewController: NSViewController {
             dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
                 let realm = try! Realm(configuration: configuration)
                 try! realm.write {
-                    // only merge the default list
-                    let lists = realm.objects(ToDoList.self).filter("text == %@", Constants.defaultListName)
+                    // only merge the initial list
+                    let lists = realm.objects(ToDoList.self).filter("initial == true")
                     while lists.count > 1 {
                         lists.first!.items.appendContentsOf(lists.last!.items)
                         realm.delete(lists.last!)

@@ -39,6 +39,7 @@ final class ToDoListLists: Object, ListPresentable {
 final class ToDoList: Object, CellPresentable, ListPresentable {
     dynamic var text = ""
     dynamic var completed = false
+    dynamic var initial = false
     let items = List<ToDoItem>()
 
     var isCompletable: Bool {
