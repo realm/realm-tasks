@@ -51,16 +51,32 @@ final class Task: Object {
 // MARK: View Controller
 
 class ViewController: UITableViewController {
+    var items = List<Task>()
 
     // MARK: Setup
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        items.append(Task(value: ["text": "My First Task"]))
     }
 
     func setupUI() {
         title = "My Tasks"
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+    }
+
+    // MARK: UITableView
+
+    override func tableView(tableView: UITableView?, numberOfRowsInSection section: Int) -> Int {
+        return items.count
+    }
+
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+        let item = items[indexPath.row]
+        cell.textLabel?.text = item.text
+        cell.textLabel?.alpha = item.completed ? 0.5 : 1
+        return cell
     }
 }
