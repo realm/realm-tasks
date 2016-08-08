@@ -343,13 +343,14 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 let cell = tableView.cellForRowAtIndexPath(destinationIndexPath)
             else { break }
 
-            if !items[destinationIndexPath.row].completed {
+            if destinationIndexPath.row != startIndexPath.row && !items[destinationIndexPath.row].completed {
                 // update data source & move rows
                 try! items.realm?.write {
                     let item = items[startIndexPath.row]
                     items.removeAtIndex(startIndexPath.row)
                     items.insert(item, atIndex: destinationIndexPath.row)
                 }
+                
                 skipNextNotification()
             }
 
