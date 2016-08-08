@@ -329,9 +329,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             }
             break
         case .Changed:
-            var center = snapshot.center
-            center.y = location.y
-            snapshot.center = center
+            snapshot.center.y = location.y
 
             guard let sourceIndexPath = sourceIndexPath
                 where indexPath != sourceIndexPath else { break }
