@@ -50,8 +50,8 @@ class ContainerViewController: UIViewController {
     }
 
     private func addChildVC() {
-        let firstList = try! Realm().objects(ToDoList.self).first!
-        let vc = ViewController<ToDoItem, ToDoList>(
+        let firstList = try! Realm().objects(TaskList.self).first!
+        let vc = ViewController<Task, TaskList>(
             items: firstList.items,
             colors: UIColor.taskColors(),
             title: firstList.text
@@ -104,10 +104,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             if realm.isEmpty {
                 // Create a default list if none exist
                 try realm.write {
-                    let list = ToDoList()
+                    let list = TaskList()
                     list.initial = true
                     list.text = Constants.defaultListName
-                    let listLists = ToDoListLists()
+                    let listLists = TaskListList()
                     listLists.items.append(list)
                     realm.add(listLists)
                 }

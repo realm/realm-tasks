@@ -73,10 +73,10 @@ extension AppDelegate: NSApplicationDelegate {
             if realm.isEmpty {
                 // Create a default list if none exist
                 try realm.write {
-                    let list = ToDoList()
+                    let list = TaskList()
                     list.initial = true
                     list.text = Constants.defaultListName
-                    let listLists = ToDoListLists()
+                    let listLists = TaskListList()
                     listLists.items.append(list)
                     realm.add(listLists)
                 }

@@ -97,9 +97,6 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     private let editingCellAlpha: CGFloat = 0.3
     private let colors: [UIColor]
 
-    // Closures
-    // private let getList: (ParentType) -> (List<Item>)
-
     // Top/Bottom View Controllers
     private let createTopViewController: (() -> (UIViewController))?
     private var topViewController: UIViewController?
@@ -111,10 +108,10 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     init(items: List<Item>, colors: [UIColor], title: String? = nil) {
         self.items = items
         self.colors = colors
-        if Item.self == ToDoItem.self {
+        if Item.self == Task.self {
             createTopViewController = {
-                ViewController<ToDoList, ToDoListLists>(
-                    items: try! Realm().objects(ToDoListLists.self).first!.items,
+                ViewController<TaskList, TaskListList>(
+                    items: try! Realm().objects(TaskListList.self).first!.items,
                     colors: UIColor.listColors()
                 )
             }
@@ -122,8 +119,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         } else {
             createTopViewController = nil
             createBottomViewController = {
-                let firstList = try! Realm().objects(ToDoList.self).first!
-                return ViewController<ToDoItem, ToDoList>(
+                let firstList = try! Realm().objects(TaskList.self).first!
+                return ViewController<Task, TaskList>(
                     items: firstList.items,
                     colors: UIColor.taskColors(),
                     title: firstList.text
@@ -225,7 +222,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         // Ideally we'd use ParentType's with primary keys, but those aren't currently supported by sync.
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
             var lists = realm.objects(ParentType.self)
-            if ParentType.self == ToDoList.self {
+            if ParentType.self == TaskList.self {
                 // only merge the initial list
                 lists = lists.filter("initial == true")
             }
@@ -251,7 +248,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
                 let realm = try! Realm(configuration: configuration)
                 try! realm.write {
                     var lists = realm.objects(ParentType.self)
-                    if ParentType.self == ToDoList.self {
+                    if ParentType.self == TaskList.self {
                         // only merge the initial list
                         lists = lists.filter("initial == true")
                     }
@@ -509,8 +506,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     }
 
     private func navigateToBottomViewController(item: Item) {
-        bottomViewController = ViewController<ToDoItem, ToDoList>(
-            items: item["items"] as! List<ToDoItem>,
+        bottomViewController = ViewController<Task, TaskList>(
+            items: item["items"] as! List<Task>,
             colors: UIColor.taskColors(),
             title: item.text
         )

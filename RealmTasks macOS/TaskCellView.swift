@@ -21,14 +21,14 @@
 import Cocoa
 import Cartography
 
-protocol ToDoItemCellViewDelegate: class {
+protocol TaskCellViewDelegate: class {
 
-    func cellView(view: ToDoItemCellView, didComplete complete: Bool)
-    func cellViewDidDelete(view: ToDoItemCellView)
+    func cellView(view: TaskCellView, didComplete complete: Bool)
+    func cellViewDidDelete(view: TaskCellView)
 
-    func cellViewDidBeginEditing(view: ToDoItemCellView)
-    func cellViewDidChangeText(view: ToDoItemCellView)
-    func cellViewDidEndEditing(view: ToDoItemCellView)
+    func cellViewDidBeginEditing(view: TaskCellView)
+    func cellViewDidChangeText(view: TaskCellView)
+    func cellViewDidEndEditing(view: TaskCellView)
 
 }
 
@@ -36,9 +36,9 @@ private let iconWidth: CGFloat = 40
 private let iconOffset = iconWidth / 2
 private let swipeThreshold = iconWidth * 2
 
-class ToDoItemCellView: NSTableCellView {
+class TaskCellView: NSTableCellView {
 
-    weak var delegate: ToDoItemCellViewDelegate?
+    weak var delegate: TaskCellViewDelegate?
 
     var text: String {
         set {
@@ -94,7 +94,7 @@ class ToDoItemCellView: NSTableCellView {
 
     private let contentView = ColorView()
     private let overlayView = ColorView()
-    private let textView = ToDoItemTextField()
+    private let textView = TaskTextField()
 
     private var releaseAction: ReleaseAction?
 
@@ -110,7 +110,7 @@ class ToDoItemCellView: NSTableCellView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureWithToDoItem(item: ToDoItem) {
+    func configureWithTask(item: Task) {
         textView.stringValue = item.text
         completed = item.completed
     }
@@ -205,9 +205,9 @@ class ToDoItemCellView: NSTableCellView {
 
 }
 
-// MARK: ToDoItemTextFieldDelegate
+// MARK: TaskTextFieldDelegate
 
-extension ToDoItemCellView: ToDoItemTextFieldDelegate {
+extension TaskCellView: TaskTextFieldDelegate {
 
     func textFieldDidBecomeFirstResponder(textField: NSTextField) {
         delegate?.cellViewDidBeginEditing(self)
@@ -225,7 +225,7 @@ extension ToDoItemCellView: ToDoItemTextFieldDelegate {
 
 // MARK: NSGestureRecognizerDelegate
 
-extension ToDoItemCellView: NSGestureRecognizerDelegate {
+extension TaskCellView: NSGestureRecognizerDelegate {
 
     func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
         guard gestureRecognizer is NSPanGestureRecognizer else {
@@ -350,13 +350,13 @@ private enum ReleaseAction {
     case Complete, Delete
 }
 
-protocol ToDoItemTextFieldDelegate: NSTextFieldDelegate {
+protocol TaskTextFieldDelegate: NSTextFieldDelegate {
 
     func textFieldDidBecomeFirstResponder(textField: NSTextField)
 
 }
 
-private final class ToDoItemTextField: NSTextField {
+private final class TaskTextField: NSTextField {
 
     private var _acceptsFirstResponder = false
 
@@ -384,7 +384,7 @@ private final class ToDoItemTextField: NSTextField {
     }
 
     override func becomeFirstResponder() -> Bool {
-        (delegate as? ToDoItemTextFieldDelegate)?.textFieldDidBecomeFirstResponder(self)
+        (delegate as? TaskTextFieldDelegate)?.textFieldDidBecomeFirstResponder(self)
 
         return super.becomeFirstResponder()
     }
