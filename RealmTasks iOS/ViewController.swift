@@ -350,7 +350,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                     items.removeAtIndex(startIndexPath.row)
                     items.insert(item, atIndex: destinationIndexPath.row)
                 }
-                
+
                 skipNextNotification()
             }
 
@@ -432,11 +432,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         // If we are dragging an item around, swap those
         // two items for their appropriate height values
-        if let startIndexPath = startIndexPath, sourceIndexPath = destinationIndexPath {
-            if indexPath.row == sourceIndexPath.row {
+        if let startIndexPath = startIndexPath, destinationIndexPath = destinationIndexPath {
+            if indexPath.row == destinationIndexPath.row {
                 item = items[startIndexPath.row]
             } else if indexPath.row == startIndexPath.row {
-                item = items[sourceIndexPath.row]
+                item = items[destinationIndexPath.row]
             }
         }
         return cellHeightForText(item.text)
