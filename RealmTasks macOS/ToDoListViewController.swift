@@ -30,12 +30,20 @@ class ToDoListViewController: NSViewController {
     @IBOutlet var topConstraint: NSLayoutConstraint?
 
     private var items = try! Realm().objects(ToDoList.self).first!.items
+
     private var notificationToken: NotificationToken?
     private var skipNotification = false
     private var reloadOnNotification = false
 
     private let prototypeCell = PrototypeToDoItemCellView(identifier: toDoCellPrototypeIdentifier)
+
     private var currentlyEditingCellView: ToDoItemCellView?
+
+    private var currentlyMovingRowView: NSTableRowView?
+    private var currentlyMovingRowSnapshotView: SnapshotView?
+    private var movingStarted = false
+
+    private var autoscrollTimer: NSTimer?
 
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
@@ -52,6 +60,7 @@ class ToDoListViewController: NSViewController {
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidExitFullScreenNotification, object: view.window)
 
         setupNotifications()
+        setupGestureRecognizers()
     }
 
     private func setupNotifications() {
@@ -111,6 +120,16 @@ class ToDoListViewController: NSViewController {
         reloadOnNotification = false
     }
 
+    private func setupGestureRecognizers() {
+        let pressGestureRecognizer = NSPressGestureRecognizer(target: self, action: #selector(handlePressGestureRecognizer))
+        let panGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(handlePanGestureRecognizer))
+
+        for recognizer in [pressGestureRecognizer, panGestureRecognizer] {
+            recognizer.delegate = self
+            tableView.addGestureRecognizer(recognizer)
+        }
+    }
+
     private dynamic func windowDidResize(notification: NSNotification) {
         updateTableViewHeightOfRows()
     }
@@ -150,6 +169,168 @@ extension ToDoListViewController {
         }
 
         return true
+    }
+
+}
+
+// MARK: Reordering
+
+extension ToDoListViewController {
+
+    var reordering: Bool {
+        return currentlyMovingRowView != nil
+    }
+
+    private func beginReorderingRow(row: Int, screenPoint point: NSPoint) {
+        currentlyMovingRowView = tableView.rowViewAtRow(row, makeIfNecessary: false)
+
+        if currentlyMovingRowView == nil {
+            return
+        }
+
+        currentlyMovingRowSnapshotView = SnapshotView(sourceView: currentlyMovingRowView!)
+        currentlyMovingRowView!.alphaValue = 0
+
+        currentlyMovingRowSnapshotView?.frame.origin.y = view.convertPoint(point, fromView: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
+        view.addSubview(currentlyMovingRowSnapshotView!)
+
+        NSView.animateWithDuration(0.2, animations: {
+            let frame = self.currentlyMovingRowSnapshotView!.frame
+            self.currentlyMovingRowSnapshotView!.frame = frame.insetBy(dx: -frame.width * 0.02, dy: -frame.height * 0.02)
+        })
+    }
+
+    private func handleReorderingForScreenPoint(point: NSPoint) {
+        if let snapshotView = currentlyMovingRowSnapshotView {
+            snapshotView.frame.origin.y = snapshotView.superview!.convertPoint(point, fromView: nil).y - snapshotView.frame.height / 2
+        }
+
+        let sourceRow = tableView.rowForView(currentlyMovingRowView!)
+        let destinationRow: Int
+
+        let pointInTableView = tableView.convertPoint(point, fromView: nil)
+
+        if pointInTableView.y < tableView.bounds.minY {
+            destinationRow = 0
+        } else if pointInTableView.y > tableView.bounds.maxY {
+            destinationRow = tableView.numberOfRows - 1
+        } else {
+            destinationRow = tableView.rowAtPoint(pointInTableView)
+        }
+
+        if canMoveRow(sourceRow, toRow: destinationRow) {
+            try! items.realm?.write {
+                let item = items[sourceRow]
+                items.removeAtIndex(sourceRow)
+                items.insert(item, atIndex: destinationRow)
+            }
+
+            skipNextNotification()
+
+            tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
+        }
+    }
+
+    private func canMoveRow(sourceRow: Int, toRow destinationRow: Int) -> Bool {
+        guard destinationRow >= 0 && destinationRow != sourceRow else {
+            return false
+        }
+
+        return !items[destinationRow].completed
+    }
+
+    private func endReordering() {
+        NSView.animateWithDuration(0.2, animations: { 
+            self.currentlyMovingRowSnapshotView?.frame = self.view.convertRect(self.currentlyMovingRowView!.frame, fromView: self.tableView)
+        }) {
+            self.currentlyMovingRowView?.alphaValue = 1
+            self.currentlyMovingRowView = nil
+
+            self.currentlyMovingRowSnapshotView?.removeFromSuperview()
+            self.currentlyMovingRowSnapshotView = nil
+
+            self.updateColors()
+        }
+    }
+
+    private dynamic func handlePressGestureRecognizer(recognizer: NSPressGestureRecognizer) {
+        switch recognizer.state {
+        case .Began:
+            beginReorderingRow(tableView.rowAtPoint(recognizer.locationInView(tableView)), screenPoint: recognizer.locationInView(nil))
+        case .Ended:
+            endReordering()
+        case .Cancelled:
+            // Handle the case when press recognizer is canceled while pan wasn't started
+            if !movingStarted {
+                endReordering()
+            }
+        default:
+            break
+        }
+    }
+
+    private dynamic func handlePanGestureRecognizer(recognizer: NSPressGestureRecognizer) {
+        switch recognizer.state {
+        case .Began:
+            movingStarted = true
+            startAutoscrolling()
+        case .Changed:
+            handleReorderingForScreenPoint(recognizer.locationInView(nil))
+        case .Ended:
+            movingStarted = false
+            endReordering()
+            stopAutoscrolling()
+        default:
+            ()
+        }
+    }
+
+    private func startAutoscrolling() {
+        guard autoscrollTimer == nil else {
+            return
+        }
+
+        autoscrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: #selector(handleAutoscrolling), userInfo: nil, repeats: true)
+    }
+
+    private dynamic func handleAutoscrolling() {
+        if let event = NSApp.currentEvent {
+            if tableView.autoscroll(event) {
+                handleReorderingForScreenPoint(event.locationInWindow)
+            }
+        }
+    }
+
+    private func stopAutoscrolling() {
+        autoscrollTimer?.invalidate()
+        autoscrollTimer = nil
+    }
+
+}
+
+// MARK: NSGestureRecognizerDelegate
+
+extension ToDoListViewController: NSGestureRecognizerDelegate {
+
+    func gestureRecognizer(gestureRecognizer: NSGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+        return true
+    }
+
+    func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
+        switch gestureRecognizer {
+        case is NSPressGestureRecognizer:
+            let targetRow = tableView.rowAtPoint(gestureRecognizer.locationInView(tableView))
+
+            guard targetRow >= 0, let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? ToDoItemCellView else {
+                return false
+            }
+
+            return !cellView.completed
+        case is NSPanGestureRecognizer:
+            return reordering
+        default:
+            return true
+        }
     }
 
 }
@@ -206,7 +387,7 @@ extension ToDoListViewController: NSTableViewDelegate {
         tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ToDoItemCellView {
-                NSView.animateWithDuration(5, animations: {
+                NSView.animateWithDuration(0.5, animations: {
                     cellView.backgroundColor = self.colorForRow(row)
                 })
             }
@@ -384,6 +565,27 @@ private final class PrototypeToDoItemCellView: ToDoItemCellView {
         layoutSubtreeIfNeeded()
 
         return fittingSize.height
+    }
+
+}
+
+private final class SnapshotView: NSView {
+
+    init(sourceView: NSView) {
+        super.init(frame: sourceView.frame)
+
+        wantsLayer = true
+        shadow = NSShadow() // Workaround to activate layer-backed shadow
+
+        layer?.contents = NSImage(data: sourceView.dataWithPDFInsideRect(sourceView.bounds))!
+        layer?.shadowColor = NSColor.blackColor().CGColor
+        layer?.shadowOpacity = 1
+        layer?.shadowRadius = 5
+        layer?.shadowOffset = CGSize(width: -5, height: 0)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }
