@@ -53,7 +53,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // Moving
     private var snapshot: UIView!
     private var startIndexPath: NSIndexPath?
-    private var sourceIndexPath: NSIndexPath?
+    private var destinationIndexPath: NSIndexPath?
 
     // Editing
     private var currentlyEditing: Bool { return currentlyEditingCell != nil }
@@ -303,7 +303,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         case .Began:
             guard let cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
             startIndexPath = indexPath
-            sourceIndexPath = indexPath
+            destinationIndexPath = indexPath
 
             // Add the snapshot as subview, aligned with the cell
             var center = cell.center
@@ -330,25 +330,25 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         case .Changed:
             snapshot.center.y = location.y
 
-            if let sourceIndexPath = sourceIndexPath where indexPath != sourceIndexPath && !items[indexPath.row].completed {
+            if let destinationIndexPath = destinationIndexPath where indexPath != destinationIndexPath && !items[indexPath.row].completed {
                 // move rows
-                tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
+                tableView.moveRowAtIndexPath(destinationIndexPath, toIndexPath: indexPath)
 
-                self.sourceIndexPath = indexPath
+                self.destinationIndexPath = indexPath
             }
         case .Ended, .Cancelled, .Failed:
             guard
                 let startIndexPath = startIndexPath,
-                let sourceIndexPath = sourceIndexPath,
-                let cell = tableView.cellForRowAtIndexPath(sourceIndexPath)
+                let destinationIndexPath = destinationIndexPath,
+                let cell = tableView.cellForRowAtIndexPath(destinationIndexPath)
             else { break }
 
-            if !items[sourceIndexPath.row].completed {
+            if !items[destinationIndexPath.row].completed {
                 // update data source & move rows
                 try! items.realm?.write {
                     let item = items[startIndexPath.row]
                     items.removeAtIndex(startIndexPath.row)
-                    items.insert(item, atIndex: sourceIndexPath.row)
+                    items.insert(item, atIndex: destinationIndexPath.row)
                 }
                 skipNextNotification()
             }
@@ -376,7 +376,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
             })
 
             self.startIndexPath = nil
-            self.sourceIndexPath = nil
+            self.destinationIndexPath = nil
         default:
             break;
         }
@@ -431,7 +431,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         // If we are dragging an item around, swap those
         // two items for their appropriate height values
-        if let startIndexPath = startIndexPath, sourceIndexPath = sourceIndexPath {
+        if let startIndexPath = startIndexPath, sourceIndexPath = destinationIndexPath {
             if indexPath.row == sourceIndexPath.row {
                 item = items[startIndexPath.row]
             } else if indexPath.row == startIndexPath.row {
