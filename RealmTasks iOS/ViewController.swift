@@ -38,6 +38,10 @@ extension UIView {
 private var tableViewBoundsKVOContext = 0
 private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
+private enum NavDirection {
+    case Up, Down
+}
+
 // MARK: View Controller
 
 final class ViewController<Item: Object, ParentType: Object where Item: CellPresentable>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
@@ -81,8 +85,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
     // Auto Layout
     private var topConstraint: NSLayoutConstraint?
-    private var bottomConstraints: ConstraintGroup?
-    private var topConstraints: ConstraintGroup?
+    private var nextConstraints: ConstraintGroup?
 
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell<Item>(style: .Default, reuseIdentifier: "cell")
@@ -515,34 +518,48 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             title: item.cellText,
             getList: { $0.items }
         )
+        startMovingToNextViewController(.Down)
+        finishMovingToNextViewController(.Down)
+    }
 
-        let bottomVC = bottomViewController!
+    private func startMovingToNextViewController(direction: NavDirection) {
+        let nextVC = direction == .Up ? topViewController! : bottomViewController!
         let parentVC = parentViewController!
-        parentVC.addChildViewController(bottomVC)
-        parentVC.view.insertSubview(bottomVC.view, atIndex: 1)
+        parentVC.addChildViewController(nextVC)
+        parentVC.view.insertSubview(nextVC.view, atIndex: 1)
         view.removeAllConstraints()
-        let bottomConstraints = constrain(bottomVC.view) { bottomView in
-            bottomView.size == bottomView.superview!.size
-            bottomView.left == bottomView.superview!.left
-            bottomView.top == bottomView.superview!.bottom
+        nextConstraints = constrain(nextVC.view, tableViewContentView) { nextView, tableViewContentView in
+            nextView.size == nextView.superview!.size
+            nextView.left == nextView.superview!.left
+            switch direction {
+            case .Up: nextView.bottom == tableViewContentView.top - 200
+            case .Down: nextView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
+            }
         }
-        bottomVC.didMoveToParentViewController(parentVC)
-        parentViewController?.title = bottomVC.title
+        nextVC.didMoveToParentViewController(parentVC)
+    }
 
-        // Navigate to bottom
+    private func finishMovingToNextViewController(direction: NavDirection) {
+        let nextVC = direction == .Up ? topViewController! : bottomViewController!
+        let parentVC = parentViewController!
         willMoveToParentViewController(nil)
+        parentVC.title = nextVC.title
         parentVC.view.layoutIfNeeded()
-        constrain(bottomVC.view, view, replace: bottomConstraints) { bottomView, currentView in
-            bottomView.edges == bottomView.superview!.edges
-            currentView.bottom == bottomView.top
-            currentView.size == bottomView.size
-            currentView.left == bottomView.left
+        constrain(nextVC.view, view, replace: nextConstraints!) { nextView, currentView in
+            nextView.edges == nextView.superview!.edges
+            if direction == .Up {
+                currentView.top == nextView.bottom
+            } else {
+                currentView.bottom == nextView.top
+            }
+            currentView.size == nextView.size
+            currentView.left == nextView.left
         }
         UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
             parentVC.view.layoutIfNeeded()
         }, completion: { _ in
             self.view.removeFromSuperview()
-            bottomVC.didMoveToParentViewController(parentVC)
+            nextVC.didMoveToParentViewController(parentVC)
             self.removeFromParentViewController()
         })
     }
@@ -559,22 +576,10 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
         if distancePulledUp > tableView.rowHeight, let createBottomViewController = createBottomViewController {
             if bottomViewController === parentViewController?.childViewControllers.last { return }
-
             if bottomViewController == nil {
                 bottomViewController = createBottomViewController()
             }
-
-            let bottomVC = bottomViewController!
-            let parentVC = parentViewController!
-            parentVC.addChildViewController(bottomVC)
-            parentVC.view.insertSubview(bottomVC.view, atIndex: 1)
-            view.removeAllConstraints()
-            bottomConstraints = constrain(bottomVC.view, tableViewContentView) { bottomView, tableViewContentView in
-                bottomView.size == bottomView.superview!.size
-                bottomView.left == bottomView.superview!.left
-                bottomView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
-            }
-            bottomVC.didMoveToParentViewController(parentVC)
+            startMovingToNextViewController(.Down)
             return
         } else {
             removeVC(bottomViewController)
@@ -613,22 +618,10 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             placeHolderCell.textView.text = "Release to Create Item"
         } else if let createTopViewController = createTopViewController {
             if topViewController === parentViewController?.childViewControllers.last { return }
-
             if topViewController == nil {
                 topViewController = createTopViewController()
             }
-
-            let topVC = topViewController!
-            let parentVC = parentViewController!
-            parentVC.addChildViewController(topVC)
-            parentVC.view.insertSubview(topVC.view, atIndex: 1)
-            view.removeAllConstraints()
-            topConstraints = constrain(topVC.view, tableViewContentView) { topView, tableViewContentView in
-                topView.size == topView.superview!.size
-                topView.left == topView.superview!.left
-                topView.bottom == tableViewContentView.top - 200
-            }
-            topVC.didMoveToParentViewController(parentVC)
+            startMovingToNextViewController(.Up)
             placeHolderCell.navHintLabel.text = "Switch to Lists"
             UIView.animateWithDuration(0.1) {
                 self.placeHolderCell.navHintLabel.alpha = 1
@@ -643,60 +636,26 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if distancePulledUp > tableView.rowHeight,
-            let parentVC = parentViewController,
-            let bottomVC = bottomViewController where bottomVC === parentVC.childViewControllers.last {
-            // Navigate to bottom
-            willMoveToParentViewController(nil)
-            parentVC.title = bottomVC.title
-            parentVC.view.layoutIfNeeded()
-            constrain(bottomVC.view, view, replace: bottomConstraints!) { bottomView, currentView in
-                bottomView.edges == bottomView.superview!.edges
-                currentView.bottom == bottomView.top
-                currentView.size == bottomView.size
-                currentView.left == bottomView.left
-            }
-            UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
-                parentVC.view.layoutIfNeeded()
-            }, completion: { _ in
-                self.view.removeFromSuperview()
-                bottomVC.didMoveToParentViewController(parentVC)
-                self.removeFromParentViewController()
-            })
+        if distancePulledUp > tableView.rowHeight &&
+            bottomViewController === parentViewController?.childViewControllers.last {
+            finishMovingToNextViewController(.Down)
             return
         }
 
         guard distancePulledDown > tableView.rowHeight else { return }
 
-        if distancePulledDown > tableView.rowHeight * 2,
-            let parentVC = parentViewController,
-            let topVC = topViewController where topVC === parentVC.childViewControllers.last {
-            // Navigate to top
-            willMoveToParentViewController(nil)
-            parentVC.title = topVC.title
-            parentVC.view.layoutIfNeeded()
-            constrain(topVC.view, view, replace: topConstraints!) { topView, currentView in
-                topView.edges == topView.superview!.edges
-                currentView.top == topView.bottom
-                currentView.size == topView.size
-                currentView.left == topView.left
-            }
-            UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
-                parentVC.view.layoutIfNeeded()
-            }, completion: { _ in
-                self.view.removeFromSuperview()
-                topVC.didMoveToParentViewController(parentVC)
-                self.removeFromParentViewController()
-            })
-        } else {
-            // Create new item
-            try! items.realm?.write {
-                items.insert(Item(), atIndex: 0)
-            }
-            skipNextNotification()
-            tableView.reloadData()
-            (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
+        if distancePulledDown > tableView.rowHeight * 2 &&
+            topViewController === parentViewController?.childViewControllers.last {
+            finishMovingToNextViewController(.Up)
+            return
         }
+        // Create new item
+        try! items.realm?.write {
+            items.insert(Item(), atIndex: 0)
+        }
+        skipNextNotification()
+        tableView.reloadData()
+        (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
 
     // MARK: Cell Callbacks
