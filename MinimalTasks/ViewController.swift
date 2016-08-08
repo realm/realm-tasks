@@ -52,18 +52,54 @@ final class Task: Object {
 
 class ViewController: UITableViewController {
     var items = List<Task>()
+    var notificationToken: NotificationToken!
+    var realm: Realm!
 
     // MARK: Setup
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupRealm()
     }
 
     func setupUI() {
         title = "My Tasks"
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(add))
+    }
+
+    func setupRealm() {
+        // Log in existing user with username and password
+        let username = "test"
+        let password = "test"
+        User.authenticateWithCredential(.UsernamePassword(username: username, password: password), actions: [],
+                                        authServerURL: NSURL(string: "http://127.0.0.1:8080")!) { user, error in
+            guard let user = user else {
+                fatalError(String(error))
+            }
+            // Open Realm
+            let configuration = Realm.Configuration(
+                syncConfiguration: (user, NSURL(string: "realm://127.0.0.1/~/realmtasks")!)
+            )
+            self.realm = try! Realm(configuration: configuration)
+            func updateList() {
+                if self.items.realm == nil, let list = self.realm.objects(TaskList.self).first {
+                    self.items = list.items
+                }
+                self.tableView.reloadData()
+            }
+            updateList()
+
+            // Notify us when Realm changes
+            self.notificationToken = self.realm.addNotificationBlock { _ in
+                updateList()
+            }
+        }
+    }
+
+    deinit {
+        notificationToken.stop()
     }
 
     // MARK: UITableView
@@ -91,8 +127,10 @@ class ViewController: UITableViewController {
         }
         alertController.addAction(UIAlertAction(title: "Add", style: .Default) { _ in
             guard let text = alertTextField.text where !text.isEmpty else { return }
-            self.items.append(Task(value: ["text": text]))
-            self.tableView.reloadData()
+            let items = self.items
+            try! items.realm?.write {
+                items.append(Task(value: ["text": text]))
+            }
         })
         presentViewController(alertController, animated: true, completion: nil)
     }
