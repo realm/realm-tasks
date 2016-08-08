@@ -63,27 +63,7 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        SyncManager.sharedManager().configureWithAppID(Constants.appID)
-
-        Realm.Configuration.defaultConfiguration = syncRealmConfiguration
-        Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
-
-        do {
-            let realm = try Realm()
-            if realm.isEmpty {
-                // Create a default list if none exist
-                try realm.write {
-                    let list = TaskList()
-                    list.initial = true
-                    list.text = Constants.defaultListName
-                    let listLists = TaskListList()
-                    listLists.items.append(list)
-                    realm.add(listLists)
-                }
-            }
-        } catch {
-            fatalError("Could not open or write to the realm: \(error)")
-        }
+        setupRealmSyncAndInitialList()
 
         mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
         mainWindowController.window?.titleVisibility = .Hidden
