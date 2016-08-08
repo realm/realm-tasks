@@ -22,24 +22,24 @@ import Cocoa
 import RealmSwift
 
 private var firstSyncWorkaroundToken = 0
-private let toDoCellIdentifier = "ToDoItemCell"
-private let toDoCellPrototypeIdentifier = "ToDoItemCellPrototype"
+private let taskCellIdentifier = "TaskCell"
+private let taskCellPrototypeIdentifier = "TaskCellPrototype"
 
-class ToDoListViewController: NSViewController {
+class TaskListViewController: NSViewController {
 
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var topConstraint: NSLayoutConstraint?
 
-    private var items = try! Realm().objects(ToDoList.self).first!.items
+    private var items = try! Realm().objects(TaskList.self).first!.items
 
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?
     private var skipNotification = false
     private var reloadOnNotification = false
 
-    private let prototypeCell = PrototypeToDoItemCellView(identifier: toDoCellPrototypeIdentifier)
+    private let prototypeCell = PrototypeTaskCellView(identifier: taskCellPrototypeIdentifier)
 
-    private var currentlyEditingCellView: ToDoItemCellView?
+    private var currentlyEditingCellView: TaskCellView?
 
     private var currentlyMovingRowView: NSTableRowView?
     private var currentlyMovingRowSnapshotView: SnapshotView?
@@ -70,10 +70,10 @@ class ToDoListViewController: NSViewController {
 
     private func setupFirstSyncWorkaround() {
         // FIXME: Hack to work around sync possibly pulling in a new list.
-        // Ideally we'd use ToDoList's with primary keys, but those aren't currently supported by sync.
+        // Ideally we'd use TaskList's with primary keys, but those aren't currently supported by sync.
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
             // only merge the initial list
-            let lists = realm.objects(ToDoList.self).filter("initial == true")
+            let lists = realm.objects(TaskList.self).filter("initial == true")
 
             guard lists.count > 1 else { return }
 
@@ -97,7 +97,7 @@ class ToDoListViewController: NSViewController {
                 let realm = try! Realm(configuration: configuration)
                 try! realm.write {
                     // only merge the initial list
-                    let lists = realm.objects(ToDoList.self).filter("initial == true")
+                    let lists = realm.objects(TaskList.self).filter("initial == true")
                     while lists.count > 1 {
                         lists.first!.items.appendContentsOf(lists.last!.items)
                         realm.delete(lists.last!)
@@ -167,11 +167,11 @@ class ToDoListViewController: NSViewController {
 
 // MARK: Actions
 
-extension ToDoListViewController {
+extension TaskListViewController {
 
-    @IBAction func newToDo(sender: AnyObject?) {
+    @IBAction func newTask(sender: AnyObject?) {
         try! items.realm?.write {
-            self.items.insert(ToDoItem(), atIndex: 0)
+            self.items.insert(Task(), atIndex: 0)
         }
 
         skipNextNotification()
@@ -186,7 +186,7 @@ extension ToDoListViewController {
     }
 
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
-        if theItem.action == #selector(newToDo) && currentlyEditingCellView != nil {
+        if theItem.action == #selector(newTask) && currentlyEditingCellView != nil {
             return false
         }
 
@@ -197,7 +197,7 @@ extension ToDoListViewController {
 
 // MARK: Reordering
 
-extension ToDoListViewController {
+extension TaskListViewController {
 
     var reordering: Bool {
         return currentlyMovingRowView != nil
@@ -332,7 +332,7 @@ extension ToDoListViewController {
 
 // MARK: NSGestureRecognizerDelegate
 
-extension ToDoListViewController: NSGestureRecognizerDelegate {
+extension TaskListViewController: NSGestureRecognizerDelegate {
 
     func gestureRecognizer(gestureRecognizer: NSGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
         return true
@@ -343,7 +343,7 @@ extension ToDoListViewController: NSGestureRecognizerDelegate {
         case is NSPressGestureRecognizer:
             let targetRow = tableView.rowAtPoint(gestureRecognizer.locationInView(tableView))
 
-            guard targetRow >= 0, let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? ToDoItemCellView else {
+            guard targetRow >= 0, let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? TaskCellView else {
                 return false
             }
 
@@ -359,7 +359,7 @@ extension ToDoListViewController: NSGestureRecognizerDelegate {
 
 // MARK: NSTableViewDataSource
 
-extension ToDoListViewController: NSTableViewDataSource {
+extension TaskListViewController: NSTableViewDataSource {
 
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return items.count
@@ -369,18 +369,18 @@ extension ToDoListViewController: NSTableViewDataSource {
 
 // MARK: NSTableViewDelegate
 
-extension ToDoListViewController: NSTableViewDelegate {
+extension TaskListViewController: NSTableViewDelegate {
 
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let cellView: ToDoItemCellView
+        let cellView: TaskCellView
 
-        if let view = tableView.makeViewWithIdentifier(toDoCellIdentifier, owner: self) as? ToDoItemCellView {
+        if let view = tableView.makeViewWithIdentifier(taskCellIdentifier, owner: self) as? TaskCellView {
             cellView = view
         } else {
-            cellView = ToDoItemCellView(identifier: toDoCellIdentifier)
+            cellView = TaskCellView(identifier: taskCellIdentifier)
         }
 
-        cellView.configureWithToDoItem(items[row])
+        cellView.configureWithTask(items[row])
         cellView.backgroundColor = colorForRow(row)
         cellView.delegate = self
 
@@ -389,9 +389,9 @@ extension ToDoListViewController: NSTableViewDelegate {
 
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         if let cellView = currentlyEditingCellView {
-            prototypeCell.configureWithToDoItemCellView(cellView)
+            prototypeCell.configureWithTaskCellView(cellView)
         } else {
-            prototypeCell.configureWithToDoItem(items[row])
+            prototypeCell.configureWithTask(items[row])
         }
 
         return prototypeCell.fittingHeightForConstrainedWidth(tableView.bounds.width)
@@ -408,7 +408,7 @@ extension ToDoListViewController: NSTableViewDelegate {
     private func updateColors() {
         tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
-            if let cellView = rowView.subviews.first as? ToDoItemCellView {
+            if let cellView = rowView.subviews.first as? TaskCellView {
                 NSView.animateWithDuration(0.5, animations: {
                     cellView.backgroundColor = self.colorForRow(row)
                 })
@@ -423,11 +423,11 @@ extension ToDoListViewController: NSTableViewDelegate {
 
 }
 
-// MARK: ToDoItemCellViewDelegate
+// MARK: TaskCellViewDelegate
 
-extension ToDoListViewController: ToDoItemCellViewDelegate {
+extension TaskListViewController: TaskCellViewDelegate {
 
-    func cellView(view: ToDoItemCellView, didComplete complete: Bool) {
+    func cellView(view: TaskCellView, didComplete complete: Bool) {
         guard let (item, index) = findItemForCellView(view) else {
             return
         }
@@ -460,7 +460,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
         }
     }
 
-    func cellViewDidDelete(view: ToDoItemCellView) {
+    func cellViewDidDelete(view: TaskCellView) {
         guard let (item, index) = findItemForCellView(view) else {
             return
         }
@@ -474,7 +474,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
         tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
     }
 
-    func cellViewDidBeginEditing(cellView: ToDoItemCellView) {
+    func cellViewDidBeginEditing(cellView: TaskCellView) {
         let editingOffset = cellView.convertRect(cellView.bounds, toView: tableView).minY
 
         topConstraint?.constant = -editingOffset
@@ -483,7 +483,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
             self.view.layoutSubtreeIfNeeded()
 
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ToDoItemCellView where view != cellView {
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? TaskCellView where view != cellView {
                     view.alphaValue = 0.3
                     view.editable = false
                 }
@@ -493,13 +493,13 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
         currentlyEditingCellView = cellView
     }
 
-    func cellViewDidChangeText(view: ToDoItemCellView) {
+    func cellViewDidChangeText(view: TaskCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
         }
     }
 
-    func cellViewDidEndEditing(view: ToDoItemCellView) {
+    func cellViewDidEndEditing(view: TaskCellView) {
         guard let (item, index) = findItemForCellView(view) else {
             return
         }
@@ -524,7 +524,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
             self.view.layoutSubtreeIfNeeded()
 
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ToDoItemCellView {
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? TaskCellView {
                     view.alphaValue = 1
                     view.editable = true
                 }
@@ -534,7 +534,7 @@ extension ToDoListViewController: ToDoItemCellViewDelegate {
         currentlyEditingCellView = nil
     }
 
-    private func findItemForCellView(view: NSView) -> (item: ToDoItem, index: Int)? {
+    private func findItemForCellView(view: NSView) -> (item: Task, index: Int)? {
         let index = tableView.rowForView(view)
 
         if index < 0 {
@@ -565,11 +565,11 @@ private func delay(time: Double, block: () -> ()) {
 
 // MARK: Private Classes
 
-private final class PrototypeToDoItemCellView: ToDoItemCellView {
+private final class PrototypeTaskCellView: TaskCellView {
 
     private var widthConstraint: NSLayoutConstraint?
 
-    func configureWithToDoItemCellView(cellView: ToDoItemCellView) {
+    func configureWithTaskCellView(cellView: TaskCellView) {
         text = cellView.text
     }
 

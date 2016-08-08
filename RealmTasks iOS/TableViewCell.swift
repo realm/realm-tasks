@@ -48,13 +48,13 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     // MARK: Properties
 
     // Stored Properties
-    let textView = ToDoItemTextView()
+    let textView = CellTextView()
     var temporarilyIgnoreSaveChanges = false
     var item: Item! {
         didSet {
             textView.text = item.text
             setCompleted(item.completed)
-            if let item = item as? ToDoList {
+            if let item = item as? TaskList {
                 let count = item.items.filter("completed == false").count
                 countLabel.text = String(count)
                 if count == 0 {
@@ -109,7 +109,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         setupOverlayView()
         setupTextView()
         setupBorders()
-        if Item.self == ToDoList.self {
+        if Item.self == TaskList.self {
             setupCountBadge()
         }
         setupNavHintLabel()
@@ -154,7 +154,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             textView.left == textView.superview!.left + 8
             textView.top == textView.superview!.top + 8
             textView.bottom == textView.superview!.bottom - 8
-            if Item.self == ToDoList.self {
+            if Item.self == TaskList.self {
                 textView.right == textView.superview!.right - 68
             } else {
                 textView.right == textView.superview!.right - 8
