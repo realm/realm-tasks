@@ -298,6 +298,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
         let location = recognizer.locationInView(tableView)
         let indexPath = tableView.indexPathForRowAtPoint(location) ?? NSIndexPath(forRow: items.count - 1, inSection: 0)
+
         switch recognizer.state {
         case .Possible: break
         case .Began:
@@ -331,32 +332,30 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         case .Changed:
             snapshot.center.y = location.y
 
-            guard let sourceIndexPath = sourceIndexPath
-                where indexPath != sourceIndexPath else { break }
+            if let sourceIndexPath = sourceIndexPath where indexPath != sourceIndexPath && !items[indexPath.row].completed {
+                // move rows
+                tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
 
-            self.sourceIndexPath = indexPath
-
-            // move rows
-            tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
+                self.sourceIndexPath = indexPath
+            }
 
             break
         case .Ended, .Cancelled, .Failed:
-            guard let cell = tableView.cellForRowAtIndexPath(indexPath),
-                startIndexPath = startIndexPath,
-                sourceIndexPath = sourceIndexPath else { break }
+            guard
+                let startIndexPath = startIndexPath,
+                let sourceIndexPath = sourceIndexPath,
+                let cell = tableView.cellForRowAtIndexPath(sourceIndexPath)
+            else { break }
 
-            // update data source & move rows
-            try! items.realm?.write {
-                let item = items[startIndexPath.row]
-                items.removeAtIndex(startIndexPath.row)
-                items.insert(item, atIndex: indexPath.row)
+            if !items[sourceIndexPath.row].completed {
+                // update data source & move rows
+                try! items.realm?.write {
+                    let item = items[startIndexPath.row]
+                    items.removeAtIndex(startIndexPath.row)
+                    items.insert(item, atIndex: sourceIndexPath.row)
+                }
+                skipNextNotification()
             }
-            skipNextNotification()
-
-            self.startIndexPath = nil
-            self.sourceIndexPath = nil
-
-            tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
 
             let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
             shadowAnimation.fromValue = 1
@@ -379,6 +378,9 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                     }
                 }
             })
+
+            self.startIndexPath = nil
+            self.sourceIndexPath = nil
             break
         }
     }
