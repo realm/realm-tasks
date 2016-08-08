@@ -21,6 +21,7 @@
 import Cocoa
 import RealmSwift
 
+private var firstSyncWorkaroundToken = 0
 private let toDoCellIdentifier = "ToDoItemCell"
 private let toDoCellPrototypeIdentifier = "ToDoItemCellPrototype"
 
@@ -32,6 +33,7 @@ class ToDoListViewController: NSViewController {
     private var items = try! Realm().objects(ToDoList.self).first!.items
 
     private var notificationToken: NotificationToken?
+    private var realmNotificationToken: NotificationToken?
     private var skipNotification = false
     private var reloadOnNotification = false
 
@@ -47,6 +49,8 @@ class ToDoListViewController: NSViewController {
 
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
+        notificationToken?.stop()
+        realmNotificationToken?.stop()
     }
 
     override func viewDidLoad() {
@@ -59,8 +63,48 @@ class ToDoListViewController: NSViewController {
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidEnterFullScreenNotification, object: view.window)
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidExitFullScreenNotification, object: view.window)
 
+        dispatch_once(&firstSyncWorkaroundToken, setupFirstSyncWorkaround)
         setupNotifications()
         setupGestureRecognizers()
+    }
+
+    private func setupFirstSyncWorkaround() {
+        // FIXME: Hack to work around sync possibly pulling in a new list.
+        // Ideally we'd use ToDoList's with primary keys, but those aren't currently supported by sync.
+        realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
+            // only merge the default list
+            let lists = realm.objects(ToDoList.self).filter("text == %@", Constants.defaultListName)
+
+            guard lists.count > 1 else { return }
+
+            self.realmNotificationToken?.stop()
+            self.realmNotificationToken = nil
+
+            let items = lists.first!.items
+
+            guard self.items != items else { return }
+
+            self.items = items
+
+            self.notificationToken?.stop()
+            self.notificationToken = nil
+            self.setupNotifications()
+
+            let configuration = realm.configuration
+
+            // Append all other items while deleting their lists, in case they were created locally before sync
+            dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
+                let realm = try! Realm(configuration: configuration)
+                try! realm.write {
+                    // only merge the default list
+                    let lists = realm.objects(ToDoList.self).filter("text == %@", Constants.defaultListName)
+                    while lists.count > 1 {
+                        lists.first!.items.appendContentsOf(lists.last!.items)
+                        realm.delete(lists.last!)
+                    }
+                }
+            }
+        }
     }
 
     private func setupNotifications() {
@@ -75,29 +119,6 @@ class ToDoListViewController: NSViewController {
                 return
             }
 
-            // FIXME: Hack to work around sync possibly pulling in a new list.
-            // Ideally we'd use ToDoList with primary keys, but those aren't currently supported by sync.
-            let realm = self.items.realm!
-            let lists = realm.objects(ToDoList.self)
-            let hasMultipleLists = lists.count > 1
-
-            if hasMultipleLists {
-                self.items = lists.first!.items
-
-                defer {
-                    // Append all other items while deleting their lists, in case they were created locally before sync
-                    try! realm.write {
-                        while lists.count > 1 {
-                            self.items.appendContentsOf(lists.last!.items)
-                            realm.delete(lists.last!)
-                        }
-                    }
-
-                    // Resubscribe to notifications
-                    self.setupNotifications()
-                }
-            }
-
             switch changes {
             case .Initial:
                 self.tableView.reloadData()
@@ -108,6 +129,7 @@ class ToDoListViewController: NSViewController {
                 self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
                 self.tableView.endUpdates()
 
+                self.updateColors()
                 self.updateTableViewHeightOfRows(modifications.toIndexSet())
             case .Error(let error):
                 fatalError(String(error))
