@@ -66,6 +66,7 @@ class ViewController: UITableViewController {
     func setupUI() {
         title = "My Tasks"
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        navigationItem.leftBarButtonItem = editButtonItem()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(add))
     }
 
@@ -114,6 +115,20 @@ class ViewController: UITableViewController {
         cell.textLabel?.text = item.text
         cell.textLabel?.alpha = item.completed ? 0.5 : 1
         return cell
+    }
+
+    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
+        try! items.realm?.write {
+            items.move(from: fromIndexPath.row, to: toIndexPath.row)
+        }
+    }
+
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == .Delete {
+            try! items.realm?.write {
+                items.removeAtIndex(indexPath.row)
+            }
+        }
     }
 
     // MARK: Functions
