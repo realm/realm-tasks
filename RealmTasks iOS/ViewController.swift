@@ -53,7 +53,7 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     // Moving
     private var snapshot: UIView!
     private var startIndexPath: NSIndexPath?
-    private var sourceIndexPath: NSIndexPath?
+    private var destinationIndexPath: NSIndexPath?
 
     // Editing
     private var currentlyEditing: Bool { return currentlyEditingCell != nil }
@@ -298,12 +298,12 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
     func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
         let location = recognizer.locationInView(tableView)
         let indexPath = tableView.indexPathForRowAtPoint(location) ?? NSIndexPath(forRow: items.count - 1, inSection: 0)
+
         switch recognizer.state {
-        case .Possible: break
         case .Began:
             guard let cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
             startIndexPath = indexPath
-            sourceIndexPath = indexPath
+            destinationIndexPath = indexPath
 
             // Add the snapshot as subview, aligned with the cell
             var center = cell.center
@@ -327,38 +327,32 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.snapshot.center = center
                 self.snapshot.transform = CGAffineTransformMakeScale(1.05, 1.05)
             }
-            break
         case .Changed:
-            var center = snapshot.center
-            center.y = location.y
-            snapshot.center = center
+            snapshot.center.y = location.y
 
-            guard let sourceIndexPath = sourceIndexPath
-                where indexPath != sourceIndexPath else { break }
+            if let destinationIndexPath = destinationIndexPath where indexPath != destinationIndexPath && !items[indexPath.row].completed {
+                // move rows
+                tableView.moveRowAtIndexPath(destinationIndexPath, toIndexPath: indexPath)
 
-            self.sourceIndexPath = indexPath
-
-            // move rows
-            tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
-
-            break
-        case .Ended, .Cancelled, .Failed:
-            guard let cell = tableView.cellForRowAtIndexPath(indexPath),
-                startIndexPath = startIndexPath,
-                sourceIndexPath = sourceIndexPath else { break }
-
-            // update data source & move rows
-            try! items.realm?.write {
-                let item = items[startIndexPath.row]
-                items.removeAtIndex(startIndexPath.row)
-                items.insert(item, atIndex: indexPath.row)
+                self.destinationIndexPath = indexPath
             }
-            skipNextNotification()
+        case .Ended, .Cancelled, .Failed:
+            guard
+                let startIndexPath = startIndexPath,
+                let destinationIndexPath = destinationIndexPath,
+                let cell = tableView.cellForRowAtIndexPath(destinationIndexPath)
+            else { break }
 
-            self.startIndexPath = nil
-            self.sourceIndexPath = nil
+            if destinationIndexPath.row != startIndexPath.row && !items[destinationIndexPath.row].completed {
+                // update data source & move rows
+                try! items.realm?.write {
+                    let item = items[startIndexPath.row]
+                    items.removeAtIndex(startIndexPath.row)
+                    items.insert(item, atIndex: destinationIndexPath.row)
+                }
 
-            tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: indexPath)
+                skipNextNotification()
+            }
 
             let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
             shadowAnimation.fromValue = 1
@@ -381,7 +375,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                     }
                 }
             })
-            break
+
+            self.startIndexPath = nil
+            self.destinationIndexPath = nil
+        default:
+            break;
         }
     }
 
@@ -434,11 +432,11 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
         // If we are dragging an item around, swap those
         // two items for their appropriate height values
-        if let startIndexPath = startIndexPath, sourceIndexPath = sourceIndexPath {
-            if indexPath.row == sourceIndexPath.row {
+        if let startIndexPath = startIndexPath, destinationIndexPath = destinationIndexPath {
+            if indexPath.row == destinationIndexPath.row {
                 item = items[startIndexPath.row]
             } else if indexPath.row == startIndexPath.row {
-                item = items[sourceIndexPath.row]
+                item = items[destinationIndexPath.row]
             }
         }
         return cellHeightForText(item.text)
