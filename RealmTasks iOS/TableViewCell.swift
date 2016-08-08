@@ -20,6 +20,7 @@
 
 import AudioToolbox
 import Cartography
+import RealmSwift
 import UIKit
 
 // MARK: Shared Functions
@@ -42,7 +43,7 @@ private let iconWidth: CGFloat = 60
 
 // MARK: Table View Cell
 
-final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
+final class TableViewCell<Item: Object where Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
 
     // MARK: Properties
 
@@ -51,7 +52,7 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
     var temporarilyIgnoreSaveChanges = false
     var item: Item! {
         didSet {
-            textView.text = item.cellText
+            textView.text = item.text
             setCompleted(item.completed)
             if let item = item as? ToDoList {
                 let count = item.items.filter("completed == false").count
@@ -235,7 +236,7 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
         case .Changed:
             let translation = recognizer.translationInView(self)
 
-            if !Item.isCompletable && translation.x > 0 {
+            if !item.isCompletable && translation.x > 0 {
                 releaseAction = nil
                 return
             }
@@ -391,7 +392,7 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
     func textViewDidEndEditing(textView: UITextView) {
         if !temporarilyIgnoreSaveChanges {
             try! item.realm!.write {
-                item.cellText = textView.text
+                item.text = textView.text
             }
         }
         textView.userInteractionEnabled = false
