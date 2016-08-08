@@ -198,8 +198,6 @@ extension ToDoListViewController {
             let frame = self.currentlyMovingRowSnapshotView!.frame
             self.currentlyMovingRowSnapshotView!.frame = frame.insetBy(dx: -frame.width * 0.02, dy: -frame.height * 0.02)
         })
-
-        movingStarted = false
     }
 
     private func handleReorderingForScreenPoint(point: NSPoint) {
@@ -208,29 +206,37 @@ extension ToDoListViewController {
         }
 
         let sourceRow = tableView.rowForView(currentlyMovingRowView!)
-        let targetRow: Int
+        let destinationRow: Int
 
         let pointInTableView = tableView.convertPoint(point, fromView: nil)
 
         if pointInTableView.y < tableView.bounds.minY {
-            targetRow = 0
+            destinationRow = 0
         } else if pointInTableView.y > tableView.bounds.maxY {
-            targetRow = tableView.numberOfRows - 1
+            destinationRow = tableView.numberOfRows - 1
         } else {
-            targetRow = tableView.rowAtPoint(pointInTableView)
+            destinationRow = tableView.rowAtPoint(pointInTableView)
         }
 
-        if targetRow >= 0 && targetRow != sourceRow  {
+        if canMoveRow(sourceRow, toRow: destinationRow) {
             try! items.realm?.write {
                 let item = items[sourceRow]
                 items.removeAtIndex(sourceRow)
-                items.insert(item, atIndex: targetRow)
+                items.insert(item, atIndex: destinationRow)
             }
 
             skipNextNotification()
 
-            tableView.moveRowAtIndex(sourceRow, toIndex: targetRow)
+            tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
         }
+    }
+
+    private func canMoveRow(sourceRow: Int, toRow destinationRow: Int) -> Bool {
+        guard destinationRow >= 0 && destinationRow != sourceRow else {
+            return false
+        }
+
+        return !items[destinationRow].completed
     }
 
     private func endReordering() {
@@ -271,6 +277,7 @@ extension ToDoListViewController {
         case .Changed:
             handleReorderingForScreenPoint(recognizer.locationInView(nil))
         case .Ended:
+            movingStarted = false
             endReordering()
             stopAutoscrolling()
         default:
