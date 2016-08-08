@@ -19,5 +19,35 @@
  **************************************************************************/
 
 import UIKit
+import RealmSwift
+
+// MARK: Models
+
+final class TaskListList: Object {
+    let items = List<TaskList>()
+    dynamic var id = 0
+
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+}
+
+final class TaskList: Object {
+    dynamic var text = ""
+    dynamic var completed = false
+    dynamic var id = ""
+    let items = List<Task>()
+
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+}
+
+final class Task: Object {
+    dynamic var text = ""
+    dynamic var completed = false
+}
+
+// MARK: View Controller
 
 class ViewController: UITableViewController {}
