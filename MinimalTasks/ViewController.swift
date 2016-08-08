@@ -40,4 +40,17 @@ final class Task: Object {
 
 // MARK: View Controller
 
-class ViewController: UITableViewController {}
+class ViewController: UITableViewController {
+
+    // MARK: Setup
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+    }
+
+    func setupUI() {
+        title = "My Tasks"
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+    }
+}
