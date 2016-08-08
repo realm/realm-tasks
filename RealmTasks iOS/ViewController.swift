@@ -300,7 +300,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
         let indexPath = tableView.indexPathForRowAtPoint(location) ?? NSIndexPath(forRow: items.count - 1, inSection: 0)
 
         switch recognizer.state {
-        case .Possible: break
         case .Began:
             guard let cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
             startIndexPath = indexPath
@@ -328,7 +327,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
                 self.snapshot.center = center
                 self.snapshot.transform = CGAffineTransformMakeScale(1.05, 1.05)
             }
-            break
         case .Changed:
             snapshot.center.y = location.y
 
@@ -338,8 +336,6 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
                 self.sourceIndexPath = indexPath
             }
-
-            break
         case .Ended, .Cancelled, .Failed:
             guard
                 let startIndexPath = startIndexPath,
@@ -381,7 +377,8 @@ final class ViewController: UIViewController, UITableViewDataSource, UITableView
 
             self.startIndexPath = nil
             self.sourceIndexPath = nil
-            break
+        default:
+            break;
         }
     }
 
