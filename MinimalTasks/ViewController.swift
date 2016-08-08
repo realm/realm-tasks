@@ -117,6 +117,23 @@ class ViewController: UITableViewController {
         return cell
     }
 
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let item = items[indexPath.row]
+        try! item.realm?.write {
+            item.completed = !item.completed
+            let destinationIndexPath: NSIndexPath
+            if item.completed {
+                // move cell to bottom
+                destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+            } else {
+                // move cell just above the first completed item
+                let completedCount = items.filter("completed = true").count
+                destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
+            }
+            items.move(from: indexPath.row, to: destinationIndexPath.row)
+        }
+    }
+
     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
         try! items.realm?.write {
             items.move(from: fromIndexPath.row, to: toIndexPath.row)
@@ -144,7 +161,7 @@ class ViewController: UITableViewController {
             guard let text = alertTextField.text where !text.isEmpty else { return }
             let items = self.items
             try! items.realm?.write {
-                items.append(Task(value: ["text": text]))
+                items.insert(Task(value: ["text": text]), atIndex: items.filter("completed = false").count)
             }
         })
         presentViewController(alertController, animated: true, completion: nil)
