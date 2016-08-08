@@ -42,6 +42,18 @@ extension Color {
             Color(red: 56/255, green: 71/255, blue: 126/255, alpha: 1)
         ]
     }
+
+    static func listColors() -> [Color] {
+        return [
+            Color(red: 6/255, green: 147/255, blue: 251/255, alpha: 1),
+            Color(red: 16/255, green: 158/255, blue: 251/255, alpha: 1),
+            Color(red: 26/255, green: 169/255, blue: 251/255, alpha: 1),
+            Color(red: 33/255, green: 180/255, blue: 251/255, alpha: 1),
+            Color(red: 40/255, green: 190/255, blue: 251/255, alpha: 1),
+            Color(red: 46/255, green: 198/255, blue: 251/255, alpha: 1),
+            Color(red: 54/255, green: 207/255, blue: 251/255, alpha: 1)
+        ]
+    }
 }
 
 extension CollectionType where Generator.Element == Color, Index == Int {

@@ -56,14 +56,8 @@ class AppDelegate: NSObject {
             return false
         }
 
-        do {
-            try Realm().open(with: token)
-            return true
-        } catch {
-            return false
-        }
+        return (try? Realm().open(with: token)) == nil
     }
-
 }
 
 extension AppDelegate: NSApplicationDelegate {
@@ -79,7 +73,12 @@ extension AppDelegate: NSApplicationDelegate {
             if realm.isEmpty {
                 // Create a default list if none exist
                 try realm.write {
-                    realm.add(ToDoList())
+                    let list = ToDoList()
+                    list.initial = true
+                    list.text = Constants.defaultListName
+                    let listLists = ToDoListLists()
+                    listLists.items.append(list)
+                    realm.add(listLists)
                 }
             }
         } catch {
