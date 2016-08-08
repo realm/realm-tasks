@@ -43,6 +43,8 @@
 		E89CE68E1D409D3500BB4521 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6891D409D3500BB4521 /* LogInViewController.swift */; };
 		E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */; };
 		E8A1E6501D59354500D8B04A /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */; };
+		E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */; };
+		E8A1E6531D59368200D8B04A /* SharedFunctionality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */; };
 		EC86AB13DF2672178CFBDC08 /* Pods_RealmTasks_RealmTasks_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F65AA97E042CAA771FDB716 /* Pods_RealmTasks_RealmTasks_iOS.framework */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +86,7 @@
 		E89CE6891D409D3500BB4521 /* LogInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
 		E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
+		E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedFunctionality.swift; sourceTree = "<group>"; };
 		F9B66AB3287C77E6F01777F3 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		FE1F651C6DD135AF60B7902F /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -157,12 +160,13 @@
 			isa = PBXGroup;
 			children = (
 				C23EB0371D4643B900D3E0AC /* Constants.swift */,
+				E89CE6861D409D3500BB4521 /* HTTPClient.swift */,
 				C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */,
 				2252019B1D3DD648009E45FA /* Models.swift */,
 				225201991D3DD648009E45FA /* RealmColor.swift */,
 				C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */,
-				E89CE6861D409D3500BB4521 /* HTTPClient.swift */,
 				C23EB02C1D4635C400D3E0AC /* Shared.xcassets */,
+				E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */,
 			);
 			path = "RealmTasks Shared";
 			sourceTree = "<group>";
@@ -484,6 +488,7 @@
 				C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */,
 				C23EB0391D4643B900D3E0AC /* Constants.swift in Sources */,
 				C28A34051D50D19B00EE8F1A /* RegisterViewController.swift in Sources */,
+				E8A1E6531D59368200D8B04A /* SharedFunctionality.swift in Sources */,
 				C23EB0301D46364000D3E0AC /* Models.swift in Sources */,
 				C23EB0321D46364000D3E0AC /* LocalIPAddress.swift in Sources */,
 			);
@@ -497,6 +502,7 @@
 				C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */,
 				225201A61D3DD648009E45FA /* ViewController.swift in Sources */,
 				225201A51D3DD648009E45FA /* CellTextView.swift in Sources */,
+				E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */,
 				C23EB0351D46421C00D3E0AC /* RealmConfigurations.swift in Sources */,
 				C23EB0381D4643B900D3E0AC /* Constants.swift in Sources */,
 				225201A31D3DD648009E45FA /* TableViewCell.swift in Sources */,

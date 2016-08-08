@@ -18,7 +18,6 @@
  *
  **************************************************************************/
 
-import Realm
 import RealmSwift
 import UIKit
 
@@ -29,27 +28,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
-        RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
-
-        Realm.Configuration.defaultConfiguration = syncRealmConfiguration
-        Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
-
-        do {
-            let realm = try Realm()
-            if realm.isEmpty {
-                // Create a default list if none exist
-                try realm.write {
-                    let list = TaskList()
-                    list.initial = true
-                    list.text = Constants.defaultListName
-                    let listLists = TaskListList()
-                    listLists.items.append(list)
-                    realm.add(listLists)
-                }
-            }
-        } catch {
-            fatalError("Could not open or write to the realm: \(error)")
-        }
+        setupRealmSyncAndInitialList()
 
         window?.rootViewController = ContainerViewController()
         window?.makeKeyAndVisible()
@@ -65,7 +44,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func logIn() {
-        let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: RLMSyncManager.sharedManager().appID ?? "", realmPath: Constants.syncRealmPath)
+        let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: Constants.appID, realmPath: Constants.syncRealmPath)
 
         loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
             if let token = accessToken {
