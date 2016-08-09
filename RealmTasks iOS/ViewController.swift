@@ -139,6 +139,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         notificationToken?.stop()
         realmNotificationToken?.stop()
         tableView.removeObserver(self, forKeyPath: "bounds")
+        parent.removeObserver(self, forKeyPath: "text")
     }
 
     override func viewDidLoad() {
