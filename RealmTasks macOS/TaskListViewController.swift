@@ -90,11 +90,15 @@ class TaskListViewController: NSViewController {
             self.notificationToken = nil
             self.setupNotifications()
 
-            let configuration = realm.configuration
+            // FIXME: Use the Realm's configuration.
+            // Currently broken because it doesn't apply the same sync-related values
+            // let configuration = realm.configuration
 
             // Append all other items while deleting their lists, in case they were created locally before sync
             dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-                let realm = try! Realm(configuration: configuration)
+                // FIXME: Use the above Realm's configuration.
+                // let realm = try! Realm(configuration: configuration)
+                let realm = try! Realm()
                 try! realm.write {
                     // only merge the initial list
                     let lists = realm.objects(TaskList.self).filter("initial == true")

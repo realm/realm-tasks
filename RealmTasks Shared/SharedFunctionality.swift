@@ -21,11 +21,18 @@
 import Realm
 import RealmSwift
 
-func setupRealmSyncAndInitialList() {
-    RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
+let user = RealmSwift.User(localIdentity: nil)
+func credentialForUsername(username: String, password: String, register: Bool) -> Credential {
+    return Credential(credentialToken: username,
+                      provider: RLMIdentityProviderUsernamePassword,
+                      userInfo: ["password": password, "register": register],
+                      serverURL: NSURL(string: "realm://\(Constants.syncHost)"))
+}
 
+func setupRealmSyncAndInitialList() {
+    configureRealmServerWithAppID(Constants.appID, logLevel: 0, globalErrorHandler: nil)
+    syncRealmConfiguration.setObjectServerPath("/~/realmtasks", for: user)
     Realm.Configuration.defaultConfiguration = syncRealmConfiguration
-    Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
 
     do {
         let realm = try Realm()
@@ -43,25 +50,4 @@ func setupRealmSyncAndInitialList() {
     } catch {
         fatalError("Could not open or write to the realm: \(error)")
     }
-}
-
-func openRealmOrLogInWithFunction(logInFunction: () -> ()) {
-    if let userRealm = try? Realm(configuration: userRealmConfiguration),
-        let token = userRealm.objects(User.self).first?.accessToken {
-        try! Realm().open(with: token)
-    } else {
-        logInFunction()
-    }
-}
-
-func openRealmAndPersistUserToken(token: String) throws {
-    dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-        let userRealm = try! Realm(configuration: userRealmConfiguration)
-        try! userRealm.write {
-            let user = User()
-            user.accessToken = token
-            userRealm.add(user)
-        }
-    }
-    try Realm().open(with: token)
 }
