@@ -36,6 +36,7 @@ extension UIView {
 }
 
 private var tableViewBoundsKVOContext = 0
+private var titleKVOContext = 0
 private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
 private enum NavDirection {
@@ -106,7 +107,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: View Lifecycle
 
-    init(parent: Parent, colors: [UIColor], title: String? = nil) {
+    init(parent: Parent, colors: [UIColor]) {
         self.parent = parent
         self.colors = colors
         if Item.self == Task.self {
@@ -123,13 +124,15 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 let firstList = try! Realm().objects(TaskList.self).first!
                 return ViewController<Task, TaskList>(
                     parent: firstList,
-                    colors: UIColor.taskColors(),
-                    title: firstList.text
+                    colors: UIColor.taskColors()
                 )
             }
         }
         super.init(nibName: nil, bundle: nil)
-        self.title = title
+        if let parent = parent as? CellPresentable {
+            (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
+            title = parent.text
+        }
     }
 
     deinit {
@@ -178,12 +181,15 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        guard context == &tableViewBoundsKVOContext else {
+        if context == &tableViewBoundsKVOContext {
+            let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
+            tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
+        } else if context == &titleKVOContext {
+            title = (parent as! CellPresentable).text
+            parentViewController?.title = title
+        } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-            return
         }
-        let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
-        tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
     }
 
     private func setupPlaceholderCell() {
@@ -509,8 +515,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
             parent: item as! TaskList,
-            colors: UIColor.taskColors(),
-            title: item.text
+            colors: UIColor.taskColors()
         )
         startMovingToNextViewController(.Down)
         finishMovingToNextViewController(.Down)
