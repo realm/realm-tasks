@@ -121,9 +121,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         } else {
             createTopViewController = nil
             createBottomViewController = {
-                let firstList = try! Realm().objects(TaskList.self).first!
-                return ViewController<Task, TaskList>(
-                    parent: firstList,
+                ViewController<Task, TaskList>(
+                    parent: try! Realm().objects(TaskList.self).first!,
                     colors: UIColor.taskColors()
                 )
             }
