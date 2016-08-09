@@ -18,7 +18,6 @@
  *
  **************************************************************************/
 
-import RealmSwift
 import UIKit
 
 @UIApplicationMain
@@ -27,43 +26,44 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-
         setupRealmSyncAndInitialList()
-
         window?.rootViewController = ContainerViewController()
         window?.makeKeyAndVisible()
-
-        openRealmOrLogInWithFunction(logIn)
-
+        logInWithPersistedUser { error in
+            if error != nil {
+                self.logIn()
+            }
+        }
         return true
     }
 
     func logIn() {
-        let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: Constants.appID, realmPath: Constants.syncRealmPath)
+        let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: NSBundle.mainBundle())
+        guard let logInViewController = loginStoryboard.instantiateInitialViewController() as? LogInViewController else {
+            fatalError()
+        }
 
-        loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
-            if let token = accessToken {
-                try! openRealmAndPersistUserToken(token)
-                return
+        logInViewController.completionHandler = { username, password, returnCode in
+            if returnCode != .Cancel,
+                let username = username,
+                let password = password {
+                persistUserAndLogInWithUsername(username, password: password, register: returnCode == .Register) { error in
+                    if let error = error {
+                        self.presentError(error)
+                    }
+                }
             }
+        }
+        window?.rootViewController?.presentViewController(logInViewController, animated: true, completion: nil)
+    }
 
-            guard let error = error else {
-                // This happens when the user chose "Cancel" while logging in, which isn't supported,
-                // so just present the login view controller again
-                self.logIn()
-                return
-            }
-
+    func presentError(error: NSError) {
+        dispatch_async(dispatch_get_main_queue()) {
             // Present error to user
-
             let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
-            let defaultAction = UIAlertAction(title: "OK", style: .Default) { _ in
+            alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
                 self.logIn()
-            }
-
-            alertController.addAction(defaultAction)
-            alertController.preferredAction = defaultAction
-
+            })
             self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
         }
     }
