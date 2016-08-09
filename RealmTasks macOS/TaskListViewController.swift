@@ -30,7 +30,7 @@ class TaskListViewController: NSViewController {
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var topConstraint: NSLayoutConstraint?
 
-    private var items = try! Realm().objects(TaskList.self).first!.items
+    private var items = try! Realm(configuration: listsRealmConfiguration).objects(TaskList.self).first!.items
 
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?

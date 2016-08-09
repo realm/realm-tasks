@@ -23,12 +23,10 @@ import RealmSwift
 
 func setupRealmSyncAndInitialList() {
     RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
-
-    Realm.Configuration.defaultConfiguration = syncRealmConfiguration
     Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
 
     do {
-        let realm = try Realm()
+        let realm = try Realm(configuration: listsRealmConfiguration)
         if realm.isEmpty {
             // Create an initial list if none exist
             try realm.write {
@@ -48,7 +46,7 @@ func setupRealmSyncAndInitialList() {
 func openRealmOrLogInWithFunction(logInFunction: () -> ()) {
     if let userRealm = try? Realm(configuration: userRealmConfiguration),
         let token = userRealm.objects(User.self).first?.accessToken {
-        try! Realm().open(with: token)
+        try! Realm(configuration: listsRealmConfiguration).open(with: token)
     } else {
         logInFunction()
     }
@@ -63,5 +61,5 @@ func openRealmAndPersistUserToken(token: String) throws {
             userRealm.add(user)
         }
     }
-    try Realm().open(with: token)
+    try Realm(configuration: listsRealmConfiguration).open(with: token)
 }
