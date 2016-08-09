@@ -39,25 +39,6 @@ class AppDelegate: NSObject {
 
         mainWindowController.contentViewController?.presentViewControllerAsSheet(registerViewController)
     }
-
-    private func persistRealmUserWithToken(token: String) {
-        dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-            let userRealm = try! Realm(configuration: userRealmConfiguration)
-            try! userRealm.write {
-                let user = User()
-                user.accessToken = token
-                userRealm.add(user)
-            }
-        }
-    }
-
-    private func restorePersistedRealmUser() -> Bool {
-        guard let userRealm = try? Realm(configuration: userRealmConfiguration), let token = userRealm.objects(User.self).first?.accessToken else {
-            return false
-        }
-
-        return (try? Realm().open(with: token)) == nil
-    }
 }
 
 extension AppDelegate: NSApplicationDelegate {
@@ -69,7 +50,7 @@ extension AppDelegate: NSApplicationDelegate {
         mainWindowController.window?.titleVisibility = .Hidden
         mainWindowController.showWindow(nil)
 
-        if !restorePersistedRealmUser() {
+        openRealmOrLogInWithFunction {
             dispatch_async(dispatch_get_main_queue()) {
                 self.logIn()
             }
@@ -93,10 +74,8 @@ extension AppDelegate: LogInViewControllerDelegate {
                 NSApp.presentError(error)
             } else {
                 if let token = accessToken {
-                    self.persistRealmUserWithToken(token)
-
                     do {
-                        try Realm().open(with: token)
+                        try openRealmAndPersistUserToken(token)
                         viewController.dismissController(nil)
                     } catch let error as NSError {
                         NSApp.presentError(error)
@@ -133,10 +112,8 @@ extension AppDelegate: RegisterViewControllerDelegate {
                 NSApp.presentError(error)
             } else {
                 if let token = accessToken {
-                    self.persistRealmUserWithToken(token)
-
                     do {
-                        try Realm().open(with: token)
+                        try openRealmAndPersistUserToken(token)
                         viewController.dismissController(nil)
                     } catch let error as NSError {
                         NSApp.presentError(error)
