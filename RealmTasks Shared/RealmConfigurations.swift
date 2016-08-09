@@ -31,6 +31,7 @@ let userRealmConfiguration: RLMRealmConfiguration = {
 }()
 
 let listsRealmConfiguration = Realm.Configuration(
-    syncServerURL: Constants.syncServerURL,
-    objectTypes: [TaskListList.self, TaskList.self]
+    fileURL: Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("lists.realm"),
+    syncServerURL: Constants.syncServerURL.URLByAppendingPathComponent("lists"),
+    objectTypes: [TaskListList.self, TaskListReference.self]
 )

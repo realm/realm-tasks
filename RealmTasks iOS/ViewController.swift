@@ -112,7 +112,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         self.colors = colors
         if Item.self == Task.self {
             createTopViewController = {
-                ViewController<TaskList, TaskListList>(
+                ViewController<TaskListReference, TaskListList>(
                     parent: try! Realm(configuration: listsRealmConfiguration).objects(TaskListList.self).first!,
                     colors: UIColor.listColors()
                 )
@@ -121,16 +121,16 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         } else {
             createTopViewController = nil
             createBottomViewController = {
-
-                ViewController<Task, TaskList>(
-                    parent: try! Realm().objects(TaskList.self).first!,
+                let firstList = try! Realm(configuration: listsRealmConfiguration).objects(TaskListReference.self).first!.list
+                return ViewController<Task, TaskList>(
+                    parent: firstList,
                     colors: UIColor.taskColors()
                 )
             }
         }
         super.init(nibName: nil, bundle: nil)
-        if let parent = parent as? CellPresentable {
-            (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
+        if let parent = parent as? TaskList {
+            parent.addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
             title = parent.text
         }
     }
@@ -229,11 +229,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         // FIXME: Hack to work around sync possibly pulling in a new list.
         // Ideally we'd use ParentType's with primary keys, but those aren't currently supported by sync.
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
-            var lists = realm.objects(Parent.self)
-            if Parent.self == TaskList.self {
-                // only merge the initial list
-                lists = lists.filter("initial == true")
-            }
+            let lists = realm.objects(Parent.self)
             guard lists.count > 1 else { return }
 
             self.realmNotificationToken?.stop()
@@ -259,11 +255,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 // let realm = try! Realm(configuration: configuration)
                 let realm = try! Realm()
                 try! realm.write {
-                    var lists = realm.objects(Parent.self)
-                    if Parent.self == TaskList.self {
-                        // only merge the initial list
-                        lists = lists.filter("initial == true")
-                    }
+                    let lists = realm.objects(Parent.self)
                     while lists.count > 1 {
                         lists.first!.items.appendContentsOf(lists.last!.items)
                         realm.delete(lists.last!)
@@ -518,7 +510,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
-            parent: item as! TaskList,
+            parent: (item as! TaskListReference).list,
             colors: UIColor.taskColors()
         )
         startMovingToNextViewController(.Down)
