@@ -44,12 +44,13 @@ private enum NavDirection {
 
 // MARK: View Controller
 
-final class ViewController<Item: Object, ParentType: Object where Item: CellPresentable, ParentType: ListPresentable, ParentType.Item == Item>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
     // Items
-    private var items: List<Item>
+    private var parent: Parent
+    private var items: List<Item> { return parent.items }
 
     // Table View
     private let tableView = UITableView()
@@ -105,13 +106,13 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
     // MARK: View Lifecycle
 
-    init(items: List<Item>, colors: [UIColor], title: String? = nil) {
-        self.items = items
+    init(parent: Parent, colors: [UIColor], title: String? = nil) {
+        self.parent = parent
         self.colors = colors
         if Item.self == Task.self {
             createTopViewController = {
                 ViewController<TaskList, TaskListList>(
-                    items: try! Realm().objects(TaskListList.self).first!.items,
+                    parent: try! Realm().objects(TaskListList.self).first!,
                     colors: UIColor.listColors()
                 )
             }
@@ -121,7 +122,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             createBottomViewController = {
                 let firstList = try! Realm().objects(TaskList.self).first!
                 return ViewController<Task, TaskList>(
-                    items: firstList.items,
+                    parent: firstList,
                     colors: UIColor.taskColors(),
                     title: firstList.text
                 )
@@ -221,8 +222,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         // FIXME: Hack to work around sync possibly pulling in a new list.
         // Ideally we'd use ParentType's with primary keys, but those aren't currently supported by sync.
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
-            var lists = realm.objects(ParentType.self)
-            if ParentType.self == TaskList.self {
+            var lists = realm.objects(Parent.self)
+            if Parent.self == TaskList.self {
                 // only merge the initial list
                 lists = lists.filter("initial == true")
             }
@@ -231,11 +232,11 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             self.realmNotificationToken?.stop()
             self.realmNotificationToken = nil
 
-            let items = lists.first!.items
+            let parent = lists.first!
 
-            guard self.items != items else { return }
+            guard self.parent != parent else { return }
 
-            self.items = items
+            self.parent = parent
 
             self.notificationToken?.stop()
             self.notificationToken = nil
@@ -247,8 +248,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
                 let realm = try! Realm(configuration: configuration)
                 try! realm.write {
-                    var lists = realm.objects(ParentType.self)
-                    if ParentType.self == TaskList.self {
+                    var lists = realm.objects(Parent.self)
+                    if Parent.self == TaskList.self {
                         // only merge the initial list
                         lists = lists.filter("initial == true")
                     }
@@ -507,7 +508,7 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
-            items: item["items"] as! List<Task>,
+            parent: item as! TaskList,
             colors: UIColor.taskColors(),
             title: item.text
         )
