@@ -409,13 +409,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             else { break }
 
             if destinationIndexPath.row != startIndexPath.row && !items[destinationIndexPath.row].completed {
-                // update data source & move rows
                 try! items.realm?.write {
-                    let item = items[startIndexPath.row]
-                    items.removeAtIndex(startIndexPath.row)
-                    items.insert(item, atIndex: destinationIndexPath.row)
+                    items.move(from: startIndexPath.row, to: destinationIndexPath.row)
                 }
-
                 skipNextNotification()
             }
 
@@ -689,8 +685,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
         }
         try! items.realm?.write {
-            items.removeAtIndex(sourceIndexPath.row)
-            items.insert(item, atIndex: destinationIndexPath.row)
+            items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
         }
 
         tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
