@@ -36,6 +36,7 @@ extension UIView {
 }
 
 private var tableViewBoundsKVOContext = 0
+private var titleKVOContext = 0
 private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
 private enum NavDirection {
@@ -44,12 +45,13 @@ private enum NavDirection {
 
 // MARK: View Controller
 
-final class ViewController<Item: Object, ParentType: Object where Item: CellPresentable, ParentType: ListPresentable, ParentType.Item == Item>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
     // Items
-    private var items: List<Item>
+    private var parent: Parent
+    private var items: List<Item> { return parent.items }
 
     // Table View
     private let tableView = UITableView()
@@ -105,13 +107,13 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
     // MARK: View Lifecycle
 
-    init(items: List<Item>, colors: [UIColor], title: String? = nil) {
-        self.items = items
+    init(parent: Parent, colors: [UIColor]) {
+        self.parent = parent
         self.colors = colors
         if Item.self == Task.self {
             createTopViewController = {
                 ViewController<TaskList, TaskListList>(
-                    items: try! Realm().objects(TaskListList.self).first!.items,
+                    parent: try! Realm().objects(TaskListList.self).first!,
                     colors: UIColor.listColors()
                 )
             }
@@ -121,14 +123,16 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             createBottomViewController = {
                 let firstList = try! Realm().objects(TaskList.self).first!
                 return ViewController<Task, TaskList>(
-                    items: firstList.items,
-                    colors: UIColor.taskColors(),
-                    title: firstList.text
+                    parent: firstList,
+                    colors: UIColor.taskColors()
                 )
             }
         }
         super.init(nibName: nil, bundle: nil)
-        self.title = title
+        if let parent = parent as? CellPresentable {
+            (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
+            title = parent.text
+        }
     }
 
     deinit {
@@ -177,12 +181,15 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        guard context == &tableViewBoundsKVOContext else {
+        if context == &tableViewBoundsKVOContext {
+            let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
+            tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
+        } else if context == &titleKVOContext {
+            title = (parent as! CellPresentable).text
+            parentViewController?.title = title
+        } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-            return
         }
-        let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
-        tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
     }
 
     private func setupPlaceholderCell() {
@@ -221,8 +228,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
         // FIXME: Hack to work around sync possibly pulling in a new list.
         // Ideally we'd use ParentType's with primary keys, but those aren't currently supported by sync.
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
-            var lists = realm.objects(ParentType.self)
-            if ParentType.self == TaskList.self {
+            var lists = realm.objects(Parent.self)
+            if Parent.self == TaskList.self {
                 // only merge the initial list
                 lists = lists.filter("initial == true")
             }
@@ -231,11 +238,11 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             self.realmNotificationToken?.stop()
             self.realmNotificationToken = nil
 
-            let items = lists.first!.items
+            let parent = lists.first!
 
-            guard self.items != items else { return }
+            guard self.parent != parent else { return }
 
-            self.items = items
+            self.parent = parent
 
             self.notificationToken?.stop()
             self.notificationToken = nil
@@ -247,8 +254,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
             dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
                 let realm = try! Realm(configuration: configuration)
                 try! realm.write {
-                    var lists = realm.objects(ParentType.self)
-                    if ParentType.self == TaskList.self {
+                    var lists = realm.objects(Parent.self)
+                    if Parent.self == TaskList.self {
                         // only merge the initial list
                         lists = lists.filter("initial == true")
                     }
@@ -507,9 +514,8 @@ final class ViewController<Item: Object, ParentType: Object where Item: CellPres
 
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
-            items: item["items"] as! List<Task>,
-            colors: UIColor.taskColors(),
-            title: item.text
+            parent: item as! TaskList,
+            colors: UIColor.taskColors()
         )
         startMovingToNextViewController(.Down)
         finishMovingToNextViewController(.Down)
