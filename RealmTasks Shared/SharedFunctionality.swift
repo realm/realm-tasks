@@ -35,7 +35,7 @@ func setupRealmSyncAndInitialList() {
     Realm.Configuration.defaultConfiguration = syncRealmConfiguration
 
     do {
-        let realm = try Realm()
+        let realm = try Realm(configuration: listsRealmConfiguration)
         if realm.isEmpty {
             // Create an initial list if none exist
             try realm.write {

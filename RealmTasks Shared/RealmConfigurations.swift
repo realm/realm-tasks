@@ -30,6 +30,7 @@ let userRealmConfiguration: RLMRealmConfiguration = {
     return config
 }()
 
-var syncRealmConfiguration = Realm.Configuration(
-    objectTypes: [TaskListList.self, TaskList.self, Task.self]
+let listsRealmConfiguration = Realm.Configuration(
+    syncServerURL: Constants.syncServerURL,
+    objectTypes: [TaskListList.self, TaskList.self]
 )

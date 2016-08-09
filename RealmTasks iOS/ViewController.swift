@@ -113,7 +113,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         if Item.self == Task.self {
             createTopViewController = {
                 ViewController<TaskList, TaskListList>(
-                    parent: try! Realm().objects(TaskListList.self).first!,
+                    parent: try! Realm(configuration: listsRealmConfiguration).objects(TaskListList.self).first!,
                     colors: UIColor.listColors()
                 )
             }
@@ -121,6 +121,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         } else {
             createTopViewController = nil
             createBottomViewController = {
+
                 ViewController<Task, TaskList>(
                     parent: try! Realm().objects(TaskList.self).first!,
                     colors: UIColor.taskColors()
