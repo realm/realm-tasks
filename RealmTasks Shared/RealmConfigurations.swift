@@ -26,7 +26,6 @@ let userRealmConfiguration = Realm.Configuration(
     objectTypes: [User.self]
 )
 
-let syncRealmConfiguration = Realm.Configuration(
-    syncServerURL: Constants.syncServerURL,
+var syncRealmConfiguration = Realm.Configuration(
     objectTypes: [TaskListList.self, TaskList.self, Task.self]
 )
