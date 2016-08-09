@@ -29,7 +29,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         setupRealmSyncAndInitialList()
         window?.rootViewController = ContainerViewController()
         window?.makeKeyAndVisible()
-        logIn()
+        logInWithPersistedUser { error in
+            if error != nil {
+                self.logIn()
+            }
+        }
         return true
     }
 
@@ -40,25 +44,27 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         logInViewController.completionHandler = { username, password, returnCode in
-            guard returnCode != .Cancel,
+            if returnCode != .Cancel,
                 let username = username,
-                let password = password else {
-                    return
-            }
-            let credential = credentialForUsername(username, password: password, register: returnCode == .Register)
-            user.loginWithCredential(credential) { error in
-                guard let error = error else { return }
-
-                dispatch_async(dispatch_get_main_queue()) {
-                    // Present error to user
-                    let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
-                    alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
-                        self.logIn()
-                    })
-                    self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+                let password = password {
+                persistUserAndLogInWithUsername(username, password: password, register: returnCode == .Register) { error in
+                    if let error = error {
+                        self.presentError(error)
+                    }
                 }
             }
         }
         window?.rootViewController?.presentViewController(logInViewController, animated: true, completion: nil)
+    }
+
+    func presentError(error: NSError) {
+        dispatch_async(dispatch_get_main_queue()) {
+            // Present error to user
+            let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
+                self.logIn()
+            })
+            self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+        }
     }
 }

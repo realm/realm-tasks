@@ -18,7 +18,7 @@
  *
  **************************************************************************/
 
-import Realm
+import Realm // FIXME: Use Realm Swift once it can create non-synced Realms again.
 import RealmSwift
 
 let user = RealmSwift.User(localIdentity: nil)
@@ -50,4 +50,30 @@ func setupRealmSyncAndInitialList() {
     } catch {
         fatalError("Could not open or write to the realm: \(error)")
     }
+}
+
+func logInWithPersistedUser(callback: (NSError?) -> ()) {
+    // FIXME: Use Realm Swift once it can create non-synced Realms again.
+    if let realm = try? RLMRealm(configuration: userRealmConfiguration),
+        let persistedUser = PersistedUser.allObjectsInRealm(realm).firstObject() as? PersistedUser {
+        let credential = credentialForUsername(persistedUser.username, password: persistedUser.password, register: false)
+        user.loginWithCredential(credential, completion: callback)
+    } else {
+        callback(NSError(domain: "io.realm.RealmTasks", code: 0, userInfo: nil))
+    }
+}
+
+func persistUserAndLogInWithUsername(username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
+    // FIXME: Use Realm Swift once it can create non-synced Realms again.
+    dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
+        let userRealm = try! RLMRealm(configuration: userRealmConfiguration)
+        try! userRealm.transactionWithBlock {
+            let user = PersistedUser()
+            user.username = username
+            user.password = password
+            userRealm.addObject(user)
+        }
+    }
+    let credential = credentialForUsername(username, password: password, register: register)
+    user.loginWithCredential(credential, completion: callback)
 }
