@@ -468,8 +468,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         cell.cellDidBeginEditing = cellDidBeginEditing
         cell.cellDidEndEditing = cellDidEndEditing
 
-        if let editingIndexPath = currentlyEditingIndexPath {
-            if editingIndexPath.row != indexPath.row { cell.alpha = editingCellAlpha }
+        if let editingIndexPath = currentlyEditingIndexPath where editingIndexPath.row != indexPath.row {
+            cell.alpha = editingCellAlpha
         }
 
         return cell
@@ -526,9 +526,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         nextConstraints = constrain(nextVC.view, tableViewContentView) { nextView, tableViewContentView in
             nextView.size == nextView.superview!.size
             nextView.left == nextView.superview!.left
-            switch direction {
-            case .Up: nextView.bottom == tableViewContentView.top - 200
-            case .Down: nextView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
+            if direction == .Up {
+                nextView.bottom == tableViewContentView.top - 200
+            } else {
+                nextView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
             }
         }
         nextVC.didMoveToParentViewController(parentVC)
@@ -726,10 +727,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             for cell in strongSelf.tableView.visibleCells where cell !== editingCell {
                 cell.alpha = 1
             }
-        }
-
-        UIView.animateWithDuration(0.3) { [weak self] in
-            self?.view.layoutSubviews()
+            strongSelf.view.layoutSubviews()
         }
 
         let item = editingCell.item
