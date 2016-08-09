@@ -50,8 +50,10 @@ extension AppDelegate: NSApplicationDelegate {
         mainWindowController.window?.titleVisibility = .Hidden
         mainWindowController.showWindow(nil)
 
-        dispatch_async(dispatch_get_main_queue()) {
-            self.logIn()
+        logInWithPersistedUser { error in
+            if error != nil {
+                self.logIn()
+            }
         }
     }
 
@@ -66,8 +68,7 @@ extension AppDelegate: NSApplicationDelegate {
 extension AppDelegate: LogInViewControllerDelegate {
 
     func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
-        let credential = credentialForUsername(userName, password: password, register: false)
-        user.loginWithCredential(credential) { error in
+        persistUserAndLogInWithUsername(userName, password: password, register: false) { error in
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = error {
                     NSApp.presentError(error)
@@ -88,8 +89,7 @@ extension AppDelegate: LogInViewControllerDelegate {
 extension AppDelegate: RegisterViewControllerDelegate {
 
     func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
-        let credential = credentialForUsername(userName, password: password, register: true)
-        user.loginWithCredential(credential) { error in
+        persistUserAndLogInWithUsername(userName, password: password, register: true) { error in
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = error {
                     NSApp.presentError(error)
