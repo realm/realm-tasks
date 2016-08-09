@@ -22,11 +22,12 @@ import Foundation
 import RealmSwift
 
 let userRealmConfiguration = Realm.Configuration(
-    fileURL: Realm.Configuration.defaultConfiguration.fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("user.realm"),
+    fileURL: Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("user.realm"),
     objectTypes: [User.self]
 )
 
 let listsRealmConfiguration = Realm.Configuration(
-    syncServerURL: Constants.syncServerURL,
-    objectTypes: [TaskListList.self, TaskList.self]
+    fileURL: Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("lists.realm"),
+    syncServerURL: Constants.syncServerURL.URLByAppendingPathComponent("lists"),
+    objectTypes: [TaskListList.self, TaskListReference.self]
 )

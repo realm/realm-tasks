@@ -54,8 +54,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         didSet {
             textView.text = item.text
             setCompleted(item.completed)
-            if let item = item as? TaskList {
-                let count = item.items.filter("completed == false").count
+            if let item = item as? TaskListReference {
+                let count = item.uncompletedCount
                 countLabel.text = String(count)
                 if count == 0 {
                     textView.alpha = 0.3
@@ -109,7 +109,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         setupOverlayView()
         setupTextView()
         setupBorders()
-        if Item.self == TaskList.self {
+        if Item.self == TaskListReference.self {
             setupCountBadge()
         }
         setupNavHintLabel()
@@ -154,7 +154,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             textView.left == textView.superview!.left + 8
             textView.top == textView.superview!.top + 8
             textView.bottom == textView.superview!.bottom - 8
-            if Item.self == TaskList.self {
+            if Item.self == TaskListReference.self {
                 textView.right == textView.superview!.right - 68
             } else {
                 textView.right == textView.superview!.right - 8

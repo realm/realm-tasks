@@ -30,8 +30,8 @@ func setupRealmSyncAndInitialList() {
         if realm.isEmpty {
             // Create an initial list if none exist
             try realm.write {
-                let list = TaskList()
-                list.initial = true
+                let list = TaskListReference()
+                list.id = Constants.defaultListID
                 list.text = Constants.defaultListName
                 let listLists = TaskListList()
                 listLists.items.append(list)

@@ -72,8 +72,7 @@ class TaskListViewController: NSViewController {
         // FIXME: Hack to work around sync possibly pulling in a new list.
         // Ideally we'd use TaskList's with primary keys, but those aren't currently supported by sync.
         realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
-            // only merge the initial list
-            let lists = realm.objects(TaskList.self).filter("initial == true")
+            let lists = realm.objects(TaskList.self)
 
             guard lists.count > 1 else { return }
 
@@ -96,8 +95,7 @@ class TaskListViewController: NSViewController {
             dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
                 let realm = try! Realm(configuration: configuration)
                 try! realm.write {
-                    // only merge the initial list
-                    let lists = realm.objects(TaskList.self).filter("initial == true")
+                    let lists = realm.objects(TaskList.self)
                     while lists.count > 1 {
                         lists.first!.items.appendContentsOf(lists.last!.items)
                         realm.delete(lists.last!)
