@@ -242,13 +242,9 @@ extension TaskListViewController {
 
         if canMoveRow(sourceRow, toRow: destinationRow) {
             try! items.realm?.write {
-                let item = items[sourceRow]
-                items.removeAtIndex(sourceRow)
-                items.insert(item, atIndex: destinationRow)
+                items.move(from: sourceRow, to: destinationRow)
             }
-
             skipNextNotification()
-
             tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
         }
     }
