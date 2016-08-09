@@ -44,3 +44,24 @@ func setupRealmSyncAndInitialList() {
         fatalError("Could not open or write to the realm: \(error)")
     }
 }
+
+func openRealmOrLogInWithFunction(logInFunction: () -> ()) {
+    if let userRealm = try? Realm(configuration: userRealmConfiguration),
+        let token = userRealm.objects(User.self).first?.accessToken {
+        try! Realm().open(with: token)
+    } else {
+        logInFunction()
+    }
+}
+
+func openRealmAndPersistUserToken(token: String) throws {
+    dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
+        let userRealm = try! Realm(configuration: userRealmConfiguration)
+        try! userRealm.write {
+            let user = User()
+            user.accessToken = token
+            userRealm.add(user)
+        }
+    }
+    try Realm().open(with: token)
+}
