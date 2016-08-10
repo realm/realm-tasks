@@ -52,7 +52,10 @@ extension AppDelegate: NSApplicationDelegate {
 
         logInWithPersistedUser { error in
             if error != nil {
-                self.logIn()
+                // FIXME: Sync API methods callbacs should be executed on main thread
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.logIn()
+                }
             }
         }
     }
@@ -69,6 +72,7 @@ extension AppDelegate: LogInViewControllerDelegate {
 
     func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
         persistUserAndLogInWithUsername(userName, password: password, register: false) { error in
+            // FIXME: Sync API methods callbacs should be executed on main thread
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = error {
                     NSApp.presentError(error)
@@ -90,6 +94,7 @@ extension AppDelegate: RegisterViewControllerDelegate {
 
     func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
         persistUserAndLogInWithUsername(userName, password: password, register: true) { error in
+            // FIXME: Sync API methods callbacs should be executed on main thread
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = error {
                     NSApp.presentError(error)
