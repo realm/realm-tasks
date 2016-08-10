@@ -58,6 +58,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                         }
                     }
                 }
+            } else {
+                // FIXME: handle cancellation properly or just restrict it
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.logIn()
+                }
             }
         }
         window?.rootViewController?.presentViewController(logInViewController, animated: true, completion: nil)
