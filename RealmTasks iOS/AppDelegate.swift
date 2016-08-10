@@ -31,7 +31,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         logInWithPersistedUser { error in
             if error != nil {
-                self.logIn()
+                // FIXME: Sync API methods callbacs should be executed on main thread
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.logIn()
+                }
             }
         }
         return true
@@ -49,7 +52,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 let password = password {
                 persistUserAndLogInWithUsername(username, password: password, register: returnCode == .Register) { error in
                     if let error = error {
-                        self.presentError(error)
+                        // FIXME: Sync API methods callbacs should be executed on main thread
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.presentError(error)
+                        }
                     }
                 }
             }
@@ -58,13 +64,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func presentError(error: NSError) {
-        dispatch_async(dispatch_get_main_queue()) {
-            // Present error to user
-            let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
-                self.logIn()
-            })
-            self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
-        }
+        // Present error to user
+        let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
+            self.logIn()
+        })
+        self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
     }
 }
