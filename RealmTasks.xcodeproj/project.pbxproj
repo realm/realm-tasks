@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22092D861D5C5BCB0016E757 /* NavHintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22092D851D5C5BCB0016E757 /* NavHintView.swift */; };
 		220C334A1D3DE1F40043A885 /* OnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220C33491D3DE1F40043A885 /* OnboardView.swift */; };
 		2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2212D5BC1D19E0700017CBC4 /* Realm.framework */; };
 		2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201941D3DD648009E45FA /* AppDelegate.swift */; };
@@ -49,6 +50,7 @@
 		0C1FC133460B9224E2A98CBE /* Pods_RealmTasks_RealmTasks_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F65AA97E042CAA771FDB716 /* Pods_RealmTasks_RealmTasks_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F2F1BE895B44ABCE16F567F /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; sourceTree = "<group>"; };
+		22092D851D5C5BCB0016E757 /* NavHintView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavHintView.swift; sourceTree = "<group>"; };
 		220C33491D3DE1F40043A885 /* OnboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardView.swift; sourceTree = "<group>"; };
 		2212D5BC1D19E0700017CBC4 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/Realm/ios/static/xcode-7/Realm.framework"; sourceTree = "<group>"; };
 		225201941D3DD648009E45FA /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				225201961D3DD648009E45FA /* LaunchScreen.storyboard */,
 				E89CE6821D409D0400BB4521 /* LogInViewController */,
 				220C33491D3DE1F40043A885 /* OnboardView.swift */,
+				22092D851D5C5BCB0016E757 /* NavHintView.swift */,
 				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
 				2252019D1D3DD648009E45FA /* ViewController.swift */,
 			);
@@ -493,6 +496,7 @@
 				220C334A1D3DE1F40043A885 /* OnboardView.swift in Sources */,
 				C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */,
 				225201A61D3DD648009E45FA /* ViewController.swift in Sources */,
+				22092D861D5C5BCB0016E757 /* NavHintView.swift in Sources */,
 				225201A51D3DD648009E45FA /* CellTextView.swift in Sources */,
 				E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */,
 				C23EB0351D46421C00D3E0AC /* RealmConfigurations.swift in Sources */,
