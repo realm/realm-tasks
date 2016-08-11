@@ -207,6 +207,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     private func setupNavHintView() {
+        navHintView.alpha = 0
         contentView.addSubview(navHintView)
         constrain(navHintView) { navHintView in
             navHintView.edges == navHintView.superview!.edges
