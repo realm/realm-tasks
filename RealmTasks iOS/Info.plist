@@ -4,6 +4,21 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeIconFiles</key>
+			<array>
+				<string>/Users/TiM/Projects/RealmTasks/RealmTasks iOS/iOS.xcassets/AppIcon.appiconset/AppIcon@2x.png</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Realm Tasks Share</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>io.realm.realmtasks.share</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -41,6 +56,15 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>Document type for shared Realm Tasks lists</string>
+			<key>UTTypeIdentifier</key>
+			<string>io.realm.realmtasks.share</string>
+		</dict>
 	</array>
 </dict>
 </plist>
