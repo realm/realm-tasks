@@ -592,7 +592,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
         if distancePulledDown <= tableView.rowHeight {
             UIView.animateWithDuration(0.1) {
-                self.placeHolderCell.navHintLabel.alpha = 0
+                self.placeHolderCell.navHintView.alpha = 0
             }
             placeHolderCell.textView.text = "Pull to Create Item"
 
@@ -612,7 +612,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
         } else if distancePulledDown <= tableView.rowHeight * 2 {
             UIView.animateWithDuration(0.1) {
-                self.placeHolderCell.navHintLabel.alpha = 0
+                self.placeHolderCell.navHintView.alpha = 0
             }
             placeHolderCell.layer.transform = CATransform3DIdentity
             placeHolderCell.textView.text = "Release to Create Item"
@@ -622,10 +622,14 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 topViewController = createTopViewController()
             }
             startMovingToNextViewController(.Up)
-            placeHolderCell.navHintLabel.text = "Switch to Lists"
-            UIView.animateWithDuration(0.1) {
-                self.placeHolderCell.navHintLabel.alpha = 1
-            }
+            placeHolderCell.navHintView.hintText = "Switch to Lists"
+            placeHolderCell.navHintView.hintImageView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
+
+            UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+                self.placeHolderCell.navHintView.alpha = 1
+                self.placeHolderCell.navHintView.hintImageView.transform = CGAffineTransformIdentity
+            }, completion: nil)
+
             return
         }
 
