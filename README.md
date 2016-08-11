@@ -40,7 +40,7 @@ running instances of the app.
 
 We recommend that you run at least two instances of the app together to really show off sync in action.
 
-## 5. Access Realm Files with the Realm Browser
+## 4. Access Realm Files with the Realm Browser
 
 1. Open the "Realm Browser" app included in the package obtained above, and close the initial 'Open' dialog.
 2. Choose `File > Open Sync URL...`
