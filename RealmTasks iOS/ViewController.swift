@@ -623,11 +623,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
             startMovingToNextViewController(.Up)
             placeHolderCell.navHintView.hintText = "Switch to Lists"
-            placeHolderCell.navHintView.hintImageView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
+            placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
 
             UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
                 self.placeHolderCell.navHintView.alpha = 1
-                self.placeHolderCell.navHintView.hintImageView.transform = CGAffineTransformIdentity
+                self.placeHolderCell.navHintView.hintArrowTransfom  = CGAffineTransformIdentity
             }, completion: nil)
 
             return
