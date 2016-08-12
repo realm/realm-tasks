@@ -10,7 +10,6 @@
 		143C81E21D65D1AA00E872E6 /* RealmTasksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143C81E11D65D1AA00E872E6 /* RealmTasksTests.swift */; };
 		22092D861D5C5BCB0016E757 /* NavHintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22092D851D5C5BCB0016E757 /* NavHintView.swift */; };
 		22092D881D5CCAF00016E757 /* ShareButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22092D871D5CCAF00016E757 /* ShareButtonView.swift */; };
-
 		220C334A1D3DE1F40043A885 /* OnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220C33491D3DE1F40043A885 /* OnboardView.swift */; };
 		2212D5BD1D19E0700017CBC4 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2212D5BC1D19E0700017CBC4 /* Realm.framework */; };
 		2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201941D3DD648009E45FA /* AppDelegate.swift */; };
