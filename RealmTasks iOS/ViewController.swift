@@ -95,6 +95,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // Onboard view
     private let onboardView = OnboardView()
 
+    // Share Button view
+    private let shareButtonView = ShareButtonView()
+
     // Constants
     private let editingCellAlpha: CGFloat = 0.3
     private let colors: [UIColor]
@@ -159,6 +162,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         setupTableView()
         setupPlaceholderCell()
         toggleOnboardView()
+        setupShareButton()
     }
 
     private func setupTableView() {
@@ -182,6 +186,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         view.addSubview(tableViewContentView)
         tableViewContentView.hidden = true
         tableView.addObserver(self, forKeyPath: "bounds", options: .New, context: &tableViewBoundsKVOContext)
+
+        toggleShareButtonView()
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
@@ -226,6 +232,21 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
     }
 
+    private func setupShareButton() {
+        shareButtonView.buttonTappedHandler = {
+            self.shareButtonTapped()
+        }
+    }
+
+    private func toggleShareButtonView() {
+        if createTopViewController == nil {
+            return
+        }
+
+        let visible = (items.count > 0)
+        self.tableView.tableFooterView = visible ? shareButtonView : nil
+    }
+
     // MARK: Notifications
 
     private func setupNotifications() {
@@ -241,6 +262,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 }
                 self.tableView.reloadData()
                 self.reloadOnNotification = false
+                self.toggleShareButtonView()
                 return
             }
 
@@ -278,6 +300,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError(String(error))
             }
+
+            self.toggleShareButtonView()
         }
     }
 
@@ -639,6 +663,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
         skipNextNotification()
         tableView.reloadData()
+        toggleShareButtonView()
         (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
 
@@ -731,6 +756,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
         skipNextNotification()
         toggleOnboardView()
+        toggleShareButtonView()
     }
 
     private func cellDidChangeText(editingCell: TableViewCell<Item>) {
