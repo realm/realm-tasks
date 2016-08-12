@@ -26,7 +26,6 @@ class NavHintView: UIView {
     var hintText: String? {
         set {
             textLabel.text = newValue
-            textLabel.sizeToFit()
             self.layoutIfNeeded()
         }
         get {
@@ -36,8 +35,17 @@ class NavHintView: UIView {
 
     var hintImage = UIImage(named: "SwitchListArrow")
 
-    let textLabel = UILabel()
-    let hintImageView = UIImageView()
+    var hintArrowTransfom: CGAffineTransform {
+        set {
+            hintImageView.transform = newValue
+        }
+        get {
+            return hintImageView.transform
+        }
+    }
+
+    private let textLabel = UILabel()
+    private let hintImageView = UIImageView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
