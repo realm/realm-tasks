@@ -9,6 +9,8 @@ abstract_target 'RealmTasks' do
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
+
+        pod 'TOActionSheet'
     end
     
     target 'RealmTasks macOS' do
