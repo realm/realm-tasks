@@ -490,7 +490,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if currentlyEditingIndexPath?.row == indexPath.row {
-            return cellHeightForText(currentlyEditingCell!.textView.text)
+            return floor(cellHeightForText(currentlyEditingCell!.textView.text))
         }
 
         var item = items[indexPath.row]
@@ -504,7 +504,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 item = items[destinationIndexPath.row]
             }
         }
-        return cellHeightForText(item.text)
+        return floor(cellHeightForText(item.text))
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
