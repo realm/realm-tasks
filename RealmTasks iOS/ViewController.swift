@@ -636,9 +636,29 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if distancePulledUp > tableView.rowHeight &&
-            bottomViewController === parentViewController?.childViewControllers.last {
-            finishMovingToNextViewController(.Down)
+        if distancePulledUp > tableView.rowHeight {
+            if bottomViewController === parentViewController?.childViewControllers.last {
+                finishMovingToNextViewController(.Down)
+            } else {
+                let itemsToDelete = items.filter("completed = true")
+                let numberOfItemsToDelete = itemsToDelete.count
+                guard numberOfItemsToDelete != 0 else { return }
+
+                try! items.realm?.write {
+                    for _ in 0..<numberOfItemsToDelete {
+                        items.removeLast()
+                    }
+                    items.realm?.delete(itemsToDelete)
+                }
+                let startingIndex = items.count
+                let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
+                    return NSIndexPath(forRow: index, inSection: 0)
+                }
+                tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
+                skipNextNotification()
+                
+                vibrate()
+            }
             return
         }
 
