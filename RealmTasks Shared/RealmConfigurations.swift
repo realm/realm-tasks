@@ -29,12 +29,18 @@ let userRealmConfiguration: RLMRealmConfiguration = {
     return config
 }()
 
-let listsRealmConfiguration = Realm.Configuration(
-    fileURL: Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("lists.realm"),
-    syncServerURL: Constants.syncServerURL.URLByAppendingPathComponent("lists"),
-    objectTypes: [TaskListList.self, TaskListReference.self]
-)
+let listsRealmConfiguration: Realm.Configuration = {
+    struct SharedConfiguration {
+        static var configuration: Realm.Configuration? = nil
+    }
 
-var syncRealmConfiguration = Realm.Configuration(
-    objectTypes: [TaskListList.self, TaskList.self, Task.self]
-)
+    if SharedConfiguration.configuration == nil {
+        SharedConfiguration.configuration = Realm.Configuration()
+        SharedConfiguration.configuration!.fileURL = Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("lists.realm")
+        SharedConfiguration.configuration!.objectTypes = [TaskListList.self, TaskListReference.self]
+        SharedConfiguration.configuration!.setObjectServerPath(Constants.syncRealmPath + "/lists", for: Constants.user)
+    }
+
+    return SharedConfiguration.configuration!
+}()
+
