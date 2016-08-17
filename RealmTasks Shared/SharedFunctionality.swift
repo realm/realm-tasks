@@ -21,7 +21,6 @@
 import Realm // FIXME: Use Realm Swift once it can create non-synced Realms again.
 import RealmSwift
 
-let user = RealmSwift.User(localIdentity: nil)
 func credentialForUsername(username: String, password: String, register: Bool) -> Credential {
     return Credential(credentialToken: username,
                       provider: RLMIdentityProviderUsernamePassword,
@@ -31,22 +30,29 @@ func credentialForUsername(username: String, password: String, register: Bool) -
 
 func setupRealmSyncAndInitialList() {
     configureRealmServerWithAppID(Constants.appID, logLevel: 0, globalErrorHandler: nil)
-    syncRealmConfiguration.setObjectServerPath("/~/realmtasks", for: user)
-    Realm.Configuration.defaultConfiguration = syncRealmConfiguration
-
+    
     do {
         let realm = try Realm(configuration: listsRealmConfiguration)
         if realm.isEmpty {
             // Create an initial list if none exist
             try realm.write {
+                
                 let list = TaskListReference()
                 list.id = Constants.defaultListID
                 list.text = Constants.defaultListName
+
                 let listLists = TaskListList()
+
                 listLists.items.append(list)
                 realm.add(listLists)
+
+                print(list)
             }
         }
+
+        let first = realm.objects(TaskListReference.self)
+        print(first)
+
     } catch {
         fatalError("Could not open or write to the realm: \(error)")
     }
@@ -57,7 +63,7 @@ func logInWithPersistedUser(callback: (NSError?) -> ()) {
     if let realm = try? RLMRealm(configuration: userRealmConfiguration),
         let persistedUser = PersistedUser.allObjectsInRealm(realm).firstObject() as? PersistedUser {
         let credential = credentialForUsername(persistedUser.username, password: persistedUser.password, register: false)
-        user.loginWithCredential(credential, completion: callback)
+        Constants.user.loginWithCredential(credential, completion: callback)
     } else {
         callback(NSError(domain: "io.realm.RealmTasks", code: 0, userInfo: nil))
     }
@@ -75,5 +81,5 @@ func persistUserAndLogInWithUsername(username: String, password: String, registe
         }
     }
     let credential = credentialForUsername(username, password: password, register: register)
-    user.loginWithCredential(credential, completion: callback)
+    Constants.user.loginWithCredential(credential, completion: callback)
 }

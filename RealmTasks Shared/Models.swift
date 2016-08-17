@@ -42,18 +42,31 @@ final class TaskListReference: Object, CellPresentable {
     dynamic var id = NSUUID().UUIDString
 
     // Proxied Properties
-    var text: String { get { return list.text } set { try! list.realm!.write { list.text = newValue } } }
-    var completed: Bool { get { return list.completed } set { try! list.realm!.write { list.completed = newValue } } }
-    var isCompletable: Bool { return list.isCompletable }
-    var uncompletedCount: Int { return list.items.filter("completed == false").count }
+    var text: String {
+        get { return String(valueFromList("text")) }
+        set { let list = self.list; try! list.realm!.write { list.text = newValue } }
+    }
+    var completed: Bool {
+        get { return (valueFromList("completed") != nil) }
+        set { let list = self.list; try! list.realm!.write { list.completed = newValue } } }
+    var isCompletable: Bool { return (valueFromList("isCompletable") != nil) }
+    var uncompletedCount: Int {
+        let items = valueFromList("items") as! Results?
+        if items?.count == 0 {
+            return 0
+        }
+
+        return (items?.filter("completed == false").count)!
+    }
 
     // List Realm Properties
     var listRealmConfiguration: Realm.Configuration {
-        return Realm.Configuration(
-            fileURL: Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("\(id).realm"),
-            syncServerURL: Constants.syncServerURL.URLByAppendingPathComponent(id),
-            objectTypes: [TaskList.self, Task.self]
-        )
+        let id = self.id
+        var configuration = Realm.Configuration()
+        configuration.fileURL = Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("\(id).realm")
+        configuration.objectTypes = [TaskList.self, Task.self]
+        configuration.setObjectServerPath(Constants.syncRealmPath + "/\(id)", for: Constants.user)
+        return configuration
     }
     func listRealm() throws -> Realm {
         return try Realm(configuration: listRealmConfiguration)
@@ -66,7 +79,18 @@ final class TaskListReference: Object, CellPresentable {
                 realm.add(TaskList())
             }
         }
-        return realm.objects(TaskList.self).first!
+        let listObject = realm.objects(TaskList.self).first!
+        return listObject
+    }
+
+    func valueFromList(name: String) -> AnyObject? {
+        let realm = try! listRealm()
+        if realm.isEmpty {
+            return nil
+        }
+
+        let listObject = realm.objects(TaskList.self).first!
+        return listObject.valueForKey(name)
     }
 }
 
