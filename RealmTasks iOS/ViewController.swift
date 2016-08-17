@@ -139,6 +139,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         notificationToken?.stop()
         realmNotificationToken?.stop()
         tableView.removeObserver(self, forKeyPath: "bounds")
+        parent.removeObserver(self, forKeyPath: "text")
     }
 
     override func viewDidLoad() {
@@ -244,11 +245,15 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             self.notificationToken = nil
             self.setupNotifications()
 
-            let configuration = realm.configuration
+            // FIXME: Use the Realm's configuration.
+            // Currently broken because it doesn't apply the same sync-related values
+            // let configuration = realm.configuration
 
             // Append all other items while deleting their lists, in case they were created locally before sync
             dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-                let realm = try! Realm(configuration: configuration)
+                // FIXME: Use the above Realm's configuration.
+                // let realm = try! Realm(configuration: configuration)
+                let realm = try! Realm()
                 try! realm.write {
                     let lists = realm.objects(Parent.self)
                     while lists.count > 1 {
@@ -460,8 +465,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         cell.cellDidBeginEditing = cellDidBeginEditing
         cell.cellDidEndEditing = cellDidEndEditing
 
-        if let editingIndexPath = currentlyEditingIndexPath {
-            if editingIndexPath.row != indexPath.row { cell.alpha = editingCellAlpha }
+        if let editingIndexPath = currentlyEditingIndexPath where editingIndexPath.row != indexPath.row {
+            cell.alpha = editingCellAlpha
         }
 
         return cell
@@ -518,9 +523,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         nextConstraints = constrain(nextVC.view, tableViewContentView) { nextView, tableViewContentView in
             nextView.size == nextView.superview!.size
             nextView.left == nextView.superview!.left
-            switch direction {
-            case .Up: nextView.bottom == tableViewContentView.top - 200
-            case .Down: nextView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
+            if direction == .Up {
+                nextView.bottom == tableViewContentView.top - 200
+            } else {
+                nextView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
             }
         }
         nextVC.didMoveToParentViewController(parentVC)
@@ -623,9 +629,29 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if distancePulledUp > tableView.rowHeight &&
-            bottomViewController === parentViewController?.childViewControllers.last {
-            finishMovingToNextViewController(.Down)
+        if distancePulledUp > tableView.rowHeight {
+            if bottomViewController === parentViewController?.childViewControllers.last {
+                finishMovingToNextViewController(.Down)
+            } else {
+                let itemsToDelete = items.filter("completed = true")
+                let numberOfItemsToDelete = itemsToDelete.count
+                guard numberOfItemsToDelete != 0 else { return }
+
+                try! items.realm?.write {
+                    for _ in 0..<numberOfItemsToDelete {
+                        items.removeLast()
+                    }
+                    items.realm?.delete(itemsToDelete)
+                }
+                let startingIndex = items.count
+                let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
+                    return NSIndexPath(forRow: index, inSection: 0)
+                }
+                tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
+                skipNextNotification()
+                
+                vibrate()
+            }
             return
         }
 
@@ -718,10 +744,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             for cell in strongSelf.tableView.visibleCells where cell !== editingCell {
                 cell.alpha = 1
             }
-        }
-
-        UIView.animateWithDuration(0.3) { [weak self] in
-            self?.view.layoutSubviews()
+            strongSelf.view.layoutSubviews()
         }
 
         let item = editingCell.item

@@ -4,7 +4,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 abstract_target 'RealmTasks' do
     use_frameworks!
     
-    pod 'RealmSwift', '1.0.2-4-sync-0.26.3'
+    pod 'RealmSwift', '1.0.2-6-sync-0.27.1'
     pod 'Cartography'
     
     target 'RealmTasks iOS' do

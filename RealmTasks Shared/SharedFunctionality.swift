@@ -18,12 +18,21 @@
  *
  **************************************************************************/
 
-import Realm
+import Realm // FIXME: Use Realm Swift once it can create non-synced Realms again.
 import RealmSwift
 
+let user = RealmSwift.User(localIdentity: nil)
+func credentialForUsername(username: String, password: String, register: Bool) -> Credential {
+    return Credential(credentialToken: username,
+                      provider: RLMIdentityProviderUsernamePassword,
+                      userInfo: ["password": password, "register": register],
+                      serverURL: NSURL(string: "realm://\(Constants.syncHost)"))
+}
+
 func setupRealmSyncAndInitialList() {
-    RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
-    Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
+    configureRealmServerWithAppID(Constants.appID, logLevel: 0, globalErrorHandler: nil)
+    syncRealmConfiguration.setObjectServerPath("/~/realmtasks", for: user)
+    Realm.Configuration.defaultConfiguration = syncRealmConfiguration
 
     do {
         let realm = try Realm(configuration: listsRealmConfiguration)
@@ -43,23 +52,32 @@ func setupRealmSyncAndInitialList() {
     }
 }
 
-func openRealmOrLogInWithFunction(logInFunction: () -> ()) {
-    if let userRealm = try? Realm(configuration: userRealmConfiguration),
-        let token = userRealm.objects(User.self).first?.accessToken {
-        try! Realm(configuration: listsRealmConfiguration).open(with: token)
+func logInWithPersistedUser(callback: (NSError?) -> ()) {
+    // FIXME: Use Realm Swift once it can create non-synced Realms again.
+    if let realm = try? RLMRealm(configuration: userRealmConfiguration),
+        let persistedUser = PersistedUser.allObjectsInRealm(realm).firstObject() as? PersistedUser {
+        let credential = credentialForUsername(persistedUser.username, password: persistedUser.password, register: false)
+        user.loginWithCredential(credential, completion: callback)
     } else {
-        logInFunction()
+        callback(NSError(domain: "io.realm.RealmTasks", code: 0, userInfo: nil))
     }
 }
 
-func openRealmAndPersistUserToken(token: String) throws {
+func persistUserAndLogInWithUsername(username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
+    // FIXME: Use Realm Swift once it can create non-synced Realms again.
     dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-        let userRealm = try! Realm(configuration: userRealmConfiguration)
-        try! userRealm.write {
-            let user = User()
-            user.accessToken = token
-            userRealm.add(user)
+        let userRealm = try! RLMRealm(configuration: userRealmConfiguration)
+        try! userRealm.transactionWithBlock {
+            let user = PersistedUser()
+            user.username = username
+            user.password = password
+            userRealm.addObject(user)
         }
     }
-    try Realm(configuration: listsRealmConfiguration).open(with: token)
+//<<<<<<< HEAD
+//    try Realm(configuration: listsRealmConfiguration).open(with: token)
+//=======
+    let credential = credentialForUsername(username, password: password, register: register)
+    user.loginWithCredential(credential, completion: callback)
+//>>>>>>> master
 }
