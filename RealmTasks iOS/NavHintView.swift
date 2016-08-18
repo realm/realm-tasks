@@ -26,7 +26,6 @@ class NavHintView: UIView {
     var hintText: String? {
         set {
             textLabel.text = newValue
-            self.layoutIfNeeded()
         }
         get {
             return textLabel.text
