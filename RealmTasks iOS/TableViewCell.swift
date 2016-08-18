@@ -66,7 +66,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
         }
     }
-    let navHintLabel = UILabel()
+    let navHintView = NavHintView()
 
     // Callbacks
     var itemCompleted: ((Item) -> ())? = nil
@@ -112,7 +112,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         if Item.self == TaskList.self {
             setupCountBadge()
         }
-        setupNavHintLabel()
+        setupNavHintView()
     }
 
     private func setupBackgroundView() {
@@ -206,15 +206,11 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         }
     }
 
-    private func setupNavHintLabel() {
-        navHintLabel.backgroundColor = .blackColor()
-        navHintLabel.textColor = .whiteColor()
-        navHintLabel.font = .systemFontOfSize(18)
-        navHintLabel.textAlignment = .Center
-        navHintLabel.alpha = 0
-        contentView.addSubview(navHintLabel)
-        constrain(navHintLabel) { navHintLabel in
-            navHintLabel.edges == navHintLabel.superview!.edges
+    private func setupNavHintView() {
+        navHintView.alpha = 0
+        contentView.addSubview(navHintView)
+        constrain(navHintView) { navHintView in
+            navHintView.edges == navHintView.superview!.edges
         }
     }
 
