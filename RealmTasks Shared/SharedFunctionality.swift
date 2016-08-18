@@ -45,14 +45,8 @@ func setupRealmSyncAndInitialList() {
 
                 listLists.items.append(list)
                 realm.add(listLists)
-
-                print(list)
             }
         }
-
-        let first = realm.objects(TaskListReference.self)
-        print(first)
-
     } catch {
         fatalError("Could not open or write to the realm: \(error)")
     }
@@ -62,8 +56,9 @@ func logInWithPersistedUser(callback: (NSError?) -> ()) {
     // FIXME: Use Realm Swift once it can create non-synced Realms again.
     if let realm = try? RLMRealm(configuration: userRealmConfiguration),
         let persistedUser = PersistedUser.allObjectsInRealm(realm).firstObject() as? PersistedUser {
+        let user = RealmSwift.User(localIdentity: Constants.userLocalIdentity)
         let credential = credentialForUsername(persistedUser.username, password: persistedUser.password, register: false)
-        Constants.user.loginWithCredential(credential, completion: callback)
+        user.loginWithCredential(credential, completion: callback)
     } else {
         callback(NSError(domain: "io.realm.RealmTasks", code: 0, userInfo: nil))
     }
@@ -80,6 +75,8 @@ func persistUserAndLogInWithUsername(username: String, password: String, registe
             userRealm.addObject(user)
         }
     }
+
+    let user = RealmSwift.User(localIdentity: Constants.userLocalIdentity)
     let credential = credentialForUsername(username, password: password, register: register)
-    Constants.user.loginWithCredential(credential, completion: callback)
+    user.loginWithCredential(credential, completion: callback)
 }

@@ -30,17 +30,10 @@ let userRealmConfiguration: RLMRealmConfiguration = {
 }()
 
 let listsRealmConfiguration: Realm.Configuration = {
-    struct SharedConfiguration {
-        static var configuration: Realm.Configuration? = nil
-    }
-
-    if SharedConfiguration.configuration == nil {
-        SharedConfiguration.configuration = Realm.Configuration()
-        SharedConfiguration.configuration!.fileURL = Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("lists.realm")
-        SharedConfiguration.configuration!.objectTypes = [TaskListList.self, TaskListReference.self]
-        SharedConfiguration.configuration!.setObjectServerPath(Constants.syncRealmPath + "/lists", for: Constants.user)
-    }
-
-    return SharedConfiguration.configuration!
+    var configuration = Realm.Configuration()
+    configuration.fileURL = Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("lists.realm")
+    configuration.objectTypes = [TaskListList.self, TaskListReference.self]
+    configuration.setObjectServerPath(Constants.syncRealmPath + "/lists", for: RealmSwift.User(localIdentity: Constants.userLocalIdentity))
+    return configuration
 }()
 
