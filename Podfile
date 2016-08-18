@@ -14,4 +14,8 @@ abstract_target 'RealmTasks' do
     target 'RealmTasks macOS' do
         platform :osx, '10.10'
     end
+    
+    target 'RealmTasks iOS Tests' do
+        platform :ios, '9.0'
+    end
 end
