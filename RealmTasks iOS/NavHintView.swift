@@ -32,7 +32,7 @@ class NavHintView: UIView {
         }
     }
 
-    var hintImage = UIImage(named: "SwitchListArrow")
+    private let hintImage = UIImage(named: "SwitchListArrow")
 
     var hintArrowTransfom: CGAffineTransform {
         set {
