@@ -30,15 +30,16 @@ class AppDelegate: NSObject {
         let logInViewController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("LogInViewController") as! LogInViewController
         logInViewController.delelegate = self
 
-        mainWindowController.contentViewController?.presentViewControllerAsSheet(logInViewController)
+        mainWindowController.contentViewController?.presentViewControllerAsSheet(logInViewController, preventsApplicationTermination: false)
     }
 
     func register() {
         let registerViewController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("RegisterViewController") as! RegisterViewController
         registerViewController.delegate = self
 
-        mainWindowController.contentViewController?.presentViewControllerAsSheet(registerViewController)
+        mainWindowController.contentViewController?.presentViewControllerAsSheet(registerViewController, preventsApplicationTermination: false)
     }
+
 }
 
 extension AppDelegate: NSApplicationDelegate {
@@ -108,6 +109,15 @@ extension AppDelegate: RegisterViewControllerDelegate {
     func registerViewControllerDidCancel(viewController: RegisterViewController) {
         viewController.dismissController(nil)
         logIn()
+    }
+
+}
+
+extension NSViewController {
+
+    func presentViewControllerAsSheet(viewController: NSViewController, preventsApplicationTermination: Bool) {
+        presentViewControllerAsSheet(viewController)
+        viewController.view.window?.preventsApplicationTerminationWhenModal = preventsApplicationTermination;
     }
 
 }
