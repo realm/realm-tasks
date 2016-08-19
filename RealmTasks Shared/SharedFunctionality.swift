@@ -26,7 +26,7 @@ func credentialForUsername(username: String, password: String, register: Bool) -
     return Credential(credentialToken: username,
                       provider: RLMIdentityProviderUsernamePassword,
                       userInfo: ["password": password, "register": register],
-                      serverURL: NSURL(string: "realm://\(Constants.syncHost)"))
+                      serverURL: Constants.syncServerURL)
 }
 
 func setupRealmSyncAndInitialList() {
