@@ -536,7 +536,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmTasks;
+				PRODUCT_BUNDLE_IDENTIFIER = io.realm.tasks.macos;
 				PRODUCT_NAME = "Realm Tasks";
 				SDKROOT = macosx;
 			};
@@ -553,7 +553,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmTasks;
+				PRODUCT_BUNDLE_IDENTIFIER = io.realm.tasks.macos;
 				PRODUCT_NAME = "Realm Tasks";
 				SDKROOT = macosx;
 			};
@@ -651,7 +651,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmTasks;
+				PRODUCT_BUNDLE_IDENTIFIER = io.realm.tasks.ios;
 				PRODUCT_NAME = "Realm Tasks";
 			};
 			name = Debug;
@@ -664,7 +664,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.realm.RealmTasks;
+				PRODUCT_BUNDLE_IDENTIFIER = io.realm.tasks.ios;
 				PRODUCT_NAME = "Realm Tasks";
 			};
 			name = Release;
