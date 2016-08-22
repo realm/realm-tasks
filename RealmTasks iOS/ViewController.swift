@@ -54,7 +54,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private var items: List<Item> { return parent.items }
 
     // Table View
-    private let tableView = UITableView()
+    let tableView = UITableView()
     private let tableViewContentView = UIView()
 
     // Notifications

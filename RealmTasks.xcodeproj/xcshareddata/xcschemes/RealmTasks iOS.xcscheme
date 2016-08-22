@@ -38,6 +38,16 @@
                ReferencedContainer = "container:RealmTasks.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "143C81DE1D65D1AA00E872E6"
+               BuildableName = "RealmTasks iOS Tests.xctest"
+               BlueprintName = "RealmTasks iOS Tests"
+               ReferencedContainer = "container:RealmTasks.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
