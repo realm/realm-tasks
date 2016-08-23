@@ -90,13 +90,7 @@ class RealmTasksTests: XCTestCase {
         wait()
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
 
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
-            let realm = try! Realm()
-            let items = realm.objects(TaskList.self).first!.items
-            try! realm.write {
-                items.insert(Task(), atIndex: 0)
-            }
-        }
+        insertItemFromSync()
         wait()
 
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
@@ -159,13 +153,8 @@ class RealmTasksTests: XCTestCase {
         wait()
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
 
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
-            let realm = try! Realm()
-            let items = realm.objects(TaskList.self).first!.items
-            try! realm.write {
-                items.removeLast()
-            }
-        }
+
+        deleteItemFromSync()
         wait()
 
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
@@ -186,13 +175,7 @@ class RealmTasksTests: XCTestCase {
         wait()
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
 
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
-            let realm = try! Realm()
-            let items = realm.objects(TaskList.self).first!.items
-            try! realm.write {
-                items.removeLast()
-            }
-        }
+        deleteItemFromSync()
         wait()
 
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
@@ -226,6 +209,28 @@ class RealmTasksTests: XCTestCase {
 
     private func wait(secs: NSTimeInterval = 0.1) {
         NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: secs))
+    }
+
+    // Emulate notifications from sync
+
+    private func insertItemFromSync(index: Int = 0) {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
+            let realm = try! Realm()
+            let items = realm.objects(TaskList.self).first!.items
+            try! realm.write {
+                items.insert(Task(), atIndex: index)
+            }
+        }
+    }
+
+    private func deleteItemFromSync() {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
+            let realm = try! Realm()
+            let items = realm.objects(TaskList.self).first!.items
+            try! realm.write {
+                items.removeLast()
+            }
+        }
     }
 
 }
