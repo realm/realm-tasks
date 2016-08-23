@@ -59,6 +59,15 @@ class RealmTasksTests: XCTestCase {
 
     override func tearDown() {
         super.tearDown()
+        if realm.inWriteTransaction {
+            realm.cancelWrite()
+        }
+        
+        if let textView = vc.view.currentFirstResponder as? UITextView {
+            textView.delegate = nil
+            endEditing()
+        }
+
         let taskList = realm.objects(TaskList.self).first!
         try! realm.write {
             taskList.items.removeAll()
@@ -93,7 +102,7 @@ class RealmTasksTests: XCTestCase {
         insertItemFromSync()
         wait()
 
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
     }
 
     func testDeleteItem() {
@@ -195,7 +204,7 @@ class RealmTasksTests: XCTestCase {
 
     private func completeItemAt(indexPath: NSIndexPath) {
         let cell = vc.tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Task>
-        cell.itemDeleted?(cell.item)
+        cell.itemCompleted?(cell.item)
     }
 
     private func setTextToEditingCell(text: String) {
