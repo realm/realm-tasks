@@ -263,7 +263,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                 deleteIconView.alpha = CGFloat(fractionOfThreshold)
             }
 
-            if !item.completed {
+            if !(item as Object).invalidated && !item.completed {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
                 overlayView.hidden = releaseAction != .Complete
                 if contentView.frame.origin.x > 0 {
@@ -294,7 +294,9 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                     self.contentView.frame.origin.x = 0
                 }
                 completionBlock = {
-                    self.setCompleted(!self.item.completed, animated: true)
+                    if !(self.item as Object).invalidated {
+                        self.setCompleted(!self.item.completed, animated: true)
+                    }
                 }
             case .Delete?:
                 animationBlock = {
@@ -387,8 +389,10 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     func textViewDidEndEditing(textView: UITextView) {
         if !temporarilyIgnoreSaveChanges {
-            try! item.realm!.write {
-                item.text = textView.text
+            if !(item as Object).invalidated {
+                try! item.realm!.write {
+                    item.text = textView.text
+                }
             }
         }
         textView.userInteractionEnabled = false
