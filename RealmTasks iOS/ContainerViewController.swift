@@ -51,7 +51,6 @@ class ContainerViewController: UIViewController {
     private func addChildVC() {
         let firstList = try! Realm().objects(TaskList.self).first!
         let vc = ViewController(parent: firstList, colors: UIColor.taskColors())
-        vc.view.frame = self.view.bounds
         title = firstList.text
         addChildViewController(vc)
         view.addSubview(vc.view)
