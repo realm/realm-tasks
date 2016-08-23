@@ -190,6 +190,37 @@ class RealmTasksTests: XCTestCase {
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
     }
 
+    func testCompleteAndDeleteFromSync() {
+        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
+
+        addNewItem()
+        setTextToEditingCell("item 1")
+        wait()
+        endEditing()
+        wait()
+        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+
+        addNewItem()
+        setTextToEditingCell("item 2")
+        wait()
+        endEditing()
+        wait()
+        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
+
+        addNewItem()
+        setTextToEditingCell("item 3")
+        wait()
+        endEditing()
+        wait()
+        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
+
+        deleteItemFromSync()
+        completeItemAt(NSIndexPath(forRow: 2, inSection: 0))
+        wait()
+
+        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
+    }
+
     // Emulate task list operations
 
     private func addNewItem() {
