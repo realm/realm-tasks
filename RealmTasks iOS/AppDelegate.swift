@@ -23,10 +23,11 @@ import UIKit
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
+    var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         setupRealmSyncAndInitialList()
+        window = UIWindow(frame: UIScreen.mainScreen().bounds)
         window?.rootViewController = ContainerViewController()
         window?.makeKeyAndVisible()
         logInWithPersistedUser { error in
