@@ -762,18 +762,18 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
 
         let item = editingCell.item
-        if !(item as Object).invalidated {
-            if item.text.isEmpty {
-                try! item.realm?.write {
-                    item.realm!.delete(item)
-                }
-                tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
-            }
-            skipNextNotification()
-            toggleOnboardView()
-        } else {
+        guard !(item as Object).invalidated else {
             tableView.reloadData()
+            return
         }
+        if item.text.isEmpty {
+            try! item.realm?.write {
+                item.realm!.delete(item)
+            }
+            tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
+        }
+        skipNextNotification()
+        toggleOnboardView()
     }
 
     private func cellDidChangeText(editingCell: TableViewCell<Item>) {
