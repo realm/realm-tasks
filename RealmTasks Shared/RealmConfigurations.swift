@@ -22,7 +22,6 @@ import Foundation
 import Realm // FIXME: Use Realm Swift once it can create non-synced Realms again.
 import RealmSwift
 
-// FIXME: Use Realm Swift once it can create non-synced Realms again.
 let userRealmConfiguration: RLMRealmConfiguration = {
     let config = RLMRealmConfiguration()
     config.fileURL = NSURL.fileURLWithPath(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]).URLByAppendingPathComponent("user.realm")
