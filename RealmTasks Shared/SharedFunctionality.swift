@@ -30,13 +30,16 @@ func credentialForUsername(username: String, password: String, register: Bool) -
 
 func setupRealmSyncAndInitialList() {
     configureRealmServerWithAppID(Constants.appID, logLevel: 0, globalErrorHandler: nil)
-    
+    setupInitialList()
+}
+
+func setupInitialList() {
     do {
         let realm = try Realm(configuration: listsRealmConfiguration)
         if realm.isEmpty {
             // Create an initial list if none exist
             try realm.write {
-                
+
                 let list = TaskListReference()
                 list.id = Constants.defaultListID
                 list.text = Constants.defaultListName
@@ -56,7 +59,7 @@ func logInWithPersistedUser(callback: (NSError?) -> ()) {
     // FIXME: Use Realm Swift once it can create non-synced Realms again.
     if let realm = try? RLMRealm(configuration: userRealmConfiguration),
         let persistedUser = PersistedUser.allObjectsInRealm(realm).firstObject() as? PersistedUser {
-        let user = RealmSwift.User(localIdentity: Constants.userLocalIdentity)
+        let user = Constants.user
         let credential = credentialForUsername(persistedUser.username, password: persistedUser.password, register: false)
         user.loginWithCredential(credential, completion: callback)
     } else {
@@ -76,7 +79,7 @@ func persistUserAndLogInWithUsername(username: String, password: String, registe
         }
     }
 
-    let user = RealmSwift.User(localIdentity: Constants.userLocalIdentity)
+    let user = Constants.user
     let credential = credentialForUsername(username, password: password, register: register)
     user.loginWithCredential(credential, completion: callback)
 }

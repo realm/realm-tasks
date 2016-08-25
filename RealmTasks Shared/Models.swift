@@ -61,7 +61,7 @@ final class TaskListReference: Object, CellPresentable {
         var configuration = Realm.Configuration()
         configuration.fileURL = Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("\(id).realm")
         configuration.objectTypes = [TaskList.self, Task.self]
-        configuration.setObjectServerPath(Constants.syncRealmPath + "/\(id)", for: RealmSwift.User(localIdentity: Constants.userLocalIdentity))
+        configuration.setObjectServerPath(Constants.syncRealmPath + "/\(id)", for: Constants.user)
         return configuration
     }
     func listRealm() throws -> Realm {

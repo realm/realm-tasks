@@ -33,6 +33,6 @@ let listsRealmConfiguration: Realm.Configuration = {
     var configuration = Realm.Configuration()
     configuration.fileURL = Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("lists.realm")
     configuration.objectTypes = [TaskListList.self, TaskListReference.self]
-    configuration.setObjectServerPath(Constants.syncRealmPath + "/lists", for: RealmSwift.User(localIdentity: Constants.userLocalIdentity))
+    configuration.setObjectServerPath(Constants.syncRealmPath + "/lists", for: Constants.user)
     return configuration
 }()

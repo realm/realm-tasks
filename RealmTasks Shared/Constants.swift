@@ -41,5 +41,5 @@ struct Constants {
 
     static let appID = NSBundle.mainBundle().bundleIdentifier!
 
-    static let userLocalIdentity = "default-user"
+    static let user = RealmSwift.User(localIdentity: nil)
 }

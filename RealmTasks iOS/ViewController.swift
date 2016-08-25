@@ -112,7 +112,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         self.colors = colors
         if Item.self == Task.self {
             createTopViewController = {
-                ViewController<TaskListReference, TaskListList>(
+                setupInitialList()
+                return ViewController<TaskListReference, TaskListList>(
                     parent: try! Realm(configuration: listsRealmConfiguration).objects(TaskListList.self).first!,
                     colors: UIColor.listColors()
                 )
@@ -121,6 +122,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         } else {
             createTopViewController = nil
             createBottomViewController = {
+                setupInitialList()
                 let firstList = try! Realm(configuration: listsRealmConfiguration).objects(TaskListReference.self).first!.list
                 return ViewController<Task, TaskList>(
                     parent: firstList,
@@ -186,7 +188,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
         } else if context == &titleKVOContext {
-            title = (parent as! CellPresentable).text
+            title = (parent as! TaskList).text
             parentViewController?.title = title
         } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
