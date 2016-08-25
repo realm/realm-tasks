@@ -700,7 +700,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     private func itemCompleted(item: Item) {
-        guard let index = items.indexOf(item) else {
+        guard !(item as Object).invalidated, let index = items.indexOf(item) else {
             return
         }
         let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
