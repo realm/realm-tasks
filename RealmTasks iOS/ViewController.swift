@@ -279,6 +279,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 self.reloadOnNotification = true
                 return
             } else if self.reloadOnNotification {
+                if let _ = self.currentlyEditingIndexPath {
+                    return
+                }
                 self.tableView.reloadData()
                 self.reloadOnNotification = false
                 return
@@ -759,6 +762,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
 
         let item = editingCell.item
+        guard !(item as Object).invalidated else {
+            tableView.reloadData()
+            return
+        }
         if item.text.isEmpty {
             try! item.realm?.write {
                 item.realm!.delete(item)
