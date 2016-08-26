@@ -45,19 +45,14 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        setupRealmSyncAndInitialList()
-
         mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
         mainWindowController.window?.titleVisibility = .Hidden
         mainWindowController.showWindow(nil)
-
-        logInWithPersistedUser { error in
-            if error != nil {
-                // FIXME: Sync API methods callbacs should be executed on main thread
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.logIn()
-                }
-            }
+        if configureDefaultRealm() {
+            let taskListVC = (mainWindowController.contentViewController as! TaskListViewController)
+            taskListVC.items = try! Realm().objects(TaskList.self).first!.items
+        } else {
+            logIn()
         }
     }
 
@@ -69,19 +64,27 @@ extension AppDelegate: NSApplicationDelegate {
 
 }
 
-extension AppDelegate: LogInViewControllerDelegate {
-
-    func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
-        persistUserAndLogInWithUsername(userName, password: password, register: false) { error in
-            // FIXME: Sync API methods callbacs should be executed on main thread
+extension AppDelegate {
+    func macAuthenticate(viewController: NSViewController, username: String, password: String, register: Bool) {
+        authenticate(username: username, password: password, register: register) { error in
+            // FIXME: Sync API methods callbacks should be executed on main thread
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = error {
                     NSApp.presentError(error)
                 } else {
                     viewController.dismissController(nil)
+                    let taskListVC = (self.mainWindowController.contentViewController as! TaskListViewController)
+                    taskListVC.items = try! Realm().objects(TaskList.self).first!.items
                 }
             }
         }
+    }
+}
+
+extension AppDelegate: LogInViewControllerDelegate {
+
+    func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
+        macAuthenticate(viewController, username: userName, password: password, register: false)
     }
 
     func logInViewControllerDidRegister(viewController: LogInViewController) {
@@ -94,16 +97,7 @@ extension AppDelegate: LogInViewControllerDelegate {
 extension AppDelegate: RegisterViewControllerDelegate {
 
     func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
-        persistUserAndLogInWithUsername(userName, password: password, register: true) { error in
-            // FIXME: Sync API methods callbacs should be executed on main thread
-            dispatch_async(dispatch_get_main_queue()) {
-                if let error = error {
-                    NSApp.presentError(error)
-                } else {
-                    viewController.dismissController(nil)
-                }
-            }
-        }
+        macAuthenticate(viewController, username: userName, password: password, register: true)
     }
 
     func registerViewControllerDidCancel(viewController: RegisterViewController) {

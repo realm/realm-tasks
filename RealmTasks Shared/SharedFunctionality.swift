@@ -25,7 +25,7 @@ import RealmSwift
 
 private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here
 private let userRealmConfiguration = Realm.Configuration(
-    fileURL: NSURL.fileURLWithPath(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]).URLByAppendingPathComponent("user.realm"),
+    fileURL: Realm.Configuration.defaultConfiguration.fileURL?.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("user.realm"),
     objectTypes: [PersistedUser.self]
 )
 
@@ -54,13 +54,13 @@ func authenticate(username username: String, password: String, register: Bool, c
                                     actions: register ? [.CreateAccount] : [],
                                     authServerURL: Constants.syncAuthURL) { user, error in
         if let user = user {
-            setDefaultRealmConfigurationWithUser(user)
             dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
                 let userRealm = try! Realm(configuration: userRealmConfiguration)
                 try! userRealm.write {
                     userRealm.add(PersistedUser(user: user))
                 }
             }
+            setDefaultRealmConfigurationWithUser(user)
             try! realm.write {
                 let list = TaskList()
                 list.id = ""

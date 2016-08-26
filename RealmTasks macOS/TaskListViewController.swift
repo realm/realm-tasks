@@ -29,7 +29,19 @@ class TaskListViewController: NSViewController {
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var topConstraint: NSLayoutConstraint?
 
-    private var items = try! Realm().objects(TaskList.self).first!.items
+    // FIXME: Hack to avoid accessing the synced Realm before we have a user.
+    internal var items: List<Task> = {
+        let tmpRealm = try! Realm(configuration: Realm.Configuration(inMemoryIdentifier: "TemporaryRealm"))
+        try! tmpRealm.write {
+            tmpRealm.add(TaskList())
+        }
+        return tmpRealm.objects(TaskList.self).first!.items
+    }() {
+        didSet {
+            notificationToken?.stop()
+            setupNotifications()
+        }
+    }
 
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?
