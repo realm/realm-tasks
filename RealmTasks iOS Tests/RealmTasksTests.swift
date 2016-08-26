@@ -169,6 +169,7 @@ class RealmTasksTests: XCTestCase {
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
     }
 
+    // Failing Test
     func testDeleteItemFromSyncWhileEditing() {
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 
@@ -190,6 +191,7 @@ class RealmTasksTests: XCTestCase {
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
     }
 
+    // Failing Test
     func testCompleteAndDeleteFromSync() {
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 
