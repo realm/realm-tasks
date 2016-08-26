@@ -37,7 +37,6 @@ extension UIView {
 
 private var tableViewBoundsKVOContext = 0
 private var titleKVOContext = 0
-private var firstSyncWorkaroundToken: dispatch_once_t = 0
 
 private enum NavDirection {
     case Up, Down
@@ -144,7 +143,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        dispatch_once(&firstSyncWorkaroundToken, setupFirstSyncWorkaround)
         setupNotifications()
         setupGestureRecognizers()
     }
@@ -224,56 +222,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: Notifications
 
-    private func setupFirstSyncWorkaround() {
-        // FIXME: Hack to work around sync possibly pulling in a new list.
-        // Ideally we'd use ParentType's with primary keys, but those aren't currently supported by sync.
-        realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
-            var lists = realm.objects(Parent.self)
-            if Parent.self == TaskList.self {
-                // only merge the initial list
-                lists = lists.filter("initial == true")
-            }
-            guard lists.count > 1 else { return }
-
-            self.realmNotificationToken?.stop()
-            self.realmNotificationToken = nil
-
-            let parent = lists.first!
-
-            guard self.parent != parent else { return }
-
-            self.parent = parent
-
-            self.notificationToken?.stop()
-            self.notificationToken = nil
-            self.setupNotifications()
-
-            // FIXME: Use the Realm's configuration.
-            // Currently broken because it doesn't apply the same sync-related values
-            // let configuration = realm.configuration
-
-            // Append all other items while deleting their lists, in case they were created locally before sync
-            dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-                // FIXME: Use the above Realm's configuration.
-                // let realm = try! Realm(configuration: configuration)
-                let realm = try! Realm()
-                try! realm.write {
-                    var lists = realm.objects(Parent.self)
-                    if Parent.self == TaskList.self {
-                        // only merge the initial list
-                        lists = lists.filter("initial == true")
-                    }
-                    while lists.count > 1 {
-                        lists.first!.items.appendContentsOf(lists.last!.items)
-                        realm.delete(lists.last!)
-                    }
-                }
-            }
-        }
-    }
-
     private func setupNotifications() {
-        notificationToken = items.addNotificationBlock { changes in
+        // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
+        notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
             if self.skipNotification {
                 self.skipNotification = false
                 self.reloadOnNotification = true

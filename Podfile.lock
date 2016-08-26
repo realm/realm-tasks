@@ -1,15 +1,58 @@
 PODS:
   - Cartography (0.6.0)
-  - RealmSwift (1.0.2-6-sync-0.27.1)
+  - Realm (1.0.2-9):
+    - RealmCore (= 2.0.0-rc0)
+    - RealmSync (= 1.0.0-beta-29.0)
+  - RealmCore (2.0.0-rc0)
+  - RealmSwift (1.0.2-9):
+    - Realm (= 1.0.2-9)
+  - RealmSync (1.0.0-beta-29.0):
+    - RealmCore (= 2.0.0-rc0)
 
 DEPENDENCIES:
   - Cartography
-  - RealmSwift (= 1.0.2-6-sync-0.27.1)
+  - Realm (from `../realm-cocoa`, branch `jp-sync-podspec`)
+  - RealmCore (from `../realm-core`, branch `jp-podspec`)
+  - RealmSwift (from `../realm-cocoa`, branch `jp-sync-podspec`)
+  - RealmSync (from `../realm-sync`, branch `jp-podspec`)
+
+EXTERNAL SOURCES:
+  Realm:
+    :branch: jp-sync-podspec
+    :git: "../realm-cocoa"
+    :submodules: true
+  RealmCore:
+    :branch: jp-podspec
+    :git: "../realm-core"
+  RealmSwift:
+    :branch: jp-sync-podspec
+    :git: "../realm-cocoa"
+  RealmSync:
+    :branch: jp-podspec
+    :git: "../realm-sync"
+
+CHECKOUT OPTIONS:
+  Realm:
+    :commit: f31ac2b6555e80aeaf6f2de5dd64bd4aa92672b1
+    :git: "../realm-cocoa"
+    :submodules: true
+  RealmCore:
+    :commit: a04da9cd02e965e47c209d27cd14566d3393a571
+    :git: "../realm-core"
+  RealmSwift:
+    :commit: f31ac2b6555e80aeaf6f2de5dd64bd4aa92672b1
+    :git: "../realm-cocoa"
+  RealmSync:
+    :commit: 9f9c8df332e0e8619e392346d1e496588715206d
+    :git: "../realm-sync"
 
 SPEC CHECKSUMS:
   Cartography: 70af183a248547694a8cfaa6b989cb7e04589985
-  RealmSwift: c9bc7b2d22e107cf3ac1e7f77450616520ba1fa4
+  Realm: 959edadab63e6df1db3068ce221d330a3627de57
+  RealmCore: 40046033edc738532c8334caf4692df3722885a8
+  RealmSwift: 2c3cf4a8601e8aec88b166d35323942e5280aa66
+  RealmSync: 7a45d88b6d84e39181006b560cfba5ae26ec7c5c
 
-PODFILE CHECKSUM: dca30645199fdfc0c73d5903ae012f7b75676050
+PODFILE CHECKSUM: e4da835d0828ccf6408ec18588a5beca473ab522
 
 COCOAPODS: 1.0.1
