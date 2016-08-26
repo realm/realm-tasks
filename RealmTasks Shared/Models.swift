@@ -19,7 +19,6 @@
  **************************************************************************/
 
 import Foundation
-import Realm // FIXME: Use Realm Swift once it can create non-synced Realms again.
 import RealmSwift
 
 protocol ListPresentable {
@@ -69,9 +68,19 @@ final class Task: Object, CellPresentable {
     }
 }
 
-// FIXME: Use Realm Swift once it can create non-synced Realms again.
-final class PersistedUser: RLMObject {
-    // FIXME: Persist access token once https://github.com/realm/realm-cocoa-private/pull/202 is available
-    dynamic var username = ""
-    dynamic var password = ""
+final class PersistedUser: Object {
+    dynamic var identity = ""
+    dynamic var refreshToken = ""
+    dynamic var authenticationServer = ""
+
+    var user: User {
+        return User(identity: identity, refreshToken: refreshToken, authServerURL: NSURL(string: authenticationServer)!)
+    }
+
+    convenience init(user: User) {
+        self.init()
+        identity = user.identity
+        refreshToken = user.refreshToken()
+        authenticationServer = user.authenticationServer!.absoluteString
+    }
 }
