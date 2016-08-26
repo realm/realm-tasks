@@ -22,55 +22,44 @@ import UIKit
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-
     var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        setupRealmSyncAndInitialList()
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        window?.rootViewController = ContainerViewController()
-        window?.makeKeyAndVisible()
-        logInWithPersistedUser { error in
-            if error != nil {
-                // FIXME: Sync API methods callbacs should be executed on main thread
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.logIn()
-                }
-            }
+        if configureDefaultRealm() {
+            window?.rootViewController = ContainerViewController()
+            window?.makeKeyAndVisible()
+        } else {
+            window?.rootViewController = UIViewController()
+            window?.makeKeyAndVisible()
+            logIn(animated: false)
         }
         return true
     }
 
-    func logIn() {
-        let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: NSBundle.mainBundle())
-        guard let logInViewController = loginStoryboard.instantiateInitialViewController() as? LogInViewController else {
-            fatalError()
-        }
-
+    func logIn(animated animated: Bool = true) {
+        let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .mainBundle())
+        let logInViewController = loginStoryboard.instantiateInitialViewController() as! LogInViewController
         logInViewController.completionHandler = { username, password, returnCode in
-            if returnCode != .Cancel,
-                let username = username,
-                let password = password {
-                persistUserAndLogInWithUsername(username, password: password, register: returnCode == .Register) { error in
-                    if let error = error {
-                        // FIXME: Sync API methods callbacs should be executed on main thread
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.presentError(error)
-                        }
-                    }
-                }
-            } else {
+            guard returnCode != .Cancel, let username = username, let password = password else {
                 // FIXME: handle cancellation properly or just restrict it
                 dispatch_async(dispatch_get_main_queue()) {
                     self.logIn()
                 }
+                return
+            }
+            authenticate(username: username, password: password, register: returnCode == .Register) { user, error in
+                if let error = error {
+                    self.presentError(error)
+                } else {
+                    self.window?.rootViewController = ContainerViewController()
+                }
             }
         }
-        window?.rootViewController?.presentViewController(logInViewController, animated: true, completion: nil)
+        window?.rootViewController?.presentViewController(logInViewController, animated: false, completion: nil)
     }
 
     func presentError(error: NSError) {
-        // Present error to user
         let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
         alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
             self.logIn()

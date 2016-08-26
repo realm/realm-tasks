@@ -28,8 +28,6 @@
 		C23EB0301D46364000D3E0AC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019B1D3DD648009E45FA /* Models.swift */; };
 		C23EB0321D46364000D3E0AC /* LocalIPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */; };
 		C23EB0331D463A2C00D3E0AC /* RealmColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201991D3DD648009E45FA /* RealmColor.swift */; };
-		C23EB0351D46421C00D3E0AC /* RealmConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */; };
-		C23EB0361D46421C00D3E0AC /* RealmConfigurations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */; };
 		C23EB0381D4643B900D3E0AC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0371D4643B900D3E0AC /* Constants.swift */; };
 		C23EB0391D4643B900D3E0AC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0371D4643B900D3E0AC /* Constants.swift */; };
 		C23EB03C1D464A7D00D3E0AC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C23EB03B1D464A7D00D3E0AC /* Main.storyboard */; };
@@ -86,7 +84,6 @@
 		C23EB0261D46329400D3E0AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C23EB02A1D46339E00D3E0AC /* RealmTasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = RealmTasks.entitlements; sourceTree = "<group>"; };
 		C23EB02C1D4635C400D3E0AC /* Shared.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Shared.xcassets; sourceTree = "<group>"; };
-		C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmConfigurations.swift; sourceTree = "<group>"; };
 		C23EB0371D4643B900D3E0AC /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		C23EB03B1D464A7D00D3E0AC /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		C23EB0581D46535F00D3E0AC /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
@@ -197,7 +194,6 @@
 				C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */,
 				2252019B1D3DD648009E45FA /* Models.swift */,
 				225201991D3DD648009E45FA /* RealmColor.swift */,
-				C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */,
 				C23EB02C1D4635C400D3E0AC /* Shared.xcassets */,
 				E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */,
 			);
@@ -604,7 +600,6 @@
 				C23EB0591D46535F00D3E0AC /* TaskListViewController.swift in Sources */,
 				C28A34021D50A0C500EE8F1A /* LogInViewController.swift in Sources */,
 				C23EB05D1D4A028A00D3E0AC /* NSView+Animations.swift in Sources */,
-				C23EB0361D46421C00D3E0AC /* RealmConfigurations.swift in Sources */,
 				C23EB0331D463A2C00D3E0AC /* RealmColor.swift in Sources */,
 				C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */,
 				C23EB0391D4643B900D3E0AC /* Constants.swift in Sources */,
@@ -625,7 +620,6 @@
 				22092D861D5C5BCB0016E757 /* NavHintView.swift in Sources */,
 				225201A51D3DD648009E45FA /* CellTextView.swift in Sources */,
 				E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */,
-				C23EB0351D46421C00D3E0AC /* RealmConfigurations.swift in Sources */,
 				C23EB0381D4643B900D3E0AC /* Constants.swift in Sources */,
 				225201A31D3DD648009E45FA /* TableViewCell.swift in Sources */,
 				E8A1E6501D59354500D8B04A /* ContainerViewController.swift in Sources */,
