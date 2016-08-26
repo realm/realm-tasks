@@ -48,7 +48,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 return
             }
-            authenticate(username: username, password: password, register: returnCode == .Register) { user, error in
+            authenticate(username: username, password: password, register: returnCode == .Register) { error in
                 if let error = error {
                     self.presentError(error)
                 } else {

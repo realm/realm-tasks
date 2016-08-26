@@ -49,7 +49,7 @@ func configureDefaultRealm() -> Bool {
     return false
 }
 
-func authenticate(username username: String, password: String, register: Bool, callback: (User?, NSError?) -> ()) {
+func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
     User.authenticateWithCredential(.UsernamePassword(username: username, password: password),
                                     actions: register ? [.CreateAccount] : [],
                                     authServerURL: Constants.syncAuthURL) { user, error in
@@ -70,6 +70,6 @@ func authenticate(username username: String, password: String, register: Bool, c
                 realm.add(listLists)
             }
         }
-        callback(user, error)
+        callback(error)
     }
 }
