@@ -35,16 +35,25 @@ protocol CellPresentable {
 
 final class TaskListList: Object, ListPresentable {
     let items = List<TaskList>()
+    dynamic var id = 0
+
+    static override func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 final class TaskList: Object, CellPresentable, ListPresentable {
     dynamic var text = ""
     dynamic var completed = false
-    dynamic var initial = false
+    dynamic var id = NSUUID().UUIDString
     let items = List<Task>()
 
     var isCompletable: Bool {
         return !items.filter("completed == false").isEmpty
+    }
+
+    static override func primaryKey() -> String? {
+        return "id"
     }
 }
 
