@@ -95,3 +95,10 @@ func authenticate(username username: String, password: String, register: Bool, c
         callback(error)
     }
 }
+
+func importAccessFile(URL: NSURL) {
+    let taskList = RealmSharing.taskListForAccessFile(URL)
+    try! Realm().write {
+        try!  Realm().add(taskList!)
+    }
+}

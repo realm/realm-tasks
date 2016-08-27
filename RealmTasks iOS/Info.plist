@@ -8,11 +8,13 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeIconFiles</key>
-			<array>
-				<string>/Users/TiM/Projects/RealmTasks/RealmTasks iOS/iOS.xcassets/AppIcon.appiconset/AppIcon@2x.png</string>
-			</array>
+			<array/>
 			<key>CFBundleTypeName</key>
 			<string>Realm Tasks Share</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>io.realm.realmtasks.share</string>
@@ -60,10 +62,19 @@
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
 			<key>UTTypeDescription</key>
-			<string>Document type for shared Realm Tasks lists</string>
+			<string>Realm Tasks Access File</string>
 			<key>UTTypeIdentifier</key>
 			<string>io.realm.realmtasks.share</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>realmtasks</string>
+			</dict>
 		</dict>
 	</array>
 </dict>
