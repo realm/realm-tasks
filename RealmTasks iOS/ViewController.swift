@@ -21,6 +21,7 @@
 import Cartography
 import RealmSwift
 import UIKit
+import TOActionSheet
 
 extension UIView {
     private func removeAllConstraints() {
@@ -147,6 +148,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         dispatch_once(&firstSyncWorkaroundToken, setupFirstSyncWorkaround)
         setupNotifications()
         setupGestureRecognizers()
+    }
+
+    override func canBecomeFirstResponder() -> Bool {
+        return true
     }
 
     // MARK: UI
@@ -809,6 +814,20 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         // Pass the token to the activity view controller
         let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
         presentViewController(activityViewController, animated: true, completion: nil)
+    }
+
+    override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
+        if motion != .MotionShake {
+            return
+        }
+
+        let actionSheet = TOActionSheet(style: .Dark)
+        actionSheet.title = title
+        actionSheet.addButtonWithTitle("Share List", tappedBlock: {
+            self.shareButtonTapped()
+        })
+
+        actionSheet.showFromView(view, inView: view.superview)
     }
 
     // MARK: Colors

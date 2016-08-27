@@ -66,5 +66,14 @@
 			<string>io.realm.realmtasks.share</string>
 		</dict>
 	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>Document type for shared Realm Tasks lists</string>
+			<key>UTTypeIdentifier</key>
+			<string>io.realm.realmtasks.share</string>
+		</dict>
+	</array>
 </dict>
 </plist>
