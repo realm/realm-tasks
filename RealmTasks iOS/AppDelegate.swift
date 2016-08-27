@@ -27,6 +27,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         setupRealmSyncAndInitialList()
+        if let accessFile = launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL {
+            importAccessFile(accessFile)
+            try! NSFileManager.defaultManager().removeItemAtURL(accessFile)
+        }
+
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         window?.rootViewController = ContainerViewController()
         window?.makeKeyAndVisible()
@@ -38,6 +43,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+
         return true
     }
 

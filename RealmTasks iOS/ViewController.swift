@@ -800,19 +800,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: General UI Callbacks
     private func shareButtonTapped() {
-        // Request a sharing token from Realm Sync
-        let realmSharingSyncToken = "0000-0000-0000"
-        let cachesDirectory = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!)
-
-        // Create an opaque file that will contain this token
-        let formattedName = title!.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "")
-        let fileName = "\(formattedName).realmtasks"
-        let fileURL = cachesDirectory.URLByAppendingPathComponent(fileName)
-
-        try! realmSharingSyncToken.writeToURL(fileURL, atomically: true, encoding: NSUTF8StringEncoding)
+        let accessFileURL = RealmSharing.URLForGeneratedAccessFile(self.parent as! TaskList)
 
         // Pass the token to the activity view controller
-        let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+        let activityViewController = UIActivityViewController(activityItems: [accessFileURL], applicationActivities: nil)
         presentViewController(activityViewController, animated: true, completion: nil)
     }
 

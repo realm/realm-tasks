@@ -38,4 +38,6 @@ struct Constants {
     static let syncAuthURL = NSURL(string: "http://\(syncHost):3000/auth")!
 
     static let appID = NSBundle.mainBundle().bundleIdentifier!
+
+    static let fileExtension = ".realmtasks"
 }

@@ -77,3 +77,10 @@ func persistUserAndLogInWithUsername(username: String, password: String, registe
     let credential = credentialForUsername(username, password: password, register: register)
     user.loginWithCredential(credential, completion: callback)
 }
+
+func importAccessFile(URL: NSURL) {
+    let taskList = RealmSharing.taskListForAccessFile(URL)
+    try! Realm().write {
+        try!  Realm().add(taskList!)
+    }
+}
