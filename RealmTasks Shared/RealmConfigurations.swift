@@ -22,7 +22,6 @@ import Foundation
 import Realm // FIXME: Use Realm Swift once it can create non-synced Realms again.
 import RealmSwift
 
-// FIXME: Use Realm Swift once it can create non-synced Realms again.
 let userRealmConfiguration: RLMRealmConfiguration = {
     let config = RLMRealmConfiguration()
     config.fileURL = NSURL.fileURLWithPath(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]).URLByAppendingPathComponent("user.realm")
@@ -30,6 +29,10 @@ let userRealmConfiguration: RLMRealmConfiguration = {
     return config
 }()
 
-var syncRealmConfiguration = Realm.Configuration(
-    objectTypes: [TaskListList.self, TaskList.self, Task.self]
-)
+let listsRealmConfiguration: Realm.Configuration = {
+    var configuration = Realm.Configuration()
+    configuration.fileURL = Realm.Configuration().fileURL!.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("lists.realm")
+    configuration.objectTypes = [TaskListList.self, TaskListReference.self]
+    configuration.setObjectServerPath(Constants.syncRealmPath + "/lists", for: Constants.user)
+    return configuration
+}()

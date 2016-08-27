@@ -21,7 +21,6 @@
 import Realm // FIXME: Use Realm Swift once it can create non-synced Realms again.
 import RealmSwift
 
-let user = RealmSwift.User(localIdentity: nil)
 func credentialForUsername(username: String, password: String, register: Bool) -> Credential {
     return Credential(credentialToken: username,
                       provider: RLMIdentityProviderUsernamePassword,
@@ -31,18 +30,22 @@ func credentialForUsername(username: String, password: String, register: Bool) -
 
 func setupRealmSyncAndInitialList() {
     configureRealmServerWithAppID(Constants.appID, logLevel: 0, globalErrorHandler: nil)
-    syncRealmConfiguration.setObjectServerPath("/~/realmtasks", for: user)
-    Realm.Configuration.defaultConfiguration = syncRealmConfiguration
+    setupInitialList()
+}
 
+func setupInitialList() {
     do {
-        let realm = try Realm()
+        let realm = try Realm(configuration: listsRealmConfiguration)
         if realm.isEmpty {
             // Create an initial list if none exist
             try realm.write {
-                let list = TaskList()
-                list.initial = true
+
+                let list = TaskListReference()
+                list.id = Constants.defaultListID
                 list.text = Constants.defaultListName
+
                 let listLists = TaskListList()
+
                 listLists.items.append(list)
                 realm.add(listLists)
             }
@@ -56,6 +59,7 @@ func logInWithPersistedUser(callback: (NSError?) -> ()) {
     // FIXME: Use Realm Swift once it can create non-synced Realms again.
     if let realm = try? RLMRealm(configuration: userRealmConfiguration),
         let persistedUser = PersistedUser.allObjectsInRealm(realm).firstObject() as? PersistedUser {
+        let user = Constants.user
         let credential = credentialForUsername(persistedUser.username, password: persistedUser.password, register: false)
         user.loginWithCredential(credential, completion: callback)
     } else {
@@ -74,6 +78,8 @@ func persistUserAndLogInWithUsername(username: String, password: String, registe
             userRealm.addObject(user)
         }
     }
+
+    let user = Constants.user
     let credential = credentialForUsername(username, password: password, register: register)
     user.loginWithCredential(credential, completion: callback)
 }
