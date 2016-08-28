@@ -27,11 +27,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         setupRealmSyncAndInitialList()
-        if let accessFile = launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL {
-            importAccessFile(accessFile)
-            try! NSFileManager.defaultManager().removeItemAtURL(accessFile)
-        }
-
+        openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL)
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         window?.rootViewController = ContainerViewController()
         window?.makeKeyAndVisible()
@@ -44,6 +40,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
+        return true
+    }
+
+    func application(application: UIApplication, willFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
+        openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL)
+        return true
+    }
+
+    func application(app: UIApplication, openURL url: NSURL, options: [String : AnyObject]) -> Bool {
+        openAccessURL(url)
         return true
     }
 
@@ -82,5 +88,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             self.logIn()
         })
         self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+    }
+
+    func openAccessURL(URL: NSURL?) {
+        guard let URL = URL else {
+            return
+        }
+
+        importAccessFile(URL)
+        try! NSFileManager.defaultManager().removeItemAtURL(URL)
     }
 }
