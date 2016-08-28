@@ -35,8 +35,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             logIn(animated: false)
         }
 
-        return true
-    }
+        if let newTaskList = openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL) {
+            let containerController = window?.rootViewController as! ContainerViewController
+            containerController.transitionToList(newTaskList, animated: false)
+        }
 
     func logIn(animated animated: Bool = true) {
         let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .mainBundle())
@@ -68,12 +70,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
     }
 
-    func openAccessURL(URL: NSURL?) {
+    func openAccessURL(URL: NSURL?) -> TaskList? {
         guard let URL = URL else {
-            return
+            return nil
         }
 
-        importAccessFile(URL)
+        let taskList = (importAccessFile(URL) as! TaskList)
         try! NSFileManager.defaultManager().removeItemAtURL(URL)
+
+        return taskList
     }
 }
