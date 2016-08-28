@@ -27,7 +27,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         setupRealmSyncAndInitialList()
-        openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL)
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         window?.rootViewController = ContainerViewController()
         window?.makeKeyAndVisible()
@@ -40,16 +39,20 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        return true
-    }
+        if let newTaskList = openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL) {
+            let containerController = window?.rootViewController as! ContainerViewController
+            containerController.transitionToList(newTaskList, animated: false)
+        }
 
-    func application(application: UIApplication, willFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) -> Bool {
-        openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL)
         return true
     }
 
     func application(app: UIApplication, openURL url: NSURL, options: [String : AnyObject]) -> Bool {
-        openAccessURL(url)
+        if let newTaskList = openAccessURL(url) {
+            let containerController = window?.rootViewController as! ContainerViewController
+            containerController.transitionToList(newTaskList, animated: true)
+        }
+        
         return true
     }
 
@@ -90,12 +93,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
     }
 
-    func openAccessURL(URL: NSURL?) {
+    func openAccessURL(URL: NSURL?) -> TaskList? {
         guard let URL = URL else {
-            return
+            return nil
         }
 
-        importAccessFile(URL)
+        let taskList = (importAccessFile(URL) as! TaskList)
         try! NSFileManager.defaultManager().removeItemAtURL(URL)
+
+        return taskList
     }
 }

@@ -23,6 +23,7 @@ import RealmSwift
 import UIKit
 
 class ContainerViewController: UIViewController {
+    private var titleBar = UIToolbar()
     private var titleLabel = UILabel()
     private var titleTopConstraint: NSLayoutConstraint?
     override var title: String? {
@@ -40,7 +41,7 @@ class ContainerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        addChildVC()
+        addChildVC(try! Realm().objects(TaskList.self).first!)
         setupTitleBar()
     }
 
@@ -48,17 +49,43 @@ class ContainerViewController: UIViewController {
         return .LightContent
     }
 
-    private func addChildVC() {
-        let firstList = try! Realm().objects(TaskList.self).first!
-        let vc = ViewController(parent: firstList, colors: UIColor.taskColors())
-        title = firstList.text
+    func transitionToList(taskList: TaskList, animated: Bool) {
+        let viewControllers = self.childViewControllers
+        var snapshotView: UIView? = nil
+
+        if animated {
+            snapshotView = self.view.snapshotViewAfterScreenUpdates(false)
+            self.view.addSubview(snapshotView!)
+        }
+
+        for controller in viewControllers {
+            controller.removeFromParentViewController()
+            controller.view.removeFromSuperview()
+        }
+
+        addChildVC(taskList)
+
+        if animated {
+            self.view.bringSubviewToFront(titleBar)
+            self.view.insertSubview(snapshotView!, belowSubview: titleBar)
+
+            UIView.animateWithDuration(0.3, animations: {
+                snapshotView?.alpha = 0.0
+            }, completion: { (complete) in
+                snapshotView?.removeFromSuperview()
+            })
+        }
+    }
+
+    private func addChildVC(taskList: TaskList) {
+        let vc = ViewController(parent: taskList, colors: UIColor.taskColors())
+        title = taskList.text
         addChildViewController(vc)
         view.addSubview(vc.view)
         vc.didMoveToParentViewController(self)
     }
 
     private func setupTitleBar() {
-        let titleBar = UIToolbar()
         titleBar.barStyle = .BlackTranslucent
         view.addSubview(titleBar)
         constrain(titleBar) { titleBar in
