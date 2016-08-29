@@ -1,15 +1,15 @@
 PODS:
   - Cartography (0.6.0)
-  - RealmSwift (1.0.2-6-sync-0.27.1)
+  - RealmSwift (1.0.2-10-sync-1.0.0-beta-29.0)
 
 DEPENDENCIES:
   - Cartography
-  - RealmSwift (= 1.0.2-6-sync-0.27.1)
+  - RealmSwift (= 1.0.2-10-sync-1.0.0-beta-29.0)
 
 SPEC CHECKSUMS:
   Cartography: 70af183a248547694a8cfaa6b989cb7e04589985
-  RealmSwift: c9bc7b2d22e107cf3ac1e7f77450616520ba1fa4
+  RealmSwift: 90a6cbf9e2a5cfa61b95f316c6e644156d63fefd
 
-PODFILE CHECKSUM: dca30645199fdfc0c73d5903ae012f7b75676050
+PODFILE CHECKSUM: cac21f2d0d72cb3fc54953519dab4950f8b30875
 
 COCOAPODS: 1.0.1
