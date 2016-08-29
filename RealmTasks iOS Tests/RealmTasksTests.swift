@@ -39,7 +39,7 @@ class RealmTasksTests: XCTestCase {
         if realm.isEmpty {
             try! realm.write {
                 let list = TaskList()
-                list.initial = true
+                list.id = ""
                 list.text = Constants.defaultListName
                 let listLists = TaskListList()
                 listLists.items.append(list)

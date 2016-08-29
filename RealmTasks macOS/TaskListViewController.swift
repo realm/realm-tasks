@@ -21,7 +21,6 @@
 import Cocoa
 import RealmSwift
 
-private var firstSyncWorkaroundToken = 0
 private let taskCellIdentifier = "TaskCell"
 private let taskCellPrototypeIdentifier = "TaskCellPrototype"
 
@@ -30,7 +29,19 @@ class TaskListViewController: NSViewController {
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var topConstraint: NSLayoutConstraint?
 
-    private var items = try! Realm().objects(TaskList.self).first!.items
+    // FIXME: Hack to avoid accessing the synced Realm before we have a user.
+    internal var items: List<Task> = {
+        let tmpRealm = try! Realm(configuration: Realm.Configuration(inMemoryIdentifier: "TemporaryRealm"))
+        try! tmpRealm.write {
+            tmpRealm.add(TaskList())
+        }
+        return tmpRealm.objects(TaskList.self).first!.items
+    }() {
+        didSet {
+            notificationToken?.stop()
+            setupNotifications()
+        }
+    }
 
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?
@@ -63,56 +74,13 @@ class TaskListViewController: NSViewController {
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidEnterFullScreenNotification, object: view.window)
         notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidExitFullScreenNotification, object: view.window)
 
-        dispatch_once(&firstSyncWorkaroundToken, setupFirstSyncWorkaround)
         setupNotifications()
         setupGestureRecognizers()
     }
 
-    private func setupFirstSyncWorkaround() {
-        // FIXME: Hack to work around sync possibly pulling in a new list.
-        // Ideally we'd use TaskList's with primary keys, but those aren't currently supported by sync.
-        realmNotificationToken = items.realm!.addNotificationBlock { _, realm in
-            // only merge the initial list
-            let lists = realm.objects(TaskList.self).filter("initial == true")
-
-            guard lists.count > 1 else { return }
-
-            self.realmNotificationToken?.stop()
-            self.realmNotificationToken = nil
-
-            let items = lists.first!.items
-
-            guard self.items != items else { return }
-
-            self.items = items
-
-            self.notificationToken?.stop()
-            self.notificationToken = nil
-            self.setupNotifications()
-
-            // FIXME: Use the Realm's configuration.
-            // Currently broken because it doesn't apply the same sync-related values
-            // let configuration = realm.configuration
-
-            // Append all other items while deleting their lists, in case they were created locally before sync
-            dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-                // FIXME: Use the above Realm's configuration.
-                // let realm = try! Realm(configuration: configuration)
-                let realm = try! Realm()
-                try! realm.write {
-                    // only merge the initial list
-                    let lists = realm.objects(TaskList.self).filter("initial == true")
-                    while lists.count > 1 {
-                        lists.first!.items.appendContentsOf(lists.last!.items)
-                        realm.delete(lists.last!)
-                    }
-                }
-            }
-        }
-    }
-
     private func setupNotifications() {
-        notificationToken = items.addNotificationBlock { changes in
+        // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
+        notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
             if self.skipNotification {
                 self.skipNotification = false
                 self.reloadOnNotification = true
