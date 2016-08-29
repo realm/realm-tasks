@@ -65,7 +65,7 @@ extension AppDelegate: NSApplicationDelegate {
 }
 
 extension AppDelegate {
-    func macAuthenticate(viewController: NSViewController, username: String, password: String, register: Bool) {
+    func performAuthentication(viewController: NSViewController, username: String, password: String, register: Bool) {
         authenticate(username: username, password: password, register: register) { error in
             // FIXME: Sync API methods callbacks should be executed on main thread
             dispatch_async(dispatch_get_main_queue()) {
@@ -84,7 +84,7 @@ extension AppDelegate {
 extension AppDelegate: LogInViewControllerDelegate {
 
     func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
-        macAuthenticate(viewController, username: userName, password: password, register: false)
+        performAuthentication(viewController, username: userName, password: password, register: false)
     }
 
     func logInViewControllerDidRegister(viewController: LogInViewController) {
@@ -97,7 +97,7 @@ extension AppDelegate: LogInViewControllerDelegate {
 extension AppDelegate: RegisterViewControllerDelegate {
 
     func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
-        macAuthenticate(viewController, username: userName, password: password, register: true)
+        performAuthentication(viewController, username: userName, password: password, register: true)
     }
 
     func registerViewControllerDidCancel(viewController: RegisterViewController) {
