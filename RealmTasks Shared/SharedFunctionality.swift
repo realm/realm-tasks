@@ -23,7 +23,8 @@ import RealmSwift
 
 // Private Helpers
 
-private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here
+private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here. https://github.com/realm/realm-sync/issues/694
+private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
 private let userRealmConfiguration = Realm.Configuration(
     fileURL: Realm.Configuration.defaultConfiguration.fileURL?.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("user.realm"),
     objectTypes: [PersistedUser.self]
@@ -35,6 +36,35 @@ private func setDefaultRealmConfigurationWithUser(user: User) {
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
     )
     realm = try! Realm()
+
+    if realm.isEmpty {
+        try! realm.write {
+            let list = TaskList()
+            list.id = Constants.defaultListID
+            list.text = Constants.defaultListName
+            let listLists = TaskListList()
+            listLists.items.append(list)
+            realm.add(listLists)
+        }
+    }
+
+    // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
+    deduplicationNotificationToken = realm.objects(TaskListList.self).first!.items.addNotificationBlock { _ in
+        // Deduplicate
+        let items = try! Realm().objects(TaskListList.self).first!.items
+        let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
+        guard listReferenceIDs.count > 1 else { return }
+
+        try! items.realm!.write {
+            for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
+                let id = id as! String
+                let indexesToRemove = items.enumerate().flatMap { index, element in
+                    return element.id == id ? index : nil
+                }
+                indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
+            }
+        }
+    }
 }
 
 // Internal Functions
@@ -61,14 +91,6 @@ func authenticate(username username: String, password: String, register: Bool, c
                 }
             }
             setDefaultRealmConfigurationWithUser(user)
-            try! realm.write {
-                let list = TaskList()
-                list.id = ""
-                list.text = Constants.defaultListName
-                let listLists = TaskListList()
-                listLists.items.append(list)
-                realm.add(listLists)
-            }
         }
         callback(error)
     }
