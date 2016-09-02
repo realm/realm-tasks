@@ -417,7 +417,7 @@ extension TaskListViewController: TaskCellViewDelegate {
             try! item.realm?.write {
                 item.completed = complete
 
-                if (index != destinationIndex) {
+                if index != destinationIndex {
                     self.items.removeAtIndex(index)
                     self.items.insert(item, atIndex: destinationIndex)
                 }
