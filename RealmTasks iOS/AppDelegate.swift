@@ -34,8 +34,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.makeKeyAndVisible()
             logIn(animated: false)
         }
-<<<<<<< HEAD
-=======
 
         if let newTaskList = openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL) {
             let containerController = window?.rootViewController as! ContainerViewController
@@ -53,12 +51,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
->>>>>>> ec25efb98785d17cb779fc6b1a34da728e8a1f38
-
-        if let newTaskList = openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL) {
-            let containerController = window?.rootViewController as! ContainerViewController
-            containerController.transitionToList(newTaskList, animated: false)
-        }
 
     func logIn(animated animated: Bool = true) {
         let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .mainBundle())
