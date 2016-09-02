@@ -9,6 +9,5 @@ disabled_rules:
   - line_length
   - opening_brace
   - todo
-  - trailing_semicolon
   - type_body_length
   - variable_name

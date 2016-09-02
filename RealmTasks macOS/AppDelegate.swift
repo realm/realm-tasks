@@ -111,7 +111,7 @@ extension NSViewController {
 
     func presentViewControllerAsSheet(viewController: NSViewController, preventApplicationTermination: Bool) {
         presentViewControllerAsSheet(viewController)
-        viewController.view.window?.preventsApplicationTerminationWhenModal = preventApplicationTermination;
+        viewController.view.window?.preventsApplicationTerminationWhenModal = preventApplicationTermination
     }
 
 }
