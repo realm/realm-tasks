@@ -46,6 +46,8 @@ private let iconWidth: CGFloat = 60
 
 // MARK: Table View Cell
 
+// FIXME: This class should be split up.
+// swiftlint:disable type_body_length
 final class TableViewCell<Item: Object where Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
 
     // MARK: Properties
