@@ -241,6 +241,8 @@ extension TaskCellView: NSGestureRecognizerDelegate {
         return fabs(event.deltaX) > fabs(event.deltaY)
     }
 
+    // FIXME: This could easily be refactored to avoid such a high CC.
+    // swiftlint:disable:next cyclomatic_complexity
     private dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
         let originalDoneIconOffset = iconOffset
         let originalDeleteIconOffset = bounds.width - deleteIconView.bounds.width - iconOffset

@@ -222,6 +222,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         addGestureRecognizer(recognizer)
     }
 
+    // FIXME: This could easily be refactored to avoid such a high CC.
+    // swiftlint:disable:next cyclomatic_complexity
     func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .Began:
