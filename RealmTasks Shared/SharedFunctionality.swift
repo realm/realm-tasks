@@ -49,18 +49,18 @@ private func setDefaultRealmConfigurationWithUser(user: User) {
     }
 
     // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
-    deduplicationNotificationToken = realm.objects(TaskListList.self).first!.items.addNotificationBlock { _ in
+    deduplicationNotificationToken = realm.addNotificationBlock { _ in
         // Deduplicate
         let items = try! Realm().objects(TaskListList.self).first!.items
-        let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
-        guard listReferenceIDs.count > 1 else { return }
+        guard items.count > 1 else { return }
 
-        try! items.realm!.write {
-            for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
-                let id = id as! String
-                let indexesToRemove = items.enumerate().flatMap { index, element in
-                    return element.id == id ? index : nil
-                }
+        let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
+        for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
+            let id = id as! String
+            let indexesToRemove = items.enumerate().flatMap { index, element in
+                return element.id == id ? index : nil
+            }
+            try! items.realm!.write {
                 indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
             }
         }
