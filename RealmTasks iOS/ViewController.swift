@@ -522,7 +522,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // FIXME: This could easily be refactored to avoid such a high CC.
     // swiftlint:disable:next cyclomatic_complexity
-    func scrollViewDidScroll(scrollView: UIScrollView)  {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         func removeVC(vc: UIViewController?) {
             if scrollView.dragging {
                 vc?.view.removeFromSuperview()
