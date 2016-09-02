@@ -197,7 +197,10 @@
 				C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */,
 				2252019B1D3DD648009E45FA /* Models.swift */,
 				225201991D3DD648009E45FA /* RealmColor.swift */,
+<<<<<<< HEAD
 				C23EB02C1D4635C400D3E0AC /* Shared.xcassets */,
+=======
+>>>>>>> ec25efb98785d17cb779fc6b1a34da728e8a1f38
 				C23EB0341D46421C00D3E0AC /* RealmConfigurations.swift */,
 				E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */,
 				226BE5F51D7128F3001D9178 /* RealmSharing.swift */,

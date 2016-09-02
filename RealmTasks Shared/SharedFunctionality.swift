@@ -104,3 +104,12 @@ func importAccessFile(URL: NSURL) -> Object {
 
     return (taskList! as Object)
 }
+
+func importAccessFile(URL: NSURL) -> Object {
+    let taskList = RealmSharing.taskListForAccessFile(URL)
+    try! Realm().write {
+        try! Realm().add(taskList!)
+    }
+
+    return (taskList! as Object)
+}
