@@ -332,7 +332,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             var center = cell.center
             snapshot = cell.snapshotViewAfterScreenUpdates(false)
             snapshot.layer.shadowColor = UIColor.blackColor().CGColor
-            snapshot.layer.shadowOffset = CGSizeMake(-5, 0)
+            snapshot.layer.shadowOffset = CGSize(width: -5, height: 0)
             snapshot.layer.shadowRadius = 5
             snapshot.center = center
             cell.hidden = true

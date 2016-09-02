@@ -448,7 +448,7 @@ private extension NSTextField {
             unstrike()
         }
 
-        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: NSMakeRange(0, Int(fraction * Double(stringValue.characters.count))))
+        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: NSRange(location: 0, length: Int(fraction * Double(stringValue.characters.count))))
     }
 
     func unstrike() {
@@ -457,7 +457,7 @@ private extension NSTextField {
 
     private func setAttribute(name: String, value: AnyObject, range: NSRange? = nil) {
         let mutableAttributedString = NSMutableAttributedString(attributedString: attributedStringValue)
-        mutableAttributedString.addAttribute(name, value: value, range: range ?? NSMakeRange(0, mutableAttributedString.length))
+        mutableAttributedString.addAttribute(name, value: value, range: range ?? NSRange(location: 0, length: mutableAttributedString.length))
         attributedStringValue = mutableAttributedString
     }
 
