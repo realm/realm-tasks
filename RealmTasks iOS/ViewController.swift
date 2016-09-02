@@ -398,7 +398,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             self.startIndexPath = nil
             self.destinationIndexPath = nil
         default:
-            break;
+            break
         }
     }
 
