@@ -18,6 +18,9 @@
  *
  **************************************************************************/
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import Cartography
 import RealmSwift
 import UIKit
