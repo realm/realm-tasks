@@ -47,7 +47,8 @@ private enum NavDirection {
 
 // MARK: View Controller
 
-final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
+    UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
