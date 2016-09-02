@@ -47,6 +47,8 @@ private enum NavDirection {
 
 // MARK: View Controller
 
+// FIXME: This class should be split up.
+// swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
     UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
