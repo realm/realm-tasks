@@ -7,4 +7,3 @@ disabled_rules:
   - line_length
   - todo
   - type_body_length
-  - variable_name
