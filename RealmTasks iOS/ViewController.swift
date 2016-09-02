@@ -614,7 +614,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 }
                 tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
                 skipNextNotification()
-                
+
                 vibrate()
             }
             return

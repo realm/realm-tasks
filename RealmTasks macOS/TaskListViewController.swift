@@ -230,7 +230,7 @@ extension TaskListViewController {
     }
 
     private func endReordering() {
-        NSView.animateWithDuration(0.2, animations: { 
+        NSView.animateWithDuration(0.2, animations: {
             self.currentlyMovingRowSnapshotView?.frame = self.view.convertRect(self.currentlyMovingRowView!.frame, fromView: self.tableView)
         }) {
             self.currentlyMovingRowView?.alphaValue = 1
