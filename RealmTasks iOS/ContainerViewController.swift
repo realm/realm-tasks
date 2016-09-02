@@ -41,7 +41,7 @@ class ContainerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        addChildVC(try! Realm().objects(TaskList.self).first!)
+        addChildVC(try! Realm().objects(TaskListReference.self).first!.list)
         setupTitleBar()
     }
 
@@ -78,9 +78,8 @@ class ContainerViewController: UIViewController {
     }
 
     private func addChildVC(taskList: TaskList) {
-        let firstList = try! Realm().objects(TaskListReference.self).first!.list
-        let vc = ViewController(parent: firstList, colors: UIColor.taskColors())
-        title = firstList.text
+        let vc = ViewController(parent: taskList, colors: UIColor.taskColors())
+        title = taskList.text
         addChildViewController(vc)
         view.addSubview(vc.view)
         vc.didMoveToParentViewController(self)
