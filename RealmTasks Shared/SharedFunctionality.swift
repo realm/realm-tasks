@@ -32,8 +32,8 @@ private let userRealmConfiguration = Realm.Configuration(
 
 private func setDefaultRealmConfigurationWithUser(user: User) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
-        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("lists")),
-        objectTypes: [TaskListList.self, TaskListReference.self]
+        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("meta")),
+        objectTypes: [TaskListList.self, TaskListReference.self, ShareOffer.self, ShareRequest.self]
     )
     realm = try! Realm()
 
@@ -104,4 +104,4 @@ func importAccessFile(URL: NSURL) -> Object {
 
     return (taskList! as Object)
 }
-
+        

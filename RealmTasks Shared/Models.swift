@@ -63,6 +63,8 @@ final class TaskListReference: Object, CellPresentable {
         return "id"
     }
 
+    dynamic var path = ""
+
     // Proxied Properties
     var text: String { get { return list.text } set { try! list.realm!.write { list.text = newValue }; textMirror = newValue } }
     var completed: Bool { get { return list.completed } set { try! list.realm!.write { list.completed = newValue } } }
@@ -146,3 +148,34 @@ final class PersistedUser: Object {
         authenticationServer = user.authenticationServer!.absoluteString
     }
 }
+
+// MARK: Sharing
+final class ShareOffer: Object {
+    dynamic var token = NSUUID().UUIDString
+    dynamic var taskListReference: TaskListReference?
+
+    // is computed by the client,
+    // contains the token
+    var uri: String {
+        return "realmtasks://share/\(token)"
+    }
+
+    override static func primaryKey() -> String {
+        return "token"
+    }
+}
+
+final class ShareRequest: Object {
+    dynamic var token: String = ""
+    dynamic var taskListReference: TaskListReference? // is filled by the server-side client
+
+    // filled by the client with the received URL,
+    // extracts and fills the token
+    //var uri: String { set { /* … */ } }
+
+    override static func primaryKey() -> String {
+        return "id"
+    }
+}
+
+
