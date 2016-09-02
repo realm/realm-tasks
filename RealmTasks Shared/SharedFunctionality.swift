@@ -25,10 +25,6 @@ import RealmSwift
 
 private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here. https://github.com/realm/realm-sync/issues/694
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
-private let userRealmConfiguration = Realm.Configuration(
-    fileURL: Realm.Configuration.defaultConfiguration.fileURL?.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("user.realm"),
-    objectTypes: [PersistedUser.self]
-)
 
 private func setDefaultRealmConfigurationWithUser(user: User) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
@@ -76,8 +72,7 @@ private func setDefaultRealmConfigurationWithUser(user: User) {
 
 // returns true on success
 func configureDefaultRealm() -> Bool {
-    if let userRealm = try? Realm(configuration: userRealmConfiguration),
-        let user = userRealm.objects(PersistedUser.self).first?.user {
+    if let user = User.all().first {
         setDefaultRealmConfigurationWithUser(user)
         return true
     }
@@ -89,12 +84,6 @@ func authenticate(username username: String, password: String, register: Bool, c
                                     actions: register ? [.CreateAccount] : [],
                                     authServerURL: Constants.syncAuthURL) { user, error in
         if let user = user {
-            dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-                let userRealm = try! Realm(configuration: userRealmConfiguration)
-                try! userRealm.write {
-                    userRealm.add(PersistedUser(user: user))
-                }
-            }
             setDefaultRealmConfigurationWithUser(user)
         }
         callback(error)
