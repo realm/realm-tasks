@@ -40,7 +40,7 @@ class OnboardView: UIView {
 
         var frame = CGRect.zero
         frame.size.width = labelView.frame.size.width
-        frame.size.height = CGRectGetHeight(imageView.frame) + contentPadding + CGRectGetHeight(labelView.frame)
+        frame.size.height = imageView.frame.height + contentPadding + labelView.frame.height
 
         super.init(frame: frame)
 
