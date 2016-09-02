@@ -305,7 +305,8 @@ extension TaskListViewController {
 
 extension TaskListViewController: NSGestureRecognizerDelegate {
 
-    func gestureRecognizer(gestureRecognizer: NSGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+    func gestureRecognizer(gestureRecognizer: NSGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
         return true
     }
 
@@ -314,7 +315,8 @@ extension TaskListViewController: NSGestureRecognizerDelegate {
         case is NSPressGestureRecognizer:
             let targetRow = tableView.rowAtPoint(gestureRecognizer.locationInView(tableView))
 
-            guard targetRow >= 0, let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? TaskCellView else {
+            guard targetRow >= 0,
+                let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? TaskCellView else {
                 return false
             }
 
@@ -551,7 +553,8 @@ private final class PrototypeTaskCellView: TaskCellView {
         }
 
         if widthConstraint == nil {
-            widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: width)
+            widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil,
+                                                 attribute: .NotAnAttribute, multiplier: 1, constant: width)
             addConstraint(widthConstraint!)
         }
 
