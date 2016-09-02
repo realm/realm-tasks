@@ -23,17 +23,12 @@ import RealmSwift
 
 class RealmSharing {
 
-    static func URLForGeneratedAccessFile(taskList: TaskList) -> NSURL {
+    static func URLForGeneratedAccessFile(taskList: TaskList, token: String) -> NSURL {
 
         //Convert list to JSON
         let payload = NSMutableDictionary()
         payload["name"] = taskList.text
-
-        let list = NSMutableArray()
-        for taskItem in taskList.items {
-            list.addObject(taskItem.text)
-        }
-        payload["items"] = list
+        payload["token"] = token
 
         let data = try! NSJSONSerialization.dataWithJSONObject(payload, options: [])
 
@@ -46,7 +41,7 @@ class RealmSharing {
         return fileURL
     }
 
-    static func taskListForAccessFile(URL: NSURL) -> TaskList? {
+    static func taskListForAccessFile(URL: NSURL) -> (name: String?, token: String?)? {
         if NSFileManager.defaultManager().fileExistsAtPath(URL.path!) == false {
             return nil
         }
@@ -54,16 +49,6 @@ class RealmSharing {
         let data = NSData(contentsOfURL: URL)
         let jsonDictionary = try! NSJSONSerialization.JSONObjectWithData(data!, options: [])
 
-        let taskList = TaskList()
-        taskList.text = (jsonDictionary["name"] as! String)
-
-        let items = (jsonDictionary["items"] as! [String])
-        for taskItem in items {
-            let task = Task()
-            task.text = taskItem
-            taskList.items.append(task)
-        }
-
-        return taskList
+        return (name: String(jsonDictionary["name"]), token: String(jsonDictionary["token"]))
     }
 }

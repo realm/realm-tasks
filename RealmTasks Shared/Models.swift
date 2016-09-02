@@ -174,7 +174,7 @@ final class ShareRequest: Object {
     //var uri: String { set { /* … */ } }
 
     override static func primaryKey() -> String {
-        return "id"
+        return "token"
     }
 }
 

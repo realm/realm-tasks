@@ -751,10 +751,25 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: General UI Callbacks
     private func shareButtonTapped() {
-        let accessFileURL = RealmSharing.URLForGeneratedAccessFile(self.parent as! TaskList)
+        let taskList = self.parent as! TaskList
+        let id = taskList.realm?.configuration.syncConfiguration?.realmURL.lastPathComponent
+        let taskListReference = try! Realm().objectForPrimaryKey(TaskListReference.self, key: id)
 
-        // Pass the token to the activity view controller
-        let activityViewController = UIActivityViewController(activityItems: [accessFileURL], applicationActivities: nil)
+        let shareOffer = ShareOffer()
+        shareOffer.taskListReference = taskListReference
+
+        try! Realm().write({
+            try! Realm().add(shareOffer)
+        })
+
+        let shareFileURL = RealmSharing.URLForGeneratedAccessFile(taskList, token: shareOffer.token)
+
+//       // Pass the token to the activity view controller
+        let containerViewController = self.parentViewController as! ContainerViewController
+
+        let activityViewController = UIActivityViewController(activityItems: [shareFileURL], applicationActivities: nil)
+        activityViewController.modalPresentationStyle = .Popover
+        activityViewController.popoverPresentationController?.sourceView = containerViewController.titleLabel
         presentViewController(activityViewController, animated: true, completion: nil)
     }
 

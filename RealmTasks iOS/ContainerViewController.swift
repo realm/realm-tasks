@@ -24,7 +24,7 @@ import UIKit
 
 class ContainerViewController: UIViewController {
     private var titleBar = UIToolbar()
-    private var titleLabel = UILabel()
+    var titleLabel = UILabel()
     private var titleTopConstraint: NSLayoutConstraint?
     override var title: String? {
         didSet {
