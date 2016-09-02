@@ -62,7 +62,7 @@ class RealmTasksTests: XCTestCase {
         if realm.inWriteTransaction {
             realm.cancelWrite()
         }
-        
+
         if let textView = vc.view.currentFirstResponder as? UITextView {
             textView.delegate = nil
             endEditing()
