@@ -21,6 +21,7 @@
 import Cartography
 import RealmSwift
 import UIKit
+import TOActionSheet
 
 extension UIView {
     private func removeAllConstraints() {
@@ -111,7 +112,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         self.colors = colors
         if Item.self == Task.self {
             createTopViewController = {
-                ViewController<TaskList, TaskListList>(
+                ViewController<TaskListReference, TaskListList>(
                     parent: try! Realm().objects(TaskListList.self).first!,
                     colors: UIColor.listColors()
                 )
@@ -120,15 +121,16 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         } else {
             createTopViewController = nil
             createBottomViewController = {
-                ViewController<Task, TaskList>(
-                    parent: try! Realm().objects(TaskList.self).first!,
+                let firstList = try! Realm().objects(TaskListReference.self).first!.list
+                return ViewController<Task, TaskList>(
+                    parent: firstList,
                     colors: UIColor.taskColors()
                 )
             }
         }
         super.init(nibName: nil, bundle: nil)
-        if let parent = parent as? CellPresentable {
-            (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
+        if let parent = parent as? TaskList {
+            parent.addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
             title = parent.text
         }
     }
@@ -145,6 +147,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         setupUI()
         setupNotifications()
         setupGestureRecognizers()
+    }
+
+    override func canBecomeFirstResponder() -> Bool {
+        return true
     }
 
     // MARK: UI
@@ -303,7 +309,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 return
             }
         } else {
-            let row = items.filter("completed = false").count
+            let row = parent.uncompletedCount
             try! items.realm?.write {
                 items.insert(Item(), atIndex: row)
             }
@@ -468,7 +474,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
-            parent: item as! TaskList,
+            parent: (item as! TaskListReference).list,
             colors: UIColor.taskColors()
         )
         startMovingToNextViewController(.Down)
@@ -664,7 +670,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
         } else {
             // move cell just above the first completed item
-            let completedCount = items.filter("completed = true").count
+            let completedCount = parent.completedCount
             destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
         }
         try! items.realm?.write {
@@ -741,6 +747,44 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 cell.alpha = editingCellAlpha
             }
         }
+    }
+
+    // MARK: General UI Callbacks
+    private func shareButtonTapped() {
+        let taskList = self.parent as! TaskList
+        let id = taskList.realm?.configuration.syncConfiguration?.realmURL.lastPathComponent
+        let taskListReference = try! Realm().objectForPrimaryKey(TaskListReference.self, key: id)
+
+        let shareOffer = ShareOffer()
+        shareOffer.taskListReference = taskListReference
+
+        try! Realm().write({
+            try! Realm().add(shareOffer)
+        })
+
+        let shareFileURL = RealmSharing.URLForGeneratedAccessFile(taskList, token: shareOffer.token)
+
+//       // Pass the token to the activity view controller
+        let containerViewController = self.parentViewController as! ContainerViewController
+
+        let activityViewController = UIActivityViewController(activityItems: [shareFileURL], applicationActivities: nil)
+        activityViewController.modalPresentationStyle = .Popover
+        activityViewController.popoverPresentationController?.sourceView = containerViewController.titleLabel
+        presentViewController(activityViewController, animated: true, completion: nil)
+    }
+
+    override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
+        if motion != .MotionShake {
+            return
+        }
+
+        let actionSheet = TOActionSheet(style: .Dark)
+        actionSheet.title = title
+        actionSheet.addButtonWithTitle("Share List", tappedBlock: {
+            self.shareButtonTapped()
+        })
+
+        actionSheet.showFromView(view, inView: view.superview)
     }
 
     // MARK: Colors

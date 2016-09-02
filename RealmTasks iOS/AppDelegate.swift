@@ -34,6 +34,21 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.makeKeyAndVisible()
             logIn(animated: false)
         }
+
+        if let newTaskList = openAccessURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL) {
+            let containerController = window?.rootViewController as! ContainerViewController
+            containerController.transitionToList(newTaskList, animated: false)
+        }
+
+        return true
+    }
+
+    func application(app: UIApplication, openURL url: NSURL, options: [String : AnyObject]) -> Bool {
+        if let newTaskList = openAccessURL(url) {
+            let containerController = window?.rootViewController as! ContainerViewController
+            containerController.transitionToList(newTaskList, animated: true)
+        }
+        
         return true
     }
 
@@ -65,5 +80,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             self.logIn()
         })
         self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+    }
+
+    func openAccessURL(URL: NSURL?) -> TaskList? {
+        guard let URL = URL else {
+            return nil
+        }
+
+        let taskList = (importAccessFile(URL) as! TaskList)
+        try! NSFileManager.defaultManager().removeItemAtURL(URL)
+
+        return taskList
     }
 }

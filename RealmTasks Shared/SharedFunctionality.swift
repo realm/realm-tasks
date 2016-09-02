@@ -32,14 +32,14 @@ private let userRealmConfiguration = Realm.Configuration(
 
 private func setDefaultRealmConfigurationWithUser(user: User) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
-        syncConfiguration: (user, Constants.syncServerURL!),
-        objectTypes: [TaskListList.self, TaskList.self, Task.self]
+        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("meta")),
+        objectTypes: [TaskListList.self, TaskListReference.self, ShareOffer.self, ShareRequest.self]
     )
     realm = try! Realm()
 
     if realm.isEmpty {
         try! realm.write {
-            let list = TaskList()
+            let list = TaskListReference()
             list.id = Constants.defaultListID
             list.text = Constants.defaultListName
             let listLists = TaskListList()
@@ -95,3 +95,8 @@ func authenticate(username username: String, password: String, register: Bool, c
         callback(error)
     }
 }
+
+func importAccessFile(URL: NSURL) -> Object? {
+    return nil
+}
+        
