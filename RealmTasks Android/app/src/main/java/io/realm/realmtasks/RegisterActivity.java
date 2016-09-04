@@ -18,86 +18,69 @@ package io.realm.realmtasks;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SignInActivity extends AppCompatActivity {
-
+public class RegisterActivity extends AppCompatActivity {
     private AutoCompleteTextView emailView;
     private EditText passwordView;
+    private EditText passwordConfirmationView;
     private View progressView;
-    private View loginFormView;
+    private View registerFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
+        setContentView(R.layout.activity_register);
         emailView = (AutoCompleteTextView) findViewById(R.id.username);
         passwordView = (EditText) findViewById(R.id.password);
-        passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        passwordConfirmationView = (EditText) findViewById(R.id.password_confirmation);
+        passwordConfirmationView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.log_in || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                if (id == R.id.register || id == EditorInfo.IME_NULL) {
+                    attemptRegister();
                     return true;
                 }
                 return false;
             }
         });
 
-        final Button mailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mailSignInButton.setOnClickListener(new OnClickListener() {
+
+        final Button mailRegisterButton = (Button) findViewById(R.id.email_register_button);
+        mailRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                attemptRegister();
             }
         });
 
-        loginFormView = findViewById(R.id.sign_in_form);
-        progressView = findViewById(R.id.sign_in_progress);
+        registerFormView = findViewById(R.id.register_form);
+        progressView = findViewById(R.id.register_progress);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        final MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.sign_in, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        final int itemId = item.getItemId();
-        if (itemId == R.id.register) {
-            startActivity(new Intent(this, RegisterActivity.class));
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void attemptLogin() {
+    private void attemptRegister() {
         emailView.setError(null);
         passwordView.setError(null);
+        passwordConfirmationView.setText(null);
 
         final String email = emailView.getText().toString();
         final String password = passwordView.getText().toString();
+        final String passwordConfirmation = passwordConfirmationView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password) && !TextUtils.equals(password, passwordConfirmation)) {
             passwordView.setError(getString(R.string.error_invalid_password));
             focusView = passwordView;
             cancel = true;
@@ -117,7 +100,7 @@ public class SignInActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             showProgress(true);
-//            startActivity(new Intent(this, ))
+            finish();
         }
     }
 
@@ -133,12 +116,12 @@ public class SignInActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            loginFormView.animate().setDuration(shortAnimTime).alpha(
+            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            registerFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -152,8 +135,7 @@ public class SignInActivity extends AppCompatActivity {
             });
         } else {
             progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 }
-

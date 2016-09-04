@@ -11,13 +11,21 @@
         <activity
             android:name=".SignInActivity"
             android:label="@string/activity_sign_in_label">
-        </activity>
-        <activity android:name=".DummyRecyclerViewActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/activity_register_label">
+        </activity>
+
+        <activity android:name=".DummyRecyclerViewActivity">
+
         </activity>
     </application>
 
