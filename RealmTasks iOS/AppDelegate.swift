@@ -34,6 +34,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.makeKeyAndVisible()
             logIn(animated: false)
         }
+
+        openShareURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL)
+        return true
+    }
+
+    func application(app: UIApplication, openURL url: NSURL, options: [String : AnyObject]) -> Bool {
+        openShareURL(url)
         return true
     }
 

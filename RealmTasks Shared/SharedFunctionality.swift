@@ -95,3 +95,16 @@ func authenticate(username username: String, password: String, register: Bool, c
         callback(error)
     }
 }
+
+func openShareURL(url: NSURL?) {
+    guard let token = url?.host else { return }
+    guard NSUUID(UUIDString: token) != nil else {
+        print("invalid share URL: \(url)")
+        return
+    }
+    // Accept share request
+    let realm = try! Realm()
+    try! realm.write {
+        realm.add(ShareRequest(token: token))
+    }
+}
