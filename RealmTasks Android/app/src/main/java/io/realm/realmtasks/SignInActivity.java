@@ -55,8 +55,8 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        final Button mailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -71,8 +71,8 @@ public class SignInActivity extends AppCompatActivity {
         emailView.setError(null);
         passwordView.setError(null);
 
-        String email = emailView.getText().toString();
-        String password = passwordView.getText().toString();
+        final String email = emailView.getText().toString();
+        final String password = passwordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -111,7 +111,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void showProgress(final boolean show) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             loginFormView.animate().setDuration(shortAnimTime).alpha(
