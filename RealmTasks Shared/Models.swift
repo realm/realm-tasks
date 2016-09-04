@@ -64,7 +64,7 @@ final class TaskListReference: Object, CellPresentable {
     var listRealmConfiguration: Realm.Configuration {
         let user = Realm.Configuration.defaultConfiguration.syncConfiguration!.user
         return Realm.Configuration(
-            syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("\(id)")),
+            syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("/~/list-\(id)")),
             objectTypes: [TaskList.self, Task.self]
         )
     }

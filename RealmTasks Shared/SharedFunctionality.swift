@@ -32,7 +32,7 @@ private let userRealmConfiguration = Realm.Configuration(
 
 private func setDefaultRealmConfigurationWithUser(user: User) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
-        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("lists")),
+        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("/~/meta")),
         objectTypes: [TaskListList.self, TaskListReference.self]
     )
     realm = try! Realm()
