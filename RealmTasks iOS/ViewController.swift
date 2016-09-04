@@ -190,8 +190,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
         } else if context == &titleKVOContext {
-            title = (parent as! CellPresentable).text
-            parentViewController?.title = title
+            if let parent = parent as? TaskList {
+                title = parent.text
+                parentViewController?.title = title
+            }
         } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
