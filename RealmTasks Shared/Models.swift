@@ -131,3 +131,27 @@ final class PersistedUser: Object {
         authenticationServer = user.authenticationServer!.absoluteString
     }
 }
+
+// MARK: Sharing
+
+final class ShareOffer: Object {
+    dynamic var expires = 0
+    dynamic var listName = ""
+    dynamic var listPath = ""
+    dynamic var token = NSUUID().UUIDString
+
+    var url: String { return "realmtasks://\(token)" }
+
+    override static func primaryKey() -> String {
+        return "token"
+    }
+}
+
+final class ShareRequest: Object {
+    dynamic var token = ""
+
+    convenience init(token: String) {
+        self.init()
+        self.token = token
+    }
+}
