@@ -754,6 +754,33 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
     }
 
+    // MARK: Shake To Share
+
+    override func canBecomeFirstResponder() -> Bool {
+        return true
+    }
+
+    override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
+        guard motion == .MotionShake, let taskList = parent as? TaskList else {
+            return
+        }
+        let id = taskList.realm?.configuration.syncConfiguration?.realmURL.lastPathComponent
+
+        let shareOffer = ShareOffer()
+        let realm = try! Realm()
+        shareOffer.listName = taskList.text
+        shareOffer.listPath = "/\(realm.configuration.syncConfiguration!.user.identity)/\(id!)"
+
+        try! realm.write {
+            realm.add(shareOffer)
+        }
+
+        // Pass the token to the activity view controller
+        let activityViewController = UIActivityViewController(activityItems: [shareOffer.url], applicationActivities: nil)
+        presentViewController(activityViewController, animated: true, completion: nil)
+        print("sharing URL: \(shareOffer.url)")
+    }
+
     // MARK: Colors
 
     private func colorForRow(row: Int) -> UIColor {
