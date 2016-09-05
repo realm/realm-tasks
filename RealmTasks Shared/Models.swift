@@ -25,25 +25,11 @@ import RealmSwift
 // https://github.com/realm/realm-sync/issues/694
 var syncedRealmsHolder = [Realm]()
 
-protocol ListPresentable {
-    associatedtype Item: Object, CellPresentable
-    var items: List<Item> { get }
-    var completedCount: Int { get }
-    var uncompletedCount: Int { get }
-}
-
-protocol CellPresentable {
-    var text: String { get set }
-    var completed: Bool { get set }
-    var isCompletable: Bool { get }
-}
-
 final class TaskListList: Object, ListPresentable {
     let items = List<TaskListReference>()
     dynamic var id = 0 // swiftlint:disable:this variable_name
 
     var completedCount: Int { return 0 }
-    var uncompletedCount: Int { return items.count }
 
     override static func primaryKey() -> String? {
         return "id"
@@ -111,7 +97,6 @@ final class TaskList: Object, ListPresentable {
         return !items.filter("completed == false").isEmpty
     }
     var completedCount: Int { return items.filter("completed == true").count }
-    var uncompletedCount: Int { return items.filter("completed == false").count }
 
     override static func primaryKey() -> String? {
         return "id"
