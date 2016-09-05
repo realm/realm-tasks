@@ -395,11 +395,9 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        if !temporarilyIgnoreSaveChanges {
-            if !(item as Object).invalidated {
-                try! item.realm!.write {
-                    item.text = textView.text
-                }
+        if !temporarilyIgnoreSaveChanges && !(item as Object).invalidated {
+            try! item.realm!.write {
+                item.text = textView.text.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
             }
         }
         textView.userInteractionEnabled = false
