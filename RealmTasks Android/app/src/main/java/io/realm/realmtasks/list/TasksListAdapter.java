@@ -18,6 +18,7 @@ package io.realm.realmtasks.list;
 
 import android.support.v7.widget.RecyclerView;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.realm.Realm;
@@ -49,6 +50,27 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
         });
         realm.close();
         super.onItemAdd();
+    }
+
+    @Override
+    public boolean onItemMove(final int fromPosition, final int toPosition) {
+        final Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                if (fromPosition < toPosition) {
+                    for (int i = fromPosition; i < toPosition; i++) {
+                        Collections.swap(items, i, i + 1);
+                    }
+                } else {
+                    for (int i = fromPosition; i > toPosition; i--) {
+                        Collections.swap(items, i, i - 1);
+                    }
+                }
+            }
+        });
+        realm.close();
+        return super.onItemMove(fromPosition, toPosition);
     }
 
     @Override
