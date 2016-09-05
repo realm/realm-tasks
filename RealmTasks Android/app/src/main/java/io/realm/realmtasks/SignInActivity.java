@@ -117,7 +117,8 @@ public class SignInActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            startActivity(new Intent(this, DummyRecyclerViewActivity.class));
+            startActivity(new Intent(this, RealmTaskListActivity.class));
+            finish();
         }
     }
 

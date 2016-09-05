@@ -63,7 +63,6 @@ public class TasksCommonAdapter<T> extends RecyclerView.Adapter implements Tasks
 
     @Override
     public void onItemDismiss(int position) {
-        items.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -84,7 +83,6 @@ public class TasksCommonAdapter<T> extends RecyclerView.Adapter implements Tasks
 
     @Override
     public void onCancelAdding() {
-        items.remove(0);
         notifyItemRemoved(0);
     }
 

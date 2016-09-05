@@ -40,4 +40,10 @@ public class DummyTasksAdapter extends TasksCommonAdapter<String> {
         items.add(0, "PULL");
         super.onItemAdd();
     }
+
+    @Override
+    public void onCancelAdding() {
+        items.remove(0);
+        super.onCancelAdding();
+    }
 }

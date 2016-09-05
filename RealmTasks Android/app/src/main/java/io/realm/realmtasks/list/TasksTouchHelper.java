@@ -67,6 +67,8 @@ public class TasksTouchHelper {
     private List<ViewHolder> swapTargets;
     private List<Integer> distances;
     private TasksOnItemTouchListener.TasksChildDrawingOrderCallback childDrawingOrderCallback;
+    private TasksOnItemTouchListener onItemTouchListener;
+    private TasksItemDecoration itemDecoration;
 
     @IntDef({ACTION_STATE_IDLE, ACTION_STATE_SWIPE, ACTION_STATE_DRAG, ACTION_STATE_PULL})
     @Retention(RetentionPolicy.SOURCE)
@@ -95,9 +97,20 @@ public class TasksTouchHelper {
     }
 
     public void attachToRecyclerView(RecyclerView recyclerView) {
+        if (this.recyclerView == recyclerView) {
+            return;
+        }
+        if (this.recyclerView != null) {
+            destroyCallbacks();
+        }
         this.recyclerView = recyclerView;
-        recyclerView.addOnItemTouchListener(new TasksOnItemTouchListener(recyclerView.getContext()));
-        recyclerView.addItemDecoration(new TasksItemDecoration());
+        if (recyclerView == null) {
+            return;
+        }
+        onItemTouchListener = new TasksOnItemTouchListener(recyclerView.getContext());
+        itemDecoration = new TasksItemDecoration();
+        recyclerView.addOnItemTouchListener(onItemTouchListener);
+        recyclerView.addItemDecoration(itemDecoration);
         final Context context = this.recyclerView.getContext();
         final ViewConfiguration viewConfiguration = ViewConfiguration.get(context);
         scaledTouchSlop = viewConfiguration.getScaledTouchSlop();
@@ -106,6 +119,13 @@ public class TasksTouchHelper {
         systemService.getDefaultDisplay().getMetrics(metrics);
         logicalDensity = metrics.density;
         overdrawChildPosition = -1;
+    }
+
+    private void destroyCallbacks() {
+        recyclerView.removeOnItemTouchListener(onItemTouchListener);
+        recyclerView.removeItemDecoration(itemDecoration);
+        onItemTouchListener = null;
+        itemDecoration = null;
     }
 
     public interface Callback {
