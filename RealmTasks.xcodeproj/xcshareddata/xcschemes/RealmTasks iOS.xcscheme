@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-               BuildableName = "Realm Tasks.app"
+               BuildableName = "RealmTasks.app"
                BlueprintName = "RealmTasks iOS"
                ReferencedContainer = "container:RealmTasks.xcodeproj">
             </BuildableReference>
@@ -53,7 +53,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "Realm Tasks.app"
+            BuildableName = "RealmTasks.app"
             BlueprintName = "RealmTasks iOS"
             ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
@@ -76,7 +76,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "Realm Tasks.app"
+            BuildableName = "RealmTasks.app"
             BlueprintName = "RealmTasks iOS"
             ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
@@ -102,7 +102,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E84CF2B01CBC408000082C1A"
-            BuildableName = "Realm Tasks.app"
+            BuildableName = "RealmTasks.app"
             BlueprintName = "RealmTasks iOS"
             ReferencedContainer = "container:RealmTasks.xcodeproj">
          </BuildableReference>
