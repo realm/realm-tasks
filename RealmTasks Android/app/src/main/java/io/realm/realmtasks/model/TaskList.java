@@ -64,6 +64,7 @@ public class TaskList extends RealmObject implements Competable {
 
     @Override
     public boolean isCompetable() {
-        return !items.where().equalTo("items.completed", false).findAll().isEmpty();
+        return true;
+//        return getItems().where().equalTo("items.completed", false).findAll().isEmpty();
     }
 }

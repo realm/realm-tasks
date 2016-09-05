@@ -434,7 +434,7 @@ public class TasksTouchHelper {
                     final float itemViewTranslationX = TasksTouchHelper.this.selected.itemView.getTranslationX();
                     final float rowTranslationX = ((TasksViewHolder) TasksTouchHelper.this.selected).getRow().getTranslationX();
                     final float previousTranslationX = itemViewTranslationX + rowTranslationX;
-                    ((TasksViewHolder) (TasksTouchHelper.this.selected)).resetPositionsAndAlpha();
+                    ((TasksViewHolder) (TasksTouchHelper.this.selected)).reset();
                     if (Math.abs(previousTranslationX) > maxNiche) {
                         if (previousTranslationX < 0) {
                             callback.onDismiss(TasksTouchHelper.this.selected);

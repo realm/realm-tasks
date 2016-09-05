@@ -18,10 +18,10 @@ package io.realm.realmtasks.list;
 
 import android.support.v7.widget.RecyclerView;
 
-import java.util.Collections;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.realmtasks.model.TaskList;
 
 public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
@@ -34,7 +34,9 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         final TasksViewHolder tasksViewHolder = (TasksViewHolder) holder;
-        tasksViewHolder.getText().setText(items.get(position).getText());
+        final TaskList taskList = items.get(position);
+        tasksViewHolder.getText().setText(taskList.getText());
+        tasksViewHolder.setStrike(taskList.isCompleted());
     }
 
     @Override
@@ -58,19 +60,31 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
-                if (fromPosition < toPosition) {
-                    for (int i = fromPosition; i < toPosition; i++) {
-                        Collections.swap(items, i, i + 1);
-                    }
-                } else {
-                    for (int i = fromPosition; i > toPosition; i--) {
-                        Collections.swap(items, i, i - 1);
-                    }
-                }
+                moveItems(fromPosition, toPosition);
             }
         });
         realm.close();
         return super.onItemMove(fromPosition, toPosition);
+    }
+
+    @Override
+    public void onItemArchive(final int position) {
+        final TaskList taskList = items.get(position);
+        final Realm realm = Realm.getDefaultInstance();
+        final int count = (int) ((RealmList<TaskList>) items).where().equalTo("completed", false).count();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                if (!taskList.isCompleted() && taskList.isCompetable()) {
+                    taskList.setCompleted(true);
+                    moveItems(position, count - 1);
+                } else {
+                    taskList.setCompleted(false);
+                    moveItems(position, count);
+                }
+            }
+        });
+        super.onItemArchive(position);
     }
 
     @Override

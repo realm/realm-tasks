@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.realm.realmtasks.R;
@@ -41,8 +42,20 @@ public class TasksCommonAdapter<T> extends RecyclerView.Adapter implements Tasks
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final TasksViewHolder tasksViewHolder = (TasksViewHolder) holder;
-        tasksViewHolder.resetPositionsAndAlpha();
+        tasksViewHolder.reset();
         tasksViewHolder.resetBackgroundColor();
+    }
+
+    protected void moveItems(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(items, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(items, i, i - 1);
+            }
+        }
     }
 
     @Override
@@ -57,7 +70,7 @@ public class TasksCommonAdapter<T> extends RecyclerView.Adapter implements Tasks
 
     @Override
     public void onItemArchive(int position) {
-        notifyItemChanged(position);
+        notifyDataSetChanged();
     }
 
     @Override

@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 import io.realm.Realm;
 import io.realm.realmtasks.list.TasksListAdapter;
@@ -57,7 +56,6 @@ public class RealmTaskListActivity extends AppCompatActivity {
             @Override
             public void onArchive(RecyclerView.ViewHolder viewHolder) {
                 adapter.onItemArchive(viewHolder.getAdapterPosition());
-                Toast.makeText(RealmTaskListActivity.this, "Archived!", Toast.LENGTH_SHORT).show();
             }
 
             @Override

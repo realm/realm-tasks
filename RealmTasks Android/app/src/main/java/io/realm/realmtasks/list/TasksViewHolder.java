@@ -16,6 +16,7 @@
 
 package io.realm.realmtasks.list;
 
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -45,13 +46,23 @@ public class TasksViewHolder extends RecyclerView.ViewHolder {
         return alpha | (color & colorMask);
     }
 
-    public void resetPositionsAndAlpha() {
+    public void setStrike(boolean set) {
+        int paintFlags = text.getPaintFlags();
+        if (set) {
+            text.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+        } else {
+            text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+    }
+
+    public void reset() {
         itemView.setTranslationX(0);
         itemView.setTranslationY(0);
         itemView.setRotationX(0);
         itemView.setAlpha(1f);
         row.setTranslationX(0);
         setIconBarAlpha(1f);
+        setStrike(false);
     }
 
     public void resetBackgroundColor() {
