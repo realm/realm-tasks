@@ -5,7 +5,7 @@ abstract_target 'RealmTasks' do
     use_frameworks!
     
     pod 'RealmSwift', '1.0.2-10-sync-1.0.0-beta-29.0'
-    pod 'Cartography'
+    pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
