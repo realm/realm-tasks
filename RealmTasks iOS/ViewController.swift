@@ -18,6 +18,9 @@
  *
  **************************************************************************/
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import Cartography
 import RealmSwift
 import UIKit
@@ -44,7 +47,10 @@ private enum NavDirection {
 
 // MARK: View Controller
 
-final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+// FIXME: This class should be split up.
+// swiftlint:disable type_body_length
+final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
+    UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     // MARK: Properties
 
@@ -332,7 +338,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             var center = cell.center
             snapshot = cell.snapshotViewAfterScreenUpdates(false)
             snapshot.layer.shadowColor = UIColor.blackColor().CGColor
-            snapshot.layer.shadowOffset = CGSizeMake(-5, 0)
+            snapshot.layer.shadowOffset = CGSize(width: -5, height: 0)
             snapshot.layer.shadowRadius = 5
             snapshot.center = center
             cell.hidden = true
@@ -398,7 +404,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             self.startIndexPath = nil
             self.destinationIndexPath = nil
         default:
-            break;
+            break
         }
     }
 
@@ -520,11 +526,13 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: UIScrollViewDelegate methods
 
-    func scrollViewDidScroll(scrollView: UIScrollView)  {
-        func removeVC(vc: UIViewController?) {
+    // FIXME: This could easily be refactored to avoid such a high CC.
+    // swiftlint:disable:next cyclomatic_complexity
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        func removeVC(viewController: UIViewController?) {
             if scrollView.dragging {
-                vc?.view.removeFromSuperview()
-                vc?.removeFromParentViewController()
+                viewController?.view.removeFromSuperview()
+                viewController?.removeFromParentViewController()
             }
         }
 
@@ -614,7 +622,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 }
                 tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
                 skipNextNotification()
-                
+
                 vibrate()
             }
             return

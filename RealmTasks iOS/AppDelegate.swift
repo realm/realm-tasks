@@ -60,7 +60,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func presentError(error: NSError) {
-        let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
+        let alertController = UIAlertController(title: error.localizedDescription,
+                                              message: error.localizedFailureReason ?? "",
+                                       preferredStyle: .Alert)
         alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
             self.logIn()
         })

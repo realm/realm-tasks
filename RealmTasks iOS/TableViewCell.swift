@@ -18,6 +18,9 @@
  *
  **************************************************************************/
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import AudioToolbox
 import Cartography
 import RealmSwift
@@ -43,6 +46,8 @@ private let iconWidth: CGFloat = 60
 
 // MARK: Table View Cell
 
+// FIXME: This class should be split up.
+// swiftlint:disable type_body_length
 final class TableViewCell<Item: Object where Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
 
     // MARK: Properties
@@ -222,6 +227,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         addGestureRecognizer(recognizer)
     }
 
+    // FIXME: This could easily be refactored to avoid such a high CC.
+    // swiftlint:disable:next cyclomatic_complexity
     func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .Began:
