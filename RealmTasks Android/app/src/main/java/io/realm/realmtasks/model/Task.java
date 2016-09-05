@@ -22,14 +22,6 @@ public class Task extends RealmObject implements Competable {
     private String text;
     private boolean completed;
 
-    public Task() {
-        this("");
-    }
-
-    public Task(String text) {
-        this.text = text;
-    }
-
     public String getText() {
         return text;
     }

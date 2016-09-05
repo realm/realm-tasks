@@ -21,6 +21,9 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class TaskList extends RealmObject implements Competable {
+    public static String DEFAULT_ID = "80EB1620-165B-4600-A1B1-D97032FDD9A0";
+    public static String DEFAULT_LIST_NAME = "defaultListName";
+
     private String text;
     private boolean completed;
     @PrimaryKey

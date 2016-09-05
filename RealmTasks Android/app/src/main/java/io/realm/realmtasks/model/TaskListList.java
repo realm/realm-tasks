@@ -23,7 +23,7 @@ import io.realm.annotations.PrimaryKey;
 public class TaskListList extends RealmObject {
     private RealmList<TaskList> items;
     @PrimaryKey
-    private String id;
+    private Integer id;
 
     public RealmList<TaskList> getItems() {
         return items;
@@ -33,11 +33,11 @@ public class TaskListList extends RealmObject {
         this.items = items;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 }
