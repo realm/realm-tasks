@@ -18,6 +18,9 @@
  *
  **************************************************************************/
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import Cocoa
 import RealmSwift
 
@@ -230,7 +233,7 @@ extension TaskListViewController {
     }
 
     private func endReordering() {
-        NSView.animateWithDuration(0.2, animations: { 
+        NSView.animateWithDuration(0.2, animations: {
             self.currentlyMovingRowSnapshotView?.frame = self.view.convertRect(self.currentlyMovingRowView!.frame, fromView: self.tableView)
         }) {
             self.currentlyMovingRowView?.alphaValue = 1
@@ -302,7 +305,8 @@ extension TaskListViewController {
 
 extension TaskListViewController: NSGestureRecognizerDelegate {
 
-    func gestureRecognizer(gestureRecognizer: NSGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+    func gestureRecognizer(gestureRecognizer: NSGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
         return true
     }
 
@@ -311,7 +315,8 @@ extension TaskListViewController: NSGestureRecognizerDelegate {
         case is NSPressGestureRecognizer:
             let targetRow = tableView.rowAtPoint(gestureRecognizer.locationInView(tableView))
 
-            guard targetRow >= 0, let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? TaskCellView else {
+            guard targetRow >= 0,
+                let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? TaskCellView else {
                 return false
             }
 
@@ -417,7 +422,7 @@ extension TaskListViewController: TaskCellViewDelegate {
             try! item.realm?.write {
                 item.completed = complete
 
-                if (index != destinationIndex) {
+                if index != destinationIndex {
                     self.items.removeAtIndex(index)
                     self.items.insert(item, atIndex: destinationIndex)
                 }
@@ -548,7 +553,8 @@ private final class PrototypeTaskCellView: TaskCellView {
         }
 
         if widthConstraint == nil {
-            widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: width)
+            widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil,
+                                                 attribute: .NotAnAttribute, multiplier: 1, constant: width)
             addConstraint(widthConstraint!)
         }
 
