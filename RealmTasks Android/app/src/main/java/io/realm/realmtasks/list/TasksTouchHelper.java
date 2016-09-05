@@ -173,15 +173,18 @@ public class TasksTouchHelper {
                     } else {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
-                        if (dy > height * 3 && pullState == PULL_STATE_CANCEL_ADD) {
+                        if (dy > height * 4 && pullState == PULL_STATE_CANCEL_ADD) {
                             callback.onCancelAdding();
                             callback.onExit();
                         } else if (dy > height) {
                             final float reverseHeight = height * 2 - dy;
-                            final float reverseRatio = reverseHeight / height;
+                            float reverseRatio = reverseHeight * 2 / height;
+                            if (reverseRatio > 1) {
+                                reverseRatio = 1;
+                            }
                             selected.itemView.setAlpha(reverseRatio);
                         }
-                        if (pullState == PULL_STATE_ADD && dy > height * 1.5) {
+                        if (pullState == PULL_STATE_ADD && dy > height * 2) {
                             pullState = PULL_STATE_CANCEL_ADD;
                         } else if (pullState == PULL_STATE_CANCEL_ADD && dy < height * 1.5) {
                             pullState = PULL_STATE_ADD;
@@ -194,7 +197,7 @@ public class TasksTouchHelper {
                 ViewCompat.setPaddingRelative(recyclerView, 0, (int) dy / 2, 0, 0);
                 recyclerView.scrollToPosition(0);
                 final View firstChild = recyclerView.getChildAt(0);
-                if (firstChild != previousFirstChild) {
+                if (firstChild != previousFirstChild && firstChild != null) {
                     final ViewHolder childViewHolder = recyclerView.getChildViewHolder(firstChild);
                     recyclerView.scrollToPosition(0);
                     selected = childViewHolder;
@@ -372,7 +375,7 @@ public class TasksTouchHelper {
             }
             final View firstChild = recyclerView.getChildAt(0);
             final int firstVisiblePosition = recyclerView.getChildAdapterPosition(firstChild);
-            if (firstVisiblePosition == 0 && firstChild.getTop() == 0) {
+            if (firstChild == null || (firstVisiblePosition == 0 && firstChild.getTop() == 0)) {
                 final int pointerIndex = motionEvent.findPointerIndex(pointerId);
                 final int action = MotionEventCompat.getActionMasked(motionEvent);
                 if (action == MotionEvent.ACTION_MOVE) {
