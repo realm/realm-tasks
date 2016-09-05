@@ -30,7 +30,7 @@ public class DummyRecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dummy_recycler_view);
+        setContentView(R.layout.activity_common_list);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final DummyTasksAdapter adapter = new DummyTasksAdapter();

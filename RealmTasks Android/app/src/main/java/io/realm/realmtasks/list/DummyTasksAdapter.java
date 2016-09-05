@@ -17,80 +17,27 @@
 package io.realm.realmtasks.list;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
-import io.realm.realmtasks.R;
-
-public class DummyTasksAdapter extends RecyclerView.Adapter implements TasksTouchHelperAdapter {
-    private static final String TAG = "DummyTasksAdapter";
-    private ArrayList<String> items;
-
+public class DummyTasksAdapter extends TasksCommonAdapter<String> {
     public DummyTasksAdapter() {
-        items = new ArrayList<String>();
+        super(new ArrayList<String>());
         for (int i = 0; i < 50; i++) {
             items.add("Realm tasks: " + i + "'s item.");
         }
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rowItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
-        return new TasksViewHolder(rowItem);
-    }
-
-    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
         final TasksViewHolder tasksViewHolder = (TasksViewHolder) holder;
-        tasksViewHolder.resetPositionsAndAlpha();
-        tasksViewHolder.resetBackgroundColor();
         tasksViewHolder.getText().setText(items.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return items.size();
     }
 
     @Override
     public void onItemAdd() {
         items.add(0, "PULL");
-        notifyItemInserted(0);
-    }
-
-    @Override
-    public void onItemArchive(int position) {
-        notifyItemChanged(position);
-    }
-
-    @Override
-    public void onItemDismiss(int position) {
-        items.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(items, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(items, i, i - 1);
-            }
-        }
-        notifyItemMoved(fromPosition, toPosition);
-        return true;
-    }
-
-    @Override
-    public void onCancelAdding() {
-        items.remove(0);
-        notifyItemRemoved(0);
+        super.onItemAdd();
     }
 }
