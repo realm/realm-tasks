@@ -32,14 +32,14 @@ private let userRealmConfiguration = Realm.Configuration(
 
 private func setDefaultRealmConfigurationWithUser(user: User) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
-        syncConfiguration: (user, Constants.syncServerURL!),
-        objectTypes: [TaskListList.self, TaskList.self, Task.self]
+        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("lists")),
+        objectTypes: [TaskListList.self, TaskListReference.self]
     )
     realm = try! Realm()
 
     if realm.isEmpty {
         try! realm.write {
-            let list = TaskList()
+            let list = TaskListReference()
             list.id = Constants.defaultListID
             list.text = Constants.defaultListName
             let listLists = TaskListList()

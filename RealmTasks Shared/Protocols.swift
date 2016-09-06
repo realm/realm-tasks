@@ -18,25 +18,21 @@
  *
  **************************************************************************/
 
-import Foundation
+import RealmSwift
 
-struct Constants {
-    #if DEBUG
-    #if os(OSX)
-    static let syncHost = "127.0.0.1"
-    #else
-    static let syncHost = localIPAddress
-    #endif
-    #else
-    static let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
-    #endif
+protocol ListPresentable {
+    associatedtype Item: Object, CellPresentable
+    var items: List<Item> { get }
+    var completedCount: Int { get }
+    var uncompletedCount: Int { get }
+}
 
-    static let syncRealmPath = "realmtasks"
-    static let defaultListName = "My Tasks"
-    static let defaultListID = "80EB1620-165B-4600-A1B1-D97032FDD9A0"
+protocol CellPresentable {
+    var text: String { get set }
+    var completed: Bool { get set }
+    var isCompletable: Bool { get }
+}
 
-    static let syncServerURL = NSURL(string: "realm://\(syncHost)/~/")
-    static let syncAuthURL = NSURL(string: "http://\(syncHost):8080")!
-
-    static let appID = NSBundle.mainBundle().bundleIdentifier!
+extension ListPresentable {
+    var uncompletedCount: Int { return items.count - completedCount }
 }
