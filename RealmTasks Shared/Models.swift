@@ -45,6 +45,8 @@ final class TaskListReference: Object, CellPresentable {
     // https://github.com/realm/realm-cocoa-private/issues/230
     dynamic var textMirror = ""
 
+    dynamic var fullServerPath: String?
+
     override static func primaryKey() -> String? {
         return "id"
     }
@@ -63,10 +65,8 @@ final class TaskListReference: Object, CellPresentable {
     // List Realm Properties
     var listRealmConfiguration: Realm.Configuration {
         let user = Realm.Configuration.defaultConfiguration.syncConfiguration!.user
-        return Realm.Configuration(
-            syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("\(id)")),
-            objectTypes: [TaskList.self, Task.self]
-        )
+        let url = Constants.syncServerURL!.URLByAppendingPathComponent(fullServerPath ?? "/~/list-\(id)")
+        return Realm.Configuration(syncConfiguration: (user, url), objectTypes: [TaskList.self, Task.self])
     }
     func listRealm() throws -> Realm {
         let realm = try Realm(configuration: listRealmConfiguration)
@@ -129,5 +129,29 @@ final class PersistedUser: Object {
         identity = user.identity
         refreshToken = user.refreshToken()
         authenticationServer = user.authenticationServer!.absoluteString
+    }
+}
+
+// MARK: Sharing
+
+final class ShareOffer: Object {
+    dynamic var expires = 0
+    dynamic var listName = ""
+    dynamic var listPath = ""
+    dynamic var token = NSUUID().UUIDString
+
+    var url: String { return "realmtasks://\(token)" }
+
+    override static func primaryKey() -> String {
+        return "token"
+    }
+}
+
+final class ShareRequest: Object {
+    dynamic var token = ""
+
+    convenience init(token: String) {
+        self.init()
+        self.token = token
     }
 }

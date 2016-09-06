@@ -190,8 +190,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
         } else if context == &titleKVOContext {
-            title = (parent as! CellPresentable).text
-            parentViewController?.title = title
+            if let parent = parent as? TaskList {
+                title = parent.text
+                parentViewController?.title = title
+            }
         } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
@@ -750,6 +752,33 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 cell.alpha = editingCellAlpha
             }
         }
+    }
+
+    // MARK: Shake To Share
+
+    override func canBecomeFirstResponder() -> Bool {
+        return true
+    }
+
+    override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
+        guard motion == .MotionShake, let taskList = parent as? TaskList else {
+            return
+        }
+        let id = taskList.realm?.configuration.syncConfiguration?.realmURL.lastPathComponent
+
+        let shareOffer = ShareOffer()
+        let realm = try! Realm()
+        shareOffer.listName = taskList.text
+        shareOffer.listPath = "/\(realm.configuration.syncConfiguration!.user.identity)/\(id!)"
+
+        try! realm.write {
+            realm.add(shareOffer)
+        }
+
+        // Pass the token to the activity view controller
+        let activityViewController = UIActivityViewController(activityItems: [shareOffer.url], applicationActivities: nil)
+        presentViewController(activityViewController, animated: true, completion: nil)
+        print("sharing URL: \(shareOffer.url)")
     }
 
     // MARK: Colors
