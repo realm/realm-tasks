@@ -67,20 +67,3 @@ final class Task: Object, CellPresentable {
         self.text = text
     }
 }
-
-final class PersistedUser: Object {
-    dynamic var identity = ""
-    dynamic var refreshToken = ""
-    dynamic var authenticationServer = ""
-
-    var user: User {
-        return User(identity: identity, refreshToken: refreshToken, authServerURL: NSURL(string: authenticationServer)!)
-    }
-
-    convenience init(user: User) {
-        self.init()
-        identity = user.identity
-        refreshToken = user.refreshToken()
-        authenticationServer = user.authenticationServer!.absoluteString
-    }
-}
