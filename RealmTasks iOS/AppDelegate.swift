@@ -35,7 +35,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             logIn(animated: false)
         }
 
-        openShareURL(launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL)
+        if let url = launchOptions?[UIApplicationLaunchOptionsURLKey] as? NSURL {
+            openShareURL(url)
+        }
         return true
     }
 

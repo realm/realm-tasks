@@ -96,9 +96,8 @@ func authenticate(username username: String, password: String, register: Bool, c
     }
 }
 
-func openShareURL(url: NSURL?) {
-    guard let token = url?.host else { return }
-    guard NSUUID(UUIDString: token) != nil else {
+func openShareURL(url: NSURL) {
+    guard let token = url.host where NSUUID(UUIDString: token) != nil else {
         print("invalid share URL: \(url)")
         return
     }
