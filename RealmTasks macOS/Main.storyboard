@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G1004" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
@@ -373,7 +373,7 @@
                     </connections>
                 </application>
                 <customObject id="VaM-de-JXt" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <customObject id="eLD-qy-Swb" customClass="AppDelegate" customModule="Realm_Tasks" customModuleProvider="target"/>
+                <customObject id="eLD-qy-Swb" customClass="AppDelegate" customModule="RealmTasks" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="75" y="0.0"/>
         </scene>
@@ -409,10 +409,10 @@
             </objects>
             <point key="canvasLocation" x="75" y="254"/>
         </scene>
-        <!--Task List View Controller-->
+        <!--List View Controller-->
         <scene sceneID="2sp-wB-1ci">
             <objects>
-                <viewController id="uaz-vB-EbV" customClass="TaskListViewController" customModule="Realm_Tasks" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="uaz-vB-EbV" customClass="ListViewController" customModule="RealmTasks" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="LWL-J7-uyt">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -484,7 +484,7 @@
         <!--Log In-->
         <scene sceneID="LlI-VW-aKs">
             <objects>
-                <viewController title="Log In" storyboardIdentifier="LogInViewController" showSeguePresentationStyle="single" id="Rd6-Qu-x6P" customClass="LogInViewController" customModule="Realm_Tasks" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Log In" storyboardIdentifier="LogInViewController" showSeguePresentationStyle="single" id="Rd6-Qu-x6P" customClass="LogInViewController" customModule="RealmTasks" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="7ed-T9-310">
                         <rect key="frame" x="0.0" y="0.0" width="440" height="197"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -611,7 +611,7 @@ DQ
         <!--Register-->
         <scene sceneID="ZUU-Jg-ddl">
             <objects>
-                <viewController title="Register" storyboardIdentifier="RegisterViewController" showSeguePresentationStyle="single" id="kGQ-bF-ae4" customClass="RegisterViewController" customModule="Realm_Tasks" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Register" storyboardIdentifier="RegisterViewController" showSeguePresentationStyle="single" id="kGQ-bF-ae4" customClass="RegisterViewController" customModule="RealmTasks" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="j4D-cr-uHK">
                         <rect key="frame" x="0.0" y="0.0" width="440" height="229"/>
                         <autoresizingMask key="autoresizingMask"/>

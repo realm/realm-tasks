@@ -27,7 +27,7 @@ import RealmSwift
 private let taskCellIdentifier = "TaskCell"
 private let taskCellPrototypeIdentifier = "TaskCellPrototype"
 
-class TaskListViewController: NSViewController {
+class ListViewController: NSViewController {
 
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var topConstraint: NSLayoutConstraint?
@@ -142,7 +142,7 @@ class TaskListViewController: NSViewController {
 
 // MARK: Actions
 
-extension TaskListViewController {
+extension ListViewController {
 
     @IBAction func newTask(sender: AnyObject?) {
         try! items.realm?.write {
@@ -172,7 +172,7 @@ extension TaskListViewController {
 
 // MARK: Reordering
 
-extension TaskListViewController {
+extension ListViewController {
 
     var reordering: Bool {
         return currentlyMovingRowView != nil
@@ -303,7 +303,7 @@ extension TaskListViewController {
 
 // MARK: NSGestureRecognizerDelegate
 
-extension TaskListViewController: NSGestureRecognizerDelegate {
+extension ListViewController: NSGestureRecognizerDelegate {
 
     func gestureRecognizer(gestureRecognizer: NSGestureRecognizer,
                            shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
@@ -332,7 +332,7 @@ extension TaskListViewController: NSGestureRecognizerDelegate {
 
 // MARK: NSTableViewDataSource
 
-extension TaskListViewController: NSTableViewDataSource {
+extension ListViewController: NSTableViewDataSource {
 
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return items.count
@@ -342,7 +342,7 @@ extension TaskListViewController: NSTableViewDataSource {
 
 // MARK: NSTableViewDelegate
 
-extension TaskListViewController: NSTableViewDelegate {
+extension ListViewController: NSTableViewDelegate {
 
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let cellView: TaskCellView
@@ -398,7 +398,7 @@ extension TaskListViewController: NSTableViewDelegate {
 
 // MARK: TaskCellViewDelegate
 
-extension TaskListViewController: TaskCellViewDelegate {
+extension ListViewController: TaskCellViewDelegate {
 
     func cellView(view: TaskCellView, didComplete complete: Bool) {
         guard let (item, index) = findItemForCellView(view) else {
