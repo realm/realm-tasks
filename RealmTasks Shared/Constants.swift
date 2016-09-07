@@ -22,15 +22,21 @@ import Foundation
 
 struct Constants {
     #if DEBUG
+    #if os(OSX)
+    static let syncHost = "127.0.0.1"
+    #else
     static let syncHost = localIPAddress
+    #endif
     #else
     static let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
     #endif
 
     static let syncRealmPath = "realmtasks"
+    static let defaultListName = "My Tasks"
+    static let defaultListID = "80EB1620-165B-4600-A1B1-D97032FDD9A0"
 
-    static let syncServerURL = NSURL(string: "realm://\(syncHost):7800/private/\(syncRealmPath)")!
-    static let syncAuthURL = NSURL(string: "http://\(syncHost):3000/auth")!
+    static let syncServerURL = NSURL(string: "realm://\(syncHost)/~/\(syncRealmPath)")
+    static let syncAuthURL = NSURL(string: "http://\(syncHost):8080")!
 
     static let appID = NSBundle.mainBundle().bundleIdentifier!
 }

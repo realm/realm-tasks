@@ -21,37 +21,49 @@
 import Foundation
 import RealmSwift
 
+protocol ListPresentable {
+    associatedtype Item: Object, CellPresentable
+    var items: List<Item> { get }
+}
+
 protocol CellPresentable {
-    var realm: Realm? { get }
-    var cellText: String { get set }
-    var isCompletable: Bool { get }
+    var text: String { get set }
     var completed: Bool { get set }
+    var isCompletable: Bool { get }
 }
 
-final class ToDoList: Object {
-    let items = List<ToDoItem>()
+final class TaskListList: Object, ListPresentable {
+    let items = List<TaskList>()
+    dynamic var id = 0 // swiftlint:disable:this variable_name
+
+    override static func primaryKey() -> String? {
+        return "id"
+    }
 }
 
-final class ToDoItem: Object, CellPresentable {
+final class TaskList: Object, CellPresentable, ListPresentable {
+    dynamic var text = ""
+    dynamic var completed = false
+    dynamic var id = NSUUID().UUIDString // swiftlint:disable:this variable_name
+    let items = List<Task>()
+
+    var isCompletable: Bool {
+        return !items.filter("completed == false").isEmpty
+    }
+
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+}
+
+final class Task: Object, CellPresentable {
     dynamic var text = ""
     dynamic var completed = false
 
-    var cellText: String {
-        get { return text }
-        set { text = newValue }
-    }
     var isCompletable: Bool { return true }
-
-    override class func ignoredProperties() -> [String] {
-        return ["cellText"]
-    }
 
     convenience init(text: String) {
         self.init()
         self.text = text
     }
-}
-
-final class User: Object {
-    dynamic var accessToken = ""
 }

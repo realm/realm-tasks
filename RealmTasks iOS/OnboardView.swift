@@ -23,11 +23,11 @@ import Cartography
 import UIKit
 
 class OnboardView: UIView {
-    let contentColor = UIColor(white: 0.13, alpha: 1)
-    let contentPadding: CGFloat = 15
+    private let contentColor = UIColor(white: 0.13, alpha: 1)
+    private let contentPadding: CGFloat = 15
 
-    let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.imageWithRenderingMode(.AlwaysTemplate))
-    let labelView = UILabel()
+    private let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.imageWithRenderingMode(.AlwaysTemplate))
+    private let labelView = UILabel()
 
     init() {
         labelView.text = "Pull Down to Start"
@@ -40,7 +40,7 @@ class OnboardView: UIView {
 
         var frame = CGRect.zero
         frame.size.width = labelView.frame.size.width
-        frame.size.height = CGRectGetHeight(imageView.frame) + contentPadding + CGRectGetHeight(labelView.frame)
+        frame.size.height = imageView.frame.height + contentPadding + labelView.frame.height
 
         super.init(frame: frame)
 
@@ -56,7 +56,7 @@ class OnboardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         constrain(labelView, imageView) { labelView, imageView in
             labelView.centerX == labelView.superview!.centerX
             labelView.bottom == labelView.superview!.bottom

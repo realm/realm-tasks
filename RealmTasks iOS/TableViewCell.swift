@@ -18,8 +18,12 @@
  *
  **************************************************************************/
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import AudioToolbox
 import Cartography
+import RealmSwift
 import UIKit
 
 // MARK: Shared Functions
@@ -42,19 +46,32 @@ private let iconWidth: CGFloat = 60
 
 // MARK: Table View Cell
 
-final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
+// FIXME: This class should be split up.
+// swiftlint:disable type_body_length
+final class TableViewCell<Item: Object where Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
 
     // MARK: Properties
 
     // Stored Properties
-    let textView = ToDoItemTextView()
+    let textView = CellTextView()
     var temporarilyIgnoreSaveChanges = false
     var item: Item! {
         didSet {
-            textView.text = item.cellText
+            textView.text = item.text
             setCompleted(item.completed)
+            if let item = item as? TaskList {
+                let count = item.items.filter("completed == false").count
+                countLabel.text = String(count)
+                if count == 0 {
+                    textView.alpha = 0.3
+                    countLabel.alpha = 0.3
+                } else {
+                    countLabel.alpha = 1
+                }
+            }
         }
     }
+    let navHintView = NavHintView()
 
     // Callbacks
     var itemCompleted: ((Item) -> ())? = nil
@@ -69,6 +86,7 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
 
     private var releaseAction: ReleaseAction?
     private let overlayView = UIView()
+    private let countLabel = UILabel()
 
     // Assets
     private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
@@ -96,6 +114,10 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
         setupOverlayView()
         setupTextView()
         setupBorders()
+        if Item.self == TaskList.self {
+            setupCountBadge()
+        }
+        setupNavHintView()
     }
 
     private func setupBackgroundView() {
@@ -137,7 +159,11 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
             textView.left == textView.superview!.left + 8
             textView.top == textView.superview!.top + 8
             textView.bottom == textView.superview!.bottom - 8
-            textView.right == textView.superview!.right - 8
+            if Item.self == TaskList.self {
+                textView.right == textView.superview!.right - 68
+            } else {
+                textView.right == textView.superview!.right - 8
+            }
         }
     }
 
@@ -165,6 +191,34 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
         }
     }
 
+    private func setupCountBadge() {
+        let badgeBackground = UIView()
+        badgeBackground.backgroundColor = UIColor(white: 1, alpha: 0.15)
+        contentView.addSubview(badgeBackground)
+        constrain(badgeBackground) { badgeBackground in
+            badgeBackground.top == badgeBackground.superview!.top
+            badgeBackground.bottom == badgeBackground.superview!.bottom
+            badgeBackground.right == badgeBackground.superview!.right
+            badgeBackground.width == 60
+        }
+
+        badgeBackground.addSubview(countLabel)
+        countLabel.backgroundColor = .clearColor()
+        countLabel.textColor = .whiteColor()
+        countLabel.font = .systemFontOfSize(18)
+        constrain(countLabel) { countLabel in
+            countLabel.center == countLabel.superview!.center
+        }
+    }
+
+    private func setupNavHintView() {
+        navHintView.alpha = 0
+        contentView.addSubview(navHintView)
+        constrain(navHintView) { navHintView in
+            navHintView.edges == navHintView.superview!.edges
+        }
+    }
+
     // MARK: Pan Gesture Recognizer
 
     private func setupPanGestureRecognizer() {
@@ -173,6 +227,8 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
         addGestureRecognizer(recognizer)
     }
 
+    // FIXME: This could easily be refactored to avoid such a high CC.
+    // swiftlint:disable:next cyclomatic_complexity
     func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .Began:
@@ -214,7 +270,7 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
                 deleteIconView.alpha = CGFloat(fractionOfThreshold)
             }
 
-            if !item.completed {
+            if !(item as Object).invalidated && !item.completed {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
                 overlayView.hidden = releaseAction != .Complete
                 if contentView.frame.origin.x > 0 {
@@ -245,7 +301,9 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
                     self.contentView.frame.origin.x = 0
                 }
                 completionBlock = {
-                    self.setCompleted(!self.item.completed, animated: true)
+                    if !(self.item as Object).invalidated {
+                        self.setCompleted(!self.item.completed, animated: true)
+                    }
                 }
             case .Delete?:
                 animationBlock = {
@@ -337,9 +395,9 @@ final class TableViewCell<Item: CellPresentable>: UITableViewCell, UITextViewDel
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        if !temporarilyIgnoreSaveChanges {
+        if !temporarilyIgnoreSaveChanges && !(item as Object).invalidated {
             try! item.realm!.write {
-                item.cellText = textView.text
+                item.text = textView.text.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
             }
         }
         textView.userInteractionEnabled = false

@@ -19,81 +19,53 @@
  **************************************************************************/
 
 import UIKit
-import Realm
-import RealmSwift
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
+    var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-
-        RLMSyncManager.sharedManager().configureWithAppID(Constants.appID)
-
-        Realm.Configuration.defaultConfiguration = syncRealmConfiguration
-        Realm.setGlobalSynchronizationLoggingLevel(.Verbose)
-
-        do {
-            let realm = try Realm()
-            if realm.isEmpty {
-                // Create a default list if none exist
-                try realm.write {
-                    realm.add(ToDoList())
-                }
-            }
-        } catch {
-            fatalError("Could not open or write to the realm: \(error)")
-        }
-
-        window?.rootViewController = ViewController()
-        window?.makeKeyAndVisible()
-
-        if let userRealm = try? Realm(configuration: userRealmConfiguration),
-            let token = userRealm.objects(User.self).first?.accessToken {
-            try! Realm().open(with: token)
+        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        if configureDefaultRealm() {
+            window?.rootViewController = ContainerViewController()
+            window?.makeKeyAndVisible()
         } else {
-            logIn()
+            window?.rootViewController = UIViewController()
+            window?.makeKeyAndVisible()
+            logIn(animated: false)
         }
-
         return true
     }
 
-    func logIn() {
-        let loginManager = RealmSyncLoginManager(authURL: Constants.syncAuthURL, appID: RLMSyncManager.sharedManager().appID ?? "", realmPath: Constants.syncRealmPath)
-
-        loginManager.logIn(fromViewController: window!.rootViewController!) { accessToken, error in
-            if let token = accessToken {
-                dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-                    let userRealm = try! Realm(configuration: userRealmConfiguration)
-                    try! userRealm.write {
-                        let user = User()
-                        user.accessToken = token
-                        userRealm.add(user)
-                    }
+    func logIn(animated animated: Bool = true) {
+        let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .mainBundle())
+        let logInViewController = loginStoryboard.instantiateInitialViewController() as! LogInViewController
+        logInViewController.completionHandler = { username, password, returnCode in
+            guard returnCode != .Cancel, let username = username, let password = password else {
+                // FIXME: handle cancellation properly or just restrict it
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.logIn()
                 }
-                try! Realm().open(with: token)
                 return
             }
-
-            guard let error = error else {
-                // This happens when the user chose "Cancel" while logging in, which isn't supported,
-                // so just present the login view controller again
-                self.logIn()
-                return
+            authenticate(username: username, password: password, register: returnCode == .Register) { error in
+                if let error = error {
+                    self.presentError(error)
+                } else {
+                    self.window?.rootViewController = ContainerViewController()
+                }
             }
-
-            // Present error to user
-
-            let alertController = UIAlertController(title: error.localizedDescription, message: error.localizedFailureReason ?? "", preferredStyle: .Alert)
-            let defaultAction = UIAlertAction(title: "OK", style: .Default) { _ in
-                self.logIn()
-            }
-
-            alertController.addAction(defaultAction)
-            alertController.preferredAction = defaultAction
-
-            self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
         }
+        window?.rootViewController?.presentViewController(logInViewController, animated: false, completion: nil)
+    }
+
+    func presentError(error: NSError) {
+        let alertController = UIAlertController(title: error.localizedDescription,
+                                              message: error.localizedFailureReason ?? "",
+                                       preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
+            self.logIn()
+        })
+        self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
     }
 }
