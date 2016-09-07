@@ -63,3 +63,5 @@ fastlane/screenshots
 fastlane/test_output
 
 LocalIPAddress.swift
+
+.DS_Store
