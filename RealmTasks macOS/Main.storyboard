@@ -394,8 +394,26 @@
                                         <action selector="newTask:" target="tRP-hs-BBi" id="I6C-2d-lm3"/>
                                     </connections>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="562656E7-21C7-4E03-8486-96B2A2B00472" label="Custom View" paletteLabel="Custom View" id="Il8-PQ-I6o">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="38" height="17"/>
+                                    <size key="maxSize" width="38" height="17"/>
+                                    <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="YAi-ph-3ty" customClass="TitleLabel" customModule="RealmTasks" customModuleProvider="target">
+                                        <rect key="frame" x="19" y="14" width="38" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" title="Title" usesSingleLineMode="YES" id="a7a-oA-zDl">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="6rT-T5-Ern"/>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
+                                <toolbarItem reference="6rT-T5-Ern"/>
+                                <toolbarItem reference="e0G-Eu-e1o"/>
+                                <toolbarItem reference="Il8-PQ-I6o"/>
                                 <toolbarItem reference="e0G-Eu-e1o"/>
                                 <toolbarItem reference="4CH-Dy-gYb"/>
                             </defaultToolbarItems>
