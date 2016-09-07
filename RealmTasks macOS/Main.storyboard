@@ -420,84 +420,25 @@
                         </toolbar>
                     </window>
                     <connections>
-                        <segue destination="uaz-vB-EbV" kind="relationship" relationship="window.shadowedContentViewController" id="t3d-Aw-rfb"/>
+                        <segue destination="sgL-6S-YI5" kind="relationship" relationship="window.shadowedContentViewController" id="oMM-yy-uhq"/>
                     </connections>
                 </windowController>
                 <customObject id="tRP-hs-BBi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="254"/>
         </scene>
-        <!--List View Controller-->
-        <scene sceneID="2sp-wB-1ci">
+        <!--Container View Controller-->
+        <scene sceneID="o2z-kx-HKY">
             <objects>
-                <viewController id="uaz-vB-EbV" customClass="ListViewController" customModule="RealmTasks" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="LWL-J7-uyt">
-                        <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
+                <viewController id="sgL-6S-YI5" customClass="ContainerViewController" customModule="RealmTasks" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="kKA-O7-b0o">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="50" horizontalPageScroll="10" verticalLineScroll="50" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhc-0C-8yh">
-                                <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
-                                <clipView key="contentView" copiesOnScroll="NO" id="OMr-Gz-NZa">
-                                    <rect key="frame" x="0.0" y="0.0" width="400" height="425"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="50" viewBased="YES" floatsGroupRows="NO" id="uDo-wk-Xbz">
-                                            <rect key="frame" x="0.0" y="0.0" width="400" height="0.0"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                            <tableColumns>
-                                                <tableColumn width="400" maxWidth="999999" id="3DS-pu-CHQ">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                                    </tableHeaderCell>
-                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="fin-lC-vkR">
-                                                        <font key="font" metaFont="system"/>
-                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
-                                                </tableColumn>
-                                            </tableColumns>
-                                            <connections>
-                                                <outlet property="dataSource" destination="uaz-vB-EbV" id="kfp-E3-a3c"/>
-                                                <outlet property="delegate" destination="uaz-vB-EbV" id="jZc-Mm-ZTm"/>
-                                            </connections>
-                                        </tableView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                </clipView>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="320" id="A9z-TA-0kA"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="425" id="tHg-pF-LU3"/>
-                                </constraints>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="SGt-4L-HqE">
-                                    <rect key="frame" x="-100" y="-100" width="223" height="15"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="afx-6v-1Eq">
-                                    <rect key="frame" x="-100" y="-100" width="15" height="102"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                            </scrollView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="xhc-0C-8yh" firstAttribute="top" secondItem="LWL-J7-uyt" secondAttribute="top" id="CoY-k6-hM5"/>
-                            <constraint firstAttribute="trailing" secondItem="xhc-0C-8yh" secondAttribute="trailing" id="FHA-WT-1ql"/>
-                            <constraint firstAttribute="bottom" secondItem="xhc-0C-8yh" secondAttribute="bottom" id="Z3C-fU-iVf"/>
-                            <constraint firstItem="xhc-0C-8yh" firstAttribute="leading" secondItem="LWL-J7-uyt" secondAttribute="leading" id="sbE-bm-KQG"/>
-                        </constraints>
                     </view>
-                    <connections>
-                        <outlet property="tableView" destination="uDo-wk-Xbz" id="HFW-Zg-ddr"/>
-                        <outlet property="topConstraint" destination="CoY-k6-hM5" id="sFq-KD-gcj"/>
-                    </connections>
                 </viewController>
-                <customObject id="E3E-MH-nnM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="lmY-JI-6xF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="732.5"/>
+            <point key="canvasLocation" x="75" y="686"/>
         </scene>
         <!--Log In-->
         <scene sceneID="LlI-VW-aKs">

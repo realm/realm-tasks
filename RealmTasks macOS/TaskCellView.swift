@@ -113,7 +113,7 @@ class TaskCellView: NSTableCellView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureWithTask(item: Task) {
+    func configureWithTask(item: CellPresentable) {
         textView.stringValue = item.text
         completed = item.completed
     }

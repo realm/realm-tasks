@@ -27,24 +27,13 @@ import RealmSwift
 private let taskCellIdentifier = "TaskCell"
 private let taskCellPrototypeIdentifier = "TaskCellPrototype"
 
-class ListViewController: NSViewController {
+final class ListViewController<ListType: ListPresentable where ListType: Object>: TableViewController, TaskCellViewDelegate, NSGestureRecognizerDelegate {
 
-    @IBOutlet var tableView: NSTableView!
-    @IBOutlet var topConstraint: NSLayoutConstraint?
+    typealias ItemType = ListType.Item
 
-    // FIXME: Hack to avoid accessing the synced Realm before we have a user.
-    internal var items: List<Task> = {
-        let tmpRealm = try! Realm(configuration: Realm.Configuration(inMemoryIdentifier: "TemporaryRealm"))
-        try! tmpRealm.write {
-            tmpRealm.add(TaskList())
-        }
-        return tmpRealm.objects(TaskList.self).first!.items
-    }() {
-        didSet {
-            notificationToken?.stop()
-            setupNotifications()
-        }
-    }
+    let list: ListType
+
+    var topConstraint: NSLayoutConstraint?
 
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?
@@ -60,6 +49,12 @@ class ListViewController: NSViewController {
     private var movingStarted = false
 
     private var autoscrollTimer: NSTimer?
+
+    init(list: ListType) {
+        self.list = list
+
+        super.init(nibName: nil, bundle: nil)!
+    }
 
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
@@ -83,7 +78,7 @@ class ListViewController: NSViewController {
 
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
-        notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
+        notificationToken = list.items.filter("TRUEPREDICATE").addNotificationBlock { changes in
             if self.skipNotification {
                 self.skipNotification = false
                 self.reloadOnNotification = true
@@ -138,15 +133,11 @@ class ListViewController: NSViewController {
         })
     }
 
-}
-
-// MARK: Actions
-
-extension ListViewController {
+    // MARK: Actions
 
     @IBAction func newTask(sender: AnyObject?) {
-        try! items.realm?.write {
-            self.items.insert(Task(), atIndex: 0)
+        try! list.realm?.write {
+            self.list.items.insert(ItemType(), atIndex: 0)
         }
 
         skipNextNotification()
@@ -168,11 +159,7 @@ extension ListViewController {
         return true
     }
 
-}
-
-// MARK: Reordering
-
-extension ListViewController {
+    // MARK: Reordering
 
     var reordering: Bool {
         return currentlyMovingRowView != nil
@@ -216,8 +203,8 @@ extension ListViewController {
         }
 
         if canMoveRow(sourceRow, toRow: destinationRow) {
-            try! items.realm?.write {
-                items.move(from: sourceRow, to: destinationRow)
+            try! list.realm?.write {
+                list.items.move(from: sourceRow, to: destinationRow)
             }
             skipNextNotification()
             tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
@@ -229,7 +216,7 @@ extension ListViewController {
             return false
         }
 
-        return !items[destinationRow].completed
+        return !list.items[destinationRow].completed
     }
 
     private func endReordering() {
@@ -299,11 +286,7 @@ extension ListViewController {
         autoscrollTimer = nil
     }
 
-}
-
-// MARK: NSGestureRecognizerDelegate
-
-extension ListViewController: NSGestureRecognizerDelegate {
+    // MARK: NSGestureRecognizerDelegate
 
     func gestureRecognizer(gestureRecognizer: NSGestureRecognizer,
                            shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
@@ -328,21 +311,13 @@ extension ListViewController: NSGestureRecognizerDelegate {
         }
     }
 
-}
-
-// MARK: NSTableViewDataSource
-
-extension ListViewController: NSTableViewDataSource {
+    // MARK: NSTableViewDataSource
 
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        return items.count
+        return list.items.count
     }
 
-}
-
-// MARK: NSTableViewDelegate
-
-extension ListViewController: NSTableViewDelegate {
+    // MARK: NSTableViewDelegate
 
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let cellView: TaskCellView
@@ -353,7 +328,7 @@ extension ListViewController: NSTableViewDelegate {
             cellView = TaskCellView(identifier: taskCellIdentifier)
         }
 
-        cellView.configureWithTask(items[row])
+        cellView.configureWithTask(list.items[row])
         cellView.backgroundColor = colorForRow(row)
         cellView.delegate = self
 
@@ -364,7 +339,7 @@ extension ListViewController: NSTableViewDelegate {
         if let cellView = currentlyEditingCellView {
             prototypeCell.configureWithTaskCellView(cellView)
         } else {
-            prototypeCell.configureWithTask(items[row])
+            prototypeCell.configureWithTask(list.items[row])
         }
 
         return prototypeCell.fittingHeightForConstrainedWidth(tableView.bounds.width)
@@ -394,26 +369,25 @@ extension ListViewController: NSTableViewDelegate {
         return NSColor.taskColors().gradientColorAtFraction(fraction)
     }
 
-}
-
-// MARK: TaskCellViewDelegate
-
-extension ListViewController: TaskCellViewDelegate {
+    // MARK: TaskCellViewDelegate
 
     func cellView(view: TaskCellView, didComplete complete: Bool) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let (tmpItem, index) = findItemForCellView(view) else {
             return
         }
+
+        // FIXME: workaround for tuple mutability
+        var item = tmpItem
 
         let destinationIndex: Int
 
         if complete {
             // move cell to bottom
-            destinationIndex = items.count - 1
+            destinationIndex = list.items.count - 1
         } else {
             // move cell just above the first completed item
-            let completedCount = items.filter("completed = true").count
-            destinationIndex = items.count - completedCount
+            let completedCount = list.items.filter("completed = true").count
+            destinationIndex = list.items.count - completedCount
         }
 
         delay(0.2) {
@@ -423,8 +397,8 @@ extension ListViewController: TaskCellViewDelegate {
                 item.completed = complete
 
                 if index != destinationIndex {
-                    self.items.removeAtIndex(index)
-                    self.items.insert(item, atIndex: destinationIndex)
+                    self.list.items.removeAtIndex(index)
+                    self.list.items.insert(item, atIndex: destinationIndex)
                 }
             }
 
@@ -440,8 +414,8 @@ extension ListViewController: TaskCellViewDelegate {
 
         skipNextNotification()
 
-        try! item.realm?.write {
-            items.realm?.delete(item)
+        try! list.realm?.write {
+            list.realm?.delete(item)
         }
 
         tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
@@ -473,9 +447,12 @@ extension ListViewController: TaskCellViewDelegate {
     }
 
     func cellViewDidEndEditing(view: TaskCellView) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let (tmpItem, index) = findItemForCellView(view) else {
             return
         }
+
+        // FIXME: workaround for tuple mutability
+        var item = tmpItem
 
         skipNextNotification()
 
@@ -507,14 +484,14 @@ extension ListViewController: TaskCellViewDelegate {
         currentlyEditingCellView = nil
     }
 
-    private func findItemForCellView(view: NSView) -> (item: Task, index: Int)? {
+    private func findItemForCellView(view: NSView) -> (item: ItemType, index: Int)? {
         let index = tableView.rowForView(view)
 
         if index < 0 {
             return nil
         }
 
-        return (items[index], index)
+        return (list.items[index], index)
     }
 
 }
