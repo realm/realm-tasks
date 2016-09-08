@@ -38,6 +38,19 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func logIn(animated animated: Bool = true) {
+        #if CLOUDKIT_AUTH
+        loginWithCloudKit(animated: animated)
+        #else
+        loginWithPasswordPrompt(animated: animated)
+        #endif
+    }
+    
+    func loginWithCloudKit(animated animated: Bool = true) {
+        let cloudKitViewController = CloudKitAuthViewController(nibName: "CloudKitAuthViewController", bundle: nil)
+        window?.rootViewController?.presentViewController(cloudKitViewController, animated: true, completion: nil)
+    }
+    
+    func loginWithPasswordPrompt(animated animated: Bool = true) {
         let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .mainBundle())
         let logInViewController = loginStoryboard.instantiateInitialViewController() as! LogInViewController
         logInViewController.completionHandler = { username, password, returnCode in

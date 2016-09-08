@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CloudKitAuthViewController" customModule="RealmTasks_iOS__CloudKit_" customModuleProvider="target">
+            <connections>
+                <outlet property="activityIndicator" destination="QEd-8q-cNU" id="6HG-A7-9Pn"/>
+                <outlet property="reloadButton" destination="0AK-gv-5Uu" id="xjU-50-qhh"/>
+                <outlet property="statusLabel" destination="xHU-Ay-hkH" id="A9e-kz-iJd"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hg2-Wt-MuX">
+                    <rect key="frame" x="248" y="551" width="105" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="105" id="8cf-2K-8PO"/>
+                        <constraint firstAttribute="height" constant="30" id="QzJ-aG-2RW"/>
+                    </constraints>
+                    <state key="normal" title="iCloud Settings"/>
+                    <connections>
+                        <action selector="cloudKitButtonTapped:" destination="-2" eventType="touchUpInside" id="cTw-cZ-2Yk"/>
+                    </connections>
+                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qYK-Xb-ZUU" userLabel="ContainerView">
+                    <rect key="frame" x="145" y="181" width="310" height="226"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iCloudLogo" translatesAutoresizingMaskIntoConstraints="NO" id="oFb-nJ-t9Y">
+                            <rect key="frame" x="91" y="8" width="128" height="100"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="128" id="0iO-ej-eOe"/>
+                                <constraint firstAttribute="height" constant="100" id="jXC-8L-lTn"/>
+                            </constraints>
+                        </imageView>
+                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="QEd-8q-cNU">
+                            <rect key="frame" x="137" y="123" width="37" height="37"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="37" id="4Is-sM-WUm"/>
+                                <constraint firstAttribute="width" constant="37" id="Vc9-My-xpu"/>
+                            </constraints>
+                            <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        </activityIndicatorView>
+                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Account Found." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xHU-Ay-hkH">
+                            <rect key="frame" x="39" y="185" width="232" height="21"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="21" id="7Xf-bA-s9h"/>
+                                <constraint firstAttribute="width" constant="232" id="ey4-8b-mq5"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0AK-gv-5Uu" userLabel="ReloadButton">
+                            <rect key="frame" x="145" y="130" width="19" height="22"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="19" id="61d-Z6-lHe"/>
+                                <constraint firstAttribute="height" constant="22" id="JYv-6E-Bpc"/>
+                            </constraints>
+                            <state key="normal" image="ReloadIcon"/>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="xHU-Ay-hkH" firstAttribute="centerX" secondItem="QEd-8q-cNU" secondAttribute="centerX" id="6oC-Bh-eiQ"/>
+                        <constraint firstItem="0AK-gv-5Uu" firstAttribute="centerX" secondItem="qYK-Xb-ZUU" secondAttribute="centerX" id="7ng-ZK-Utr"/>
+                        <constraint firstAttribute="height" constant="226" id="VpN-ec-2ZW"/>
+                        <constraint firstItem="oFb-nJ-t9Y" firstAttribute="top" secondItem="qYK-Xb-ZUU" secondAttribute="top" constant="8" id="das-EZ-adP"/>
+                        <constraint firstAttribute="width" constant="310" id="nl7-La-Guf"/>
+                        <constraint firstItem="0AK-gv-5Uu" firstAttribute="top" secondItem="oFb-nJ-t9Y" secondAttribute="bottom" constant="22" id="pTh-c8-X6E"/>
+                        <constraint firstItem="oFb-nJ-t9Y" firstAttribute="centerX" secondItem="qYK-Xb-ZUU" secondAttribute="centerX" id="vcU-kY-bxr"/>
+                        <constraint firstItem="QEd-8q-cNU" firstAttribute="centerX" secondItem="qYK-Xb-ZUU" secondAttribute="centerX" id="x09-AO-9Jv"/>
+                        <constraint firstItem="QEd-8q-cNU" firstAttribute="top" secondItem="oFb-nJ-t9Y" secondAttribute="bottom" constant="15" id="xhr-b4-xrn"/>
+                        <constraint firstItem="xHU-Ay-hkH" firstAttribute="top" secondItem="QEd-8q-cNU" secondAttribute="bottom" constant="25" id="ycA-03-e3R"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="hg2-Wt-MuX" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="014-b6-PbI"/>
+                <constraint firstItem="qYK-Xb-ZUU" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="Eis-31-u65"/>
+                <constraint firstItem="qYK-Xb-ZUU" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" constant="-6" id="Y1q-gg-uDT"/>
+                <constraint firstAttribute="bottom" secondItem="hg2-Wt-MuX" secondAttribute="bottom" constant="19" id="rMF-kJ-zIw"/>
+            </constraints>
+            <point key="canvasLocation" x="1201" y="697"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="ReloadIcon" width="19" height="22"/>
+        <image name="iCloudLogo" width="128" height="86"/>
+    </resources>
+</document>
