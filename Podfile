@@ -8,7 +8,7 @@ abstract_target 'RealmTasks' do
     # pod 'RealmSwift', '1.0.2-15'
 
     # binary podspec
-    pod 'RealmSwift', '1.0.2-15-sync-1.0.0-beta-31.0'
+    pod 'RealmSwift', '1.0.2-16-sync-1.0.0-beta-32.0'
     
     pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
     
