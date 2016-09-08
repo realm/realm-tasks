@@ -23,7 +23,6 @@ import UIKit
 enum LogInViewControllerReturnCode: Int {
     case LogIn
     case Register
-    case CloudKit
     case Cancel
 }
 
@@ -56,17 +55,6 @@ class LogInViewController: UIViewController {
         dismissViewControllerAnimated(true) {
             self.completionHandler?(userName: nil, password: nil, returnCode: .Cancel)
         }
-    }
-
-    @IBAction func cloudKitButtonTapped(sender: AnyObject?) {
-        dismissViewControllerAnimated(true) {
-            self.completionHandler?(userName: nil, password: nil, returnCode: .CloudKit)
-        }
-    }
-
-    @IBAction func configureCloudKitButtonTapped(sender: AnyObject?) {
-        let url = NSURL(string: "prefs:root=CASTLE")
-        UIApplication.sharedApplication().openURL(url!)
     }
 
     private dynamic func updateUI() {
