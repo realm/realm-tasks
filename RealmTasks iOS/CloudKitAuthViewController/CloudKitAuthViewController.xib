@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="activityIndicator" destination="QEd-8q-cNU" id="6HG-A7-9Pn"/>
                 <outlet property="reloadButton" destination="0AK-gv-5Uu" id="xjU-50-qhh"/>
+                <outlet property="settingsButton" destination="hg2-Wt-MuX" id="gtq-uw-dxx"/>
                 <outlet property="statusLabel" destination="xHU-Ay-hkH" id="A9e-kz-iJd"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -18,7 +19,7 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hg2-Wt-MuX">
+                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hg2-Wt-MuX">
                     <rect key="frame" x="248" y="551" width="105" height="30"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="105" id="8cf-2K-8PO"/>
@@ -26,7 +27,7 @@
                     </constraints>
                     <state key="normal" title="iCloud Settings"/>
                     <connections>
-                        <action selector="cloudKitButtonTapped:" destination="-2" eventType="touchUpInside" id="cTw-cZ-2Yk"/>
+                        <action selector="cloudKitButtonTapped:" destination="-1" eventType="touchUpInside" id="8sg-9i-YGo"/>
                     </connections>
                 </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qYK-Xb-ZUU" userLabel="ContainerView">
@@ -64,6 +65,9 @@
                                 <constraint firstAttribute="height" constant="22" id="JYv-6E-Bpc"/>
                             </constraints>
                             <state key="normal" image="ReloadIcon"/>
+                            <connections>
+                                <action selector="reloadButtonTapped:" destination="-1" eventType="touchUpInside" id="tFo-M2-QKP"/>
+                            </connections>
                         </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -88,7 +92,7 @@
                 <constraint firstItem="qYK-Xb-ZUU" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" constant="-6" id="Y1q-gg-uDT"/>
                 <constraint firstAttribute="bottom" secondItem="hg2-Wt-MuX" secondAttribute="bottom" constant="19" id="rMF-kJ-zIw"/>
             </constraints>
-            <point key="canvasLocation" x="1201" y="697"/>
+            <point key="canvasLocation" x="1475" y="835"/>
         </view>
     </objects>
     <resources>

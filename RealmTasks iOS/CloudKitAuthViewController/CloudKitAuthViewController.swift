@@ -26,6 +26,9 @@ class CloudKitAuthViewController: UIViewController {
     @IBOutlet weak var reloadButton: UIButton?
     @IBOutlet weak var statusLabel: UILabel?
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView?
+    @IBOutlet weak var settingsButton: UIButton?
+    
+    var completionHandler: ((accessToken: String?, error: NSError?) -> ())?
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
@@ -36,6 +39,7 @@ class CloudKitAuthViewController: UIViewController {
         activityIndicator?.startAnimating()
         reloadButton?.hidden = true
         statusLabel?.hidden = true
+        settingsButton?.enabled = false
         
         downloadCloudKitUserRecord()
     }
@@ -48,22 +52,28 @@ class CloudKitAuthViewController: UIViewController {
                 return
             }
           
-            self.showError((recordID?.recordName)!)
+            let userAccessToken = recordID?.recordName
+            self.completionHandler?(accessToken: userAccessToken, error: error)
         })
     }
     
     func showError(message: String) {
         NSOperationQueue.mainQueue().addOperationWithBlock { 
             self.activityIndicator?.stopAnimating()
+            self.settingsButton?.enabled = true
             self.reloadButton?.hidden = false
             self.statusLabel?.hidden = false
             self.statusLabel?.text = message
         }
     }
     
-    //MARK: Button Feedback
+    //MARK: Button Callbacks
+    @IBAction func reloadButtonTapped(sender: AnyObject?) {
+        beginAuthentication()
+    }
+    
     @IBAction func cloudKitButtonTapped(sender: AnyObject?) {
         let url = NSURL(string: "prefs:root=CASTLE")
-        print(UIApplication.sharedApplication().openURL(url!))
+        UIApplication.sharedApplication().openURL(url!)
     }
 }

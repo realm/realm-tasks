@@ -47,6 +47,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func loginWithCloudKit(animated animated: Bool = true) {
         let cloudKitViewController = CloudKitAuthViewController(nibName: "CloudKitAuthViewController", bundle: nil)
+        cloudKitViewController.completionHandler = { userAccessToken, error in
+            authenticate(userAccessToken!, callback: { error in
+                cloudKitViewController.presentingViewController?.dismissViewControllerAnimated(true, completion: {
+                    if let error = error {
+                        self.presentError(error)
+                    } else {
+                        self.window?.rootViewController = ContainerViewController()
+                    }
+                })
+            })
+        }
+        
         window?.rootViewController?.presentViewController(cloudKitViewController, animated: true, completion: nil)
     }
     
