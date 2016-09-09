@@ -25,7 +25,8 @@ import Cocoa
 import RealmSwift
 
 private let taskCellIdentifier = "TaskCell"
-private let taskCellPrototypeIdentifier = "TaskCellPrototype"
+private let listCellIdentifier = "ListCell"
+private let prototypeCellIdentifier = "PrototypeCell"
 
 final class ListViewController<ListType: ListPresentable where ListType: Object>: TableViewController, TaskCellViewDelegate, NSGestureRecognizerDelegate {
 
@@ -36,11 +37,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     var topConstraint: NSLayoutConstraint?
 
     private var notificationToken: NotificationToken?
-    private var realmNotificationToken: NotificationToken?
     private var skipNotification = false
     private var reloadOnNotification = false
 
-    private let prototypeCell = PrototypeTaskCellView(identifier: taskCellPrototypeIdentifier)
+    private let prototypeCell = PrototypeTaskCellView(identifier: prototypeCellIdentifier)
 
     private var currentlyEditingCellView: TaskCellView?
 
@@ -59,7 +59,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
         notificationToken?.stop()
-        realmNotificationToken?.stop()
     }
 
     override func viewDidLoad() {
@@ -145,10 +144,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         NSView.animateWithDuration(0.2, animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
-        }) {
             self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
-            self.view.window?.toolbar?.validateVisibleItems()
-        }
+            self.view.window?.update()
+        })
     }
 
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
@@ -320,15 +318,32 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     // MARK: NSTableViewDelegate
 
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let item = list.items[row]
         let cellView: TaskCellView
 
-        if let view = tableView.makeViewWithIdentifier(taskCellIdentifier, owner: self) as? TaskCellView {
-            cellView = view
-        } else {
-            cellView = TaskCellView(identifier: taskCellIdentifier)
+        // FIXME: unify cells creation
+        switch item {
+        case is TaskList:
+            if let view = tableView.makeViewWithIdentifier(listCellIdentifier, owner: self) as? ListCellView {
+                cellView = view
+            } else {
+                cellView = ListCellView(identifier: listCellIdentifier)
+            }
+
+            break
+        case is Task:
+            if let view = tableView.makeViewWithIdentifier(taskCellIdentifier, owner: self) as? TaskCellView {
+                cellView = view
+            } else {
+                cellView = TaskCellView(identifier: taskCellIdentifier)
+            }
+
+            break
+        default:
+            fatalError("Unknown item type")
         }
 
-        cellView.configureWithTask(list.items[row])
+        cellView.configureWithTask(item)
         cellView.backgroundColor = colorForRow(row)
         cellView.delegate = self
 
@@ -343,6 +358,18 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         return prototypeCell.fittingHeightForConstrainedWidth(tableView.bounds.width)
+    }
+
+    func tableViewSelectionDidChange(notification: NSNotification) {
+        let index = tableView.selectedRow
+
+        guard 0 <= index && index < list.items.count else {
+            return
+        }
+
+        if let list = list.items[index] as? TaskList {
+            (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
+        }
     }
 
     func tableView(tableView: NSTableView, didAddRowView rowView: NSTableRowView, forRow row: Int) {

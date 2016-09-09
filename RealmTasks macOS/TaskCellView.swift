@@ -95,9 +95,11 @@ class TaskCellView: NSTableCellView {
         return imageView
     }()
 
-    private let contentView = ColorView()
+    let contentView = ColorView()
+    let textView = TaskTextField()
+
     private let overlayView = ColorView()
-    private let textView = TaskTextField()
+
 
     private var releaseAction: ReleaseAction?
 
@@ -361,7 +363,7 @@ protocol TaskTextFieldDelegate: NSTextFieldDelegate {
 
 }
 
-private final class TaskTextField: NSTextField {
+final class TaskTextField: NSTextField {
 
     private var _acceptsFirstResponder = false
 
@@ -424,7 +426,7 @@ private final class TaskTextField: NSTextField {
 
 }
 
-private final class ColorView: NSView {
+final class ColorView: NSView {
 
     var backgroundColor = NSColor.clearColor() {
         didSet {

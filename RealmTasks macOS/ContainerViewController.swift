@@ -24,12 +24,28 @@ import Cartography
 
 class ContainerViewController: NSViewController {
 
-    var currentListViewController: NSViewController?
+    @IBAction func showAllLists(sender: AnyObject?) {
+        let rootList = try! Realm().objects(TaskListList.self).first!
+
+        presentViewControllerForList(rootList)
+    }
+
+    @IBAction func showRecentList(sender: AnyObject?) {
+        // TODO: restore from user defaults
+        let list = try! Realm().objects(TaskList.self).first!
+
+        presentViewControllerForList(list)
+    }
 
     func presentViewControllerForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
+        for viewController in childViewControllers {
+            viewController.view.removeFromSuperview()
+            viewController.removeFromParentViewController()
+        }
+
         let listViewController = ListViewController(list: list)
 
-        currentListViewController = listViewController
+        addChildViewController(listViewController)
         view.addSubview(listViewController.view)
 
         constrain(listViewController.view) { view in

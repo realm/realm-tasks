@@ -38,6 +38,7 @@ class TableViewController: NSViewController, NSTableViewDelegate, NSTableViewDat
 
         let scrollView = NSScrollView()
         scrollView.documentView = tableView
+        scrollView.backgroundColor = .blackColor()
 
         view.addSubview(scrollView)
 

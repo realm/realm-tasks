@@ -389,7 +389,7 @@
                         <toolbar key="toolbar" implicitIdentifier="6F2EB22A-AA56-4725-B70A-288A6CE2DA21" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="small" id="nsm-Fv-9B1">
                             <allowedToolbarItems>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="e0G-Eu-e1o"/>
-                                <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New Task" paletteLabel="New Task" tag="-1" image="NSAddTemplate" id="4CH-Dy-gYb">
+                                <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New" paletteLabel="New" tag="-1" image="NSAddTemplate" id="4CH-Dy-gYb">
                                     <connections>
                                         <action selector="newTask:" target="tRP-hs-BBi" id="I6C-2d-lm3"/>
                                     </connections>
@@ -409,12 +409,19 @@
                                     </textField>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="6rT-T5-Ern"/>
+                                <toolbarItem implicitItemIdentifier="7FA9AC5A-EECD-4FE0-8E02-9AD9BCEEE4AF" label="Lists" paletteLabel="Lists" tag="-1" image="NSListViewTemplate" id="0mI-Ud-1wl">
+                                    <connections>
+                                        <action selector="showAllLists:" target="tRP-hs-BBi" id="aev-UH-Jnm"/>
+                                    </connections>
+                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
+                                <toolbarItem reference="6rT-T5-Ern"/>
                                 <toolbarItem reference="6rT-T5-Ern"/>
                                 <toolbarItem reference="e0G-Eu-e1o"/>
                                 <toolbarItem reference="Il8-PQ-I6o"/>
                                 <toolbarItem reference="e0G-Eu-e1o"/>
+                                <toolbarItem reference="0mI-Ud-1wl"/>
                                 <toolbarItem reference="4CH-Dy-gYb"/>
                             </defaultToolbarItems>
                         </toolbar>
@@ -735,5 +742,6 @@ Gw
     </scenes>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSListViewTemplate" width="14" height="10"/>
     </resources>
 </document>
