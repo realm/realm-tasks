@@ -24,6 +24,9 @@ import Cartography
 
 class ContainerViewController: NSViewController {
 
+    var currentListViewController: NSViewController?
+    var constraintGroup = ConstraintGroup()
+
     @IBAction func showAllLists(sender: AnyObject?) {
         let rootList = try! Realm().objects(TaskListList.self).first!
 
@@ -38,21 +41,56 @@ class ContainerViewController: NSViewController {
     }
 
     func presentViewControllerForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
-        for viewController in childViewControllers {
-            viewController.view.removeFromSuperview()
-            viewController.removeFromParentViewController()
-        }
-
         let listViewController = ListViewController(list: list)
 
         addChildViewController(listViewController)
         view.addSubview(listViewController.view)
 
-        constrain(listViewController.view) { view in
-            view.edges == view.superview!.edges
+        if let currentListViewController = currentListViewController {
+            constrain(listViewController.view, currentListViewController.view, replace: constraintGroup) { newView, oldVIew in
+                oldVIew.edges == oldVIew.superview!.edges
+
+                if list is CellPresentable {
+                    newView.top == newView.superview!.bottom
+                } else {
+                    newView.bottom == newView.superview!.top
+                }
+
+                newView.height == newView.superview!.height
+                newView.width == newView.superview!.width
+            }
+
+            view.layoutSubtreeIfNeeded()
+
+            constrain(listViewController.view, currentListViewController.view, replace: constraintGroup) { newView, oldVIew in
+                newView.edges == newView.superview!.edges
+
+                if list is CellPresentable {
+                    oldVIew.bottom == oldVIew.superview!.top
+                } else {
+                    oldVIew.top == oldVIew.superview!.bottom
+                }
+
+                oldVIew.height == oldVIew.superview!.height
+                oldVIew.width == oldVIew.superview!.width
+            }
+
+            NSView.animateWithDuration(0.3, animations: {
+                NSAnimationContext.currentContext().timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut) 
+                self.view.layoutSubtreeIfNeeded()
+            }) {
+                currentListViewController.removeFromParentViewController()
+                currentListViewController.view.removeFromSuperview()
+            }
+        } else {
+            constrain(listViewController.view, replace: constraintGroup) { view in
+                view.edges == view.superview!.edges
+            }
         }
 
         updateToolbarForList(list)
+
+        currentListViewController = listViewController
     }
 
     private func updateToolbarForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
