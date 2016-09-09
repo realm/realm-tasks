@@ -23,18 +23,21 @@
 
 import Cocoa
 import RealmSwift
+import Cartography
 
 private let taskCellIdentifier = "TaskCell"
 private let listCellIdentifier = "ListCell"
 private let prototypeCellIdentifier = "PrototypeCell"
 
-final class ListViewController<ListType: ListPresentable where ListType: Object>: TableViewController, TaskCellViewDelegate, NSGestureRecognizerDelegate {
+final class ListViewController<ListType: ListPresentable where ListType: Object>: NSViewController, NSTableViewDelegate, NSTableViewDataSource, TaskCellViewDelegate, NSGestureRecognizerDelegate {
 
     typealias ItemType = ListType.Item
 
     let list: ListType
 
     var topConstraint: NSLayoutConstraint?
+
+    private let tableView = NSTableView()
 
     private var notificationToken: NotificationToken?
     private var skipNotification = false
@@ -61,6 +64,27 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         notificationToken?.stop()
     }
 
+    override func loadView() {
+        view = NSView()
+        view.wantsLayer = true
+
+        tableView.addTableColumn(NSTableColumn())
+        tableView.backgroundColor = .blackColor()
+        tableView.headerView = nil
+        tableView.selectionHighlightStyle = .None
+        tableView.intercellSpacing = .zero
+
+        let scrollView = NSScrollView()
+        scrollView.documentView = tableView
+        scrollView.backgroundColor = .blackColor()
+
+        view.addSubview(scrollView)
+
+        constrain(scrollView) { scrollView in
+            scrollView.edges == scrollView.superview!.edges
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -73,6 +97,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         setupNotifications()
         setupGestureRecognizers()
+
+        tableView.setDelegate(self)
+        tableView.setDataSource(self)
     }
 
     private func setupNotifications() {
@@ -449,12 +476,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     func cellViewDidBeginEditing(cellView: TaskCellView) {
-        let editingOffset = cellView.convertRect(cellView.bounds, toView: tableView).minY
-
-        topConstraint?.constant = -editingOffset
-
         NSView.animateWithDuration(0.3, animations: {
-            self.view.layoutSubtreeIfNeeded()
+            self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
 
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
                 if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? TaskCellView where view != cellView {
@@ -495,11 +518,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             }
         }
 
-        topConstraint?.constant = 0
-
         NSView.animateWithDuration(0.3, animations: {
-            self.view.layoutSubtreeIfNeeded()
-
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
                 if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? TaskCellView {
                     view.alphaValue = 1

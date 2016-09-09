@@ -36,7 +36,6 @@
 		C23EB05D1D4A028A00D3E0AC /* NSView+Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */; };
 		C277A6F11D80329D00DED239 /* TitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277A6F01D80329D00DED239 /* TitleLabel.swift */; };
 		C277A6F31D8035B300DED239 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277A6F21D8035B300DED239 /* ContainerViewController.swift */; };
-		C277A6F51D80489300DED239 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277A6F41D80489300DED239 /* TableViewController.swift */; };
 		C277A6F71D80646500DED239 /* ListCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277A6F61D80646500DED239 /* ListCellView.swift */; };
 		C28A34021D50A0C500EE8F1A /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28A34011D50A0C500EE8F1A /* LogInViewController.swift */; };
 		C28A34051D50D19B00EE8F1A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28A34041D50D19B00EE8F1A /* RegisterViewController.swift */; };
@@ -95,7 +94,6 @@
 		C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSView+Animations.swift"; sourceTree = "<group>"; };
 		C277A6F01D80329D00DED239 /* TitleLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleLabel.swift; sourceTree = "<group>"; };
 		C277A6F21D8035B300DED239 /* ContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
-		C277A6F41D80489300DED239 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		C277A6F61D80646500DED239 /* ListCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListCellView.swift; sourceTree = "<group>"; };
 		C28A34011D50A0C500EE8F1A /* LogInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
 		C28A34041D50D19B00EE8F1A /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
@@ -194,7 +192,6 @@
 				C277A6F61D80646500DED239 /* ListCellView.swift */,
 				C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */,
 				C277A6F01D80329D00DED239 /* TitleLabel.swift */,
-				C277A6F41D80489300DED239 /* TableViewController.swift */,
 			);
 			path = "RealmTasks macOS";
 			sourceTree = "<group>";
@@ -609,7 +606,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C23EB05B1D4655A900D3E0AC /* TaskCellView.swift in Sources */,
-				C277A6F51D80489300DED239 /* TableViewController.swift in Sources */,
 				C23EB0591D46535F00D3E0AC /* ListViewController.swift in Sources */,
 				C277A6F31D8035B300DED239 /* ContainerViewController.swift in Sources */,
 				C28A34021D50A0C500EE8F1A /* LogInViewController.swift in Sources */,
