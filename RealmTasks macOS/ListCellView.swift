@@ -66,6 +66,8 @@ class ListCellView: TaskCellView {
                 countLabel.alphaValue = 1
             }
         }
+
+        textView.editable = false
     }
 
     override func textFieldDidBecomeFirstResponder(textField: NSTextField) {

@@ -83,6 +83,11 @@ class TaskCellView: NSTableCellView {
         }
     }
 
+    let contentView = ColorView()
+    let textView = TaskTextField()
+
+    private let overlayView = ColorView()
+
     private let doneIconView: NSImageView = {
         let imageView = NSImageView()
         imageView.image = NSImage(named: "DoneIcon")
@@ -94,12 +99,6 @@ class TaskCellView: NSTableCellView {
         imageView.image = NSImage(named: "DeleteIcon")
         return imageView
     }()
-
-    let contentView = ColorView()
-    let textView = TaskTextField()
-
-    private let overlayView = ColorView()
-
 
     private var releaseAction: ReleaseAction?
 
