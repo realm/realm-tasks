@@ -52,7 +52,54 @@ class ContainerViewController: NSViewController {
             view.edges == view.superview!.edges
         }
 
-        view.window?.title = (list as? CellPresentable)?.text ?? "Lists"
+        updateToolbarForList(list)
+    }
+
+    private func updateToolbarForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
+        guard let toolbar = view.window?.toolbar else {
+            return
+        }
+
+        if let titleLabel = toolbar.itemWithIdentifier("TitleLabel")?.view as? NSTextField {
+            titleLabel.stringValue = (list as? CellPresentable)?.text ?? "Lists"
+        }
+
+        if list is CellPresentable {
+            if !toolbar.hasItemWithIdentifier("ShowAllListsButton") {
+                toolbar.insertItemWithItemIdentifier("ShowAllListsButton", atIndex: toolbar.items.count - 1)
+            }
+        } else if let index = toolbar.indexOfItemWithIdentifier("ShowAllListsButton") {
+            view.window?.toolbar?.removeItemAtIndex(index)
+        }
+
+        // Let the new controller takes care about toolbar validation
+        view.window?.makeFirstResponder(childViewControllers.first)
+    }
+
+}
+
+private extension NSToolbar {
+
+    func hasItemWithIdentifier(identifier: String) -> Bool {
+        return itemWithIdentifier(identifier) != nil
+    }
+
+    func itemWithIdentifier(identifier: String) -> NSToolbarItem? {
+        guard let index = indexOfItemWithIdentifier(identifier) else {
+            return nil
+        }
+
+        return items[index]
+    }
+
+    func indexOfItemWithIdentifier(identifier: String) -> Int? {
+        for (index, item) in items.enumerate() {
+            if item.itemIdentifier == identifier {
+                return index
+            }
+        }
+
+        return nil
     }
 
 }
