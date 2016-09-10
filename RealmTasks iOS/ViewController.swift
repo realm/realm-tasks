@@ -45,6 +45,20 @@ private enum NavDirection {
     case Up, Down
 }
 
+private enum TransactionInfo {
+    case none
+    case insert(Int)
+    case delete(Int)
+    case deleteMany(Int)
+    case move(Int, Int)
+}
+private func !=(lhs: TransactionInfo, rhs: TransactionInfo) -> Bool {
+    switch (lhs, rhs) {
+    case (.none, .none): return false
+    default: return true
+    }
+}
+
 // MARK: View Controller
 
 // FIXME: This class should be split up.
@@ -65,8 +79,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // Notifications
     private var notificationToken: NotificationToken?
     private var realmNotificationToken: NotificationToken?
-    private var skipNotification = false
-    private var reloadOnNotification = false
+    private var lastTransaction: TransactionInfo = .none
 
     // Scrolling
     private var distancePulledDown: CGFloat {
@@ -231,16 +244,53 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
         notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
-            if self.skipNotification {
-                self.skipNotification = false
-                self.reloadOnNotification = true
-                return
-            } else if self.reloadOnNotification {
-                if let _ = self.currentlyEditingIndexPath {
-                    return
+            
+            // If we have just done a transaction in the TableView and it's state reflects that
+            // then we do not want to react on the notification about the changes we have just done.
+            // But other transactions could have happened before or after ours, so we have to check
+            // that this notification is only about the last one we did.
+            if self.lastTransaction != TransactionInfo.none {
+                switch changes {
+                case .Update(_, let deletions, let insertions, let modifications):
+                    switch self.lastTransaction {
+                    case .insert(let pos):
+                        if (deletions.isEmpty && modifications.isEmpty && insertions.count == 1 && insertions[0] == pos) {
+                            self.lastTransaction = .none
+                            print("lastTransaction.insert")
+                            return
+                        }
+                    case .delete(let pos):
+                        if (modifications.isEmpty && insertions.isEmpty && deletions.count == 1 && deletions[0] == pos) {
+                            self.lastTransaction = .none
+                            print("lastTransaction.delete")
+                            return
+                        }
+                    case .deleteMany(let count):
+                        if (modifications.isEmpty && insertions.isEmpty && deletions.count == count) {
+                            self.lastTransaction = .none
+                            print("lastTransaction.deleteMany")
+                            return
+                        }
+                    case .move:
+                        if (modifications.isEmpty && insertions.count == 1 && deletions.count == 1) {
+                            self.lastTransaction = .none
+                            print("lastTransaction.move")
+                            return
+                        }
+                    default: break
+                    }
+                default: break
                 }
+                
+                // If we get to here it means that other transactions has happened
+                // before or after our transactions, so we need to do a full refresh
+                self.lastTransaction = .none
                 self.tableView.reloadData()
-                self.reloadOnNotification = false
+                print("reload!!")
+                return
+            }
+            
+            if let _ = self.currentlyEditingIndexPath {
                 return
             }
 
@@ -312,11 +362,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             let row = items.filter("completed = false").count
             try! items.realm?.write {
                 items.insert(Item(), atIndex: row)
+                lastTransaction = .insert(row)
             }
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
             toggleOnboardView(animated: true)
-            skipNextNotification()
             cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
         }
         let textView = cell.textView
@@ -375,8 +425,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             if destinationIndexPath.row != startIndexPath.row && !items[destinationIndexPath.row].completed {
                 try! items.realm?.write {
                     items.move(from: startIndexPath.row, to: destinationIndexPath.row)
+                    lastTransaction = .move(startIndexPath.row, destinationIndexPath.row)
                 }
-                skipNextNotification()
             }
 
             let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
@@ -612,13 +662,13 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
                 try! items.realm?.write {
                     items.realm?.delete(itemsToDelete)
+                    lastTransaction = .deleteMany(itemsToDelete.count)
                 }
                 let startingIndex = items.count
                 let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
                     return NSIndexPath(forRow: index, inSection: 0)
                 }
                 tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
-                skipNextNotification()
 
                 vibrate()
             }
@@ -635,8 +685,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         // Create new item
         try! items.realm?.write {
             items.insert(Item(), atIndex: 0)
+            lastTransaction = .insert(0)
         }
-        skipNextNotification()
         tableView.reloadData()
         (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
@@ -650,10 +700,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
         try! items.realm?.write {
             items.realm?.delete(item)
+            lastTransaction = .delete(index)
         }
 
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        skipNextNotification()
         updateColors()
         toggleOnboardView()
     }
@@ -674,10 +724,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
         try! items.realm?.write {
             items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
+            lastTransaction = .move(sourceIndexPath.row, destinationIndexPath.row)
         }
 
         tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-        skipNextNotification()
         updateColors()
         toggleOnboardView()
     }
@@ -725,10 +775,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         if item.text.isEmpty {
             try! item.realm?.write {
                 item.realm!.delete(item)
+                lastTransaction = .delete(items.indexOf(item)!)
             }
             tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
         }
-        skipNextNotification()
         toggleOnboardView()
     }
 
@@ -767,12 +817,5 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }, completion: { _ in
             completion?()
         })
-    }
-
-    // MARK: Sync
-
-    private func skipNextNotification() {
-        skipNotification = true
-        reloadOnNotification = false
     }
 }
