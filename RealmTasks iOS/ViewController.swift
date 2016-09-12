@@ -248,14 +248,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             case .Initial:
                 // Results are now populated and can be accessed without blocking the UI
                 self.tableView.reloadData()
-            case .Update(_, let deletions, let insertions, let modifications):
+            case .Update(_, _, _, _):
                 let updateTableView = {
-                    // Query results have changed, so apply them to the UITableView
-                    self.tableView.beginUpdates()
-                    self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                    self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                    self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
-                    self.tableView.endUpdates()
+                    // TODO: Fix me to support proper animations
+                    self.tableView.reloadData()
                 }
 
                 if let currentlyEditingIndexPath = self.currentlyEditingIndexPath {

@@ -97,12 +97,9 @@ class TaskListViewController: NSViewController {
             switch changes {
             case .Initial:
                 self.tableView.reloadData()
-            case .Update(_, let deletions, let insertions, let modifications):
-                self.tableView.beginUpdates()
-                self.tableView.removeRowsAtIndexes(deletions.toIndexSet(), withAnimation: .EffectFade)
-                self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectFade)
-                self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
-                self.tableView.endUpdates()
+            case .Update(_, _, _, let modifications):
+                // TODO: Fix me to support proper animations
+                self.tableView.reloadData()
 
                 self.updateColors()
                 self.updateTableViewHeightOfRows(modifications.toIndexSet())
