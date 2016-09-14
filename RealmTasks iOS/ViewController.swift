@@ -614,6 +614,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 guard numberOfItemsToDelete != 0 else { return }
 
                 try! items.realm?.write {
+                    for _ in 0..<numberOfItemsToDelete {
+                        items.removeLast()
+                    }
                     items.realm?.delete(itemsToDelete)
                 }
                 let startingIndex = items.count

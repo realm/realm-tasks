@@ -4,12 +4,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 abstract_target 'RealmTasks' do
     use_frameworks!
     
-    # source podspec
-    # pod 'RealmSwift', '1.0.2-15'
-
-    # binary podspec
-    pod 'RealmSwift', '1.0.2-16-sync-1.0.0-beta-32.0'
-    
+    pod 'RealmSwift', '1.0.2-10-sync-1.0.0-beta-29.0'
     pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
     
     target 'RealmTasks iOS' do
