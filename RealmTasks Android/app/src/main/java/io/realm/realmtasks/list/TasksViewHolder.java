@@ -19,6 +19,7 @@ package io.realm.realmtasks.list;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ public class TasksViewHolder extends RecyclerView.ViewHolder {
     private final RelativeLayout iconBar;
     private final RelativeLayout row;
     private final TextView text;
+    private final EditText editText;
 
     public TasksViewHolder(View itemView) {
         super(itemView);
@@ -37,6 +39,7 @@ public class TasksViewHolder extends RecyclerView.ViewHolder {
         row = (RelativeLayout) itemView.findViewById(R.id.row);
         row.setBackgroundColor(generateBackgroundColor());
         text = (TextView) row.findViewById(R.id.text);
+        editText = (EditText) row.findViewById(R.id.edit_text);
     }
 
     private int generateBackgroundColor() {
@@ -53,6 +56,27 @@ public class TasksViewHolder extends RecyclerView.ViewHolder {
         } else {
             text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
         }
+    }
+
+    public void setEditable(boolean set) {
+        if (set) {
+            if (isEditable() == false) {
+                editText.setText(text.getText().toString());
+            }
+            text.setVisibility(View.GONE);
+            editText.setVisibility(View.VISIBLE);
+            editText.requestFocus();
+        } else {
+            if (isEditable() == true) {
+                text.setText(editText.getText().toString());
+            }
+            text.setVisibility(View.VISIBLE);
+            editText.setVisibility(View.GONE);
+        }
+    }
+
+    public boolean isEditable() {
+        return editText.getVisibility() == View.VISIBLE;
     }
 
     public void reset() {
@@ -75,6 +99,10 @@ public class TasksViewHolder extends RecyclerView.ViewHolder {
 
     public TextView getText() {
         return text;
+    }
+
+    public EditText getEditText() {
+        return editText;
     }
 
     public void setIconBarAlpha(float alpha) {

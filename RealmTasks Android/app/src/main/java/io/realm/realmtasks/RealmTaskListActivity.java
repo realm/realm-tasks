@@ -24,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import io.realm.Realm;
 import io.realm.realmtasks.list.TasksListAdapter;
 import io.realm.realmtasks.list.TasksTouchHelper;
+import io.realm.realmtasks.list.TasksViewHolder;
 import io.realm.realmtasks.model.TaskListList;
 
 public class RealmTaskListActivity extends AppCompatActivity {
@@ -47,37 +48,7 @@ public class RealmTaskListActivity extends AppCompatActivity {
         realm = Realm.getDefaultInstance();
         adapter = new TasksListAdapter(realm.where(TaskListList.class).findFirst().getItems());
         recyclerView.setAdapter(adapter);
-        tasksTouchHelper = new TasksTouchHelper(new TasksTouchHelper.Callback() {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder from, RecyclerView.ViewHolder to) {
-                return adapter.onItemMove(from.getAdapterPosition(), to.getAdapterPosition());
-            }
-
-            @Override
-            public void onArchive(RecyclerView.ViewHolder viewHolder) {
-                adapter.onItemArchive(viewHolder.getAdapterPosition());
-            }
-
-            @Override
-            public void onDismiss(RecyclerView.ViewHolder viewHolder) {
-                adapter.onItemDismiss(viewHolder.getAdapterPosition());
-            }
-
-            @Override
-            public void onAdd() {
-                adapter.onItemAdd();
-            }
-
-            @Override
-            public void onCancelAdding() {
-                adapter.onCancelAdding();
-            }
-
-            @Override
-            public void onExit() {
-                finish();
-            }
-        });
+        tasksTouchHelper = new TasksTouchHelper(new Callback());
         tasksTouchHelper.attachToRecyclerView(recyclerView);
     }
 
@@ -87,5 +58,47 @@ public class RealmTaskListActivity extends AppCompatActivity {
         recyclerView.setAdapter(null);
         realm.close();
         super.onStop();
+    }
+
+    private class Callback implements TasksTouchHelper.Callback {
+        @Override
+        public void onMoved(RecyclerView recyclerView, TasksViewHolder from, TasksViewHolder to) {
+            adapter.onItemMoved(from.getAdapterPosition(), to.getAdapterPosition());
+        }
+
+        @Override
+        public void onArchived(TasksViewHolder viewHolder) {
+            adapter.onItemArchived(viewHolder.getAdapterPosition());
+        }
+
+        @Override
+        public void onDismissed(TasksViewHolder viewHolder) {
+            adapter.onItemDismissed(viewHolder.getAdapterPosition());
+        }
+
+        @Override
+        public boolean onItemClicked(TasksViewHolder viewHolder) {
+            return false;
+        }
+
+        @Override
+        public void onItemChanged(TasksViewHolder viewHolder) {
+            adapter.onItemChanged(viewHolder);
+        }
+
+        @Override
+        public void onAdded() {
+            adapter.onItemAdded();
+        }
+
+        @Override
+        public void onReverted() {
+            adapter.onItemReverted();
+        }
+
+        @Override
+        public void onExited() {
+            finish();
+        }
     }
 }

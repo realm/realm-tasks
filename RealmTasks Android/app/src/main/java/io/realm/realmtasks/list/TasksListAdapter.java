@@ -40,41 +40,41 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
     }
 
     @Override
-    public void onItemAdd() {
+    public void onItemAdded() {
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm bgRealm) {
+            public void execute(Realm realm) {
                 final TaskList taskList = realm.createObject(TaskList.class);
                 taskList.setText("Added");
                 items.add(0, taskList);
             }
         });
         realm.close();
-        super.onItemAdd();
+        super.onItemAdded();
     }
 
     @Override
-    public boolean onItemMove(final int fromPosition, final int toPosition) {
+    public void onItemMoved(final int fromPosition, final int toPosition) {
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm bgRealm) {
+            public void execute(Realm realm) {
                 moveItems(fromPosition, toPosition);
             }
         });
         realm.close();
-        return super.onItemMove(fromPosition, toPosition);
+        super.onItemMoved(fromPosition, toPosition);
     }
 
     @Override
-    public void onItemArchive(final int position) {
+    public void onItemArchived(final int position) {
         final TaskList taskList = items.get(position);
         final Realm realm = Realm.getDefaultInstance();
         final int count = (int) ((RealmList<TaskList>) items).where().equalTo("completed", false).count();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm bgRealm) {
+            public void execute(Realm realm) {
                 if (!taskList.isCompleted() && taskList.isCompetable()) {
                     taskList.setCompleted(true);
                     moveItems(position, count - 1);
@@ -84,32 +84,50 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
                 }
             }
         });
-        super.onItemArchive(position);
+        super.onItemArchived(position);
     }
 
     @Override
-    public void onItemDismiss(final int position) {
+    public void onItemDismissed(final int position) {
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm bgRealm) {
+            public void execute(Realm realm) {
                 items.remove(position);
             }
         });
         realm.close();
-        super.onItemDismiss(position);
+        super.onItemDismissed(position);
     }
 
     @Override
-    public void onCancelAdding() {
+    public void onItemReverted() {
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm bgRealm) {
+            public void execute(Realm realm) {
                 items.remove(0);
             }
         });
         realm.close();
-        super.onCancelAdding();
+        super.onItemReverted();
+    }
+
+    @Override
+    public void onItemChanged(final TasksViewHolder viewHolder) {
+        final Realm realm = Realm.getDefaultInstance();
+        final int position = viewHolder.getAdapterPosition();
+        if (position < 0) {
+            return;
+        }
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                TaskList taskList = items.get(position);
+                taskList.setText(viewHolder.getText().getText().toString());
+            }
+        });
+        realm.close();
+        super.onItemChanged(viewHolder);
     }
 }

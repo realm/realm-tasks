@@ -43,7 +43,16 @@
             android:layout_marginLeft="15dp"
             android:text="Text"
             android:textColor="@android:color/white"
-            android:textSize="18dp"/>
+            android:textSize="18dp" />
+
+        <EditText
+            android:id="@+id/edit_text"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:visibility="gone" />
 
     </RelativeLayout>
 </FrameLayout>

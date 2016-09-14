@@ -74,19 +74,25 @@ public class TasksTouchHelper {
     @Retention(RetentionPolicy.SOURCE)
     private @interface ActionState {
     }
+
     private static final int ACTION_STATE_IDLE = 0;
     private static final int ACTION_STATE_SWIPE = 1;
     private static final int ACTION_STATE_DRAG = 2;
     private static final int ACTION_STATE_PULL = 3;
-    private @ActionState int actionState = ACTION_STATE_IDLE;
+    private
+    @ActionState
+    int actionState = ACTION_STATE_IDLE;
 
     @IntDef({PULL_STATE_ADD, PULL_STATE_CANCEL_ADD})
     @Retention(RetentionPolicy.SOURCE)
     private @interface PullState {
     }
+
     private static final int PULL_STATE_ADD = 0;
     private static final int PULL_STATE_CANCEL_ADD = 1;
-    private @PullState int pullState = PULL_STATE_ADD;
+    private
+    @PullState
+    int pullState = PULL_STATE_ADD;
 
     private TasksTouchHelper() {
         this(null);
@@ -129,12 +135,21 @@ public class TasksTouchHelper {
     }
 
     public interface Callback {
-        boolean onMove(RecyclerView recyclerView, ViewHolder from, ViewHolder to);
-        void onArchive(ViewHolder viewHolder);
-        void onDismiss(ViewHolder viewHolder);
-        void onAdd();
-        void onCancelAdding();
-        void onExit();
+        void onMoved(RecyclerView recyclerView, TasksViewHolder from, TasksViewHolder to);
+
+        void onArchived(TasksViewHolder viewHolder);
+
+        void onDismissed(TasksViewHolder viewHolder);
+
+        boolean onItemClicked(TasksViewHolder viewHolder);
+
+        void onItemChanged(TasksViewHolder viewHolder);
+
+        void onAdded();
+
+        void onReverted();
+
+        void onExited();
     }
 
     private class TasksItemDecoration extends ItemDecoration {
@@ -174,8 +189,8 @@ public class TasksTouchHelper {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
                         if (dy > height * 4 && pullState == PULL_STATE_CANCEL_ADD) {
-                            callback.onCancelAdding();
-                            callback.onExit();
+                            callback.onReverted();
+                            callback.onExited();
                         } else if (dy > height) {
                             final float reverseHeight = height * 2 - dy;
                             float reverseRatio = reverseHeight * 2 / height;
@@ -200,22 +215,22 @@ public class TasksTouchHelper {
                 if (firstChild != previousFirstChild && firstChild != null) {
                     final ViewHolder childViewHolder = recyclerView.getChildViewHolder(firstChild);
                     recyclerView.scrollToPosition(0);
-                    selected = childViewHolder;
+                    selected = (TasksViewHolder) childViewHolder;
                 }
             }
         }
     }
 
     private class TasksOnItemTouchListener implements OnItemTouchListener {
-        private GestureDetectorCompat mGestureDetector;
+        private GestureDetectorCompat gestureDetector;
 
         public TasksOnItemTouchListener(Context context) {
-            mGestureDetector = new GestureDetectorCompat(context, new TasksSimpleOnGestureListener());
+            gestureDetector = new GestureDetectorCompat(context, new TasksSimpleOnGestureListener());
         }
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent motionEvent) {
-            mGestureDetector.onTouchEvent(motionEvent);
+            gestureDetector.onTouchEvent(motionEvent);
             final int action = MotionEventCompat.getActionMasked(motionEvent);
             if (action == MotionEvent.ACTION_DOWN) {
                 pointerId = motionEvent.getPointerId(0);
@@ -240,7 +255,7 @@ public class TasksTouchHelper {
 
         @Override
         public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-            mGestureDetector.onTouchEvent(motionEvent);
+            gestureDetector.onTouchEvent(motionEvent);
             if (pointerId == POINTER_ID_NONE) {
                 return;
             }
@@ -337,11 +352,10 @@ public class TasksTouchHelper {
                 distances.clear();
                 return;
             }
-            if (callback.onMove(recyclerView, fromViewHolder, toViewHolder)) {
-                if (layoutManager instanceof ItemTouchHelper.ViewDropHandler) {
-                    final ItemTouchHelper.ViewDropHandler viewDropHandler = (ItemTouchHelper.ViewDropHandler) layoutManager;
-                    viewDropHandler.prepareForDrop(fromViewHolder.itemView, toViewHolder.itemView, 0, selectedTop);
-                }
+            callback.onMoved(recyclerView, (TasksViewHolder) fromViewHolder, (TasksViewHolder) toViewHolder);
+            if (layoutManager instanceof ItemTouchHelper.ViewDropHandler) {
+                final ItemTouchHelper.ViewDropHandler viewDropHandler = (ItemTouchHelper.ViewDropHandler) layoutManager;
+                viewDropHandler.prepareForDrop(fromViewHolder.itemView, toViewHolder.itemView, 0, selectedTop);
             }
         }
 
@@ -382,7 +396,7 @@ public class TasksTouchHelper {
                     dy = motionEvent.getY(pointerIndex) - initialY;
                     if (dy > 10) {
                         initialY = motionEvent.getY(pointerIndex);
-                        callback.onAdd();
+                        callback.onAdded();
                         previousFirstChild = firstChild;
                         pullState = PULL_STATE_ADD;
                         selectView(null, ACTION_STATE_PULL);
@@ -418,12 +432,14 @@ public class TasksTouchHelper {
             if (childViewHolder == null) {
                 return;
             }
+            if (currentEditing == childViewHolder) {
+                return;
+            }
             TasksTouchHelper.this.dx = TasksTouchHelper.this.dy = 0;
-            selectView(childViewHolder, ACTION_STATE_SWIPE);
+            selectView((TasksViewHolder) childViewHolder, ACTION_STATE_SWIPE);
         }
 
-        private void selectView(ViewHolder selected, @ActionState int actionState) {
-            Log.d(TAG, "previousActionState: " + TasksTouchHelper.this.actionState +"selected: " + selected + " actionState: "+ actionState);
+        private void selectView(TasksViewHolder selected, @ActionState int actionState) {
             if (selected == TasksTouchHelper.this.selected && actionState == TasksTouchHelper.this.actionState) {
                 return;
             }
@@ -437,9 +453,9 @@ public class TasksTouchHelper {
                     ((TasksViewHolder) (TasksTouchHelper.this.selected)).reset();
                     if (Math.abs(previousTranslationX) > maxNiche) {
                         if (previousTranslationX < 0) {
-                            callback.onDismiss(TasksTouchHelper.this.selected);
+                            callback.onDismissed(TasksTouchHelper.this.selected);
                         } else {
-                            callback.onArchive(TasksTouchHelper.this.selected);
+                            callback.onArchived(TasksTouchHelper.this.selected);
                         }
                     }
                 }
@@ -454,7 +470,7 @@ public class TasksTouchHelper {
                     TasksTouchHelper.this.selected.itemView.setTranslationY(0);
                     if (pullState == PULL_STATE_CANCEL_ADD) {
                         TasksTouchHelper.this.selected.itemView.setAlpha(0);
-                        callback.onCancelAdding();
+                        callback.onReverted();
                     } else {
                         TasksTouchHelper.this.selected.itemView.setAlpha(1f);
                     }
@@ -498,6 +514,44 @@ public class TasksTouchHelper {
             }
 
             @Override
+            public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+                final int pointerId = motionEvent.getPointerId(0);
+                final int pointerIndex = motionEvent.findPointerIndex(pointerId);
+                final View childView = findChildView(motionEvent, pointerIndex);
+                if (childView == null) {
+                    if (currentEditing != null) {
+                        doEndOfEditing();
+                    }
+                    return false;
+                }
+                final TasksViewHolder viewHolder = (TasksViewHolder) recyclerView.getChildViewHolder(childView);
+                if (viewHolder == null) {
+                    doEndOfEditing();
+                    return false;
+                }
+                if (currentEditing == viewHolder) {
+                    return false;
+                }
+                if (currentEditing != null) {
+                    doEndOfEditing();
+                }
+                if (motionEvent.getX() > viewHolder.itemView.getWidth() / 2) {
+                    if (callback.onItemClicked(viewHolder)) {
+                        return true;
+                    }
+                }
+                currentEditing = viewHolder;
+                viewHolder.setEditable(true);
+                return true;
+            }
+
+            private void doEndOfEditing() {
+                currentEditing.setEditable(false);
+                callback.onItemChanged(currentEditing);
+                currentEditing = null;
+            }
+
+            @Override
             public void onLongPress(MotionEvent motionEvent) {
                 final int pointerId = motionEvent.getPointerId(0);
                 final int pointerIndex = motionEvent.findPointerIndex(pointerId);
@@ -512,7 +566,7 @@ public class TasksTouchHelper {
                 initialX = motionEvent.getX(pointerIndex);
                 initialY = motionEvent.getY(pointerIndex);
                 dx = dy = 0;
-                selectView(viewHolder, ACTION_STATE_DRAG);
+                selectView((TasksViewHolder) viewHolder, ACTION_STATE_DRAG);
             }
         }
 

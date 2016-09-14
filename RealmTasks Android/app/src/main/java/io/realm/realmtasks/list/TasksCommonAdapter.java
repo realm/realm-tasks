@@ -64,28 +64,32 @@ public class TasksCommonAdapter<T> extends RecyclerView.Adapter implements Tasks
     }
 
     @Override
-    public void onItemAdd() {
+    public void onItemAdded() {
         notifyItemInserted(0);
     }
 
     @Override
-    public void onItemArchive(int position) {
+    public void onItemArchived(int position) {
         notifyDataSetChanged();
     }
 
     @Override
-    public void onItemDismiss(int position) {
+    public void onItemDismissed(int position) {
         notifyItemRemoved(position);
     }
 
     @Override
-    public boolean onItemMove(int fromPosition, int toPosition) {
+    public void onItemMoved(int fromPosition, int toPosition) {
         notifyItemMoved(fromPosition, toPosition);
-        return true;
     }
 
     @Override
-    public void onCancelAdding() {
+    public void onItemChanged(TasksViewHolder viewHolder) {
+        notifyItemChanged(viewHolder.getAdapterPosition());
+    }
+
+    @Override
+    public void onItemReverted() {
         notifyItemRemoved(0);
     }
 
