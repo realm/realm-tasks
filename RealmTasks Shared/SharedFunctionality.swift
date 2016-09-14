@@ -28,7 +28,7 @@ private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove 
 
 private func setDefaultRealmConfigurationWithUser(user: User) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
-        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("/~/meta")),
+        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("meta")),
         objectTypes: [ShareOffer.self, ShareRequest.self, TaskListList.self, TaskListReference.self]
     )
     realm = try! Realm()
