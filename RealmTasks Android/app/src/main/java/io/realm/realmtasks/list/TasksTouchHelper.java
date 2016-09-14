@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,6 @@ import android.support.v7.widget.RecyclerView.OnItemTouchListener;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,7 +58,8 @@ public class TasksTouchHelper {
     private float selectedInitialX;
     private float selectedInitialY;
     private float logicalDensity;
-    private ViewHolder selected;
+    private TasksViewHolder selected;
+    private TasksViewHolder currentEditing;
     private RecyclerView recyclerView;
     private View overdrawChild;
     private View previousFirstChild;
