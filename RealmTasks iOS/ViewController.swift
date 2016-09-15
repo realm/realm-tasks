@@ -64,9 +64,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // Notifications
     private var notificationToken: NotificationToken?
-    private var realmNotificationToken: NotificationToken?
-    private var skipNotification = false
-    private var reloadOnNotification = false
 
     // Scrolling
     private var distancePulledDown: CGFloat {
@@ -141,7 +138,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     deinit {
         notificationToken?.stop()
-        realmNotificationToken?.stop()
         tableView.removeObserver(self, forKeyPath: "bounds")
         parent.removeObserver(self, forKeyPath: "text")
     }
@@ -231,53 +227,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
         notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
-            if self.skipNotification {
-                self.skipNotification = false
-                self.reloadOnNotification = true
-                return
-            } else if self.reloadOnNotification {
-                if let _ = self.currentlyEditingIndexPath {
-                    return
-                }
-                self.tableView.reloadData()
-                self.reloadOnNotification = false
-                return
-            }
-
-            switch changes {
-            case .Initial:
-                // Results are now populated and can be accessed without blocking the UI
-                self.tableView.reloadData()
-            case .Update(_, let deletions, let insertions, let modifications):
-                let updateTableView = {
-                    // Query results have changed, so apply them to the UITableView
-                    self.tableView.beginUpdates()
-                    self.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                    self.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                    self.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
-                    self.tableView.endUpdates()
-                }
-
-                if let currentlyEditingIndexPath = self.currentlyEditingIndexPath {
-                    UIView.performWithoutAnimation {
-                        // FIXME: Updating table view forces resigning first responder
-                        // If editing, unintended input state is committed and sync.
-                        self.currentlyEditingCell?.temporarilyIgnoreSaveChanges = true
-                        updateTableView()
-                        let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell<Item>
-                        currentlyEditingCell.temporarilyIgnoreSaveChanges = false
-                        currentlyEditingCell.textView.becomeFirstResponder()
-                    }
-                } else {
-                    updateTableView()
-                }
-
-                self.updateColors()
-                self.toggleOnboardView(animated: true)
-            case .Error(let error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError(String(error))
-            }
+            self.tableView.reloadData()
         }
     }
 
@@ -316,7 +266,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
             toggleOnboardView(animated: true)
-            skipNextNotification()
             cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
         }
         let textView = cell.textView
@@ -376,7 +325,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 try! items.realm?.write {
                     items.move(from: startIndexPath.row, to: destinationIndexPath.row)
                 }
-                skipNextNotification()
             }
 
             let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
@@ -618,7 +566,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                     return NSIndexPath(forRow: index, inSection: 0)
                 }
                 tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
-                skipNextNotification()
 
                 vibrate()
             }
@@ -636,7 +583,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         try! items.realm?.write {
             items.insert(Item(), atIndex: 0)
         }
-        skipNextNotification()
         tableView.reloadData()
         (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
@@ -653,7 +599,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
 
         tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        skipNextNotification()
         updateColors()
         toggleOnboardView()
     }
@@ -677,7 +622,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
 
         tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-        skipNextNotification()
         updateColors()
         toggleOnboardView()
     }
@@ -728,7 +672,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
             tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
         }
-        skipNextNotification()
         toggleOnboardView()
     }
 
@@ -767,12 +710,5 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }, completion: { _ in
             completion?()
         })
-    }
-
-    // MARK: Sync
-
-    private func skipNextNotification() {
-        skipNotification = true
-        reloadOnNotification = false
     }
 }
