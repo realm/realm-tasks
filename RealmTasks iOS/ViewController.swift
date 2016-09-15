@@ -195,6 +195,17 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
+    
+    override func didMoveToParentViewController(parent: UIViewController?) {
+        guard parent == nil else { // we're being removed from our parent controller
+            return
+        }
+        
+        let visibleCells = tableView.visibleCells
+        for cell in visibleCells {
+            (cell as! TableViewCell<Item>).reset()
+        }
+    }
 
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
@@ -395,7 +406,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 self.snapshot = nil
 
                 self.updateColors {
-                    UIView.performWithoutAnimation {
+                    UIView.performWithoutAnimation { [unowned self] in
                         self.tableView.reloadData()
                     }
                 }
@@ -438,7 +449,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
         return cell
     }
-
+    
     private func cellHeightForText(text: String) -> CGFloat {
         return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
                                          options: [.UsesLineFragmentOrigin],
@@ -472,6 +483,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         cell.alpha = currentlyEditing ? editingCellAlpha : 1
     }
 
+    func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        let itemCell = cell as! TableViewCell<Item>
+        itemCell.reset()
+    }
+    
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
             parent: item as! TaskList,
