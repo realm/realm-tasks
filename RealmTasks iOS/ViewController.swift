@@ -138,12 +138,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             title = parent.text
         }
     }
-
+    
     deinit {
-        notificationToken?.stop()
-        realmNotificationToken?.stop()
         tableView.removeObserver(self, forKeyPath: "bounds")
         parent.removeObserver(self, forKeyPath: "text")
+        notificationToken?.stop()
+        realmNotificationToken?.stop()
     }
 
     override func viewDidLoad() {
@@ -230,7 +230,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
-        notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
+        notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { [unowned self] changes in
             if self.skipNotification {
                 self.skipNotification = false
                 self.reloadOnNotification = true
@@ -517,7 +517,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
         UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
             parentVC.view.layoutIfNeeded()
-        }, completion: { _ in
+        }, completion: { [unowned self] _ in
             self.view.removeFromSuperview()
             nextVC.didMoveToParentViewController(parentVC)
             self.removeFromParentViewController()
@@ -553,7 +553,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
 
         if distancePulledDown <= tableView.rowHeight {
-            UIView.animateWithDuration(0.1) {
+            UIView.animateWithDuration(0.1) { [unowned self] in
                 self.placeHolderCell.navHintView.alpha = 0
             }
             placeHolderCell.textView.text = "Pull to Create Item"
@@ -573,7 +573,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 onboardView.alpha = 0
             }
         } else if distancePulledDown <= tableView.rowHeight * 2 {
-            UIView.animateWithDuration(0.1) {
+            UIView.animateWithDuration(0.1) { [unowned self] in
                 self.placeHolderCell.navHintView.alpha = 0
             }
             placeHolderCell.layer.transform = CATransform3DIdentity
@@ -587,7 +587,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             placeHolderCell.navHintView.hintText = "Switch to Lists"
             placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
 
-            UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+            UIView.animateWithDuration(0.4, delay: 0.0,
+                                       usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5,
+                                       options: [], animations: { [unowned self] in
                 self.placeHolderCell.navHintView.alpha = 1
                 self.placeHolderCell.navHintView.hintArrowTransfom  = CGAffineTransformIdentity
             }, completion: nil)
@@ -737,7 +739,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         // reload the height of the cell
         let height = cellHeightForText(editingCell.textView.text)
         if Int(height) != Int(editingCell.frame.size.height) {
-            UIView.performWithoutAnimation {
+            UIView.performWithoutAnimation { [unowned self] in
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
             }
