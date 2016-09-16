@@ -127,7 +127,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         cellDidEndEditing = nil
         cellDidChangeText = nil
     }
-    
+
     private func setupBackgroundView() {
         backgroundColor = .clearColor()
 
