@@ -138,7 +138,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             title = parent.text
         }
     }
-    
+
     deinit {
         tableView.removeObserver(self, forKeyPath: "bounds")
         parent.removeObserver(self, forKeyPath: "text")
@@ -449,7 +449,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
         return cell
     }
-    
+
     private func cellHeightForText(text: String) -> CGFloat {
         return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
                                          options: [.UsesLineFragmentOrigin],
@@ -487,7 +487,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         let itemCell = cell as! TableViewCell<Item>
         itemCell.reset()
     }
-    
+
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
             parent: item as! TaskList,
