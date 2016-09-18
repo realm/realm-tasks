@@ -99,9 +99,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // Onboard view
     private let onboardView = OnboardView()
 
-    // Constants
-    private let colors: [UIColor]
-
     // Top/Bottom View Controllers
     private let createTopViewController: (() -> (UIViewController))?
     private var topViewController: UIViewController?
@@ -111,7 +108,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // MARK: View Lifecycle
 
     init(parent: Parent, colors: [UIColor]) {
-        self.colors = colors
         if Item.self == Task.self {
             createTopViewController = {
                 ViewController<TaskListReference, TaskListList>(
@@ -131,7 +127,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
         }
 
-        presenter = ListPresenter(parent: parent)
+        presenter = ListPresenter(parent: parent, colors: colors)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -194,7 +190,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
-        placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
+        placeHolderCell.backgroundView!.backgroundColor = presenter.colorForRow(0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -268,7 +264,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                     updateTableView()
                 }
 
-                self.updateColors()
+                self.presenter.updateColors()
                 self.toggleOnboardView(animated: true)
             case .Error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
@@ -390,7 +386,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 self.snapshot.removeFromSuperview()
                 self.snapshot = nil
 
-                self.updateColors {
+                self.presenter.updateColors {
                     UIView.performWithoutAnimation {
                         self.tableView.reloadData()
                     }
@@ -457,7 +453,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        cell.contentView.backgroundColor = colorForRow(indexPath.row)
+        cell.contentView.backgroundColor = presenter.colorForRow(indexPath.row)
         cell.alpha = currentlyEditing ? presenter.editingCellAlpha : 1
     }
 
@@ -643,27 +639,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         if motion == .MotionShake {
             presenter.shareCurrentList()
         }
-    }
-
-    // MARK: Colors
-
-    internal func colorForRow(row: Int) -> UIColor {
-        let fraction = Double(row) / Double(max(13, items.count))
-        return colors.gradientColorAtFraction(fraction)
-    }
-
-    internal func updateColors(completion completion: (() -> Void)? = nil) {
-        let visibleCellsAndColors = tableView.visibleCells.map { cell in
-            return (cell, colorForRow(tableView.indexPathForCell(cell)!.row))
-        }
-
-        UIView.animateWithDuration(0.5, animations: {
-            for (cell, color) in visibleCellsAndColors {
-                cell.contentView.backgroundColor = color
-            }
-        }, completion: { _ in
-            completion?()
-        })
     }
 
     // MARK: Sync

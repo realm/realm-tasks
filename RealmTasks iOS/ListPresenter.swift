@@ -20,7 +20,6 @@ protocol ListViewControllerProtocol {
     var bounds: CGRect {get}
 
     func skipNextNotification()
-    func updateColors(completion completion: (() -> Void)?)
     func toggleOnboardView(animated animated: Bool)
 
     func setTopConstraint(constant: CGFloat)
@@ -47,12 +46,12 @@ class ListPresenter<Parent: Object where Parent: ListPresentable>: NSObject, Lis
     }
     var currentlyEditingIndexPath: NSIndexPath?
 
-
-    convenience init(parent: Parent) {
+    convenience init(parent: Parent, colors: [UIColor]) {
         self.init()
         items = ItemsInteractor(parent: parent)
         cellInteractor = CellInteractor(parent: parent)
         cellInteractor.presenter = self
+        self.colors = colors
     }
 
     deinit {
@@ -105,7 +104,7 @@ class ListPresenter<Parent: Object where Parent: ListPresentable>: NSObject, Lis
 
     func refreshTableAfterUpdate() {
         viewController.skipNextNotification()
-        viewController.updateColors(completion: nil)
+        updateColors(completion: nil)
         viewController.toggleOnboardView(animated: false)
     }
 
@@ -192,6 +191,30 @@ class ListPresenter<Parent: Object where Parent: ListPresentable>: NSObject, Lis
                                          options: [.UsesLineFragmentOrigin],
                                          attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
                                          context: nil).height + 33
+    }
+
+    // MARK: Colors
+    private var colors: [UIColor]!
+
+    internal func colorForRow(row: Int) -> UIColor {
+        let fraction = Double(row) / Double(max(13, items.tasks.parent.items.count))
+        return colors.gradientColorAtFraction(fraction)
+    }
+
+    internal func updateColors(completion completion: (() -> Void)? = nil) {
+        let tableView = viewController.tableView
+
+        let visibleCellsAndColors = tableView.visibleCells.map { cell in
+            return (cell, colorForRow(tableView.indexPathForCell(cell)!.row))
+        }
+
+        UIView.animateWithDuration(0.5, animations: {
+            for (cell, color) in visibleCellsAndColors {
+                cell.contentView.backgroundColor = color
+            }
+            }, completion: { _ in
+                completion?()
+        })
     }
 
 }
