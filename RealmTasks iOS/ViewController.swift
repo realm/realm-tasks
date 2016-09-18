@@ -55,7 +55,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     {
 
     // MARK: Properties
-
     private var presenter: ListPresenter<Parent>
 
     // Items
@@ -212,7 +211,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
     }
 
-    private func toggleOnboardView(animated animated: Bool = false) {
+    internal func toggleOnboardView(animated animated: Bool = false) {
         if onboardView.superview == nil {
             tableView.addSubview(onboardView)
             onboardView.center = tableView.center
@@ -650,42 +649,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // MARK: Cell Callbacks
 
     private func itemDeleted(item: Item) {
-        guard let index = items.indexOf(item) else {
-            return
-        }
-
-        try! items.realm?.write {
-            items.realm?.delete(item)
-        }
-
-        tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        skipNextNotification()
-        updateColors()
-        toggleOnboardView()
+        presenter.deleteCellWithItem(item)
     }
 
     private func itemCompleted(item: Item) {
-        guard !(item as Object).invalidated, let index = items.indexOf(item) else {
-            return
-        }
-        let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
-        let destinationIndexPath: NSIndexPath
-        if item.completed {
-            // move cell to bottom
-            destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
-        } else {
-            // move cell just above the first completed item
-            let completedCount = presenter.parent.completedCount
-            destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
-        }
-        try! items.realm?.write {
-            items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
-        }
-
-        tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-        skipNextNotification()
-        updateColors()
-        toggleOnboardView()
+        presenter.completeCellWithItem(item)
     }
 
     private func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
@@ -761,34 +729,19 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
-        guard motion == .MotionShake, let taskList = presenter.parent as? TaskList else {
-            return
+        if motion == .MotionShake {
+            presenter.shareCurrentList()
         }
-        let id = taskList.realm?.configuration.syncConfiguration?.realmURL.lastPathComponent
-
-        let shareOffer = ShareOffer()
-        let realm = try! Realm()
-        shareOffer.listName = taskList.text
-        shareOffer.listPath = "/\(realm.configuration.syncConfiguration!.user.identity)/\(id!)"
-
-        try! realm.write {
-            realm.add(shareOffer)
-        }
-
-        // Pass the token to the activity view controller
-        let activityViewController = UIActivityViewController(activityItems: [shareOffer.url], applicationActivities: nil)
-        presentViewController(activityViewController, animated: true, completion: nil)
-        print("sharing URL: \(shareOffer.url)")
     }
 
     // MARK: Colors
 
-    private func colorForRow(row: Int) -> UIColor {
+    internal func colorForRow(row: Int) -> UIColor {
         let fraction = Double(row) / Double(max(13, items.count))
         return colors.gradientColorAtFraction(fraction)
     }
 
-    private func updateColors(completion completion: (() -> Void)? = nil) {
+    internal func updateColors(completion completion: (() -> Void)? = nil) {
         let visibleCellsAndColors = tableView.visibleCells.map { cell in
             return (cell, colorForRow(tableView.indexPathForCell(cell)!.row))
         }
@@ -804,7 +757,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: Sync
 
-    private func skipNextNotification() {
+    internal func skipNextNotification() {
         skipNotification = true
         reloadOnNotification = false
     }
@@ -816,6 +769,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     func shareDialogueWithUrl(shareUrl: String) {
-
+        // Pass the token to the activity view controller
+        let activityViewController = UIActivityViewController(activityItems: [shareUrl], applicationActivities: nil)
+        presentViewController(activityViewController, animated: true, completion: nil)
     }
 }

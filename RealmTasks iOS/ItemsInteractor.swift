@@ -12,9 +12,12 @@ import RealmSwift
 class ItemsInteractor<Parent: Object where Parent: ListPresentable> {
 
     let tasks: Tasks<Parent>
-
+    var presenter: ListPresenterProtocol!
+    
     init(parent: Parent) {
         tasks = Tasks(parent: parent)
         
     }
+
+    
 }

@@ -23,6 +23,8 @@
 		9C2F58FE1D8F163A00A55D99 /* Tasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2F58FD1D8F163A00A55D99 /* Tasks.swift */; };
 		9C2F59001D8F16B800A55D99 /* ListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2F58FF1D8F16B800A55D99 /* ListPresenter.swift */; };
 		9C2F59021D8F180400A55D99 /* ItemsInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2F59011D8F180400A55D99 /* ItemsInteractor.swift */; };
+		9C2F59041D8F1CE800A55D99 /* ShareInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2F59031D8F1CE800A55D99 /* ShareInteractor.swift */; };
+		9C2F59061D8F2D6700A55D99 /* CellInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2F59051D8F2D6700A55D99 /* CellInteractor.swift */; };
 		AF6DB3B195E188C570802C2B /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C1FC133460B9224E2A98CBE /* Pods_RealmTasks_RealmTasks_macOS.framework */; };
 		C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB01F1D46329400D3E0AC /* AppDelegate.swift */; };
 		C23EB0221D46329400D3E0AC /* macOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C23EB0211D46329400D3E0AC /* macOS.xcassets */; };
@@ -85,6 +87,8 @@
 		9C2F58FD1D8F163A00A55D99 /* Tasks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tasks.swift; sourceTree = "<group>"; };
 		9C2F58FF1D8F16B800A55D99 /* ListPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListPresenter.swift; sourceTree = "<group>"; };
 		9C2F59011D8F180400A55D99 /* ItemsInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemsInteractor.swift; sourceTree = "<group>"; };
+		9C2F59031D8F1CE800A55D99 /* ShareInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareInteractor.swift; sourceTree = "<group>"; };
+		9C2F59051D8F2D6700A55D99 /* CellInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellInteractor.swift; sourceTree = "<group>"; };
 		9CCE23B978EF7565F4866B4B /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		C23EB01D1D46329400D3E0AC /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23EB01F1D46329400D3E0AC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -184,7 +188,9 @@
 			isa = PBXGroup;
 			children = (
 				9C2F58FF1D8F16B800A55D99 /* ListPresenter.swift */,
+				9C2F59031D8F1CE800A55D99 /* ShareInteractor.swift */,
 				9C2F59011D8F180400A55D99 /* ItemsInteractor.swift */,
+				9C2F59051D8F2D6700A55D99 /* CellInteractor.swift */,
 				9C2F58FD1D8F163A00A55D99 /* Tasks.swift */,
 			);
 			name = ViewController;
@@ -651,8 +657,10 @@
 				2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */,
 				E89CE68E1D409D3500BB4521 /* LogInViewController.swift in Sources */,
 				9C2F58FE1D8F163A00A55D99 /* Tasks.swift in Sources */,
+				9C2F59041D8F1CE800A55D99 /* ShareInteractor.swift in Sources */,
 				E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */,
 				225201A41D3DD648009E45FA /* Models.swift in Sources */,
+				9C2F59061D8F2D6700A55D99 /* CellInteractor.swift in Sources */,
 				225201A21D3DD648009E45FA /* RealmColor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

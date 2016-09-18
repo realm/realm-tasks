@@ -16,5 +16,4 @@ class Tasks<Parent: Object where Parent: ListPresentable> {
     init(parent: Parent) {
         self.parent = parent
     }
-    
 }
