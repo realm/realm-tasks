@@ -17,14 +17,20 @@ protocol ListViewControllerProtocol {
     func setListTitle(title: String)
 
     var tableView: UITableView {get}
+    var bounds: CGRect {get}
 
     func skipNextNotification()
     func updateColors(completion completion: (() -> Void)?)
     func toggleOnboardView(animated animated: Bool)
+
+    func setTopConstraint(constant: CGFloat)
+    func setPlaceholderAlpha(alpha: CGFloat)
 }
 
 class ListPresenter<Parent: Object where Parent: ListPresentable>: NSObject, ListPresenterProtocol {
+    let editingCellAlpha: CGFloat = 0.3
 
+    // Connections
     var viewController: ListViewControllerProtocol!
     var items: ItemsInteractor<Parent>!
     var cellInteractor: CellInteractor<Parent>!
@@ -32,6 +38,15 @@ class ListPresenter<Parent: Object where Parent: ListPresentable>: NSObject, Lis
     var parent: Parent {
         return items.tasks.parent
     }
+
+    // Editing properties
+    var currentlyEditingCell: TableViewCell<Parent.Item>? {
+        didSet {
+            viewController.tableView.scrollEnabled = (currentlyEditingCell == nil)
+        }
+    }
+    var currentlyEditingIndexPath: NSIndexPath?
+
 
     convenience init(parent: Parent) {
         self.init()
@@ -102,4 +117,81 @@ class ListPresenter<Parent: Object where Parent: ListPresentable>: NSObject, Lis
         viewController.tableView.deleteRowsAtIndexPaths(from, withRowAnimation: withRowAnimation)
         refreshTableAfterUpdate()
     }
+
+    func updateListForChangedCell(editingCell: TableViewCell<Parent.Item>) {
+        // If the height of the text view has extended to the next line,
+        // reload the height of the cell
+        let height = cellHeightForText(editingCell.textView.text)
+        if Int(height) != Int(editingCell.frame.size.height) {
+            UIView.performWithoutAnimation {[unowned self] in
+                self.viewController.tableView.beginUpdates()
+                self.viewController.tableView.endUpdates()
+            }
+
+            for cell in viewController.tableView.visibleCells where cell !== editingCell {
+                cell.alpha = editingCellAlpha
+            }
+        }
+    }
+
+    func cellDidBeginEditing(editingCell: TableViewCell<Parent.Item>) {
+        currentlyEditingCell = editingCell
+        let tableView = viewController.tableView
+
+        currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
+
+        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
+        viewController.setTopConstraint( -editingOffset)
+        tableView.contentInset.bottom += editingOffset
+
+        viewController.setPlaceholderAlpha(0)
+        tableView.bounces = false
+
+        UIView.animateWithDuration(0.3, animations: { [unowned self] in
+            tableView.superview?.layoutSubviews()
+            for cell in tableView.visibleCells where cell !== editingCell {
+                cell.alpha = self.editingCellAlpha
+            }
+            }, completion: { [unowned self] finished in
+                self.viewController.tableView.bounces = true
+            })
+    }
+
+    func cellDidEndEditing(editingCell: TableViewCell<Parent.Item>) {
+        currentlyEditingCell = nil
+        currentlyEditingIndexPath = nil
+
+        let tableView = viewController.tableView
+
+        tableView.contentInset.bottom = 54
+        viewController.setTopConstraint(0)
+        UIView.animateWithDuration(0.3) {
+            for cell in tableView.visibleCells where cell !== editingCell {
+                cell.alpha = 1
+            }
+            tableView.superview?.layoutSubviews()
+        }
+
+        let item = editingCell.item
+        guard !(item as Object).invalidated else {
+            tableView.reloadData()
+            return
+        }
+        if item.text.isEmpty {
+            try! item.realm?.write {
+                item.realm!.delete(item)
+            }
+            tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
+        }
+        viewController.skipNextNotification()
+        viewController.toggleOnboardView(animated: false)
+    }
+
+    internal func cellHeightForText(text: String) -> CGFloat {
+        return text.boundingRectWithSize(CGSize(width: viewController.bounds.size.width - 25, height: viewController.bounds.size.height),
+                                         options: [.UsesLineFragmentOrigin],
+                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
+                                         context: nil).height + 33
+    }
+
 }

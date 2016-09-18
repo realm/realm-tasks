@@ -65,6 +65,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // Table View
     let tableView = UITableView()
     private let tableViewContentView = UIView()
+    var bounds: CGRect { return view.bounds }
 
     // Notifications
     private var notificationToken: NotificationToken?
@@ -86,13 +87,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private var destinationIndexPath: NSIndexPath?
 
     // Editing
-    private var currentlyEditing: Bool { return currentlyEditingCell != nil }
-    private var currentlyEditingCell: TableViewCell<Item>? {
-        didSet {
-            tableView.scrollEnabled = !currentlyEditing
-        }
-    }
-    private var currentlyEditingIndexPath: NSIndexPath?
+    private var currentlyEditing: Bool { return presenter.currentlyEditingCell != nil }
 
     // Auto Layout
     private var topConstraint: NSLayoutConstraint?
@@ -105,7 +100,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private let onboardView = OnboardView()
 
     // Constants
-    private let editingCellAlpha: CGFloat = 0.3
     private let colors: [UIColor]
 
     // Top/Bottom View Controllers
@@ -238,7 +232,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 self.reloadOnNotification = true
                 return
             } else if self.reloadOnNotification {
-                if let _ = self.currentlyEditingIndexPath {
+                if let _ = self.presenter.currentlyEditingIndexPath {
                     return
                 }
                 self.tableView.reloadData()
@@ -260,11 +254,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                     self.tableView.endUpdates()
                 }
 
-                if let currentlyEditingIndexPath = self.currentlyEditingIndexPath {
+                if let currentlyEditingIndexPath = self.presenter.currentlyEditingIndexPath {
                     UIView.performWithoutAnimation {
                         // FIXME: Updating table view forces resigning first responder
                         // If editing, unintended input state is committed and sync.
-                        self.currentlyEditingCell?.temporarilyIgnoreSaveChanges = true
+                        self.presenter.currentlyEditingCell?.temporarilyIgnoreSaveChanges = true
                         updateTableView()
                         let currentlyEditingCell = self.tableView.cellForRowAtIndexPath(currentlyEditingIndexPath) as! TableViewCell<Item>
                         currentlyEditingCell.temporarilyIgnoreSaveChanges = false
@@ -428,31 +422,24 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Item>
         cell.item = items[indexPath.row]
-        cell.itemCompleted = itemCompleted
-        cell.itemDeleted = itemDeleted
-        cell.cellDidChangeText = cellDidChangeText
-        cell.cellDidBeginEditing = cellDidBeginEditing
-        cell.cellDidEndEditing = cellDidEndEditing
+        cell.itemCompleted = presenter.completeCellWithItem
+        cell.itemDeleted = presenter.deleteCellWithItem
+        cell.cellDidChangeText = presenter.updateListForChangedCell
+        cell.cellDidBeginEditing = presenter.cellDidBeginEditing
+        cell.cellDidEndEditing = presenter.cellDidEndEditing
 
-        if let editingIndexPath = currentlyEditingIndexPath where editingIndexPath.row != indexPath.row {
-            cell.alpha = editingCellAlpha
+        if let editingIndexPath = presenter.currentlyEditingIndexPath where editingIndexPath.row != indexPath.row {
+            cell.alpha = presenter.editingCellAlpha
         }
 
         return cell
     }
 
-    private func cellHeightForText(text: String) -> CGFloat {
-        return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
-                                         options: [.UsesLineFragmentOrigin],
-                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
-                                         context: nil).height + 33
-    }
-
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if currentlyEditingIndexPath?.row == indexPath.row {
-            return floor(cellHeightForText(currentlyEditingCell!.textView.text))
+        if presenter.currentlyEditingIndexPath?.row == indexPath.row {
+            return floor(presenter.cellHeightForText(presenter.currentlyEditingCell!.textView.text))
         }
 
         var item = items[indexPath.row]
@@ -466,12 +453,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 item = items[destinationIndexPath.row]
             }
         }
-        return floor(cellHeightForText(item.text))
+        return floor(presenter.cellHeightForText(item.text))
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         cell.contentView.backgroundColor = colorForRow(indexPath.row)
-        cell.alpha = currentlyEditing ? editingCellAlpha : 1
+        cell.alpha = currentlyEditing ? presenter.editingCellAlpha : 1
     }
 
     private func navigateToBottomViewController(item: Item) {
@@ -646,82 +633,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
 
-    // MARK: Cell Callbacks
-
-    private func itemDeleted(item: Item) {
-        presenter.deleteCellWithItem(item)
-    }
-
-    private func itemCompleted(item: Item) {
-        presenter.completeCellWithItem(item)
-    }
-
-    private func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
-        currentlyEditingCell = editingCell
-        currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
-
-        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
-        topConstraint?.constant = -editingOffset
-        tableView.contentInset.bottom += editingOffset
-
-        placeHolderCell.alpha = 0
-        tableView.bounces = false
-
-        UIView.animateWithDuration(0.3, animations: { [unowned self] in
-            self.view.layoutSubviews()
-            for cell in self.tableView.visibleCells where cell !== editingCell {
-                cell.alpha = self.editingCellAlpha
-            }
-        }, completion: { [unowned self] finished in
-            self.tableView.bounces = true
-        })
-    }
-
-    private func cellDidEndEditing(editingCell: TableViewCell<Item>) {
-        currentlyEditingCell = nil
-        currentlyEditingIndexPath = nil
-
-        tableView.contentInset.bottom = 54
-        topConstraint?.constant = 0
-        UIView.animateWithDuration(0.3) { [weak self] in
-            guard let strongSelf = self else { return }
-            for cell in strongSelf.tableView.visibleCells where cell !== editingCell {
-                cell.alpha = 1
-            }
-            strongSelf.view.layoutSubviews()
-        }
-
-        let item = editingCell.item
-        guard !(item as Object).invalidated else {
-            tableView.reloadData()
-            return
-        }
-        if item.text.isEmpty {
-            try! item.realm?.write {
-                item.realm!.delete(item)
-            }
-            tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
-        }
-        skipNextNotification()
-        toggleOnboardView()
-    }
-
-    private func cellDidChangeText(editingCell: TableViewCell<Item>) {
-        // If the height of the text view has extended to the next line,
-        // reload the height of the cell
-        let height = cellHeightForText(editingCell.textView.text)
-        if Int(height) != Int(editingCell.frame.size.height) {
-            UIView.performWithoutAnimation {
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
-            }
-
-            for cell in tableView.visibleCells where cell !== editingCell {
-                cell.alpha = editingCellAlpha
-            }
-        }
-    }
-
     // MARK: Shake To Share
 
     override func canBecomeFirstResponder() -> Bool {
@@ -772,5 +683,13 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         // Pass the token to the activity view controller
         let activityViewController = UIActivityViewController(activityItems: [shareUrl], applicationActivities: nil)
         presentViewController(activityViewController, animated: true, completion: nil)
+    }
+
+    func setTopConstraint(constant: CGFloat) {
+        topConstraint?.constant = constant
+    }
+
+    func setPlaceholderAlpha(alpha: CGFloat) {
+        placeHolderCell.alpha = alpha
     }
 }
