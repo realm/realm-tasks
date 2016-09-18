@@ -39,7 +39,6 @@ extension UIView {
 }
 
 private var tableViewBoundsKVOContext = 0
-private var titleKVOContext = 0
 
 private enum NavDirection {
     case Up, Down
@@ -50,13 +49,19 @@ private enum NavDirection {
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+    UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate,
+
+    ListViewControllerProtocol
+    {
 
     // MARK: Properties
 
+    private var presenter: ListPresenter<Parent>
+
     // Items
-    private var parent: Parent
-    private var items: List<Item> { return parent.items }
+    private var items: List<Parent.Item> {
+        return presenter.allItems()
+    }
 
     // Table View
     let tableView = UITableView()
@@ -113,7 +118,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // MARK: View Lifecycle
 
     init(parent: Parent, colors: [UIColor]) {
-        self.parent = parent
         self.colors = colors
         if Item.self == Task.self {
             createTopViewController = {
@@ -133,18 +137,19 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 )
             }
         }
+
+        presenter = ListPresenter(parent: parent)
+
         super.init(nibName: nil, bundle: nil)
-        if let parent = parent as? TaskList {
-            parent.addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
-            title = parent.text
-        }
+
+        presenter.viewController = self
+        presenter.observeTitle()
     }
 
     deinit {
         notificationToken?.stop()
         realmNotificationToken?.stop()
         tableView.removeObserver(self, forKeyPath: "bounds")
-        parent.removeObserver(self, forKeyPath: "text")
     }
 
     override func viewDidLoad() {
@@ -189,11 +194,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         if context == &tableViewBoundsKVOContext {
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
-        } else if context == &titleKVOContext {
-            if let parent = parent as? TaskList {
-                title = parent.text
-                parentViewController?.title = title
-            }
         } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
@@ -312,7 +312,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 return
             }
         } else {
-            let row = parent.uncompletedCount
+            let row = presenter.parent.uncompletedCount
             try! items.realm?.write {
                 items.insert(Item(), atIndex: row)
             }
@@ -675,7 +675,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
         } else {
             // move cell just above the first completed item
-            let completedCount = parent.completedCount
+            let completedCount = presenter.parent.completedCount
             destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
         }
         try! items.realm?.write {
@@ -761,7 +761,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
-        guard motion == .MotionShake, let taskList = parent as? TaskList else {
+        guard motion == .MotionShake, let taskList = presenter.parent as? TaskList else {
             return
         }
         let id = taskList.realm?.configuration.syncConfiguration?.realmURL.lastPathComponent
@@ -807,5 +807,15 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private func skipNextNotification() {
         skipNotification = true
         reloadOnNotification = false
+    }
+
+    // MARK: ListViewControllerProtocol
+    func setListTitle(title: String) {
+        self.title = title
+        parentViewController?.title = title
+    }
+
+    func shareDialogueWithUrl(shareUrl: String) {
+
     }
 }

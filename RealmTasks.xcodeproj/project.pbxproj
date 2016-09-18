@@ -20,6 +20,9 @@
 		225201A51D3DD648009E45FA /* CellTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019C1D3DD648009E45FA /* CellTextView.swift */; };
 		225201A61D3DD648009E45FA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019D1D3DD648009E45FA /* ViewController.swift */; };
 		2A447ADB26F54F2CF35792DC /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DDADA10BA83306A40543B8B /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */; };
+		9C2F58FE1D8F163A00A55D99 /* Tasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2F58FD1D8F163A00A55D99 /* Tasks.swift */; };
+		9C2F59001D8F16B800A55D99 /* ListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2F58FF1D8F16B800A55D99 /* ListPresenter.swift */; };
+		9C2F59021D8F180400A55D99 /* ItemsInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2F59011D8F180400A55D99 /* ItemsInteractor.swift */; };
 		AF6DB3B195E188C570802C2B /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C1FC133460B9224E2A98CBE /* Pods_RealmTasks_RealmTasks_macOS.framework */; };
 		C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB01F1D46329400D3E0AC /* AppDelegate.swift */; };
 		C23EB0221D46329400D3E0AC /* macOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C23EB0211D46329400D3E0AC /* macOS.xcassets */; };
@@ -79,6 +82,9 @@
 		2252019D1D3DD648009E45FA /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4DDADA10BA83306A40543B8B /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D7D2927CA4A12217D6E1964 /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; sourceTree = "<group>"; };
+		9C2F58FD1D8F163A00A55D99 /* Tasks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tasks.swift; sourceTree = "<group>"; };
+		9C2F58FF1D8F16B800A55D99 /* ListPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListPresenter.swift; sourceTree = "<group>"; };
+		9C2F59011D8F180400A55D99 /* ItemsInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemsInteractor.swift; sourceTree = "<group>"; };
 		9CCE23B978EF7565F4866B4B /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		C23EB01D1D46329400D3E0AC /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23EB01F1D46329400D3E0AC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -169,8 +175,19 @@
 				22092D851D5C5BCB0016E757 /* NavHintView.swift */,
 				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
 				2252019D1D3DD648009E45FA /* ViewController.swift */,
+				9C2F58FB1D8F0DF500A55D99 /* ViewController */,
 			);
 			path = "RealmTasks iOS";
+			sourceTree = "<group>";
+		};
+		9C2F58FB1D8F0DF500A55D99 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				9C2F58FF1D8F16B800A55D99 /* ListPresenter.swift */,
+				9C2F59011D8F180400A55D99 /* ItemsInteractor.swift */,
+				9C2F58FD1D8F163A00A55D99 /* Tasks.swift */,
+			);
+			name = ViewController;
 			sourceTree = "<group>";
 		};
 		C23EB01E1D46329400D3E0AC /* RealmTasks macOS */ = {
@@ -433,7 +450,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		3AE7B23DDA2C82C375060AF1 /* [CP] Check Pods Manifest.lock */ = {
@@ -448,7 +465,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		5ED81D26D231C143AB37A5C5 /* [CP] Copy Pods Resources */ = {
@@ -478,7 +495,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		7087FEFB203D3E6D6368DA7B /* [CP] Copy Pods Resources */ = {
@@ -628,9 +645,12 @@
 				E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */,
 				C23EB0381D4643B900D3E0AC /* Constants.swift in Sources */,
 				225201A31D3DD648009E45FA /* TableViewCell.swift in Sources */,
+				9C2F59021D8F180400A55D99 /* ItemsInteractor.swift in Sources */,
 				E8A1E6501D59354500D8B04A /* ContainerViewController.swift in Sources */,
+				9C2F59001D8F16B800A55D99 /* ListPresenter.swift in Sources */,
 				2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */,
 				E89CE68E1D409D3500BB4521 /* LogInViewController.swift in Sources */,
+				9C2F58FE1D8F163A00A55D99 /* Tasks.swift in Sources */,
 				E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */,
 				225201A41D3DD648009E45FA /* Models.swift in Sources */,
 				225201A21D3DD648009E45FA /* RealmColor.swift in Sources */,
