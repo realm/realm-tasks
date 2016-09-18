@@ -28,14 +28,14 @@ private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove 
 
 private func setDefaultRealmConfigurationWithUser(user: User) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
-        syncConfiguration: (user, Constants.syncServerURL!),
-        objectTypes: [TaskListList.self, TaskList.self, Task.self]
+        syncConfiguration: (user, Constants.syncServerURL!.URLByAppendingPathComponent("/~/meta")),
+        objectTypes: [ShareOffer.self, ShareRequest.self, TaskListList.self, TaskListReference.self]
     )
     realm = try! Realm()
 
     if realm.isEmpty {
         try! realm.write {
-            let list = TaskList()
+            let list = TaskListReference()
             list.id = Constants.defaultListID
             list.text = Constants.defaultListName
             let listLists = TaskListList()
@@ -45,24 +45,19 @@ private func setDefaultRealmConfigurationWithUser(user: User) {
     }
 
     // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
-    deduplicationNotificationToken = realm.addNotificationBlock { _, realm in
-        guard realm.objects(TaskListList.self).first!.items.count > 1 else {
-            return
-        }
+    deduplicationNotificationToken = realm.objects(TaskListList.self).first!.items.addNotificationBlock { _ in
         // Deduplicate
-        dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-            let items = try! Realm().objects(TaskListList.self).first!.items
-            guard items.count > 1 else { return }
+        let items = try! Realm().objects(TaskListList.self).first!.items
+        let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
+        guard listReferenceIDs.count > 1 else { return }
 
-            try! items.realm!.write {
-                let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
-                for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
-                    let id = id as! String
-                    let indexesToRemove = items.enumerate().flatMap { index, element in
-                        return element.id == id ? index : nil
-                    }
-                    indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
+        try! items.realm!.write {
+            for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
+                let id = id as! String
+                let indexesToRemove = items.enumerate().flatMap { index, element in
+                    return element.id == id ? index : nil
                 }
+                indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
             }
         }
     }
@@ -87,5 +82,17 @@ func authenticate(username username: String, password: String, register: Bool, c
             setDefaultRealmConfigurationWithUser(user)
         }
         callback(error)
+    }
+}
+
+func openShareURL(url: NSURL) {
+    guard let token = url.host where NSUUID(UUIDString: token) != nil else {
+        print("invalid share URL: \(url)")
+        return
+    }
+    // Accept share request
+    let realm = try! Realm()
+    try! realm.write {
+        realm.add(ShareRequest(token: token))
     }
 }
