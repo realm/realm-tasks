@@ -385,7 +385,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Item>
         cell.item = items[indexPath.row]
         cell.presenter = cellPresenter
-        cell.cellDidChangeText = cellDidChangeText
 
         if let editingIndexPath = cellPresenter.currentlyEditingIndexPath where editingIndexPath.row != indexPath.row {
             cell.alpha = editingCellAlpha
@@ -394,18 +393,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         return cell
     }
 
-    private func cellHeightForText(text: String) -> CGFloat {
-        return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
-                                         options: [.UsesLineFragmentOrigin],
-                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
-                                         context: nil).height + 33
-    }
-
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if cellPresenter.currentlyEditingIndexPath?.row == indexPath.row {
-            return floor(cellHeightForText(cellPresenter.currentlyEditingCell!.textView.text))
+            return floor(cellPresenter.cellHeightForText(cellPresenter.currentlyEditingCell!.textView.text))
         }
 
         var item = items[indexPath.row]
@@ -419,7 +411,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 item = items[destinationIndexPath.row]
             }
         }
-        return floor(cellHeightForText(item.text))
+        return floor(cellPresenter.cellHeightForText(item.text))
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -599,24 +591,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
         
         (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
-    }
-
-    // MARK: Cell Callbacks
-
-    private func cellDidChangeText(editingCell: TableViewCell<Item>) {
-        // If the height of the text view has extended to the next line,
-        // reload the height of the cell
-        let height = cellHeightForText(editingCell.textView.text)
-        if Int(height) != Int(editingCell.frame.size.height) {
-            UIView.performWithoutAnimation { [unowned self] in
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
-            }
-
-            for cell in tableView.visibleCells where cell !== editingCell {
-                cell.alpha = editingCellAlpha
-            }
-        }
     }
 
     // MARK: Colors

@@ -127,4 +127,32 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
         viewController.didUpdateList()
     }
 
+    func cellDidChangeText(editingCell: TableViewCell<Item>) {
+        // If the height of the text view has extended to the next line,
+        // reload the height of the cell
+        let height = cellHeightForText(editingCell.textView.text)
+        let tableView = viewController.tableView
+
+        if Int(height) != Int(editingCell.frame.size.height) {
+            UIView.performWithoutAnimation {
+                tableView.beginUpdates()
+                tableView.endUpdates()
+            }
+
+            for cell in tableView.visibleCells where cell !== editingCell {
+                cell.alpha = editingCellAlpha
+            }
+        }
+    }
+
+    func cellHeightForText(text: String) -> CGFloat {
+        guard let view = viewController.tableView.superview else {
+            return 0.0
+        }
+        
+        return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
+                                         options: [.UsesLineFragmentOrigin],
+                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
+                                         context: nil).height + 33
+    }
 }
