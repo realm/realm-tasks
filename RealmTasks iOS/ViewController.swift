@@ -107,6 +107,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private let createBottomViewController: (() -> (UIViewController))?
     private var bottomViewController: UIViewController?
 
+    // Tracking observers
+    private var observingText = false
+    
     // MARK: View Lifecycle
 
     init(parent: Parent, colors: [UIColor]) {
@@ -133,13 +136,17 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         if let parent = parent as? CellPresentable {
             (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
             title = parent.text
+            observingText = true
         }
     }
 
     deinit {
         tableView.removeObserver(self, forKeyPath: "bounds")
-        parent.removeObserver(self, forKeyPath: "text")
         notificationToken?.stop()
+        
+        if observingText {
+            parent.removeObserver(self, forKeyPath: "text")
+        }
     }
 
     override func viewDidLoad() {
