@@ -597,7 +597,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         try! items.realm?.write {
             items.insert(Item(), atIndex: 0)
         }
-        tableView.reloadData()
+        
         (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
 
