@@ -1,16 +1,28 @@
-//
-//  TablePresenter.swift
-//  RealmTasks
-//
-//  Created by Marin Todorov on 9/19/16.
-//  Copyright © 2016 Realm. All rights reserved.
-//
+/*************************************************************************
+ *
+ * REALM CONFIDENTIAL
+ * __________________
+ *
+ *  [2016] Realm Inc
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Realm Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Realm Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Realm Incorporated.
+ *
+ **************************************************************************/
 
 import Foundation
 import RealmSwift
 import UIKit
 
-class TablePresenter<Parent: Object where Parent: ListPresentable>:NSObject,
+class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     var viewController: ViewControllerProtocol! {
@@ -18,7 +30,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>:NSObject,
             setupMovingGesture()
         }
     }
-    var cellPresenter: CellPresenter<Parent.Item>!
+    weak var cellPresenter: CellPresenter<Parent.Item>?
 
     var items: List<Parent.Item> {
         return parent.items
@@ -38,6 +50,10 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>:NSObject,
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = viewController.tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Parent.Item>
+        guard let cellPresenter = cellPresenter else {
+            return cell
+        }
+
         cell.item = items[indexPath.row]
         cell.presenter = cellPresenter
 
@@ -51,6 +67,10 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>:NSObject,
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        guard let cellPresenter = cellPresenter else {
+            return 0.0
+        }
+
         if cellPresenter.currentlyEditingIndexPath?.row == indexPath.row {
             return floor(cellPresenter.cellHeightForText(cellPresenter.currentlyEditingCell!.textView.text))
         }
@@ -70,7 +90,10 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>:NSObject,
     }
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        //TODO: cell.contentView.backgroundColor = colorForRow(indexPath.row)
+        cell.contentView.backgroundColor = colorForRow(indexPath.row)
+        guard let cellPresenter = cellPresenter else {
+            return
+        }
         cell.alpha = cellPresenter.currentlyEditing ? editingCellAlpha : 1
     }
 
