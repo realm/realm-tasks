@@ -47,8 +47,8 @@ class ContainerViewController: NSViewController {
         view.addSubview(listViewController.view)
 
         if let currentListViewController = currentListViewController {
-            constrain(listViewController.view, currentListViewController.view, replace: constraintGroup) { newView, oldVIew in
-                oldVIew.edges == oldVIew.superview!.edges
+            constrain(listViewController.view, currentListViewController.view, replace: constraintGroup) { newView, oldView in
+                oldView.edges == oldView.superview!.edges
 
                 if list is CellPresentable {
                     newView.top == newView.superview!.bottom
@@ -56,27 +56,29 @@ class ContainerViewController: NSViewController {
                     newView.bottom == newView.superview!.top
                 }
 
-                newView.height == newView.superview!.height
-                newView.width == newView.superview!.width
+                newView.size == newView.superview!.size
             }
 
             view.layoutSubtreeIfNeeded()
 
-            constrain(listViewController.view, currentListViewController.view, replace: constraintGroup) { newView, oldVIew in
+            constrain(listViewController.view, currentListViewController.view, replace: constraintGroup) { newView, oldView in
                 newView.edges == newView.superview!.edges
 
                 if list is CellPresentable {
-                    oldVIew.bottom == oldVIew.superview!.top
+                    oldView.bottom == oldView.superview!.top
                 } else {
-                    oldVIew.top == oldVIew.superview!.bottom
+                    oldView.top == oldView.superview!.bottom
                 }
 
-                oldVIew.height == oldVIew.superview!.height
-                oldVIew.width == oldVIew.superview!.width
+                oldView.size == oldView.superview!.size
             }
 
-            NSView.animateWithDuration(0.3, animations: {
-                NSAnimationContext.currentContext().timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut) 
+            listViewController.view.alphaValue = 0
+
+            NSView.animateWithDuration(0.3, timingFunction: .easeInEaseOut(), animations: {
+                currentListViewController.view.alphaValue = 0
+                listViewController.view.alphaValue = 1
+
                 self.view.layoutSubtreeIfNeeded()
             }) {
                 currentListViewController.removeFromParentViewController()

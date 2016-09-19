@@ -386,7 +386,7 @@
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
-                        <toolbar key="toolbar" implicitIdentifier="6F2EB22A-AA56-4725-B70A-288A6CE2DA21" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="small" id="nsm-Fv-9B1">
+                        <toolbar key="toolbar" implicitIdentifier="6F2EB22A-AA56-4725-B70A-288A6CE2DA21" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="small" id="nsm-Fv-9B1">
                             <allowedToolbarItems>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="e0G-Eu-e1o"/>
                                 <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New" paletteLabel="New" tag="-1" image="NSAddTemplate" id="4CH-Dy-gYb">
@@ -439,14 +439,19 @@
         <scene sceneID="o2z-kx-HKY">
             <objects>
                 <viewController id="sgL-6S-YI5" customClass="ContainerViewController" customModule="RealmTasks" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="kKA-O7-b0o">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                    <view key="view" wantsLayer="YES" id="kKA-O7-b0o" customClass="ColorView" customModule="RealmTasks" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="307" height="437"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="backgroundColor">
+                                <color key="value" red="0.074509803921568626" green="0.070588235294117646" blue="0.074509803921568626" alpha="1" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </view>
                 </viewController>
                 <customObject id="lmY-JI-6xF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="686"/>
+            <point key="canvasLocation" x="75.5" y="808.5"/>
         </scene>
         <!--Log In-->
         <scene sceneID="LlI-VW-aKs">

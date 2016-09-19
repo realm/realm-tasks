@@ -67,14 +67,14 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         view.wantsLayer = true
 
         tableView.addTableColumn(NSTableColumn())
-        tableView.backgroundColor = .blackColor()
+        tableView.backgroundColor = .clearColor()
         tableView.headerView = nil
         tableView.selectionHighlightStyle = .None
         tableView.intercellSpacing = .zero
 
         let scrollView = NSScrollView()
         scrollView.documentView = tableView
-        scrollView.backgroundColor = .blackColor()
+        scrollView.drawsBackground = false
 
         view.addSubview(scrollView)
 

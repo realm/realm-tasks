@@ -22,13 +22,35 @@ import Cocoa
 
 extension NSView {
 
-    static func animateWithDuration(duration: NSTimeInterval, animations: () -> Void, completion: (() -> Void)? = nil) {
+    static func animateWithDuration(duration: NSTimeInterval, timingFunction: CAMediaTimingFunction = .lineral(), animations: () -> Void, completion: (() -> Void)? = nil) {
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = duration
             context.allowsImplicitAnimation = true
+
+            context.duration = duration
+            context.timingFunction = timingFunction
 
             animations()
         }, completionHandler: completion)
+    }
+
+}
+
+extension CAMediaTimingFunction {
+
+    static func lineral() -> CAMediaTimingFunction {
+        return CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+    }
+
+    static func easeIn() -> CAMediaTimingFunction {
+        return CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+    }
+
+    static func easeOut() -> CAMediaTimingFunction {
+        return CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+    }
+
+    static func easeInEaseOut() -> CAMediaTimingFunction {
+        return CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
     }
 
 }
