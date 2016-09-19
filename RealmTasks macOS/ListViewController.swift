@@ -385,8 +385,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func colorForRow(row: Int) -> NSColor {
-        let fraction = Double(row) / Double(max(13, tableView.numberOfRows))
-        return NSColor.taskColors().gradientColorAtFraction(fraction)
+        let colors = ItemType.self is Task.Type ? NSColor.taskColors() : NSColor.listColors()
+        let fraction = Double(row) / Double(max(13, list.items.count))
+
+        return colors.gradientColorAtFraction(fraction)
     }
 
     // MARK: TaskCellViewDelegate
