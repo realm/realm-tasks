@@ -50,7 +50,10 @@ private enum NavDirection {
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+    UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate,
+
+    ViewControllerProtocol
+{
 
     // MARK: Properties
 
@@ -107,6 +110,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private let createBottomViewController: (() -> (UIViewController))?
     private var bottomViewController: UIViewController?
 
+    // MARK: MTT
+    private var cellPresenter: CellPresenter<Item>!
+
     // MARK: View Lifecycle
 
     init(parent: Parent, colors: [UIColor]) {
@@ -134,6 +140,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
             title = parent.text
         }
+
+        cellPresenter = CellPresenter(items: parent.items)
+        cellPresenter.viewController = self
     }
 
     deinit {
@@ -385,8 +394,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Item>
         cell.item = items[indexPath.row]
+        cell.presenter = cellPresenter
         cell.itemCompleted = itemCompleted
-        cell.itemDeleted = itemDeleted
+        //cell.itemDeleted = itemDeleted
         cell.cellDidChangeText = cellDidChangeText
         cell.cellDidBeginEditing = cellDidBeginEditing
         cell.cellDidEndEditing = cellDidEndEditing
@@ -607,20 +617,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: Cell Callbacks
 
-    private func itemDeleted(item: Item) {
-        guard let index = items.indexOf(item) else {
-            return
-        }
-
-        try! items.realm?.write {
-            items.realm?.delete(item)
-        }
-
-        tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        updateColors()
-        toggleOnboardView()
-    }
-
     private func itemCompleted(item: Item) {
         guard !(item as Object).invalidated, let index = items.indexOf(item) else {
             return
@@ -728,5 +724,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }, completion: { _ in
             completion?()
         })
+    }
+
+    // MARK: ViewControllerProtocol
+    func didUpdateList() {
+        updateColors()
+        toggleOnboardView()
     }
 }

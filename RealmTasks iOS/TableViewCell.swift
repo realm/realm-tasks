@@ -74,8 +74,9 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     let navHintView = NavHintView()
 
     // Callbacks
+    var presenter: CellPresenter<Item>!
+
     var itemCompleted: ((Item) -> ())? = nil
-    var itemDeleted: ((Item) -> ())? = nil
     var cellDidBeginEditing: ((TableViewCell) -> ())? = nil
     var cellDidEndEditing: ((TableViewCell) -> ())? = nil
     var cellDidChangeText: ((TableViewCell) -> ())? = nil
@@ -121,8 +122,9 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func reset() {
+        presenter = nil
+
         itemCompleted = nil
-        itemDeleted = nil
         cellDidBeginEditing = nil
         cellDidEndEditing = nil
         cellDidChangeText = nil
@@ -322,7 +324,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                     self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
                 }
                 completionBlock = {
-                    self.itemDeleted?(self.item)
+                    self.presenter.deleteItem(self.item)
                 }
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()
