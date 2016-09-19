@@ -49,7 +49,7 @@ private enum NavDirection {
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UIGestureRecognizerDelegate,
+    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate,
 
     ViewControllerProtocol
 {
@@ -424,8 +424,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         try! items.realm?.write {
             items.insert(Item(), atIndex: 0)
         }
-        
-        (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
+
+        if let firstCell = tableView.visibleCells.first as? TableViewCell<Item> {
+            firstCell.textView.becomeFirstResponder()
+        }
     }
 
     // MARK: ViewControllerProtocol
