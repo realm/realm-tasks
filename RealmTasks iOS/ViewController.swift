@@ -237,7 +237,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
-        notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
+        notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { [unowned self] changes in
             self.tableView.reloadData()
         }
     }
