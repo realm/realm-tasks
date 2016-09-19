@@ -92,7 +92,7 @@ func authenticate(username username: String, password: String, register: Bool, c
 
 func authenticate(cloudKitUserAccessToken: String, callback: (NSError?) -> ()) {
     let credential = Credential(customToken: cloudKitUserAccessToken, provider: "cloudkit")
-    User.authenticateWithCredential(credential, actions: [], authServerURL: Constants.syncAuthURL) { (user, error) in
+    User.authenticateWithCredential(credential, actions: [.CreateAccount, .UseExistingAccount], authServerURL: Constants.syncAuthURL) { (user, error) in
         if let user = user {
             setDefaultRealmConfigurationWithUser(user)
         }
