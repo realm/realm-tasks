@@ -76,10 +76,6 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     // Callbacks
     var presenter: CellPresenter<Item>!
 
-    var cellDidBeginEditing: ((TableViewCell) -> ())? = nil
-    var cellDidEndEditing: ((TableViewCell) -> ())? = nil
-    var cellDidChangeText: ((TableViewCell) -> ())? = nil
-
     // Private Properties
     private var originalDoneIconCenter = CGPoint()
     private var originalDeleteIconCenter = CGPoint()
@@ -122,10 +118,6 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     func reset() {
         presenter = nil
-
-        cellDidBeginEditing = nil
-        cellDidEndEditing = nil
-        cellDidChangeText = nil
     }
 
     private func setupBackgroundView() {
@@ -399,7 +391,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func textViewDidBeginEditing(textView: UITextView) {
-        cellDidBeginEditing?(self)
+        presenter.cellDidBeginEditing(self)
     }
 
     func textViewDidEndEditing(textView: UITextView) {
@@ -409,10 +401,10 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
         }
         textView.userInteractionEnabled = false
-        cellDidEndEditing?(self)
+        presenter.cellDidEndEditing(self)
     }
 
     func textViewDidChange(textView: UITextView) {
-        cellDidChangeText?(self)
+        presenter.cellDidChangeText(self)
     }
 }
