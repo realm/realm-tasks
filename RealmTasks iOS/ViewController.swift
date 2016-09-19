@@ -44,6 +44,22 @@ private enum NavDirection {
     case Up, Down
 }
 
+// MARK: View Controller Protocol
+protocol ViewControllerProtocol: UIScrollViewDelegate {
+    var tableView: UITableView {get}
+    var tableViewContentView: UIView {get}
+    var view: UIView! {get}
+
+    func didUpdateList()
+
+    func setTopConstraintTo(constant constant: CGFloat)
+    func setPlaceholderAlpha(alpha: CGFloat)
+
+    func setListTitle(title: String)
+
+    func removeFromParentViewController()
+}
+
 // MARK: View Controller
 
 // FIXME: This class should be split up.
@@ -61,7 +77,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // Table View
     let tableView = UITableView()
-    private let tableViewContentView = UIView()
+    internal let tableViewContentView = UIView()
 
     // Notifications
     private var notificationToken: NotificationToken?
