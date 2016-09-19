@@ -40,8 +40,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private let tableView = NSTableView()
 
     private var notificationToken: NotificationToken?
-    private var skipNotification = false
-    private var reloadOnNotification = false
 
     private let prototypeCell = PrototypeTaskCellView(identifier: prototypeCellIdentifier)
 
@@ -105,37 +103,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
         notificationToken = list.items.filter("TRUEPREDICATE").addNotificationBlock { changes in
-            if self.skipNotification {
-                self.skipNotification = false
-                self.reloadOnNotification = true
-                return
-            } else if self.reloadOnNotification {
-                self.tableView.reloadData()
-                self.reloadOnNotification = false
-                return
-            }
-
-            switch changes {
-            case .Initial:
-                self.tableView.reloadData()
-            case .Update(_, let deletions, let insertions, let modifications):
-                self.tableView.beginUpdates()
-                self.tableView.removeRowsAtIndexes(deletions.toIndexSet(), withAnimation: .EffectFade)
-                self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectFade)
-                self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
-                self.tableView.endUpdates()
-
-                self.updateColors()
-                self.updateTableViewHeightOfRows(modifications.toIndexSet())
-            case .Error(let error):
-                fatalError(String(error))
-            }
+            self.tableView.reloadData()
         }
-    }
-
-    private func skipNextNotification() {
-        skipNotification = true
-        reloadOnNotification = false
     }
 
     private func setupGestureRecognizers() {
@@ -165,8 +134,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         try! list.realm?.write {
             self.list.items.insert(ItemType(), atIndex: 0)
         }
-
-        skipNextNotification()
 
         NSView.animateWithDuration(0.2, animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
@@ -231,7 +198,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             try! list.realm?.write {
                 list.items.move(from: sourceRow, to: destinationRow)
             }
-            skipNextNotification()
             tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
         }
     }
@@ -445,7 +411,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         delay(0.2) {
-            self.skipNextNotification()
 
             try! item.realm?.write {
                 item.completed = complete
@@ -465,8 +430,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         guard let (item, index) = findItemForCellView(view) else {
             return
         }
-
-        skipNextNotification()
 
         try! list.realm?.write {
             list.realm?.delete(item)
@@ -503,8 +466,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         // FIXME: workaround for tuple mutability
         var item = tmpItem
-
-        skipNextNotification()
 
         try! item.realm?.write {
             if !view.text.isEmpty {
