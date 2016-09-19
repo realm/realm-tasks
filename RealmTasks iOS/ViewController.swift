@@ -39,7 +39,6 @@ extension UIView {
 }
 
 private var tableViewBoundsKVOContext = 0
-private var titleKVOContext = 0
 
 private enum NavDirection {
     case Up, Down
@@ -50,7 +49,7 @@ private enum NavDirection {
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UITableViewDelegate, UIGestureRecognizerDelegate,
+    UIViewController, UIGestureRecognizerDelegate,
 
     ViewControllerProtocol
 {
@@ -92,9 +91,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private var bottomViewController: UIViewController?
 
     // MARK: MTT
-//    private var cellPresenter: CellPresenter<Item>!
-//    private var tablePresenter: TablePresenter<Parent>!
-
     private var listPresenter: ListPresenter<Item, Parent>!
 
     // MARK: View Lifecycle
@@ -118,10 +114,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
         }
         super.init(nibName: nil, bundle: nil)
-        if let parent = parent as? CellPresentable {
-            (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
-            title = parent.text
-        }
 
         listPresenter = ListPresenter(parent: parent, colors: colors)
         listPresenter.viewController = self
@@ -129,7 +121,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     deinit {
         tableView.removeObserver(self, forKeyPath: "bounds")
-        listPresenter.parent.removeObserver(self, forKeyPath: "text")
         notificationToken?.stop()
     }
 
@@ -175,9 +166,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         if context == &tableViewBoundsKVOContext {
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
-        } else if context == &titleKVOContext {
-            title = (listPresenter.parent as! CellPresentable).text
-            parentViewController?.title = title
         } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
@@ -452,5 +440,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     func setPlaceholderAlpha(alpha: CGFloat) {
         placeHolderCell.alpha = alpha
+    }
+
+    func setListTitle(title: String) {
+        self.title = title
+        parentViewController?.title = title
     }
 }
