@@ -395,8 +395,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Item>
         cell.item = items[indexPath.row]
         cell.presenter = cellPresenter
-        cell.itemCompleted = itemCompleted
-        //cell.itemDeleted = itemDeleted
         cell.cellDidChangeText = cellDidChangeText
         cell.cellDidBeginEditing = cellDidBeginEditing
         cell.cellDidEndEditing = cellDidEndEditing
@@ -616,29 +614,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     // MARK: Cell Callbacks
-
-    private func itemCompleted(item: Item) {
-        guard !(item as Object).invalidated, let index = items.indexOf(item) else {
-            return
-        }
-        let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
-        let destinationIndexPath: NSIndexPath
-        if item.completed {
-            // move cell to bottom
-            destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
-        } else {
-            // move cell just above the first completed item
-            let completedCount = items.filter("completed = true").count
-            destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
-        }
-        try! items.realm?.write {
-            items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
-        }
-
-        tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-        updateColors()
-        toggleOnboardView()
-    }
 
     private func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
         currentlyEditingCell = editingCell

@@ -76,7 +76,6 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     // Callbacks
     var presenter: CellPresenter<Item>!
 
-    var itemCompleted: ((Item) -> ())? = nil
     var cellDidBeginEditing: ((TableViewCell) -> ())? = nil
     var cellDidEndEditing: ((TableViewCell) -> ())? = nil
     var cellDidChangeText: ((TableViewCell) -> ())? = nil
@@ -124,7 +123,6 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     func reset() {
         presenter = nil
 
-        itemCompleted = nil
         cellDidBeginEditing = nil
         cellDidEndEditing = nil
         cellDidChangeText = nil
@@ -379,7 +377,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
             vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
-            itemCompleted?(item)
+            presenter.completeItem(item)
         } else {
             updateColor()
         }
