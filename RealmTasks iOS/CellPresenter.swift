@@ -22,16 +22,6 @@ import Foundation
 import RealmSwift
 import UIKit
 
-protocol ViewControllerProtocol: UIScrollViewDelegate {
-    var tableView: UITableView {get}
-    func didUpdateList()
-
-    func setTopConstraintTo(constant constant: CGFloat)
-    func setPlaceholderAlpha(alpha: CGFloat)
-
-    func setListTitle(title: String)
-}
-
 internal let editingCellAlpha: CGFloat = 0.3
 
 class CellPresenter<Item: Object where Item: CellPresentable> {
