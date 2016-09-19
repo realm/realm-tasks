@@ -275,7 +275,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 items.insert(Item(), atIndex: row)
             }
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
-            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+            tableView.reloadData()
             toggleOnboardView(animated: true)
             cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
         }
@@ -579,11 +579,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 try! items.realm?.write {
                     items.realm?.delete(itemsToDelete)
                 }
-                let startingIndex = items.count
-                let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
-                    return NSIndexPath(forRow: index, inSection: 0)
-                }
-                tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
 
                 vibrate()
             }
@@ -602,7 +597,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             items.insert(Item(), atIndex: 0)
         }
         
-        (tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
+        self.tableView.reloadData()
+        (self.tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
     }
 
     // MARK: Cell Callbacks
@@ -616,7 +612,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             items.realm?.delete(item)
         }
 
-        tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
+        tableView.reloadData()
         updateColors()
         toggleOnboardView()
     }
@@ -688,7 +684,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             try! item.realm?.write {
                 item.realm!.delete(item)
             }
-            tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
+            tableView.reloadData()
         }
         toggleOnboardView()
     }

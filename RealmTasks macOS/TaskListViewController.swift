@@ -118,7 +118,6 @@ extension TaskListViewController {
 
         NSView.animateWithDuration(0.2, animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
-            self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
         }) {
             self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
             self.view.window?.toolbar?.validateVisibleItems()
@@ -404,8 +403,6 @@ extension TaskListViewController: TaskCellViewDelegate {
         try! item.realm?.write {
             items.realm?.delete(item)
         }
-
-        tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
     }
 
     func cellViewDidBeginEditing(cellView: TaskCellView) {
@@ -443,10 +440,6 @@ extension TaskListViewController: TaskCellViewDelegate {
                 item.text = view.text
             } else {
                 item.realm!.delete(item)
-
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
-                }
             }
         }
 
