@@ -101,7 +101,16 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
         let itemCell = cell as! TableViewCell<Parent.Item>
         itemCell.reset()
     }
-    
+
+    //MARK: UIScrollViewDelegate
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        viewController.scrollViewDidScroll?(scrollView)
+    }
+
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        viewController.scrollViewDidEndDragging?(scrollView, willDecelerate: decelerate)
+    }
+
     //MARK: Moving
     private var snapshot: UIView!
     private var startIndexPath: NSIndexPath?
