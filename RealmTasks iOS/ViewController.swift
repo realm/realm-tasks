@@ -266,7 +266,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 items.insert(Item(), atIndex: row)
             }
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
-            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+            tableView.reloadData()
             toggleOnboardView(animated: true)
             cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
         }
@@ -418,11 +418,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 try! items.realm?.write {
                     items.realm?.delete(itemsToDelete)
                 }
-                let startingIndex = items.count
-                let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
-                    return NSIndexPath(forRow: index, inSection: 0)
-                }
-                tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .None)
 
                 vibrate()
             }
@@ -449,6 +444,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // MARK: ViewControllerProtocol
     func didUpdateList() {
         listPresenter.tablePresenter.updateColors()
+        tableView.reloadData()
         toggleOnboardView()
     }
 
