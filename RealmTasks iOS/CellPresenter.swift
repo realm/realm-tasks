@@ -22,7 +22,7 @@ import Foundation
 import RealmSwift
 import UIKit
 
-protocol ViewControllerProtocol {
+protocol ViewControllerProtocol: UIScrollViewDelegate {
     var tableView: UITableView {get}
     func didUpdateList()
 
