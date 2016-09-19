@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -31,7 +31,7 @@
                     </connections>
                 </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qYK-Xb-ZUU" userLabel="ContainerView">
-                    <rect key="frame" x="145" y="181" width="310" height="226"/>
+                    <rect key="frame" x="145" y="174" width="310" height="251"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iCloudLogo" translatesAutoresizingMaskIntoConstraints="NO" id="oFb-nJ-t9Y">
                             <rect key="frame" x="91" y="8" width="128" height="100"/>
@@ -48,11 +48,11 @@
                             </constraints>
                             <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         </activityIndicatorView>
-                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Account Found." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xHU-Ay-hkH">
-                            <rect key="frame" x="39" y="185" width="232" height="21"/>
+                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Account Found." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xHU-Ay-hkH">
+                            <rect key="frame" x="13" y="185" width="289" height="50"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="21" id="7Xf-bA-s9h"/>
-                                <constraint firstAttribute="width" constant="232" id="ey4-8b-mq5"/>
+                                <constraint firstAttribute="height" constant="50" id="7Xf-bA-s9h"/>
+                                <constraint firstAttribute="width" constant="289" id="ey4-8b-mq5"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -72,9 +72,9 @@
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstItem="xHU-Ay-hkH" firstAttribute="centerX" secondItem="QEd-8q-cNU" secondAttribute="centerX" id="6oC-Bh-eiQ"/>
+                        <constraint firstItem="xHU-Ay-hkH" firstAttribute="centerX" secondItem="QEd-8q-cNU" secondAttribute="centerX" constant="2" id="6oC-Bh-eiQ"/>
                         <constraint firstItem="0AK-gv-5Uu" firstAttribute="centerX" secondItem="qYK-Xb-ZUU" secondAttribute="centerX" id="7ng-ZK-Utr"/>
-                        <constraint firstAttribute="height" constant="226" id="VpN-ec-2ZW"/>
+                        <constraint firstAttribute="height" constant="251" id="VpN-ec-2ZW"/>
                         <constraint firstItem="oFb-nJ-t9Y" firstAttribute="top" secondItem="qYK-Xb-ZUU" secondAttribute="top" constant="8" id="das-EZ-adP"/>
                         <constraint firstAttribute="width" constant="310" id="nl7-La-Guf"/>
                         <constraint firstItem="0AK-gv-5Uu" firstAttribute="top" secondItem="oFb-nJ-t9Y" secondAttribute="bottom" constant="22" id="pTh-c8-X6E"/>
@@ -89,7 +89,7 @@
             <constraints>
                 <constraint firstItem="hg2-Wt-MuX" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="014-b6-PbI"/>
                 <constraint firstItem="qYK-Xb-ZUU" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="Eis-31-u65"/>
-                <constraint firstItem="qYK-Xb-ZUU" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" constant="-6" id="Y1q-gg-uDT"/>
+                <constraint firstItem="qYK-Xb-ZUU" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" constant="-0.5" id="Y1q-gg-uDT"/>
                 <constraint firstAttribute="bottom" secondItem="hg2-Wt-MuX" secondAttribute="bottom" constant="19" id="rMF-kJ-zIw"/>
             </constraints>
             <point key="canvasLocation" x="1475" y="835"/>
