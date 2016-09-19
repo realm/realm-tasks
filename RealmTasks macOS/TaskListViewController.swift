@@ -47,9 +47,6 @@ class TaskListViewController: NSViewController {
     }
 
     private var notificationToken: NotificationToken?
-    private var realmNotificationToken: NotificationToken?
-    private var skipNotification = false
-    private var reloadOnNotification = false
 
     private let prototypeCell = PrototypeTaskCellView(identifier: taskCellPrototypeIdentifier)
 
@@ -64,7 +61,6 @@ class TaskListViewController: NSViewController {
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
         notificationToken?.stop()
-        realmNotificationToken?.stop()
     }
 
     override func viewDidLoad() {
@@ -84,37 +80,8 @@ class TaskListViewController: NSViewController {
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
         notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
-            if self.skipNotification {
-                self.skipNotification = false
-                self.reloadOnNotification = true
-                return
-            } else if self.reloadOnNotification {
-                self.tableView.reloadData()
-                self.reloadOnNotification = false
-                return
-            }
-
-            switch changes {
-            case .Initial:
-                self.tableView.reloadData()
-            case .Update(_, let deletions, let insertions, let modifications):
-                self.tableView.beginUpdates()
-                self.tableView.removeRowsAtIndexes(deletions.toIndexSet(), withAnimation: .EffectFade)
-                self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectFade)
-                self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
-                self.tableView.endUpdates()
-
-                self.updateColors()
-                self.updateTableViewHeightOfRows(modifications.toIndexSet())
-            case .Error(let error):
-                fatalError(String(error))
-            }
+            self.tableView.reloadData()
         }
-    }
-
-    private func skipNextNotification() {
-        skipNotification = true
-        reloadOnNotification = false
     }
 
     private func setupGestureRecognizers() {
@@ -148,8 +115,6 @@ extension TaskListViewController {
         try! items.realm?.write {
             self.items.insert(Task(), atIndex: 0)
         }
-
-        skipNextNotification()
 
         NSView.animateWithDuration(0.2, animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
@@ -219,7 +184,6 @@ extension TaskListViewController {
             try! items.realm?.write {
                 items.move(from: sourceRow, to: destinationRow)
             }
-            skipNextNotification()
             tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
         }
     }
@@ -417,7 +381,6 @@ extension TaskListViewController: TaskCellViewDelegate {
         }
 
         delay(0.2) {
-            self.skipNextNotification()
 
             try! item.realm?.write {
                 item.completed = complete
@@ -437,8 +400,6 @@ extension TaskListViewController: TaskCellViewDelegate {
         guard let (item, index) = findItemForCellView(view) else {
             return
         }
-
-        skipNextNotification()
 
         try! item.realm?.write {
             items.realm?.delete(item)
@@ -476,8 +437,6 @@ extension TaskListViewController: TaskCellViewDelegate {
         guard let (item, index) = findItemForCellView(view) else {
             return
         }
-
-        skipNextNotification()
 
         try! item.realm?.write {
             if !view.text.isEmpty {
