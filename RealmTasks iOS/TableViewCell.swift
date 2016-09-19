@@ -120,6 +120,14 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         setupNavHintView()
     }
 
+    func reset() {
+        itemCompleted = nil
+        itemDeleted = nil
+        cellDidBeginEditing = nil
+        cellDidEndEditing = nil
+        cellDidChangeText = nil
+    }
+
     private func setupBackgroundView() {
         backgroundColor = .clearColor()
 

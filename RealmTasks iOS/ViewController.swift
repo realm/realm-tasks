@@ -137,9 +137,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     deinit {
-        notificationToken?.stop()
         tableView.removeObserver(self, forKeyPath: "bounds")
         parent.removeObserver(self, forKeyPath: "text")
+        notificationToken?.stop()
     }
 
     override func viewDidLoad() {
@@ -189,6 +189,17 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             parentViewController?.title = title
         } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
+    
+    override func didMoveToParentViewController(parent: UIViewController?) {
+        guard parent == nil else { // we're being removed from our parent controller
+            return
+        }
+        
+        let visibleCells = tableView.visibleCells
+        for cell in visibleCells {
+            (cell as! TableViewCell<Item>).reset()
         }
     }
 
@@ -343,7 +354,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 self.snapshot = nil
 
                 self.updateColors {
-                    UIView.performWithoutAnimation {
+                    UIView.performWithoutAnimation { [unowned self] in
                         self.tableView.reloadData()
                     }
                 }
@@ -420,6 +431,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         cell.alpha = currentlyEditing ? editingCellAlpha : 1
     }
 
+    func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        let itemCell = cell as! TableViewCell<Item>
+        itemCell.reset()
+    }
+
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
             parent: item as! TaskList,
@@ -465,7 +481,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
         UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
             parentVC.view.layoutIfNeeded()
-        }, completion: { _ in
+        }, completion: { [unowned self] _ in
             self.view.removeFromSuperview()
             nextVC.didMoveToParentViewController(parentVC)
             self.removeFromParentViewController()
@@ -501,7 +517,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
 
         if distancePulledDown <= tableView.rowHeight {
-            UIView.animateWithDuration(0.1) {
+            UIView.animateWithDuration(0.1) { [unowned self] in
                 self.placeHolderCell.navHintView.alpha = 0
             }
             placeHolderCell.textView.text = "Pull to Create Item"
@@ -521,7 +537,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 onboardView.alpha = 0
             }
         } else if distancePulledDown <= tableView.rowHeight * 2 {
-            UIView.animateWithDuration(0.1) {
+            UIView.animateWithDuration(0.1) { [unowned self] in
                 self.placeHolderCell.navHintView.alpha = 0
             }
             placeHolderCell.layer.transform = CATransform3DIdentity
@@ -535,7 +551,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             placeHolderCell.navHintView.hintText = "Switch to Lists"
             placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
 
-            UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+            UIView.animateWithDuration(0.4, delay: 0.0,
+                                       usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5,
+                                       options: [], animations: { [unowned self] in
                 self.placeHolderCell.navHintView.alpha = 1
                 self.placeHolderCell.navHintView.hintArrowTransfom  = CGAffineTransformIdentity
             }, completion: nil)
@@ -680,7 +698,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         // reload the height of the cell
         let height = cellHeightForText(editingCell.textView.text)
         if Int(height) != Int(editingCell.frame.size.height) {
-            UIView.performWithoutAnimation {
+            UIView.performWithoutAnimation { [unowned self] in
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
             }
