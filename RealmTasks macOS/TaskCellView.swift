@@ -168,18 +168,16 @@ class TaskCellView: NSTableCellView {
         contentView.addSubview(highlightLine)
         contentView.addSubview(shadowLine)
 
-        let singlePixelInPoints = 1 / NSScreen.mainScreen()!.backingScaleFactor
-
         constrain(highlightLine, shadowLine) { highlightLine, shadowLine in
             highlightLine.top == highlightLine.superview!.top
             highlightLine.left == highlightLine.superview!.left
             highlightLine.right == highlightLine.superview!.right
-            highlightLine.height == singlePixelInPoints
+            highlightLine.height == 1
 
             shadowLine.bottom == shadowLine.superview!.bottom
             shadowLine.left == shadowLine.superview!.left
             shadowLine.right == shadowLine.superview!.right
-            shadowLine.height == singlePixelInPoints
+            shadowLine.height == 1
         }
     }
 
@@ -197,7 +195,7 @@ class TaskCellView: NSTableCellView {
         contentView.addSubview(textView)
 
         constrain(textView) { textView in
-            textView.edges == inset(textView.superview!.edges, 8, 14)
+            textView.edges == inset(textView.superview!.edges, 13, 11)
         }
     }
 
@@ -427,7 +425,7 @@ final class TaskTextField: NSTextField {
 
 final class ColorView: NSView {
 
-    var backgroundColor = NSColor.clearColor() {
+    @IBInspectable var backgroundColor: NSColor = .clearColor() {
         didSet {
             needsDisplay = true
         }
