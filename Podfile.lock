@@ -1,25 +1,48 @@
 PODS:
   - Cartography (0.7.0)
-  - RealmSwift (1.0.2-16-sync-1.0.0-beta-32.0)
+  - Realm (1.1.0):
+    - RealmCore
+    - RealmSync
+  - RealmCore (1.4.2)
+  - RealmSwift (1.1.0):
+    - Realm (= 1.1.0)
+  - RealmSync (0.27.3):
+    - RealmCore (= 1.4.2)
 
 DEPENDENCIES:
   - Cartography (from `https://github.com/robb/Cartography.git`, branch `master`)
-  - RealmSwift (= 1.0.2-16-sync-1.0.0-beta-32.0)
+  - Realm (from `https://github.com/realm/realm-cocoa-private.git`, branch `sync`)
+  - RealmSwift (from `https://github.com/realm/realm-cocoa-private.git`, branch `sync`)
 
 EXTERNAL SOURCES:
   Cartography:
     :branch: master
     :git: https://github.com/robb/Cartography.git
+  Realm:
+    :branch: sync
+    :git: https://github.com/realm/realm-cocoa-private.git
+  RealmSwift:
+    :branch: sync
+    :git: https://github.com/realm/realm-cocoa-private.git
 
 CHECKOUT OPTIONS:
   Cartography:
     :commit: ecdeffda56a6ce9dc8bb571b5455a6395d403b03
     :git: https://github.com/robb/Cartography.git
+  Realm:
+    :commit: 1fb5e715b343816778d7ab86eeea94ae9ab2cebe
+    :git: https://github.com/realm/realm-cocoa-private.git
+  RealmSwift:
+    :commit: 1fb5e715b343816778d7ab86eeea94ae9ab2cebe
+    :git: https://github.com/realm/realm-cocoa-private.git
 
 SPEC CHECKSUMS:
   Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
-  RealmSwift: 7a6216f2e780d464a7058ba49be3e2a658e476d0
+  Realm: 6e501d87f7de272ea46ecfbd70f1aff31440878f
+  RealmCore: 296c3f78b9339a1204fdde4f5ab2c3600a30aca7
+  RealmSwift: 6c74231803e6ed829117d4b52168d285cb08a4f5
+  RealmSync: 3d7c8e955c1fb38a606761443e809eba0bfb86c9
 
-PODFILE CHECKSUM: de881c23d76cb14b150012343bfc9c1fd3033467
+PODFILE CHECKSUM: b14e868eee3f331a1e7754b69a5479ec4c11779d
 
 COCOAPODS: 1.0.1
