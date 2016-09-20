@@ -141,13 +141,13 @@ public class TasksTouchHelper {
 
         void onDismissed(TasksViewHolder viewHolder);
 
-        boolean onItemClicked(TasksViewHolder viewHolder);
+        boolean onClicked(TasksViewHolder viewHolder);
 
-        void onItemChanged(TasksViewHolder viewHolder);
+        void onChanged(TasksViewHolder viewHolder);
 
         void onAdded();
 
-        void onReverted();
+        void onReverted(boolean shouldUpdateUI);
 
         void onExited();
     }
@@ -189,7 +189,7 @@ public class TasksTouchHelper {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
                         if (dy > height * 4 && pullState == PULL_STATE_CANCEL_ADD) {
-                            callback.onReverted();
+                            callback.onReverted(false);
                             callback.onExited();
                         } else if (dy > height) {
                             final float reverseHeight = height * 2 - dy;
@@ -470,7 +470,7 @@ public class TasksTouchHelper {
                     TasksTouchHelper.this.selected.itemView.setTranslationY(0);
                     if (pullState == PULL_STATE_CANCEL_ADD) {
                         TasksTouchHelper.this.selected.itemView.setAlpha(0);
-                        callback.onReverted();
+                        callback.onReverted(true);
                     } else {
                         TasksTouchHelper.this.selected.itemView.setAlpha(1f);
                     }
@@ -536,7 +536,7 @@ public class TasksTouchHelper {
                     doEndOfEditing();
                 }
                 if (motionEvent.getX() > viewHolder.itemView.getWidth() / 2) {
-                    if (callback.onItemClicked(viewHolder)) {
+                    if (callback.onClicked(viewHolder)) {
                         return true;
                     }
                 }
@@ -547,7 +547,7 @@ public class TasksTouchHelper {
 
             private void doEndOfEditing() {
                 currentEditing.setEditable(false);
-                callback.onItemChanged(currentEditing);
+                callback.onChanged(currentEditing);
                 currentEditing = null;
             }
 

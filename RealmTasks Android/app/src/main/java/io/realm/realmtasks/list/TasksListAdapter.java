@@ -19,6 +19,7 @@ package io.realm.realmtasks.list;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
+import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -46,12 +47,12 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
             @Override
             public void execute(Realm realm) {
                 final TaskList taskList = realm.createObject(TaskList.class);
-                taskList.setText("Added");
+                taskList.setId(UUID.randomUUID().toString());
+                taskList.setText("New task list");
                 items.add(0, taskList);
             }
         });
         realm.close();
-        super.onItemAdded();
     }
 
     @Override
@@ -64,7 +65,6 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
             }
         });
         realm.close();
-        super.onItemMoved(fromPosition, toPosition);
     }
 
     @Override
@@ -84,7 +84,6 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
                 }
             }
         });
-        super.onItemArchived(position);
     }
 
     @Override
@@ -97,11 +96,13 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
             }
         });
         realm.close();
-        super.onItemDismissed(position);
     }
 
     @Override
     public void onItemReverted() {
+        if (items.size() == 0) {
+            return;
+        }
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -110,7 +111,6 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
             }
         });
         realm.close();
-        super.onItemReverted();
     }
 
     @Override
@@ -128,6 +128,5 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
             }
         });
         realm.close();
-        super.onItemChanged(viewHolder);
     }
 }

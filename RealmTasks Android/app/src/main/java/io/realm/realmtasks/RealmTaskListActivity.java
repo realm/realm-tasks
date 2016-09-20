@@ -63,37 +63,48 @@ public class RealmTaskListActivity extends AppCompatActivity {
     private class Callback implements TasksTouchHelper.Callback {
         @Override
         public void onMoved(RecyclerView recyclerView, TasksViewHolder from, TasksViewHolder to) {
-            adapter.onItemMoved(from.getAdapterPosition(), to.getAdapterPosition());
+            final int fromPosition = from.getAdapterPosition();
+            final int toPosition = to.getAdapterPosition();
+            adapter.onItemMoved(fromPosition, toPosition);
+            adapter.notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override
         public void onArchived(TasksViewHolder viewHolder) {
             adapter.onItemArchived(viewHolder.getAdapterPosition());
+            adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onDismissed(TasksViewHolder viewHolder) {
-            adapter.onItemDismissed(viewHolder.getAdapterPosition());
+            final int position = viewHolder.getAdapterPosition();
+            adapter.onItemDismissed(position);
+            adapter.notifyItemRemoved(position);
         }
 
         @Override
-        public boolean onItemClicked(TasksViewHolder viewHolder) {
+        public boolean onClicked(TasksViewHolder viewHolder) {
             return false;
         }
 
         @Override
-        public void onItemChanged(TasksViewHolder viewHolder) {
+        public void onChanged(TasksViewHolder viewHolder) {
             adapter.onItemChanged(viewHolder);
+            adapter.notifyItemChanged(viewHolder.getAdapterPosition());
         }
 
         @Override
         public void onAdded() {
             adapter.onItemAdded();
+            adapter.notifyItemInserted(0);
         }
 
         @Override
-        public void onReverted() {
+        public void onReverted(boolean shouldUpdateUI) {
             adapter.onItemReverted();
+            if (shouldUpdateUI) {
+                adapter.notifyItemRemoved(0);
+            }
         }
 
         @Override
