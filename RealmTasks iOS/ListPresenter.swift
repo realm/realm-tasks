@@ -36,10 +36,8 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
 
             if viewController != nil {
                 observeListTitle()
-            } else {
-                if observingText {
-                    parent.removeObserver(self, forKeyPath: "text")
-                }
+            } else if observingText {
+                parent.removeObserver(self, forKeyPath: "text")
             }
         }
     }
@@ -52,7 +50,7 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
         tablePresenter.cellPresenter = cellPresenter
     }
 
-    //MARK: List title
+    // MARK: List title
     private var observingText = false
     
     func observeListTitle() {

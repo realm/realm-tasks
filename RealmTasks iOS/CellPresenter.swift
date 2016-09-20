@@ -68,7 +68,7 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
         viewController.didUpdateList()
     }
 
-    //MARK: Editing
+    // MARK: Editing
 
     var currentlyEditing: Bool { return currentlyEditingCell != nil }
 
@@ -97,9 +97,9 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
             for cell in tableView.visibleCells where cell !== editingCell {
                 cell.alpha = editingCellAlpha
             }
-            }, completion: {_ in
-                tableView.bounces = true
-            })
+        }, completion: {_ in
+            tableView.bounces = true
+        })
     }
 
     func cellDidEndEditing(editingCell: TableViewCell<Item>) {

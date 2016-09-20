@@ -102,7 +102,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
         itemCell.reset()
     }
 
-    //MARK: UIScrollViewDelegate
+    // MARK: UIScrollViewDelegate
     func scrollViewDidScroll(scrollView: UIScrollView) {
         viewController.scrollViewDidScroll?(scrollView)
     }
@@ -111,7 +111,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
         viewController.scrollViewDidEndDragging?(scrollView, willDecelerate: decelerate)
     }
 
-    //MARK: Moving
+    // MARK: Moving
     private var snapshot: UIView!
     private var startIndexPath: NSIndexPath?
     private var destinationIndexPath: NSIndexPath?
@@ -188,17 +188,15 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
             UIView.animateWithDuration(0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
                 self.snapshot.transform = CGAffineTransformIdentity
-                }, completion: { [unowned self] _ in
-                    cell.hidden = false
-                    self.snapshot.removeFromSuperview()
-                    self.snapshot = nil
+            }, completion: { [unowned self] _ in
+                cell.hidden = false
+                self.snapshot.removeFromSuperview()
+                self.snapshot = nil
 
-                    self.updateColors {
-                        UIView.performWithoutAnimation {
-                            tableView.reloadData()
-                        }
-                    }
-                })
+                self.updateColors {
+                    UIView.performWithoutAnimation(tableView.reloadData)
+                }
+            })
 
             self.startIndexPath = nil
             self.destinationIndexPath = nil
@@ -218,7 +216,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
         return gestureRecognizer.isKindOfClass(UITapGestureRecognizer.self)
     }
 
-    //MARK: Colors
+    // MARK: Colors
     private let colors: [UIColor]
 
     func colorForRow(row: Int) -> UIColor {
@@ -237,9 +235,8 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
             for (cell, color) in visibleCellsAndColors {
                 cell.contentView.backgroundColor = color
             }
-            }, completion: { _ in
-                completion?()
+        }, completion: { _ in
+            completion?()
         })
     }
-
 }
