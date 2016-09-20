@@ -533,17 +533,18 @@ private final class PrototypeTaskCellView: TaskCellView {
     }
 
     func fittingHeightForConstrainedWidth(width: CGFloat) -> CGFloat {
-        if let constraint = widthConstraint where constraint.constant != width {
-            removeConstraint(constraint)
-            widthConstraint = nil
-        }
-
-        if widthConstraint == nil {
+        if let widthConstraint = widthConstraint {
+            widthConstraint.constant = width
+        } else {
             widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil,
                                                  attribute: .NotAnAttribute, multiplier: 1, constant: width)
             addConstraint(widthConstraint!)
         }
 
+        layoutSubtreeIfNeeded()
+
+        // NSTextField's content size must be recalculated after cell size is changed  
+        textView.invalidateIntrinsicContentSize()
         layoutSubtreeIfNeeded()
 
         return fittingSize.height
