@@ -6,8 +6,10 @@ abstract_target 'RealmTasks' do
     
 
     # build from source
-    pod 'Realm', git: 'https://github.com/realm/realm-cocoa-private.git', branch: 'sync'
-    pod 'RealmSwift', git: 'https://github.com/realm/realm-cocoa-private.git', branch: 'sync'
+    pod 'Realm', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'sync', :submodules => true
+    pod 'RealmSwift',   git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'sync'
+    pod 'RealmCore', '2.0.0-rc3'
+    pod 'RealmSync', '1.0.0-beta-31.0'
     
     # 'master' of Cartography contains Swift 2.3 compatibility
     pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
@@ -28,7 +30,7 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['SWIFT_VERSION'] = '2.3' # or '3.0'
+      config.build_settings['SWIFT_VERSION'] = '2.3'
     end
   end
 end
