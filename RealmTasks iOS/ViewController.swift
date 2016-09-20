@@ -65,10 +65,7 @@ protocol ViewControllerProtocol: UIScrollViewDelegate {
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate,
-
-    ViewControllerProtocol
-{
+    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
 
     // MARK: Properties
     var items: List<Item> {
@@ -186,12 +183,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
-    
+
     override func didMoveToParentViewController(parent: UIViewController?) {
         guard parent == nil else { // we're being removed from our parent controller
             return
         }
-        
+
         let visibleCells = tableView.visibleCells
         for cell in visibleCells {
             (cell as! TableViewCell<Item>).reset()
