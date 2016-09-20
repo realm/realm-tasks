@@ -39,10 +39,25 @@ extension UIView {
 }
 
 private var tableViewBoundsKVOContext = 0
-private var titleKVOContext = 0
 
 private enum NavDirection {
     case Up, Down
+}
+
+// MARK: View Controller Protocol
+protocol ViewControllerProtocol: UIScrollViewDelegate {
+    var tableView: UITableView {get}
+    var tableViewContentView: UIView {get}
+    var view: UIView! {get}
+
+    func didUpdateList()
+
+    func setTopConstraintTo(constant constant: CGFloat)
+    func setPlaceholderAlpha(alpha: CGFloat)
+
+    func setListTitle(title: String)
+
+    func removeFromParentViewController()
 }
 
 // MARK: View Controller
@@ -50,17 +65,16 @@ private enum NavDirection {
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
 
     // MARK: Properties
-
-    // Items
-    private var parent: Parent
-    private var items: List<Item> { return parent.items }
+    var items: List<Item> {
+        return listPresenter.parent.items
+    }
 
     // Table View
     let tableView = UITableView()
-    private let tableViewContentView = UIView()
+    internal let tableViewContentView = UIView()
 
     // Notifications
     private var notificationToken: NotificationToken?
@@ -73,20 +87,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         return tableView.contentOffset.y + tableView.bounds.size.height - max(tableView.bounds.size.height, tableView.contentSize.height)
     }
 
-    // Moving
-    private var snapshot: UIView!
-    private var startIndexPath: NSIndexPath?
-    private var destinationIndexPath: NSIndexPath?
-
-    // Editing
-    private var currentlyEditing: Bool { return currentlyEditingCell != nil }
-    private var currentlyEditingCell: TableViewCell<Item>? {
-        didSet {
-            tableView.scrollEnabled = !currentlyEditing
-        }
-    }
-    private var currentlyEditingIndexPath: NSIndexPath?
-
     // Auto Layout
     private var topConstraint: NSLayoutConstraint?
     private var nextConstraints: ConstraintGroup?
@@ -97,24 +97,18 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // Onboard view
     private let onboardView = OnboardView()
 
-    // Constants
-    private let editingCellAlpha: CGFloat = 0.3
-    private let colors: [UIColor]
-
     // Top/Bottom View Controllers
     private let createTopViewController: (() -> (UIViewController))?
     private var topViewController: UIViewController?
     private let createBottomViewController: (() -> (UIViewController))?
     private var bottomViewController: UIViewController?
 
-    // Tracking observers
-    private var observingText = false
-    
+    // MARK: MTT
+    private var listPresenter: ListPresenter<Item, Parent>!
+
     // MARK: View Lifecycle
 
     init(parent: Parent, colors: [UIColor]) {
-        self.parent = parent
-        self.colors = colors
         if Item.self == Task.self {
             createTopViewController = {
                 ViewController<TaskList, TaskListList>(
@@ -133,20 +127,14 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
         }
         super.init(nibName: nil, bundle: nil)
-        if let parent = parent as? CellPresentable {
-            (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
-            title = parent.text
-            observingText = true
-        }
+
+        listPresenter = ListPresenter(parent: parent, colors: colors)
+        listPresenter.viewController = self
     }
 
     deinit {
         tableView.removeObserver(self, forKeyPath: "bounds")
         notificationToken?.stop()
-        
-        if observingText {
-            parent.removeObserver(self, forKeyPath: "text")
-        }
     }
 
     override func viewDidLoad() {
@@ -172,8 +160,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             tableView.bottom == tableView.superview!.bottom
             tableView.left == tableView.superview!.left
         }
-        tableView.dataSource = self
-        tableView.delegate = self
+        tableView.dataSource = listPresenter.tablePresenter
+        tableView.delegate = listPresenter.tablePresenter
         tableView.registerClass(TableViewCell<Item>.self, forCellReuseIdentifier: "cell")
         tableView.separatorStyle = .None
         tableView.backgroundColor = .blackColor()
@@ -191,19 +179,16 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         if context == &tableViewBoundsKVOContext {
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
-        } else if context == &titleKVOContext {
-            title = (parent as! CellPresentable).text
-            parentViewController?.title = title
         } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
-    
+
     override func didMoveToParentViewController(parent: UIViewController?) {
         guard parent == nil else { // we're being removed from our parent controller
             return
         }
-        
+
         let visibleCells = tableView.visibleCells
         for cell in visibleCells {
             (cell as! TableViewCell<Item>).reset()
@@ -212,7 +197,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func setupPlaceholderCell() {
         placeHolderCell.alpha = 0
-        placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
+        placeHolderCell.backgroundView!.backgroundColor = listPresenter.tablePresenter.colorForRow(0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -259,17 +244,13 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func setupGestureRecognizers() {
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(_:))))
-
-        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureRecognized(_:)))
-        longPressGestureRecognizer.delegate = self
-        tableView.addGestureRecognizer(longPressGestureRecognizer)
     }
 
     func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
         guard recognizer.state == .Ended else {
             return
         }
-        if currentlyEditing {
+        if listPresenter.cellPresenter.currentlyEditing {
             view.endEditing(true)
             return
         }
@@ -295,158 +276,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         let textView = cell.textView
         textView.userInteractionEnabled = !textView.userInteractionEnabled
         textView.becomeFirstResponder()
-    }
-
-    func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
-        let location = recognizer.locationInView(tableView)
-        let indexPath = tableView.indexPathForRowAtPoint(location) ?? NSIndexPath(forRow: items.count - 1, inSection: 0)
-
-        switch recognizer.state {
-        case .Began:
-            guard let cell = tableView.cellForRowAtIndexPath(indexPath) else { break }
-            startIndexPath = indexPath
-            destinationIndexPath = indexPath
-
-            // Add the snapshot as subview, aligned with the cell
-            var center = cell.center
-            snapshot = cell.snapshotViewAfterScreenUpdates(false)
-            snapshot.layer.shadowColor = UIColor.blackColor().CGColor
-            snapshot.layer.shadowOffset = CGSize(width: -5, height: 0)
-            snapshot.layer.shadowRadius = 5
-            snapshot.center = center
-            cell.hidden = true
-            tableView.addSubview(snapshot)
-
-            // Animate
-            let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
-            shadowAnimation.fromValue = 0
-            shadowAnimation.toValue = 1
-            shadowAnimation.duration = 0.3
-            snapshot.layer.addAnimation(shadowAnimation, forKey: shadowAnimation.keyPath)
-            snapshot.layer.shadowOpacity = 1
-            UIView.animateWithDuration(0.3) { [unowned self] in
-                center.y = location.y
-                self.snapshot.center = center
-                self.snapshot.transform = CGAffineTransformMakeScale(1.05, 1.05)
-            }
-        case .Changed:
-            snapshot.center.y = location.y
-
-            if let destinationIndexPath = destinationIndexPath where indexPath != destinationIndexPath && !items[indexPath.row].completed {
-                // move rows
-                tableView.moveRowAtIndexPath(destinationIndexPath, toIndexPath: indexPath)
-
-                self.destinationIndexPath = indexPath
-            }
-        case .Ended, .Cancelled, .Failed:
-            guard
-                let startIndexPath = startIndexPath,
-                let destinationIndexPath = destinationIndexPath,
-                let cell = tableView.cellForRowAtIndexPath(destinationIndexPath)
-            else { break }
-
-            if destinationIndexPath.row != startIndexPath.row && !items[destinationIndexPath.row].completed {
-                try! items.realm?.write {
-                    items.move(from: startIndexPath.row, to: destinationIndexPath.row)
-                }
-            }
-
-            let shadowAnimation = CABasicAnimation(keyPath: "shadowOpacity")
-            shadowAnimation.fromValue = 1
-            shadowAnimation.toValue = 0
-            shadowAnimation.duration = 0.3
-            snapshot.layer.addAnimation(shadowAnimation, forKey: shadowAnimation.keyPath)
-            snapshot.layer.shadowOpacity = 0
-
-            UIView.animateWithDuration(0.3, animations: { [unowned self] in
-                self.snapshot.center = cell.center
-                self.snapshot.transform = CGAffineTransformIdentity
-            }, completion: { [unowned self] _ in
-                cell.hidden = false
-                self.snapshot.removeFromSuperview()
-                self.snapshot = nil
-
-                self.updateColors {
-                    UIView.performWithoutAnimation { [unowned self] in
-                        self.tableView.reloadData()
-                    }
-                }
-            })
-
-            self.startIndexPath = nil
-            self.destinationIndexPath = nil
-        default:
-            break
-        }
-    }
-
-    func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
-        let location = gestureRecognizer.locationInView(tableView)
-        if let indexPath = tableView.indexPathForRowAtPoint(location),
-            cell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
-            return !cell.item.completed
-        }
-        return gestureRecognizer.isKindOfClass(UITapGestureRecognizer.self)
-    }
-
-    // MARK: UITableViewDataSource
-
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
-    }
-
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Item>
-        cell.item = items[indexPath.row]
-        cell.itemCompleted = itemCompleted
-        cell.itemDeleted = itemDeleted
-        cell.cellDidChangeText = cellDidChangeText
-        cell.cellDidBeginEditing = cellDidBeginEditing
-        cell.cellDidEndEditing = cellDidEndEditing
-
-        if let editingIndexPath = currentlyEditingIndexPath where editingIndexPath.row != indexPath.row {
-            cell.alpha = editingCellAlpha
-        }
-
-        return cell
-    }
-
-    private func cellHeightForText(text: String) -> CGFloat {
-        return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
-                                         options: [.UsesLineFragmentOrigin],
-                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
-                                         context: nil).height + 33
-    }
-
-    // MARK: UITableViewDelegate
-
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if currentlyEditingIndexPath?.row == indexPath.row {
-            return floor(cellHeightForText(currentlyEditingCell!.textView.text))
-        }
-
-        var item = items[indexPath.row]
-
-        // If we are dragging an item around, swap those
-        // two items for their appropriate height values
-        if let startIndexPath = startIndexPath, destinationIndexPath = destinationIndexPath {
-            if indexPath.row == destinationIndexPath.row {
-                item = items[startIndexPath.row]
-            } else if indexPath.row == startIndexPath.row {
-                item = items[destinationIndexPath.row]
-            }
-        }
-        return floor(cellHeightForText(item.text))
-    }
-
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        cell.contentView.backgroundColor = colorForRow(indexPath.row)
-        cell.alpha = currentlyEditing ? editingCellAlpha : 1
-    }
-
-    func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        let itemCell = cell as! TableViewCell<Item>
-        itemCell.reset()
     }
 
     private func navigateToBottomViewController(item: Item) {
@@ -609,133 +438,29 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         try! items.realm?.write {
             items.insert(Item(), atIndex: 0)
         }
-        
-        self.tableView.reloadData()
-        (self.tableView.visibleCells.first as! TableViewCell<Item>).textView.becomeFirstResponder()
+
+        if let firstCell = tableView.visibleCells.first as? TableViewCell<Item> {
+            firstCell.textView.becomeFirstResponder()
+        }
     }
 
-    // MARK: Cell Callbacks
-
-    private func itemDeleted(item: Item) {
-        guard let index = items.indexOf(item) else {
-            return
-        }
-
-        try! items.realm?.write {
-            items.realm?.delete(item)
-        }
-
+    // MARK: ViewControllerProtocol
+    func didUpdateList() {
+        listPresenter.tablePresenter.updateColors()
         tableView.reloadData()
-        updateColors()
         toggleOnboardView()
     }
 
-    private func itemCompleted(item: Item) {
-        guard !(item as Object).invalidated, let index = items.indexOf(item) else {
-            return
-        }
-        let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
-        let destinationIndexPath: NSIndexPath
-        if item.completed {
-            // move cell to bottom
-            destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
-        } else {
-            // move cell just above the first completed item
-            let completedCount = items.filter("completed = true").count
-            destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
-        }
-        try! items.realm?.write {
-            items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
-        }
-
-        tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-        updateColors()
-        toggleOnboardView()
+    func setTopConstraintTo(constant constant: CGFloat) {
+        topConstraint?.constant = constant
     }
 
-    private func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
-        currentlyEditingCell = editingCell
-        currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
-
-        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
-        topConstraint?.constant = -editingOffset
-        tableView.contentInset.bottom += editingOffset
-
-        placeHolderCell.alpha = 0
-        tableView.bounces = false
-
-        UIView.animateWithDuration(0.3, animations: { [unowned self] in
-            self.view.layoutSubviews()
-            for cell in self.tableView.visibleCells where cell !== editingCell {
-                cell.alpha = self.editingCellAlpha
-            }
-        }, completion: { [unowned self] finished in
-            self.tableView.bounces = true
-        })
+    func setPlaceholderAlpha(alpha: CGFloat) {
+        placeHolderCell.alpha = alpha
     }
 
-    private func cellDidEndEditing(editingCell: TableViewCell<Item>) {
-        currentlyEditingCell = nil
-        currentlyEditingIndexPath = nil
-
-        tableView.contentInset.bottom = 54
-        topConstraint?.constant = 0
-        UIView.animateWithDuration(0.3) { [weak self] in
-            guard let strongSelf = self else { return }
-            for cell in strongSelf.tableView.visibleCells where cell !== editingCell {
-                cell.alpha = 1
-            }
-            strongSelf.view.layoutSubviews()
-        }
-
-        let item = editingCell.item
-        guard !(item as Object).invalidated else {
-            tableView.reloadData()
-            return
-        }
-        if item.text.isEmpty {
-            try! item.realm?.write {
-                item.realm!.delete(item)
-            }
-            tableView.reloadData()
-        }
-        toggleOnboardView()
-    }
-
-    private func cellDidChangeText(editingCell: TableViewCell<Item>) {
-        // If the height of the text view has extended to the next line,
-        // reload the height of the cell
-        let height = cellHeightForText(editingCell.textView.text)
-        if Int(height) != Int(editingCell.frame.size.height) {
-            UIView.performWithoutAnimation { [unowned self] in
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
-            }
-
-            for cell in tableView.visibleCells where cell !== editingCell {
-                cell.alpha = editingCellAlpha
-            }
-        }
-    }
-
-    // MARK: Colors
-
-    private func colorForRow(row: Int) -> UIColor {
-        let fraction = Double(row) / Double(max(13, items.count))
-        return colors.gradientColorAtFraction(fraction)
-    }
-
-    private func updateColors(completion completion: (() -> Void)? = nil) {
-        let visibleCellsAndColors = tableView.visibleCells.map { cell in
-            return (cell, colorForRow(tableView.indexPathForCell(cell)!.row))
-        }
-
-        UIView.animateWithDuration(0.5, animations: {
-            for (cell, color) in visibleCellsAndColors {
-                cell.contentView.backgroundColor = color
-            }
-        }, completion: { _ in
-            completion?()
-        })
+    func setListTitle(title: String) {
+        self.title = title
+        parentViewController?.title = title
     }
 }
