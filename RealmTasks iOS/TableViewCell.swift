@@ -74,11 +74,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     let navHintView = NavHintView()
 
     // Callbacks
-    var itemCompleted: ((Item) -> ())? = nil
-    var itemDeleted: ((Item) -> ())? = nil
-    var cellDidBeginEditing: ((TableViewCell) -> ())? = nil
-    var cellDidEndEditing: ((TableViewCell) -> ())? = nil
-    var cellDidChangeText: ((TableViewCell) -> ())? = nil
+    var presenter: CellPresenter<Item>!
 
     // Private Properties
     private var originalDoneIconCenter = CGPoint()
@@ -121,11 +117,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func reset() {
-        itemCompleted = nil
-        itemDeleted = nil
-        cellDidBeginEditing = nil
-        cellDidEndEditing = nil
-        cellDidChangeText = nil
+        presenter = nil
     }
 
     private func setupBackgroundView() {
@@ -322,7 +314,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                     self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
                 }
                 completionBlock = {
-                    self.itemDeleted?(self.item)
+                    self.presenter.deleteItem(self.item)
                 }
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()
@@ -377,7 +369,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
             vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
-            itemCompleted?(item)
+            presenter.completeItem(item)
         } else {
             updateColor()
         }
@@ -399,7 +391,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func textViewDidBeginEditing(textView: UITextView) {
-        cellDidBeginEditing?(self)
+        presenter.cellDidBeginEditing(self)
     }
 
     func textViewDidEndEditing(textView: UITextView) {
@@ -409,10 +401,10 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
         }
         textView.userInteractionEnabled = false
-        cellDidEndEditing?(self)
+        presenter.cellDidEndEditing(self)
     }
 
     func textViewDidChange(textView: UITextView) {
-        cellDidChangeText?(self)
+        presenter.cellDidChangeText(self)
     }
 }
