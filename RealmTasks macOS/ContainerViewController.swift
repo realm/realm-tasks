@@ -90,9 +90,9 @@ class ContainerViewController: NSViewController {
             }
         }
 
-        updateToolbarForList(list)
-
         currentListViewController = listViewController
+
+        updateToolbarForList(list)
     }
 
     private func updateToolbarForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
@@ -113,7 +113,7 @@ class ContainerViewController: NSViewController {
         }
 
         // Let the new controller takes care about toolbar validation
-        view.window?.makeFirstResponder(childViewControllers.first)
+        view.window?.makeFirstResponder(currentListViewController)
     }
 
 }
