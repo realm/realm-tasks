@@ -25,18 +25,18 @@ import android.util.Log;
 
 import io.realm.Realm;
 import io.realm.realmtasks.list.RealmTasksViewHolder;
-import io.realm.realmtasks.list.TaskListAdapter;
+import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
-import io.realm.realmtasks.model.TaskListList;
 
-public class TaskListActivity extends AppCompatActivity {
+public class TaskActivity extends AppCompatActivity {
 
-    private static final String TAG = "TaskListActivity";
+    private static final String TAG = "TaskActivity";
     private Realm realm;
     private RecyclerView recyclerView;
-    private TaskListAdapter adapter;
+    private TaskAdapter adapter;
     private TouchHelper touchHelper;
+    private String id;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,13 +44,20 @@ public class TaskListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_common_list);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        final Intent intent = getIntent();
+        id = intent.getStringExtra("id");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         realm = Realm.getDefaultInstance();
-        adapter = new TaskListAdapter(realm.where(TaskListList.class).findFirst().getItems());
+        Log.d(TAG, "id: " + id);
+        if (id == null || id.isEmpty()) {
+            adapter = new TaskAdapter(realm.where(TaskList.class).findFirst().getItems());
+        } else {
+            adapter = new TaskAdapter(realm.where(TaskList.class).equalTo("id", id).findFirst().getItems());
+        }
         recyclerView.setAdapter(adapter);
         touchHelper = new TouchHelper(new Callback());
         touchHelper.attachToRecyclerView(recyclerView);
@@ -88,14 +95,7 @@ public class TaskListActivity extends AppCompatActivity {
 
         @Override
         public boolean onClicked(RealmTasksViewHolder viewHolder) {
-            final int position = viewHolder.getAdapterPosition();
-            final TaskList taskList = adapter.getItems().get(position);
-            final String id = taskList.getId();
-            Log.d(TAG, "id: " + id);
-            final Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
-            intent.putExtra("id", taskList.getId());
-            TaskListActivity.this.startActivity(intent);
-            return true;
+            return false;
         }
 
         @Override
