@@ -153,7 +153,7 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
         guard let view = viewController.tableView.superview else {
             return 0.0
         }
-        
+
         return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
                                          options: [.UsesLineFragmentOrigin],
                                          attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],

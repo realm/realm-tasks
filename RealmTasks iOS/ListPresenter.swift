@@ -52,7 +52,7 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
 
     // MARK: List title
     private var observingText = false
-    
+
     func observeListTitle() {
         if let parent = parent as? CellPresentable {
             (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)

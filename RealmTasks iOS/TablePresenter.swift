@@ -124,7 +124,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
 
     func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
         let tableView = viewController.tableView
-        
+
         let location = recognizer.locationInView(tableView)
         let indexPath = tableView.indexPathForRowAtPoint(location) ?? NSIndexPath(forRow: items.count - 1, inSection: 0)
 
