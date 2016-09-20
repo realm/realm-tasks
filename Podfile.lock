@@ -3,16 +3,18 @@ PODS:
   - Realm (1.1.0):
     - RealmCore
     - RealmSync
-  - RealmCore (1.4.2)
+  - RealmCore (2.0.0-rc3)
   - RealmSwift (1.1.0):
     - Realm (= 1.1.0)
-  - RealmSync (0.27.3):
-    - RealmCore (= 1.4.2)
+  - RealmSync (1.0.0-beta-31.0):
+    - RealmCore (= 2.0.0-rc3)
 
 DEPENDENCIES:
   - Cartography (from `https://github.com/robb/Cartography.git`, branch `master`)
-  - Realm (from `https://github.com/realm/realm-cocoa-private.git`, branch `sync`)
-  - RealmSwift (from `https://github.com/realm/realm-cocoa-private.git`, branch `sync`)
+  - Realm (from `git@github.com:realm/realm-cocoa-private.git`, branch `sync`)
+  - RealmCore (= 2.0.0-rc3)
+  - RealmSwift (from `git@github.com:realm/realm-cocoa-private.git`, branch `sync`)
+  - RealmSync (= 1.0.0-beta-31.0)
 
 EXTERNAL SOURCES:
   Cartography:
@@ -20,10 +22,11 @@ EXTERNAL SOURCES:
     :git: https://github.com/robb/Cartography.git
   Realm:
     :branch: sync
-    :git: https://github.com/realm/realm-cocoa-private.git
+    :git: git@github.com:realm/realm-cocoa-private.git
+    :submodules: true
   RealmSwift:
     :branch: sync
-    :git: https://github.com/realm/realm-cocoa-private.git
+    :git: git@github.com:realm/realm-cocoa-private.git
 
 CHECKOUT OPTIONS:
   Cartography:
@@ -31,18 +34,19 @@ CHECKOUT OPTIONS:
     :git: https://github.com/robb/Cartography.git
   Realm:
     :commit: 1fb5e715b343816778d7ab86eeea94ae9ab2cebe
-    :git: https://github.com/realm/realm-cocoa-private.git
+    :git: git@github.com:realm/realm-cocoa-private.git
+    :submodules: true
   RealmSwift:
     :commit: 1fb5e715b343816778d7ab86eeea94ae9ab2cebe
-    :git: https://github.com/realm/realm-cocoa-private.git
+    :git: git@github.com:realm/realm-cocoa-private.git
 
 SPEC CHECKSUMS:
   Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
   Realm: 6e501d87f7de272ea46ecfbd70f1aff31440878f
-  RealmCore: 296c3f78b9339a1204fdde4f5ab2c3600a30aca7
+  RealmCore: 0c3d2ef84b197f1f7dddf4345d14744796c30484
   RealmSwift: 6c74231803e6ed829117d4b52168d285cb08a4f5
-  RealmSync: 3d7c8e955c1fb38a606761443e809eba0bfb86c9
+  RealmSync: 3a8bc9b4360474804c74011e5ecff3d32d4b0d6b
 
-PODFILE CHECKSUM: b14e868eee3f331a1e7754b69a5479ec4c11779d
+PODFILE CHECKSUM: be5e5691a361b87886ad26610906dc9fe1e9fd52
 
 COCOAPODS: 1.0.1
