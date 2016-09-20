@@ -25,19 +25,19 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.realmtasks.model.TaskList;
 
-public class TasksListAdapter extends TasksCommonAdapter<TaskList> implements TasksTouchHelperAdapter {
+public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHelperAdapter {
 
-    public TasksListAdapter(List<TaskList> items) {
+    public TaskListAdapter(List<TaskList> items) {
         super(items);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        final TasksViewHolder tasksViewHolder = (TasksViewHolder) holder;
+        final RealmTasksViewHolder realmTasksViewHolder = (RealmTasksViewHolder) holder;
         final TaskList taskList = items.get(position);
-        tasksViewHolder.getText().setText(taskList.getText());
-        tasksViewHolder.setStrike(taskList.isCompleted());
+        realmTasksViewHolder.getText().setText(taskList.getText());
+        realmTasksViewHolder.setStrike(taskList.isCompleted());
     }
 
     @Override
@@ -114,7 +114,7 @@ public class TasksListAdapter extends TasksCommonAdapter<TaskList> implements Ta
     }
 
     @Override
-    public void onItemChanged(final TasksViewHolder viewHolder) {
+    public void onItemChanged(final RealmTasksViewHolder viewHolder) {
         final Realm realm = Realm.getDefaultInstance();
         final int position = viewHolder.getAdapterPosition();
         if (position < 0) {

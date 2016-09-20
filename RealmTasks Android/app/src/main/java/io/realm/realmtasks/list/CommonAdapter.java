@@ -26,24 +26,24 @@ import java.util.List;
 
 import io.realm.realmtasks.R;
 
-public class TasksCommonAdapter<T> extends RecyclerView.Adapter {
+public class CommonAdapter<T> extends RecyclerView.Adapter {
     protected List<T> items;
 
-    public TasksCommonAdapter(List<T> items) {
+    public CommonAdapter(List<T> items) {
         this.items = items;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rowItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
-        return new TasksViewHolder(rowItem);
+        return new RealmTasksViewHolder(rowItem);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final TasksViewHolder tasksViewHolder = (TasksViewHolder) holder;
-        tasksViewHolder.reset();
-        tasksViewHolder.resetBackgroundColor();
+        final RealmTasksViewHolder realmTasksViewHolder = (RealmTasksViewHolder) holder;
+        realmTasksViewHolder.reset();
+        realmTasksViewHolder.resetBackgroundColor();
     }
 
     protected void moveItems(int fromPosition, int toPosition) {

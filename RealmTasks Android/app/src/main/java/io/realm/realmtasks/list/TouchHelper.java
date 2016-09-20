@@ -43,9 +43,9 @@ import static android.support.v7.widget.RecyclerView.ItemDecoration;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.State;
 
-public class TasksTouchHelper {
+public class TouchHelper {
     private static final int POINTER_ID_NONE = -1;
-    private static final String TAG = "TasksTouchHelper";
+    private static final String TAG = "TouchHelper";
 
     private final Callback callback;
 
@@ -58,8 +58,8 @@ public class TasksTouchHelper {
     private float selectedInitialX;
     private float selectedInitialY;
     private float logicalDensity;
-    private TasksViewHolder selected;
-    private TasksViewHolder currentEditing;
+    private RealmTasksViewHolder selected;
+    private RealmTasksViewHolder currentEditing;
     private RecyclerView recyclerView;
     private View overdrawChild;
     private View previousFirstChild;
@@ -94,11 +94,11 @@ public class TasksTouchHelper {
     @PullState
     int pullState = PULL_STATE_ADD;
 
-    private TasksTouchHelper() {
+    private TouchHelper() {
         this(null);
     }
 
-    public TasksTouchHelper(Callback callback) {
+    public TouchHelper(Callback callback) {
         this.callback = callback;
     }
 
@@ -135,15 +135,15 @@ public class TasksTouchHelper {
     }
 
     public interface Callback {
-        void onMoved(RecyclerView recyclerView, TasksViewHolder from, TasksViewHolder to);
+        void onMoved(RecyclerView recyclerView, RealmTasksViewHolder from, RealmTasksViewHolder to);
 
-        void onArchived(TasksViewHolder viewHolder);
+        void onArchived(RealmTasksViewHolder viewHolder);
 
-        void onDismissed(TasksViewHolder viewHolder);
+        void onDismissed(RealmTasksViewHolder viewHolder);
 
-        boolean onClicked(TasksViewHolder viewHolder);
+        boolean onClicked(RealmTasksViewHolder viewHolder);
 
-        void onChanged(TasksViewHolder viewHolder);
+        void onChanged(RealmTasksViewHolder viewHolder);
 
         void onAdded();
 
@@ -157,7 +157,7 @@ public class TasksTouchHelper {
         public void onDraw(Canvas c, RecyclerView parent, State state) {
             overdrawChildPosition = -1;
             if (selected != null) {
-                final TasksViewHolder selectedViewHolder = (TasksViewHolder) selected;
+                final RealmTasksViewHolder selectedViewHolder = (RealmTasksViewHolder) selected;
                 final View selectedItemView = selectedViewHolder.itemView;
                 if (actionState == ACTION_STATE_SWIPE) {
                     final float translationX = selectedInitialX + dx - selected.itemView.getLeft();
@@ -215,7 +215,7 @@ public class TasksTouchHelper {
                 if (firstChild != previousFirstChild && firstChild != null) {
                     final ViewHolder childViewHolder = recyclerView.getChildViewHolder(firstChild);
                     recyclerView.scrollToPosition(0);
-                    selected = (TasksViewHolder) childViewHolder;
+                    selected = (RealmTasksViewHolder) childViewHolder;
                 }
             }
         }
@@ -276,7 +276,7 @@ public class TasksTouchHelper {
                     dx = motionEvent.getX(pointerIndex) - initialX;
                     dy = motionEvent.getY(pointerIndex) - initialY;
                     moveIfNecessary(viewHolder);
-                    TasksTouchHelper.this.recyclerView.invalidate();
+                    TouchHelper.this.recyclerView.invalidate();
                 }
             }
         }
@@ -352,7 +352,7 @@ public class TasksTouchHelper {
                 distances.clear();
                 return;
             }
-            callback.onMoved(recyclerView, (TasksViewHolder) fromViewHolder, (TasksViewHolder) toViewHolder);
+            callback.onMoved(recyclerView, (RealmTasksViewHolder) fromViewHolder, (RealmTasksViewHolder) toViewHolder);
             if (layoutManager instanceof ItemTouchHelper.ViewDropHandler) {
                 final ItemTouchHelper.ViewDropHandler viewDropHandler = (ItemTouchHelper.ViewDropHandler) layoutManager;
                 viewDropHandler.prepareForDrop(fromViewHolder.itemView, toViewHolder.itemView, 0, selectedTop);
@@ -435,50 +435,50 @@ public class TasksTouchHelper {
             if (currentEditing == childViewHolder) {
                 return;
             }
-            TasksTouchHelper.this.dx = TasksTouchHelper.this.dy = 0;
-            selectView((TasksViewHolder) childViewHolder, ACTION_STATE_SWIPE);
+            TouchHelper.this.dx = TouchHelper.this.dy = 0;
+            selectView((RealmTasksViewHolder) childViewHolder, ACTION_STATE_SWIPE);
         }
 
-        private void selectView(TasksViewHolder selected, @ActionState int actionState) {
-            if (selected == TasksTouchHelper.this.selected && actionState == TasksTouchHelper.this.actionState) {
+        private void selectView(RealmTasksViewHolder selected, @ActionState int actionState) {
+            if (selected == TouchHelper.this.selected && actionState == TouchHelper.this.actionState) {
                 return;
             }
-            final @ActionState int previousActionState = TasksTouchHelper.this.actionState;
+            final @ActionState int previousActionState = TouchHelper.this.actionState;
             if (previousActionState == ACTION_STATE_SWIPE) {
-                if (TasksTouchHelper.this.selected != null) {
+                if (TouchHelper.this.selected != null) {
                     final float maxNiche = logicalDensity * 66 / 2;
-                    final float itemViewTranslationX = TasksTouchHelper.this.selected.itemView.getTranslationX();
-                    final float rowTranslationX = ((TasksViewHolder) TasksTouchHelper.this.selected).getRow().getTranslationX();
+                    final float itemViewTranslationX = TouchHelper.this.selected.itemView.getTranslationX();
+                    final float rowTranslationX = TouchHelper.this.selected.getRow().getTranslationX();
                     final float previousTranslationX = itemViewTranslationX + rowTranslationX;
-                    ((TasksViewHolder) (TasksTouchHelper.this.selected)).reset();
+                    TouchHelper.this.selected.reset();
                     if (Math.abs(previousTranslationX) > maxNiche) {
                         if (previousTranslationX < 0) {
-                            callback.onDismissed(TasksTouchHelper.this.selected);
+                            callback.onDismissed(TouchHelper.this.selected);
                         } else {
-                            callback.onArchived(TasksTouchHelper.this.selected);
+                            callback.onArchived(TouchHelper.this.selected);
                         }
                     }
                 }
             } else if (previousActionState == ACTION_STATE_DRAG) {
-                TasksTouchHelper.this.selected.itemView.setTranslationY(0);
+                TouchHelper.this.selected.itemView.setTranslationY(0);
                 removeChildDrawingOrder();
             } else if (previousActionState == ACTION_STATE_PULL) {
                 recyclerView.scrollToPosition(0);
                 ViewCompat.setPaddingRelative(recyclerView, 0, 0, 0, 0);
-                if (TasksTouchHelper.this.selected != null) {
-                    TasksTouchHelper.this.selected.itemView.setRotationX(0);
-                    TasksTouchHelper.this.selected.itemView.setTranslationY(0);
+                if (TouchHelper.this.selected != null) {
+                    TouchHelper.this.selected.itemView.setRotationX(0);
+                    TouchHelper.this.selected.itemView.setTranslationY(0);
                     if (pullState == PULL_STATE_CANCEL_ADD) {
-                        TasksTouchHelper.this.selected.itemView.setAlpha(0);
+                        TouchHelper.this.selected.itemView.setAlpha(0);
                         callback.onReverted(true);
                     } else {
-                        TasksTouchHelper.this.selected.itemView.setAlpha(1f);
+                        TouchHelper.this.selected.itemView.setAlpha(1f);
                     }
                     recyclerView.invalidate();
                 }
             }
-            TasksTouchHelper.this.selected = selected;
-            TasksTouchHelper.this.actionState = actionState;
+            TouchHelper.this.selected = selected;
+            TouchHelper.this.actionState = actionState;
             if (selected != null) {
                 selectedInitialX = selected.itemView.getLeft();
                 selectedInitialY = selected.itemView.getTop();
@@ -487,7 +487,7 @@ public class TasksTouchHelper {
                 }
             }
             final ViewParent viewParent = recyclerView.getParent();
-            viewParent.requestDisallowInterceptTouchEvent(TasksTouchHelper.this.selected != null);
+            viewParent.requestDisallowInterceptTouchEvent(TouchHelper.this.selected != null);
             recyclerView.invalidate();
         }
 
@@ -524,7 +524,7 @@ public class TasksTouchHelper {
                     }
                     return false;
                 }
-                final TasksViewHolder viewHolder = (TasksViewHolder) recyclerView.getChildViewHolder(childView);
+                final RealmTasksViewHolder viewHolder = (RealmTasksViewHolder) recyclerView.getChildViewHolder(childView);
                 if (viewHolder == null) {
                     doEndOfEditing();
                     return false;
@@ -556,7 +556,7 @@ public class TasksTouchHelper {
                 final int pointerId = motionEvent.getPointerId(0);
                 final int pointerIndex = motionEvent.findPointerIndex(pointerId);
                 final View childView = findChildView(motionEvent, pointerIndex);
-                if (childView == null || pointerId != TasksTouchHelper.this.pointerId) {
+                if (childView == null || pointerId != TouchHelper.this.pointerId) {
                     return;
                 }
                 final ViewHolder viewHolder = recyclerView.getChildViewHolder(childView);
@@ -566,7 +566,7 @@ public class TasksTouchHelper {
                 initialX = motionEvent.getX(pointerIndex);
                 initialY = motionEvent.getY(pointerIndex);
                 dx = dy = 0;
-                selectView((TasksViewHolder) viewHolder, ACTION_STATE_DRAG);
+                selectView((RealmTasksViewHolder) viewHolder, ACTION_STATE_DRAG);
             }
         }
 

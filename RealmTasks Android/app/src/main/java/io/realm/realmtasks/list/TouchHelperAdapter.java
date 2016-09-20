@@ -16,11 +16,11 @@
 
 package io.realm.realmtasks.list;
 
-public interface TasksTouchHelperAdapter {
+public interface TouchHelperAdapter {
     void onItemAdded();
     void onItemArchived(int posision);
     void onItemDismissed(int position);
     void onItemMoved(int fromPosition, int toPosition);
-    void onItemChanged(TasksViewHolder viewHolder);
+    void onItemChanged(RealmTasksViewHolder viewHolder);
     void onItemReverted();
 }

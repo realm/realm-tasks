@@ -24,7 +24,7 @@ import io.realm.RealmConfiguration;
 import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.model.TaskListList;
 
-public class TasksApplication extends Application {
+public class RealmTasksApplication extends Application {
 
     @Override
     public void onCreate() {

@@ -27,13 +27,13 @@ import java.util.Random;
 
 import io.realm.realmtasks.R;
 
-public class TasksViewHolder extends RecyclerView.ViewHolder {
+public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
     private final RelativeLayout iconBar;
     private final RelativeLayout row;
     private final TextView text;
     private final EditText editText;
 
-    public TasksViewHolder(View itemView) {
+    public RealmTasksViewHolder(View itemView) {
         super(itemView);
         iconBar = (RelativeLayout) itemView.findViewById(R.id.icon_bar);
         row = (RelativeLayout) itemView.findViewById(R.id.row);
