@@ -24,9 +24,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.realmtasks.list.RealmTasksViewHolder;
 import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
+import io.realm.realmtasks.model.Task;
 import io.realm.realmtasks.model.TaskList;
 
 public class TaskActivity extends AppCompatActivity {
@@ -53,11 +55,13 @@ public class TaskActivity extends AppCompatActivity {
         super.onStart();
         realm = Realm.getDefaultInstance();
         Log.d(TAG, "id: " + id);
+        RealmList<Task> items;
         if (id == null || id.isEmpty()) {
-            adapter = new TaskAdapter(realm.where(TaskList.class).findFirst().getItems());
+            items = realm.where(TaskList.class).findFirst().getItems();
         } else {
-            adapter = new TaskAdapter(realm.where(TaskList.class).equalTo("id", id).findFirst().getItems());
+            items = realm.where(TaskList.class).equalTo("id", id).findFirst().getItems();
         }
+        adapter = new TaskAdapter(items);
         recyclerView.setAdapter(adapter);
         touchHelper = new TouchHelper(new Callback());
         touchHelper.attachToRecyclerView(recyclerView);
