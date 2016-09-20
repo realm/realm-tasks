@@ -26,7 +26,7 @@ import java.util.List;
 
 import io.realm.realmtasks.R;
 
-public class TasksCommonAdapter<T> extends RecyclerView.Adapter implements TasksTouchHelperAdapter {
+public class TasksCommonAdapter<T> extends RecyclerView.Adapter {
     protected List<T> items;
 
     public TasksCommonAdapter(List<T> items) {
@@ -61,30 +61,6 @@ public class TasksCommonAdapter<T> extends RecyclerView.Adapter implements Tasks
     @Override
     public int getItemCount() {
         return items.size();
-    }
-
-    @Override
-    public void onItemAdded() {
-    }
-
-    @Override
-    public void onItemArchived(int position) {
-    }
-
-    @Override
-    public void onItemDismissed(int position) {
-    }
-
-    @Override
-    public void onItemMoved(int fromPosition, int toPosition) {
-    }
-
-    @Override
-    public void onItemChanged(TasksViewHolder viewHolder) {
-    }
-
-    @Override
-    public void onItemReverted() {
     }
 
     public List<T> getItems() {

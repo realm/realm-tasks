@@ -189,7 +189,7 @@ public class TasksTouchHelper {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
                         if (dy > height * 4 && pullState == PULL_STATE_CANCEL_ADD) {
-                            callback.onReverted(false);
+                            callback.onReverted(true);
                             callback.onExited();
                         } else if (dy > height) {
                             final float reverseHeight = height * 2 - dy;

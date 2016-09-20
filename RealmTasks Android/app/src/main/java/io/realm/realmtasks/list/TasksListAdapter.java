@@ -25,7 +25,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.realmtasks.model.TaskList;
 
-public class TasksListAdapter extends TasksCommonAdapter<TaskList> {
+public class TasksListAdapter extends TasksCommonAdapter<TaskList> implements TasksTouchHelperAdapter {
 
     public TasksListAdapter(List<TaskList> items) {
         super(items);
