@@ -125,7 +125,6 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
             try! item.realm?.write {
                 item.realm!.delete(item)
             }
-            tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
         }
 
         viewController.didUpdateList()
