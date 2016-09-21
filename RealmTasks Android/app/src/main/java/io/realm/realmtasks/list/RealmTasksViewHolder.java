@@ -30,18 +30,24 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
     private final RelativeLayout row;
     private final TextView text;
     private final EditText editText;
+    private final RecyclerView.Adapter adapter;
 
-    public RealmTasksViewHolder(View itemView) {
+    public RealmTasksViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
         iconBar = (RelativeLayout) itemView.findViewById(R.id.icon_bar);
         row = (RelativeLayout) itemView.findViewById(R.id.row);
         row.setBackgroundColor(generateBackgroundColor());
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
+        this.adapter = adapter;
     }
 
     private int generateBackgroundColor() {
-        return ColorHelper.getColor(ColorHelper.taskColors, getAdapterPosition(), 13);
+        if (adapter != null && adapter instanceof TouchHelperAdapter) {
+            return ((TouchHelperAdapter) adapter).generatedRowColor(getAdapterPosition());
+        } else {
+            return 0xFF000000;
+        }
     }
 
     public void setStrike(boolean set) {
@@ -104,7 +110,7 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
         iconBar.setAlpha(alpha);
     }
 
-    private static class ColorHelper {
+    public static class ColorHelper {
         private static final String TAG = "ColorHelper";
 
         public static final int[] taskColors= {
