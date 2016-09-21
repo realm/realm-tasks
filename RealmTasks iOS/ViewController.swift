@@ -232,7 +232,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { [unowned self] changes in
             // Do not perform an update if the user is editing a cell at this moment
             // (The table will be reloaded by the 'end editing' call of the active cell)
-            guard self.currentlyEditingCell == nil else {
+            guard self.listPresenter.cellPresenter.currentlyEditingCell == nil else {
                 return
             }
             
