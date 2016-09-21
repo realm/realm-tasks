@@ -72,49 +72,36 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
 
     var currentlyEditing: Bool { return currentlyEditingCell != nil }
 
-    private(set) var currentlyEditingCell: TableViewCell<Item>? {
+    var currentlyEditingCell: TableViewCell<Item>? {
         didSet {
             viewController.tableView.scrollEnabled = !currentlyEditing
         }
     }
-    private(set) var currentlyEditingIndexPath: NSIndexPath?
+    var currentlyEditingIndexPath: NSIndexPath?
 
     func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
-        currentlyEditingCell = editingCell
+        guard currentlyEditingCell != editingCell else {
+            return
+        }
+        
         let tableView = viewController.tableView
 
+        currentlyEditingCell = editingCell
         currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
 
-        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
+        let editingOffset = editingCell.becomeEditingCell(inTable: tableView)
+
         viewController.setTopConstraintTo(constant: -editingOffset)
-        tableView.contentInset.bottom += editingOffset
-
         viewController.setPlaceholderAlpha(0)
-        tableView.bounces = false
-
-        UIView.animateWithDuration(0.3, animations: {
-            tableView.superview?.layoutSubviews()
-            for cell in tableView.visibleCells where cell !== editingCell {
-                cell.alpha = editingCellAlpha
-            }
-        }, completion: {_ in
-            tableView.bounces = true
-        })
     }
 
     func cellDidEndEditing(editingCell: TableViewCell<Item>) {
-        currentlyEditingCell = nil
-        currentlyEditingIndexPath = nil
         let tableView = viewController.tableView
 
-        tableView.contentInset.bottom = 54
-        viewController.setTopConstraintTo(constant: 0)
-        UIView.animateWithDuration(0.3) {
-            for cell in tableView.visibleCells where cell !== editingCell {
-                cell.alpha = 1
-            }
-            tableView.superview?.layoutSubviews()
-        }
+        currentlyEditingCell = nil
+        currentlyEditingIndexPath = nil
+
+        editingCell.resignEditingCell(inTable: tableView)
 
         let item = editingCell.item
         guard !(item as Object).invalidated else {
@@ -128,6 +115,7 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
             tableView.deleteRowsAtIndexPaths([tableView.indexPathForCell(editingCell)!], withRowAnimation: .None)
         }
 
+        viewController.setTopConstraintTo(constant: 0)
         viewController.didUpdateList()
     }
 

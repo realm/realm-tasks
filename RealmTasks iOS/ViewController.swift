@@ -235,8 +235,14 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             guard self.listPresenter.cellPresenter.currentlyEditingCell == nil else {
                 return
             }
-            
+
             self.tableView.reloadData()
+
+            if self.activateTopCellAfterRefresh, let firstCell = self.tableView.visibleCells.first as? TableViewCell<Item> {
+                self.activateTopCellAfterRefresh = false
+                firstCell.textView.becomeFirstResponder()
+                return
+            }
         }
     }
 
@@ -438,11 +444,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         try! items.realm?.write {
             items.insert(Item(), atIndex: 0)
         }
-
-        if let firstCell = tableView.visibleCells.first as? TableViewCell<Item> {
-            firstCell.textView.becomeFirstResponder()
-        }
+        activateTopCellAfterRefresh = true
     }
+
+    private var activateTopCellAfterRefresh = false
 
     // MARK: ViewControllerProtocol
     func didUpdateList() {

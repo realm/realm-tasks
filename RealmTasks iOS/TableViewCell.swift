@@ -407,4 +407,32 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     func textViewDidChange(textView: UITextView) {
         presenter.cellDidChangeText(self)
     }
+
+    // MARK: Editing
+    func becomeEditingCell(inTable tableView: UITableView) -> CGFloat {
+        let editingOffset = convertRect(bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
+        tableView.contentInset.bottom += editingOffset
+        tableView.bounces = false
+
+        UIView.animateWithDuration(0.3, animations: {
+            tableView.superview?.layoutSubviews()
+            for cell in tableView.visibleCells where cell !== self {
+                cell.alpha = editingCellAlpha
+            }
+        }, completion: {_ in
+            tableView.bounces = true
+        })
+
+        return editingOffset
+    }
+
+    func resignEditingCell(inTable tableView: UITableView) {
+        tableView.contentInset.bottom = 54
+        UIView.animateWithDuration(0.3) {
+            for cell in tableView.visibleCells where cell !== self {
+                cell.alpha = 1
+            }
+            tableView.superview?.layoutSubviews()
+        }
+    }
 }
