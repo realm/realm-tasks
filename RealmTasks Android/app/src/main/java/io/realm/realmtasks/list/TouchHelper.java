@@ -69,6 +69,7 @@ public class TouchHelper {
     private TasksOnItemTouchListener.TasksChildDrawingOrderCallback childDrawingOrderCallback;
     private TasksOnItemTouchListener onItemTouchListener;
     private TasksItemDecoration itemDecoration;
+    private boolean isCanceldAdding;
 
     @IntDef({ACTION_STATE_IDLE, ACTION_STATE_SWIPE, ACTION_STATE_DRAG, ACTION_STATE_PULL})
     @Retention(RetentionPolicy.SOURCE)
@@ -189,7 +190,10 @@ public class TouchHelper {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
                         if (dy > height * 4 && pullState == PULL_STATE_CANCEL_ADD) {
-                            callback.onReverted(true);
+                            if (!isCanceldAdding) {
+                                callback.onReverted(true);
+                                isCanceldAdding = true;
+                            }
                             callback.onExited();
                         } else if (dy > height) {
                             final float reverseHeight = height * 2 - dy;
@@ -237,6 +241,7 @@ public class TouchHelper {
                 final int pointerIndex = motionEvent.findPointerIndex(pointerId);
                 initialX = motionEvent.getX(pointerIndex);
                 initialY = motionEvent.getY(pointerIndex);
+                isCanceldAdding = false;
             } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
                 pointerId = POINTER_ID_NONE;
                 selectView(null, ACTION_STATE_IDLE);
@@ -470,7 +475,10 @@ public class TouchHelper {
                     TouchHelper.this.selected.itemView.setTranslationY(0);
                     if (pullState == PULL_STATE_CANCEL_ADD) {
                         TouchHelper.this.selected.itemView.setAlpha(0);
-                        callback.onReverted(true);
+                        if (!isCanceldAdding) {
+                            callback.onReverted(true);
+                            isCanceldAdding = true;
+                        }
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
                     }
