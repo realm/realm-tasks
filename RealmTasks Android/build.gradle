@@ -2,16 +2,44 @@
 
 buildscript {
     repositories {
+        maven {
+            credentials(AwsCredentials) {
+                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
+                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
+            }
+            url "s3://realm-ci-artifacts/maven/releases/"
+        }
+        maven {
+            credentials(AwsCredentials) {
+                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
+                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
+            }
+            url "s3://realm-ci-artifacts/maven/snapshots/"
+        }
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
-        classpath "io.realm:realm-gradle-plugin:1.2.0"
+        classpath "io.realm:realm-gradle-plugin:1.0.0-beta-33.0"
     }
 }
 
 allprojects {
     repositories {
+        maven {
+            credentials(AwsCredentials) {
+                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
+                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
+            }
+            url "s3://realm-ci-artifacts/maven/releases/"
+        }
+        maven {
+            credentials(AwsCredentials) {
+                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
+                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
+            }
+            url "s3://realm-ci-artifacts/maven/snapshots/"
+        }
         jcenter()
     }
 }
@@ -19,3 +47,4 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+

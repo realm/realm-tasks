@@ -29,7 +29,7 @@ public class RealmTasksApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm.setDefaultConfiguration(buildRealmConfigutation());
+        Realm.init(this);
         populateDefaultList();
     }
 
@@ -48,10 +48,5 @@ public class RealmTasksApplication extends Application {
             });
         }
         realm.close();
-    }
-
-    @NonNull
-    private RealmConfiguration buildRealmConfigutation() {
-        return new RealmConfiguration.Builder(this).build();
     }
 }
