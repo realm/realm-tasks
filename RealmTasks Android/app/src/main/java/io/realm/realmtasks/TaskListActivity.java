@@ -107,14 +107,14 @@ public class TaskListActivity extends AppCompatActivity {
         @Override
         public void onAdded() {
             adapter.onItemAdded();
-            adapter.notifyItemInserted(0);
+            adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onReverted(boolean shouldUpdateUI) {
             adapter.onItemReverted();
             if (shouldUpdateUI) {
-                adapter.notifyItemRemoved(0);
+                adapter.notifyDataSetChanged();
             }
         }
 

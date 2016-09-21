@@ -23,8 +23,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.Random;
-
 import io.realm.realmtasks.R;
 
 public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
@@ -43,10 +41,7 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
     }
 
     private int generateBackgroundColor() {
-        final int color = new Random().nextInt();
-        final int colorMask = 0xFFFFFF;
-        final int alpha = 0xFF000000;
-        return alpha | (color & colorMask);
+        return ColorHelper.getColor(ColorHelper.taskColors, getAdapterPosition(), 13);
     }
 
     public void setStrike(boolean set) {
@@ -107,5 +102,62 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
 
     public void setIconBarAlpha(float alpha) {
         iconBar.setAlpha(alpha);
+    }
+
+    private static class ColorHelper {
+        private static final String TAG = "ColorHelper";
+
+        public static final int[] taskColors= {
+                0xFFE7A776,
+                0xFFE47D72,
+                0xFFE9636F,
+                0xFFF25191,
+                0xFF9A50A4,
+                0xFF58569D,
+                0xFF38477E
+        };
+
+        public static final int[] listColors = {
+                0xFF0693FB,
+                0xFF109EFB,
+                0xFF1AA9FB,
+                0xFF21B4FB,
+                0xFF28BEFB,
+                0xFF2EC6FB,
+                0xFF36CFFB
+        };
+
+        public static int getColor(int[] targetColors, int index, int size) {
+            if (size < 13) {
+                size = 13;
+            }
+            if (index < 0) {
+                index = 0;
+            } else if (index >= size) {
+                index = size - 1;
+            }
+            double fraction = (double) index / size;
+            if (fraction < 0.0) {
+                fraction = 0.0;
+            } else if (fraction > 1.0) {
+                fraction = 1.0;
+            }
+            final double step = 1.0 / (targetColors.length - 1);
+            final int colorIndex = (int) (fraction / step);
+            final int topColor = targetColors[colorIndex];
+            final int bottomColor = targetColors[colorIndex + 1];
+            final int topRed = (topColor >> 16) & 0xFF;
+            final int bottomRed = (bottomColor >> 16) & 0xFF;
+            final int topGreen = (topColor >> 8) & 0xFF;
+            final int bottomGreen = (bottomColor >> 8) & 0xFF;
+            final int topBlue = topColor & 0xFF;
+            final int bottomBlue = bottomColor & 0xFF;
+            final double colorOffset = (fraction - (colorIndex * step)) / step;
+            final int red = (int) (topRed + (bottomRed - topRed) * colorOffset);
+            final int green = (int) (topGreen + (bottomGreen - topGreen) * colorOffset);
+            final int blue = (int) (topBlue + (bottomBlue - topBlue) * colorOffset);
+            final int color = 0xFF000000 | (red << 16) | (green << 8) | blue;
+            return color;
+        }
     }
 }
