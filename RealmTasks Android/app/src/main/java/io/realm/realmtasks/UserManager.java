@@ -8,7 +8,7 @@ public class UserManager {
 
     // Configure Realm for the current active user
     public static void setActiveUser(User user) {
-        SyncConfiguration config = new SyncConfiguration.Builder(user, RealmTasksApplication.REALM_URL).build();
-        Realm.setDefaultConfiguration(config);
+        SyncConfiguration defaultConfig = new SyncConfiguration.Builder(user, RealmTasksApplication.REALM_URL).build();
+        Realm.setDefaultConfiguration(defaultConfig);
     }
 }

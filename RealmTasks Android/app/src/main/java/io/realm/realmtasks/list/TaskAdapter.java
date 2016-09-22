@@ -82,6 +82,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
                 }
             }
         });
+        realm.close();
     }
 
     @Override

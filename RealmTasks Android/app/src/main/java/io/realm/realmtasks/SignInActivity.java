@@ -23,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,9 +39,12 @@ import android.widget.Toast;
 
 import io.realm.Credentials;
 import io.realm.ObjectServerError;
+import io.realm.Realm;
 import io.realm.User;
 
 public class SignInActivity extends AppCompatActivity {
+
+    public static final String ACTION_LOGOUT_EXISTING_USER = "action.logoutExistingUser";
 
     private AutoCompleteTextView usernameView;
     private EditText passwordView;
@@ -75,10 +79,13 @@ public class SignInActivity extends AppCompatActivity {
         loginFormView = findViewById(R.id.sign_in_form);
         progressView = findViewById(R.id.sign_in_progress);
 
-
         // Check if we already got a user, if yes, just continue automatically
         if (User.currentUser() != null) {
-            loginComplete(User.currentUser());
+            if (ACTION_LOGOUT_EXISTING_USER.equals(getIntent().getAction())) {
+                User.currentUser().logout();
+            } else {
+                loginComplete(User.currentUser());
+            }
         }
     }
 
@@ -91,7 +98,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.sign_in, menu);
+        menuInflater.inflate(R.menu.menu_signin, menu);
         return true;
     }
 

@@ -22,6 +22,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import io.realm.Realm;
 import io.realm.realmtasks.list.RealmTasksViewHolder;
@@ -62,6 +64,27 @@ public class TaskListActivity extends AppCompatActivity {
         recyclerView.setAdapter(null);
         realm.close();
         super.onStop();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_tasks, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_logout:
+                Intent intent = new Intent(TaskListActivity.this, SignInActivity.class);
+                intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
+                startActivity(intent);
+                realm.close();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private class Callback implements TouchHelper.Callback {

@@ -83,6 +83,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
                 }
             }
         });
+        realm.close();
     }
 
     @Override
