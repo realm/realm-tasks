@@ -39,4 +39,12 @@ struct Constants {
     static let syncAuthURL = NSURL(string: "http://\(syncHost):8080")!
 
     static let appID = NSBundle.mainBundle().bundleIdentifier!
+
+    static let onboardItems = [
+        "Swipe right to mark as done",
+        "Swipe left to delete",
+        "Swipe down to add a new item",
+        "Pull down to switch lists",
+        "Pull up to clear all completed items"
+    ]
 }
