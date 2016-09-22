@@ -124,6 +124,7 @@ extension TaskListViewController {
 
         NSView.animateWithDuration(0.2, animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
+            self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
         }) {
             self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
             self.view.window?.toolbar?.validateVisibleItems()
