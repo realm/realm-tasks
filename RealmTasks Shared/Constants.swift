@@ -35,8 +35,8 @@ struct Constants {
     static let defaultListName = "My Tasks"
     static let defaultListID = "80EB1620-165B-4600-A1B1-D97032FDD9A0"
 
-    static let syncServerURL = NSURL(string: "realm://\(syncHost)/~/\(syncRealmPath)")
-    static let syncAuthURL = NSURL(string: "http://\(syncHost):8080")!
+    static let syncServerURL = NSURL(string: "realm://\(syncHost):9080/~/\(syncRealmPath)")
+    static let syncAuthURL = NSURL(string: "http://\(syncHost):9080")!
 
     static let appID = NSBundle.mainBundle().bundleIdentifier!
 }
