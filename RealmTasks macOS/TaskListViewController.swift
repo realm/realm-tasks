@@ -403,7 +403,7 @@ extension TaskListViewController: TaskCellViewDelegate {
     }
 
     func cellViewDidDelete(view: TaskCellView) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let item = findItemForCellView(view)?.item else {
             return
         }
 
@@ -438,7 +438,7 @@ extension TaskListViewController: TaskCellViewDelegate {
     }
 
     func cellViewDidEndEditing(view: TaskCellView) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let item = findItemForCellView(view)?.item else {
             return
         }
 
