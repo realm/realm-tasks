@@ -80,9 +80,8 @@ func configureDefaultRealm() -> Bool {
 }
 
 func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
-    User.authenticateWithCredential(.usernamePassword(username, password: password),
-                                    actions: register ? [.CreateAccount] : [],
-                                    authServerURL: Constants.syncAuthURL) { user, error in
+    User.authenticateWithCredential(.usernamePassword(username, password: password, actions: register ? [.CreateAccount] : []),
+                                    authServerURL: Constants.syncAuthURL, timeout: 10) { (user, error) in
         if let user = user {
             setDefaultRealmConfigurationWithUser(user)
         }
