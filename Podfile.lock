@@ -1,10 +1,8 @@
 PODS:
   - Cartography (0.7.0)
-  - RealmSwift (1.0.2-16-sync-1.0.0-beta-32.0)
 
 DEPENDENCIES:
   - Cartography (from `https://github.com/robb/Cartography.git`, branch `master`)
-  - RealmSwift (= 1.0.2-16-sync-1.0.0-beta-32.0)
 
 EXTERNAL SOURCES:
   Cartography:
@@ -18,8 +16,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
-  RealmSwift: 7a6216f2e780d464a7058ba49be3e2a658e476d0
 
-PODFILE CHECKSUM: de881c23d76cb14b150012343bfc9c1fd3033467
+PODFILE CHECKSUM: c31170587703d3bf860c9d605eaaced3807873d0
 
 COCOAPODS: 1.0.1
