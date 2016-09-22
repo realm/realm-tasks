@@ -296,11 +296,11 @@ extension TaskCellView: NSGestureRecognizerDelegate {
                 }
 
                 completionBlock = {
-                    NSView.animateWithDuration(0.2, animations: {
+                    NSView.animate(animations: {
                         self.completed = !self.completed
-                    }, completion: {
+                    }) {
                         self.delegate?.cellView(self, didComplete: self.completed)
-                    })
+                    }
                 }
             case .Delete?:
                 animationBlock = {
@@ -323,7 +323,7 @@ extension TaskCellView: NSGestureRecognizerDelegate {
                 completionBlock = {}
             }
 
-            NSView.animateWithDuration(0.2, animations: animationBlock) {
+            NSView.animate(animations: animationBlock) {
                 completionBlock()
 
                 self.doneIconView.frame.origin.x = originalDoneIconOffset

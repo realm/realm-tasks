@@ -75,7 +75,7 @@ class ContainerViewController: NSViewController {
 
             listViewController.view.alphaValue = 0
 
-            NSView.animateWithDuration(0.3, timingFunction: .easeInEaseOut(), animations: {
+            NSView.animate(animations: {
                 currentListViewController.view.alphaValue = 0
                 listViewController.view.alphaValue = 1
 

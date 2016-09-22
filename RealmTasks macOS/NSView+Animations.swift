@@ -22,7 +22,15 @@ import Cocoa
 
 extension NSView {
 
-    static func animateWithDuration(duration: NSTimeInterval, timingFunction: CAMediaTimingFunction = .lineral(), animations: () -> Void, completion: (() -> Void)? = nil) {
+    static var defaultAnimationDuration: NSTimeInterval {
+        return 0.2
+    }
+
+    static var defaultAnimationTimingFunction: CAMediaTimingFunction {
+        return .easeInEaseOut()
+    }
+
+    static func animate(duration duration: NSTimeInterval = defaultAnimationDuration, timingFunction: CAMediaTimingFunction = defaultAnimationTimingFunction, animations: () -> Void, completion: (() -> Void)? = nil) {
         NSAnimationContext.runAnimationGroup({ context in
             context.allowsImplicitAnimation = true
 
@@ -31,6 +39,11 @@ extension NSView {
 
             animations()
         }, completionHandler: completion)
+    }
+
+    // Convenient method for trailing closure syntax without completion handler
+    static func animate(duration duration: NSTimeInterval = defaultAnimationDuration, timingFunction: CAMediaTimingFunction = defaultAnimationTimingFunction, animations: () -> Void) {
+        animate(duration: duration, timingFunction: timingFunction, animations: animations, completion: nil)
     }
 
 }

@@ -125,9 +125,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func updateTableViewHeightOfRows(indexes: NSIndexSet? = nil) {
         // noteHeightOfRows animates by default, disable this
-        NSView.animateWithDuration(0, animations: {
+        NSView.animate(duration: 0) {
             self.tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSRange(0...self.tableView.numberOfRows)))
-        })
+        }
     }
 
     // MARK: Actions
@@ -137,12 +137,12 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             self.list.items.insert(ItemType(), atIndex: 0)
         }
 
-        NSView.animateWithDuration(0.2, animations: {
+        NSView.animate() {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
             self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
             self.view.window?.update()
-        })
+        }
     }
 
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
@@ -172,10 +172,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         currentlyMovingRowSnapshotView?.frame.origin.y = view.convertPoint(point, fromView: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
         view.addSubview(currentlyMovingRowSnapshotView!)
 
-        NSView.animateWithDuration(0.2, animations: {
+        NSView.animate() {
             let frame = self.currentlyMovingRowSnapshotView!.frame
             self.currentlyMovingRowSnapshotView!.frame = frame.insetBy(dx: -frame.width * 0.02, dy: -frame.height * 0.02)
-        })
+        }
     }
 
     private func handleReorderingForScreenPoint(point: NSPoint) {
@@ -214,7 +214,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func endReordering() {
-        NSView.animateWithDuration(0.2, animations: {
+        NSView.animate(animations: {
             self.currentlyMovingRowSnapshotView?.frame = self.view.convertRect(self.currentlyMovingRowView!.frame, fromView: self.tableView)
         }) {
             self.currentlyMovingRowView?.alphaValue = 1
@@ -283,7 +283,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     // MARK: Editing
 
     private func beginEditingCell(cellView: TaskCellView) {
-        NSView.animateWithDuration(0.2, animations: {
+        NSView.animate() {
             self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
 
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
@@ -291,7 +291,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                     view.alphaValue = 0.3
                 }
             }
-        })
+        }
 
         cellView.editable = true
         view.window?.makeFirstResponder(cellView.textView)
@@ -416,9 +416,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? TaskCellView {
-                NSView.animateWithDuration(0.5, animations: {
+                NSView.animate() {
                     cellView.backgroundColor = self.colorForRow(row)
-                })
+                }
             }
         }
     }
@@ -504,13 +504,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             }
         }
 
-        NSView.animateWithDuration(0.3, animations: {
+        NSView.animate() {
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
                 if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) {
                     view.alphaValue = 1
                 }
             }
-        })
+        }
 
         currentlyEditingCellView = nil
     }
