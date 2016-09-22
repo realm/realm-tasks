@@ -201,7 +201,11 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                 list.items.move(from: sourceRow, to: destinationRow)
             }
 
-            tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
+            NSView.animate() {
+                // Disable implicit animations because tableView animates reordering via animator proxy
+                NSAnimationContext.currentContext().allowsImplicitAnimation = false
+                self.tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
+            }
         }
     }
 
