@@ -1,63 +1,22 @@
 PODS:
   - Cartography (0.7.0)
-  - Realm (1.1.0):
-    - RealmCore
-    - RealmSync
-  - RealmCore (2.0.0-rc4)
-  - RealmSwift (1.1.0):
-    - Realm (= 1.1.0)
-  - RealmSync (1.0.0-beta-34.1):
-    - RealmCore
 
 DEPENDENCIES:
   - Cartography (from `https://github.com/robb/Cartography.git`, branch `master`)
-  - Realm (from `git@github.com:realm/realm-cocoa-private.git`, branch `sync`)
-  - RealmCore (from `git@github.com:realm/realm-core.git`, branch `sync`)
-  - RealmSwift (from `git@github.com:realm/realm-cocoa-private.git`, branch `sync`)
-  - RealmSync (from `git@github.com:realm/realm-sync.git`)
 
 EXTERNAL SOURCES:
   Cartography:
     :branch: master
     :git: https://github.com/robb/Cartography.git
-  Realm:
-    :branch: sync
-    :git: git@github.com:realm/realm-cocoa-private.git
-    :submodules: true
-  RealmCore:
-    :branch: sync
-    :git: git@github.com:realm/realm-core.git
-  RealmSwift:
-    :branch: sync
-    :git: git@github.com:realm/realm-cocoa-private.git
-  RealmSync:
-    :git: git@github.com:realm/realm-sync.git
 
 CHECKOUT OPTIONS:
   Cartography:
     :commit: ecdeffda56a6ce9dc8bb571b5455a6395d403b03
     :git: https://github.com/robb/Cartography.git
-  Realm:
-    :commit: c3b33bbdb9dc936d9315bbb3acce8bc2a30117d2
-    :git: git@github.com:realm/realm-cocoa-private.git
-    :submodules: true
-  RealmCore:
-    :commit: b055e4afd3d979c7480246c8841a1bd81ac59d58
-    :git: git@github.com:realm/realm-core.git
-  RealmSwift:
-    :commit: c3b33bbdb9dc936d9315bbb3acce8bc2a30117d2
-    :git: git@github.com:realm/realm-cocoa-private.git
-  RealmSync:
-    :commit: 1f179224d39794b71d82a2891fb5d9b14c9e3090
-    :git: git@github.com:realm/realm-sync.git
 
 SPEC CHECKSUMS:
   Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
-  Realm: 6e501d87f7de272ea46ecfbd70f1aff31440878f
-  RealmCore: 00371f7334d1dd838ec4df686644f1a25dd0932a
-  RealmSwift: 6c74231803e6ed829117d4b52168d285cb08a4f5
-  RealmSync: 4154ffb11b1408602998b758863f051ac3f20aa3
 
-PODFILE CHECKSUM: cb5e4af467c024850bae8ab12666d03abf0b0c8f
+PODFILE CHECKSUM: c31170587703d3bf860c9d605eaaced3807873d0
 
 COCOAPODS: 1.0.1
