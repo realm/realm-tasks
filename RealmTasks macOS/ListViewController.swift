@@ -103,7 +103,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
         notificationToken = list.items.filter("TRUEPREDICATE").addNotificationBlock { changes in
-            self.tableView.reloadData()
+            if !self.reordering {
+                self.tableView.reloadData()
+            }
         }
     }
 
@@ -198,6 +200,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             try! list.realm?.write {
                 list.items.move(from: sourceRow, to: destinationRow)
             }
+
             tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
         }
     }
@@ -277,6 +280,29 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         autoscrollTimer = nil
     }
 
+    // MARK: Editing
+
+    private func beginEditingCell(cellView: TaskCellView) {
+        NSView.animateWithDuration(0.2, animations: {
+            self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
+
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? TaskCellView where view != cellView {
+                    view.alphaValue = 0.3
+                }
+            }
+        })
+
+        cellView.editable = true
+        view.window?.makeFirstResponder(cellView.textView)
+
+        currentlyEditingCellView = cellView
+    }
+
+    private func endEditingCells() {
+        view.window?.makeFirstResponder(self)
+    }
+
     // MARK: NSGestureRecognizerDelegate
 
     func gestureRecognizer(gestureRecognizer: NSGestureRecognizer,
@@ -336,7 +362,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             fatalError("Unknown item type")
         }
 
-        cellView.configureWithTask(item)
+        cellView.configure(item)
         cellView.backgroundColor = colorForRow(row)
         cellView.delegate = self
 
@@ -345,9 +371,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         if let cellView = currentlyEditingCellView {
-            prototypeCell.configureWithTaskCellView(cellView)
+            prototypeCell.configure(cellView)
         } else {
-            prototypeCell.configureWithTask(list.items[row])
+            prototypeCell.configure(list.items[row])
         }
 
         return prototypeCell.fittingHeightForConstrainedWidth(tableView.bounds.width)
@@ -357,11 +383,24 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         let index = tableView.selectedRow
 
         guard 0 <= index && index < list.items.count else {
+            endEditingCells()
             return
         }
 
-        if let list = list.items[index] as? TaskList {
-            (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
+        guard !list.items[index].completed else {
+            endEditingCells()
+            return
+        }
+
+        let cellView = tableView.viewAtColumn(0, row: index, makeIfNecessary: false)
+
+        if let view = cellView as? TaskCellView {
+            beginEditingCell(view)
+        } else if let view = cellView as? ListCellView {
+//            beginEditingCell(view)
+            if let list = list.items[index] as? TaskList {
+                (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
+            }
         }
     }
 
@@ -413,7 +452,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         delay(0.2) {
-
             try! item.realm?.write {
                 item.completed = complete
 
@@ -438,21 +476,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
-    }
-
-    func cellViewDidBeginEditing(cellView: TaskCellView) {
-        NSView.animateWithDuration(0.3, animations: {
-            self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
-
-            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? TaskCellView where view != cellView {
-                    view.alphaValue = 0.3
-                    view.editable = false
-                }
-            }
-        })
-
-        currentlyEditingCellView = cellView
     }
 
     func cellViewDidChangeText(view: TaskCellView) {
@@ -483,9 +506,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         NSView.animateWithDuration(0.3, animations: {
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? TaskCellView {
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) {
                     view.alphaValue = 1
-                    view.editable = true
                 }
             }
         })
@@ -528,7 +550,7 @@ private final class PrototypeTaskCellView: TaskCellView {
 
     private var widthConstraint: NSLayoutConstraint?
 
-    func configureWithTaskCellView(cellView: TaskCellView) {
+    func configure(cellView: TaskCellView) {
         text = cellView.text
     }
 

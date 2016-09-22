@@ -29,7 +29,6 @@ protocol TaskCellViewDelegate: class {
     func cellView(view: TaskCellView, didComplete complete: Bool)
     func cellViewDidDelete(view: TaskCellView)
 
-    func cellViewDidBeginEditing(view: TaskCellView)
     func cellViewDidChangeText(view: TaskCellView)
     func cellViewDidEndEditing(view: TaskCellView)
 
@@ -59,13 +58,12 @@ class TaskCellView: NSTableCellView {
             overlayView.hidden = !completed
             overlayView.backgroundColor = completed ? .completeDimBackgroundColor() : .completeGreenBackgroundColor()
             textView.alphaValue = completed ? 0.3 : 1
-            textView.editable = !completed
         }
     }
 
     var editable: Bool {
         set {
-            textView.editable = newValue && !completed
+            textView.editable = newValue
         }
 
         get {
@@ -114,8 +112,8 @@ class TaskCellView: NSTableCellView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureWithTask(item: CellPresentable) {
-        textView.stringValue = item.text
+    func configure(item: CellPresentable) {
+        text = item.text
         completed = item.completed
     }
 
@@ -123,14 +121,7 @@ class TaskCellView: NSTableCellView {
         super.prepareForReuse()
         alphaValue = 1
         contentView.frame.origin.x = 0
-    }
-
-    override func acceptsFirstMouse(theEvent: NSEvent?) -> Bool {
-        return true
-    }
-
-    override func becomeFirstResponder() -> Bool {
-        return textView.forceBecomeFirstResponder()
+        editable = false
     }
 
     private func setupUI() {
@@ -209,17 +200,14 @@ class TaskCellView: NSTableCellView {
 
 // MARK: TaskTextFieldDelegate
 
-extension TaskCellView: TaskTextFieldDelegate {
-
-    func textFieldDidBecomeFirstResponder(textField: NSTextField) {
-        delegate?.cellViewDidBeginEditing(self)
-    }
+extension TaskCellView: NSTextFieldDelegate {
 
     override func controlTextDidChange(obj: NSNotification) {
         delegate?.cellViewDidChangeText(self)
     }
 
     override func controlTextDidEndEditing(obj: NSNotification) {
+        editable = false
         delegate?.cellViewDidEndEditing(self)
     }
 
@@ -354,12 +342,6 @@ private enum ReleaseAction {
     case Complete, Delete
 }
 
-protocol TaskTextFieldDelegate: NSTextFieldDelegate {
-
-    func textFieldDidBecomeFirstResponder(textField: NSTextField)
-
-}
-
 final class TaskTextField: NSTextField {
 
     private var _acceptsFirstResponder = false
@@ -373,36 +355,12 @@ final class TaskTextField: NSTextField {
         textColor = .whiteColor()
         backgroundColor = .clearColor()
         lineBreakMode = .ByWordWrapping
+        selectable = false
+        editable = false
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override var acceptsFirstResponder: Bool {
-        return _acceptsFirstResponder
-    }
-
-    override func acceptsFirstMouse(theEvent: NSEvent?) -> Bool {
-        return false
-    }
-
-    override func becomeFirstResponder() -> Bool {
-        (delegate as? TaskTextFieldDelegate)?.textFieldDidBecomeFirstResponder(self)
-
-        return super.becomeFirstResponder()
-    }
-
-    func forceBecomeFirstResponder() -> Bool {
-        _acceptsFirstResponder = true
-        becomeFirstResponder()
-        _acceptsFirstResponder = false
-
-        return true
-    }
-
-    override func resetCursorRects() {
-        addCursorRect(bounds, cursor: .arrowCursor())
     }
 
     override var intrinsicContentSize: NSSize {
@@ -419,26 +377,6 @@ final class TaskTextField: NSTextField {
 
         // Update height on text change
         invalidateIntrinsicContentSize()
-    }
-
-}
-
-final class ColorView: NSView {
-
-    @IBInspectable var backgroundColor: NSColor = .clearColor() {
-        didSet {
-            needsDisplay = true
-        }
-    }
-
-    convenience init(backgroundColor: NSColor) {
-        self.init(frame: .zero)
-        self.backgroundColor = backgroundColor
-    }
-
-    override func drawRect(dirtyRect: NSRect) {
-        backgroundColor.setFill()
-        NSRectFillUsingOperation(dirtyRect, .CompositeSourceOver)
     }
 
 }

@@ -1,10 +1,22 @@
-//
-//  ListCellView.swift
-//  RealmTasks
-//
-//  Created by Dmitry Obukhov on 07/09/16.
-//  Copyright © 2016 Realm. All rights reserved.
-//
+/*************************************************************************
+ *
+ * REALM CONFIDENTIAL
+ * __________________
+ *
+ *  [2016] Realm Inc
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Realm Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Realm Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Realm Incorporated.
+ *
+ **************************************************************************/
 
 import Cocoa
 import Cartography
@@ -13,10 +25,16 @@ class ListCellView: TaskCellView {
 
     private let countLabel = NSTextField()
 
+    private var editing = false
+
     override init(identifier: String) {
         super.init(identifier: identifier)
 
         setupCountBadge()
+
+        textView.layer?.cornerRadius = 5
+
+        setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
     }
     
     required init?(coder: NSCoder) {
@@ -51,27 +69,64 @@ class ListCellView: TaskCellView {
         }
     }
 
-    override func configureWithTask(item: CellPresentable) {
-        super.configureWithTask(item)
-
-        if let item = item as? TaskList {
-            let count = item.items.filter("completed == false").count
-
-            countLabel.integerValue = count
-
-            if count == 0 {
-                textView.alphaValue = 0.3
-                countLabel.alphaValue = 0.3
-            } else {
-                countLabel.alphaValue = 1
-            }
+    override func configure(item: CellPresentable) {
+        guard let list = item as? TaskList else {
+            fatalError("Wrong item type")
         }
 
-        textView.editable = false
+        super.configure(list)
+
+        let count = list.items.filter("completed == false").count
+
+        countLabel.integerValue = count
+        countLabel.alphaValue = count == 0 ? 0.3 : 1
+        textView.alphaValue = count == 0 ? 0.3 : 1
+
+        editable = false
     }
 
-    override func textFieldDidBecomeFirstResponder(textField: NSTextField) {
-        
+    override func updateTrackingAreas() {
+        setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
+    }
+
+    override func mouseEntered(theEvent: NSEvent) {
+        super.mouseEntered(theEvent)
+
+        performSelector(#selector(delayedSetEditable), withObject: nil, afterDelay: 1.2)
+    }
+
+    override func mouseExited(theEvent: NSEvent) {
+        super.mouseExited(theEvent)
+
+        guard !editing else {
+            return
+        }
+
+        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: #selector(delayedSetEditable), object: nil)
+
+        editable = false
+        textView.backgroundColor = .clearColor()
+    }
+
+    private dynamic func delayedSetEditable() {
+        editable = true
+        textView.backgroundColor = NSColor(white: 0, alpha: 0.3)
+
+        NSCursor.IBeamCursor().set()
+    }
+
+//    override func textFieldDidBecomeFirstResponder(textField: NSTextField) {
+//        super.textFieldDidBecomeFirstResponder(textField)
+//
+//        editing = true
+//    }
+
+    override func controlTextDidEndEditing(obj: NSNotification) {
+        super.controlTextDidEndEditing(obj)
+
+        editing = false
+        editable = false
+        textView.backgroundColor = .clearColor()
     }
 
 }
