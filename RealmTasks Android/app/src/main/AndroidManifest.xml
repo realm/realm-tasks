@@ -12,6 +12,10 @@
         <activity
             android:name=".SignInActivity"
             android:label="@string/activity_sign_in_label">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
 
 
@@ -21,10 +25,6 @@
         </activity>
 
         <activity android:name=".TaskListActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
 
         <activity android:name=".TaskActivity">

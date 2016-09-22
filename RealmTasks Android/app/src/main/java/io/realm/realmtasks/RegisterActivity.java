@@ -18,6 +18,7 @@ package io.realm.realmtasks;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,9 +30,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Objects;
+
+import io.realm.Credentials;
+import io.realm.ObjectServerError;
+import io.realm.Realm;
+import io.realm.User;
+import io.realm.realmtasks.model.TaskList;
+import io.realm.realmtasks.model.TaskListList;
+
+import static android.text.TextUtils.isEmpty;
+import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
 
 public class RegisterActivity extends AppCompatActivity {
-    private AutoCompleteTextView emailView;
+    private AutoCompleteTextView usernameView;
     private EditText passwordView;
     private EditText passwordConfirmationView;
     private View progressView;
@@ -41,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        emailView = (AutoCompleteTextView) findViewById(R.id.username);
+        usernameView = (AutoCompleteTextView) findViewById(R.id.username);
         passwordView = (EditText) findViewById(R.id.password);
         passwordConfirmationView = (EditText) findViewById(R.id.password_confirmation);
         passwordConfirmationView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -69,47 +83,87 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void attemptRegister() {
-        emailView.setError(null);
+        usernameView.setError(null);
         passwordView.setError(null);
-        passwordConfirmationView.setText(null);
+        passwordConfirmationView.setError(null);
 
-        final String email = emailView.getText().toString();
+        final String username = usernameView.getText().toString();
         final String password = passwordView.getText().toString();
         final String passwordConfirmation = passwordConfirmationView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password) && !TextUtils.equals(password, passwordConfirmation)) {
-            passwordView.setError(getString(R.string.error_invalid_password));
+
+        if (isEmpty(username)) {
+            usernameView.setError(getString(R.string.error_field_required));
+            focusView = usernameView;
+            cancel = true;
+        }
+
+        if (isEmpty(password)) {
+            passwordView.setError(getString(R.string.error_field_required));
             focusView = passwordView;
             cancel = true;
         }
 
-        if (TextUtils.isEmpty(email)) {
-            emailView.setError(getString(R.string.error_field_required));
-            focusView = emailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            emailView.setError(getString(R.string.error_invalid_email));
-            focusView = emailView;
+        if (isEmpty(passwordConfirmation)) {
+            passwordConfirmationView.setError(getString(R.string.error_field_required));
+            focusView = passwordConfirmationView;
             cancel = true;
         }
 
+        if (!password.equals(passwordConfirmation)) {
+            passwordConfirmationView.setError(getString(R.string.error_incorrect_password));
+            focusView = passwordConfirmationView;
+            cancel = true;
+        }
         if (cancel) {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            finish();
+            User.loginAsync(Credentials.usernamePassword(username, password, true), AUTH_URL, new User.Callback() {
+                @Override
+                public void onSuccess(User user) {
+                    showProgress(false);
+                    registrationComplete(user);
+                }
+
+                @Override
+                public void onError(ObjectServerError error) {
+                    showProgress(false);
+                    String errorMsg;
+                    switch (error.getErrorCode()) {
+                        case EXISTING_ACCOUNT: errorMsg = "Account already exists"; break;
+                        default:
+                            errorMsg = error.toString();
+                    }
+                    Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
-    private boolean isEmailValid(String email) {
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+    private void registrationComplete(User user) {
+        UserManager.setActiveUser(user);
+        final Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                final TaskListList taskListList = realm.createObject(TaskListList.class, 1);
+                final TaskList taskList = new TaskList();
+                taskList.setId(TaskList.DEFAULT_ID);
+                taskList.setText(TaskList.DEFAULT_LIST_NAME);
+                taskListList.getItems().add(taskList);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                realm.close();
+                startActivity(new Intent(RegisterActivity.this, TaskListActivity.class));
+                finish();
+            }
+        });
     }
 
     private void showProgress(final boolean show) {

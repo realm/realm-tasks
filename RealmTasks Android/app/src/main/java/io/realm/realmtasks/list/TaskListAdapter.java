@@ -46,8 +46,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                final TaskList taskList = realm.createObject(TaskList.class);
-                taskList.setId(UUID.randomUUID().toString());
+                final TaskList taskList = realm.createObject(TaskList.class, UUID.randomUUID().toString());
                 taskList.setText("New task list");
                 items.add(0, taskList);
             }

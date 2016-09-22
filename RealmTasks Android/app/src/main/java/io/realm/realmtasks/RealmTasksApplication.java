@@ -26,27 +26,12 @@ import io.realm.realmtasks.model.TaskListList;
 
 public class RealmTasksApplication extends Application {
 
+    public static final String AUTH_URL = "http://192.168.1.21:8080/auth";
+    public static final String REALM_URL = "realm://192.168.1.21:7800/~/default";
+
     @Override
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
-        populateDefaultList();
-    }
-
-    private void populateDefaultList() {
-        final Realm realm = Realm.getDefaultInstance();
-        if (realm.isEmpty()) {
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    final TaskListList taskListList = realm.createObject(TaskListList.class);
-                    final TaskList taskList = new TaskList();
-                    taskList.setId(TaskList.DEFAULT_ID);
-                    taskList.setText(TaskList.DEFAULT_LIST_NAME);
-                    taskListList.getItems().add(taskList);
-                }
-            });
-        }
-        realm.close();
     }
 }

@@ -34,10 +34,15 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import io.realm.Credentials;
+import io.realm.ObjectServerError;
+import io.realm.User;
 
 public class SignInActivity extends AppCompatActivity {
 
-    private AutoCompleteTextView emailView;
+    private AutoCompleteTextView usernameView;
     private EditText passwordView;
     private View progressView;
     private View loginFormView;
@@ -46,7 +51,7 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        emailView = (AutoCompleteTextView) findViewById(R.id.username);
+        usernameView = (AutoCompleteTextView) findViewById(R.id.username);
         passwordView = (EditText) findViewById(R.id.password);
         passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -59,8 +64,8 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-        final Button mailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mailSignInButton.setOnClickListener(new OnClickListener() {
+        final Button signInButton = (Button) findViewById(R.id.sign_in_button);
+        signInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -69,6 +74,18 @@ public class SignInActivity extends AppCompatActivity {
 
         loginFormView = findViewById(R.id.sign_in_form);
         progressView = findViewById(R.id.sign_in_progress);
+
+
+        // Check if we already got a user, if yes, just continue automatically
+        if (User.currentUser() != null) {
+            loginComplete(User.currentUser());
+        }
+    }
+
+    private void loginComplete(User user) {
+        UserManager.setActiveUser(user);
+        startActivity(new Intent(this, TaskListActivity.class));
+        finish();
     }
 
     @Override
@@ -88,28 +105,24 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-        emailView.setError(null);
+        usernameView.setError(null);
         passwordView.setError(null);
 
-        final String email = emailView.getText().toString();
+        final String email = usernameView.getText().toString();
         final String password = passwordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password)) {
             passwordView.setError(getString(R.string.error_invalid_password));
             focusView = passwordView;
             cancel = true;
         }
 
         if (TextUtils.isEmpty(email)) {
-            emailView.setError(getString(R.string.error_field_required));
-            focusView = emailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            emailView.setError(getString(R.string.error_invalid_email));
-            focusView = emailView;
+            usernameView.setError(getString(R.string.error_field_required));
+            focusView = usernameView;
             cancel = true;
         }
 
@@ -117,17 +130,31 @@ public class SignInActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            startActivity(new Intent(this, TaskListActivity.class));
-            finish();
+            User.loginAsync(Credentials.usernamePassword(email, password, false), RealmTasksApplication.AUTH_URL, new User.Callback() {
+                        @Override
+                        public void onSuccess(User user) {
+                            showProgress(false);
+                            loginComplete(user);
+                        }
+
+                        @Override
+                        public void onError(ObjectServerError error) {
+                            showProgress(false);
+                            String errorMsg;
+                            switch (error.getErrorCode()) {
+                                case UNKNOWN_ACCOUNT:
+                                    errorMsg = "Account does not exists.";
+                                    break;
+                                case INVALID_CREDENTIALS:
+                                    errorMsg = "User name and password does not match";
+                                    break;
+                                default:
+                                    errorMsg = error.toString();
+                            }
+                            Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    });
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        return password.length() > 4;
     }
 
     private void showProgress(final boolean show) {
