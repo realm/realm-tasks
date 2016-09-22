@@ -56,7 +56,6 @@ public class TaskActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         realm = Realm.getDefaultInstance();
-        Log.d(TAG, "id: " + id);
         RealmList<Task> items;
         if (id == null || id.isEmpty()) {
             items = realm.where(TaskList.class).findFirst().getItems();
