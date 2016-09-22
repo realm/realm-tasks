@@ -129,13 +129,13 @@ public class TouchHelper {
         systemService.getDefaultDisplay().getMetrics(metrics);
         logicalDensity = metrics.density;
         overdrawChildPosition = -1;
-        adapter.setOnItemAddedListener(new OnItemAddedListener());
+        adapter.setOnFirstItemUpdateListener(new OnFirstItemUpdateListener());
     }
 
     private void destroyCallbacks() {
         recyclerView.removeOnItemTouchListener(onItemTouchListener);
         recyclerView.removeItemDecoration(itemDecoration);
-        adapter.setOnItemAddedListener(null);
+        adapter.setOnFirstItemUpdateListener(null);
         recyclerView.setAdapter(null);
         onItemTouchListener = null;
         itemDecoration = null;
@@ -477,6 +477,7 @@ public class TouchHelper {
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
                     }
+                    TouchHelper.this.selected = null;
                     recyclerView.invalidate();
                 }
             }
@@ -602,11 +603,16 @@ public class TouchHelper {
         }
     }
 
-    private class OnItemAddedListener implements CommonAdapter.OnItemAddedListener {
+    private class OnFirstItemUpdateListener implements CommonAdapter.OnFirstItemUpdateListener {
+
+        private static final String TAG = "OFI";
 
         @Override
-        public void added(ViewHolder viewHolder) {
-            selected = (RealmTasksViewHolder) viewHolder;
+        public void updated(ViewHolder viewHolder) {
+            Log.d(TAG, "actionState: " + actionState + " selected: " + selected + " viewHolder: " + viewHolder);
+            if (actionState == ACTION_STATE_PULL && selected == null) {
+                selected = (RealmTasksViewHolder) viewHolder;
+            }
         }
     }
 }
