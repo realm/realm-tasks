@@ -113,6 +113,11 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
     }
 
     @Override
+    public int generatedRowColor(int row) {
+        return RealmTasksViewHolder.ColorHelper.getColor(RealmTasksViewHolder.ColorHelper.listColors, row, getItemCount());
+    }
+
+    @Override
     public void onItemChanged(final RealmTasksViewHolder viewHolder) {
         final Realm realm = Realm.getDefaultInstance();
         final int position = viewHolder.getAdapterPosition();

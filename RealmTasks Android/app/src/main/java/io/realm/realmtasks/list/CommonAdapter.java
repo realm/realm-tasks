@@ -36,7 +36,7 @@ public class CommonAdapter<T> extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rowItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
-        return new RealmTasksViewHolder(rowItem);
+        return new RealmTasksViewHolder(rowItem, this);
     }
 
     @Override
