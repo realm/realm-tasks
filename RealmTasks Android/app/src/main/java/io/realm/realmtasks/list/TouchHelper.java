@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -372,7 +373,7 @@ public class TouchHelper {
             selectView(null, ACTION_STATE_IDLE);
         }
 
-        private boolean isHit(View view, float x, float y, float left, float top) {
+        private boolean checkHit(View view, float x, float y, float left, float top) {
             return x >= left && y >= top && x <= left + view.getWidth() && y <= top + view.getHeight();
         }
 
@@ -381,7 +382,7 @@ public class TouchHelper {
             final float y = motionEvent.getY(pointerIndex);
             if (selected != null) {
                 final View selectedView = selected.itemView;
-                if (isHit(selectedView, x, y, selectedInitialX + dx, selectedInitialY + dy)) {
+                if (checkHit(selectedView, x, y, selectedInitialX + dx, selectedInitialY + dy)) {
                     return selectedView;
                 }
             }
@@ -537,13 +538,23 @@ public class TouchHelper {
                     doEndOfEditing();
                     return false;
                 }
+                final TextView textView = viewHolder.getText();
+                final int left = textView.getLeft();
+                final int top = viewHolder.itemView.getTop() + textView.getTop();
+                boolean isHit = checkHit(textView, motionEvent.getX(), motionEvent.getY(), left, top);
                 if (currentEditing == viewHolder) {
-                    return false;
+                    if (isHit) {
+                        return false;
+                    } else {
+                        doEndOfEditing();
+                        return false;
+                    }
                 }
                 if (currentEditing != null) {
                     doEndOfEditing();
+                    return false;
                 }
-                if (motionEvent.getX() > viewHolder.itemView.getWidth() / 2) {
+                if (!isHit) {
                     if (callback.onClicked(viewHolder)) {
                         return true;
                     }
