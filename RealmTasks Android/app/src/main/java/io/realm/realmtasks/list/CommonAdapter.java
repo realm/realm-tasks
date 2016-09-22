@@ -31,6 +31,7 @@ import io.realm.RealmRecyclerViewAdapter;
 import io.realm.realmtasks.R;
 
 public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapter<T, RecyclerView.ViewHolder> {
+
     protected List<T> items;
 
     public CommonAdapter(Context context, OrderedRealmCollection<T> items) {

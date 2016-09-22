@@ -45,8 +45,8 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.State;
 
 public class TouchHelper {
+
     private static final int POINTER_ID_NONE = -1;
-    private static final String TAG = "TouchHelper";
 
     private final Callback callback;
 
@@ -137,24 +137,19 @@ public class TouchHelper {
     }
 
     public interface Callback {
+
         void onMoved(RecyclerView recyclerView, RealmTasksViewHolder from, RealmTasksViewHolder to);
-
         void onArchived(RealmTasksViewHolder viewHolder);
-
         void onDismissed(RealmTasksViewHolder viewHolder);
-
         boolean onClicked(RealmTasksViewHolder viewHolder);
-
         void onChanged(RealmTasksViewHolder viewHolder);
-
         void onAdded();
-
         void onReverted(boolean shouldUpdateUI);
-
         void onExited();
     }
 
     private class TasksItemDecoration extends ItemDecoration {
+
         @Override
         public void onDraw(Canvas c, RecyclerView parent, State state) {
             overdrawChildPosition = -1;
@@ -227,6 +222,7 @@ public class TouchHelper {
     }
 
     private class TasksOnItemTouchListener implements OnItemTouchListener {
+
         private GestureDetectorCompat gestureDetector;
 
         public TasksOnItemTouchListener(Context context) {
@@ -517,6 +513,7 @@ public class TouchHelper {
         }
 
         private class TasksSimpleOnGestureListener extends SimpleOnGestureListener {
+
             @Override
             public boolean onDown(MotionEvent motionEvent) {
                 return true;
@@ -590,6 +587,7 @@ public class TouchHelper {
         }
 
         private class TasksChildDrawingOrderCallback implements RecyclerView.ChildDrawingOrderCallback {
+
             @Override
             public int onGetChildDrawingOrder(int childCount, int iteration) {
                 if (overdrawChild == null) {

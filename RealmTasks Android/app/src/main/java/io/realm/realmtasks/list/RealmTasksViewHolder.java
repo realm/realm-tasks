@@ -26,6 +26,7 @@ import android.widget.TextView;
 import io.realm.realmtasks.R;
 
 public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
+
     private final RelativeLayout iconBar;
     private final RelativeLayout row;
     private final TextView text;
@@ -111,7 +112,6 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
     }
 
     public static class ColorHelper {
-        private static final String TAG = "ColorHelper";
 
         public static final int[] taskColors= {
                 0xFFE7A776,

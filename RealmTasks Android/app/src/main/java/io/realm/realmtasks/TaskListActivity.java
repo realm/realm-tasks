@@ -98,6 +98,7 @@ public class TaskListActivity extends AppCompatActivity {
     }
 
     private class Callback implements TouchHelper.Callback {
+
         @Override
         public void onMoved(RecyclerView recyclerView, RealmTasksViewHolder from, RealmTasksViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
@@ -125,7 +126,7 @@ public class TaskListActivity extends AppCompatActivity {
             final TaskList taskList = adapter.getItems().get(position);
             final String id = taskList.getId();
             final Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
-            intent.putExtra("id", taskList.getId());
+            intent.putExtra("id", id);
             TaskListActivity.this.startActivity(intent);
             return true;
         }

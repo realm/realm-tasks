@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -35,7 +34,6 @@ import io.realm.realmtasks.model.TaskList;
 
 public class TaskActivity extends AppCompatActivity {
 
-    private static final String TAG = "TaskActivity";
     private Realm realm;
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
@@ -99,6 +97,7 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     private class Callback implements TouchHelper.Callback {
+
         @Override
         public void onMoved(RecyclerView recyclerView, RealmTasksViewHolder from, RealmTasksViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
