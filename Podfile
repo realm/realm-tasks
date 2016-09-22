@@ -6,6 +6,7 @@ abstract_target 'RealmTasks' do
     
     # 'master' of Cartography contains Swift 2.3 compatibility
     pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
+    pod 'RealmSwift', '1.1.0-0-sync-1.0.0-beta-34.0'
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
