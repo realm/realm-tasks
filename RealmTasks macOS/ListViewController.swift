@@ -29,7 +29,7 @@ private let taskCellIdentifier = "TaskCell"
 private let listCellIdentifier = "ListCell"
 private let prototypeCellIdentifier = "PrototypeCell"
 
-final class ListViewController<ListType: ListPresentable where ListType: Object>: NSViewController, NSTableViewDelegate, NSTableViewDataSource, TaskCellViewDelegate, NSGestureRecognizerDelegate {
+final class ListViewController<ListType: ListPresentable where ListType: Object>: NSViewController, NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecognizerDelegate {
 
     typealias ItemType = ListType.Item
 
@@ -41,9 +41,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private var notificationToken: NotificationToken?
 
-    private let prototypeCell = PrototypeTaskCellView(identifier: prototypeCellIdentifier)
+    private let prototypeCell = PrototypeCellView(identifier: prototypeCellIdentifier)
 
-    private var currentlyEditingCellView: TaskCellView?
+    private var currentlyEditingCellView: ItemCellView?
 
     private var currentlyMovingRowView: NSTableRowView?
     private var currentlyMovingRowSnapshotView: SnapshotView?
@@ -286,12 +286,12 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     // MARK: Editing
 
-    private func beginEditingCell(cellView: TaskCellView) {
+    private func beginEditingCell(cellView: ItemCellView) {
         NSView.animate() {
             self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
 
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? TaskCellView where view != cellView {
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) where view != cellView {
                     view.alphaValue = 0.3
                 }
             }
@@ -306,6 +306,14 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private func endEditingCells() {
         view.window?.makeFirstResponder(self)
         currentlyEditingCellView = nil
+
+        NSView.animate() {
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) {
+                    view.alphaValue = 1
+                }
+            }
+        }
     }
 
     // MARK: NSGestureRecognizerDelegate
@@ -321,7 +329,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             let targetRow = tableView.rowAtPoint(gestureRecognizer.locationInView(tableView))
 
             guard targetRow >= 0,
-                let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? TaskCellView else {
+                let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? ItemCellView else {
                 return false
             }
 
@@ -343,28 +351,26 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let item = list.items[row]
-        let cellView: TaskCellView
 
-        // FIXME: unify cells creation
+        let cellViewIdentifier: String
+        let cellViewType: ItemCellView.Type
+        let cellView: ItemCellView
+
         switch item {
         case is TaskList:
-            if let view = tableView.makeViewWithIdentifier(listCellIdentifier, owner: self) as? ListCellView {
-                cellView = view
-            } else {
-                cellView = ListCellView(identifier: listCellIdentifier)
-            }
-
-            break
+            cellViewIdentifier = listCellIdentifier
+            cellViewType = ListCellView.self
         case is Task:
-            if let view = tableView.makeViewWithIdentifier(taskCellIdentifier, owner: self) as? TaskCellView {
-                cellView = view
-            } else {
-                cellView = TaskCellView(identifier: taskCellIdentifier)
-            }
-
-            break
+            cellViewIdentifier = taskCellIdentifier
+            cellViewType = TaskCellView.self
         default:
             fatalError("Unknown item type")
+        }
+
+        if let view = tableView.makeViewWithIdentifier(cellViewIdentifier, owner: self) as? ItemCellView {
+            cellView = view
+        } else {
+            cellView = cellViewType.init(identifier: listCellIdentifier)
         }
 
         cellView.configure(item)
@@ -402,15 +408,14 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
-        let cellView = tableView.viewAtColumn(0, row: index, makeIfNecessary: false)
+        guard let cellView = tableView.viewAtColumn(0, row: index, makeIfNecessary: false) as? ItemCellView where cellView != currentlyEditingCellView else {
+            return
+        }
 
-        if let view = cellView as? TaskCellView {
-            beginEditingCell(view)
-        } else if let view = cellView as? ListCellView {
-//            beginEditingCell(view)
-            if let list = list.items[index] as? TaskList {
-                (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
-            }
+        if let listCellView = cellView as? ListCellView where !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
+            (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
+        } else {
+            beginEditingCell(cellView)
         }
     }
 
@@ -425,7 +430,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private func updateColors() {
         tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
-            if let cellView = rowView.subviews.first as? TaskCellView {
+            if let cellView = rowView.subviews.first as? ItemCellView {
                 NSView.animate() {
                     cellView.backgroundColor = self.colorForRow(row)
                 }
@@ -440,9 +445,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         return colors.gradientColorAtFraction(fraction)
     }
 
-    // MARK: TaskCellViewDelegate
+    // MARK: ItemCellViewDelegate
 
-    func cellView(view: TaskCellView, didComplete complete: Bool) {
+    func cellView(view: ItemCellView, didComplete complete: Bool) {
         guard let (tmpItem, index) = findItemForCellView(view) else {
             return
         }
@@ -476,7 +481,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
     }
 
-    func cellViewDidDelete(view: TaskCellView) {
+    func cellViewDidDelete(view: ItemCellView) {
         guard let (item, index) = findItemForCellView(view) else {
             return
         }
@@ -488,13 +493,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
     }
 
-    func cellViewDidChangeText(view: TaskCellView) {
+    func cellViewDidChangeText(view: ItemCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
         }
     }
 
-    func cellViewDidEndEditing(view: TaskCellView) {
+    func cellViewDidEndEditing(view: ItemCellView) {
         guard let (tmpItem, index) = findItemForCellView(view) else {
             return
         }
@@ -510,14 +515,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
                 dispatch_async(dispatch_get_main_queue()) {
                     self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
-                }
-            }
-        }
-
-        NSView.animate() {
-            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) {
-                    view.alphaValue = 1
                 }
             }
         }
@@ -557,11 +554,11 @@ private func delay(time: Double, block: () -> ()) {
 
 // MARK: Private Classes
 
-private final class PrototypeTaskCellView: TaskCellView {
+private final class PrototypeCellView: ItemCellView {
 
     private var widthConstraint: NSLayoutConstraint?
 
-    func configure(cellView: TaskCellView) {
+    func configure(cellView: ItemCellView) {
         text = cellView.text
     }
 

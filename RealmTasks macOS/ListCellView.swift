@@ -21,20 +21,29 @@
 import Cocoa
 import Cartography
 
-class ListCellView: TaskCellView {
+class ListCellView: ItemCellView {
 
     private let countLabel = NSTextField()
 
-    private var editing = false
+    private(set) var acceptsEditing = false {
+        didSet {
+            textView.backgroundColor = acceptsEditing ? NSColor(white: 0, alpha: 0.3) : .clearColor()
+            window?.invalidateCursorRectsForView(self)
+        }
+    }
 
-    override init(identifier: String) {
+    override var editable: Bool {
+        didSet {
+            acceptsEditing = false
+        }
+    }
+
+    required init(identifier: String) {
         super.init(identifier: identifier)
 
         setupCountBadge()
 
         textView.layer?.cornerRadius = 5
-
-        setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
     }
     
     required init?(coder: NSCoder) {
@@ -76,57 +85,60 @@ class ListCellView: TaskCellView {
 
         super.configure(list)
 
-        let count = list.items.filter("completed == false").count
-
-        countLabel.integerValue = count
-        countLabel.alphaValue = count == 0 ? 0.3 : 1
-        textView.alphaValue = count == 0 ? 0.3 : 1
-
+        countLabel.integerValue = list.items.filter("completed == false").count
         editable = false
+
+        updateTextColor()
     }
 
-    override func updateTrackingAreas() {
-        setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
+    private func updateTextColor() {
+        NSView.animate(duration: 0.1) {
+            self.countLabel.alphaValue = self.countLabel.integerValue == 0 ? 0.3 : 1
+            self.textView.alphaValue = self.countLabel.integerValue == 0 ? 0.3 : 1
+        }
+    }
+
+    override func resetCursorRects() {
+        super.resetCursorRects()
+        addCursorRect(bounds, cursor: acceptsEditing ? .IBeamCursor() : .arrowCursor())
     }
 
     override func mouseEntered(theEvent: NSEvent) {
         super.mouseEntered(theEvent)
 
-        performSelector(#selector(delayedSetEditable), withObject: nil, afterDelay: 1.2)
+        guard !editable else {
+            return
+        }
+
+        NSView.animate(duration: 0.1) {
+            self.countLabel.alphaValue = 1
+            self.textView.alphaValue = 1
+        }
+
+        performSelector(#selector(delayedSetAcceptEditing), withObject: nil, afterDelay: 1.2)
     }
 
     override func mouseExited(theEvent: NSEvent) {
         super.mouseExited(theEvent)
 
-        guard !editing else {
+        guard !editable else {
             return
         }
 
-        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: #selector(delayedSetEditable), object: nil)
+        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: #selector(delayedSetAcceptEditing), object: nil)
+        acceptsEditing = false
 
-        editable = false
-        textView.backgroundColor = .clearColor()
+        updateTextColor()
     }
 
-    private dynamic func delayedSetEditable() {
-        editable = true
-        textView.backgroundColor = NSColor(white: 0, alpha: 0.3)
-
-        NSCursor.IBeamCursor().set()
+    private dynamic func delayedSetAcceptEditing() {
+        acceptsEditing = true
     }
-
-//    override func textFieldDidBecomeFirstResponder(textField: NSTextField) {
-//        super.textFieldDidBecomeFirstResponder(textField)
-//
-//        editing = true
-//    }
 
     override func controlTextDidEndEditing(obj: NSNotification) {
         super.controlTextDidEndEditing(obj)
 
-        editing = false
-        editable = false
-        textView.backgroundColor = .clearColor()
+        acceptsEditing = false
     }
 
 }
