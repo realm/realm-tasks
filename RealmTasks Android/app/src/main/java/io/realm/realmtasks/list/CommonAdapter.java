@@ -16,6 +16,7 @@
 
 package io.realm.realmtasks.list;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +25,16 @@ import android.view.ViewGroup;
 import java.util.Collections;
 import java.util.List;
 
+import io.realm.OrderedRealmCollection;
+import io.realm.RealmModel;
+import io.realm.RealmRecyclerViewAdapter;
 import io.realm.realmtasks.R;
 
-public class CommonAdapter<T> extends RecyclerView.Adapter {
+public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapter<T, RecyclerView.ViewHolder> {
     protected List<T> items;
 
-    public CommonAdapter(List<T> items) {
+    public CommonAdapter(Context context, OrderedRealmCollection<T> items) {
+        super(context, items, true);
         this.items = items;
     }
 

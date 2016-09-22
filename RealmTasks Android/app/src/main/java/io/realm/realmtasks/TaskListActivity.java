@@ -25,12 +25,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmList;
+import io.realm.RealmModel;
+import io.realm.RealmResults;
 import io.realm.realmtasks.list.RealmTasksViewHolder;
 import io.realm.realmtasks.list.TaskListAdapter;
 import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.model.TaskListList;
+
+import static java.util.Collections.emptyList;
 
 public class TaskListActivity extends AppCompatActivity {
 
@@ -52,16 +61,26 @@ public class TaskListActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         realm = Realm.getDefaultInstance();
-        adapter = new TaskListAdapter(realm.where(TaskListList.class).findFirst().getItems());
-        recyclerView.setAdapter(adapter);
-        touchHelper = new TouchHelper(new Callback());
-        touchHelper.attachToRecyclerView(recyclerView);
+        final RealmResults<TaskListList> list = realm.where(TaskListList.class).findAllAsync();
+        list.addChangeListener(new RealmChangeListener<RealmResults<TaskListList>>() {
+            @Override
+            public void onChange(RealmResults<TaskListList> results) {
+                if (results.size() > 0) {
+                    adapter = new TaskListAdapter(TaskListActivity.this, list.first().getItems());
+                    recyclerView.setAdapter(adapter);
+                    touchHelper = new TouchHelper(new Callback());
+                    touchHelper.attachToRecyclerView(recyclerView);
+                }
+            }
+        });
     }
 
     @Override
     protected void onStop() {
-        touchHelper.attachToRecyclerView(null);
-        recyclerView.setAdapter(null);
+        if (adapter != null) {
+            touchHelper.attachToRecyclerView(null);
+            recyclerView.setAdapter(null);
+        }
         realm.close();
         super.onStop();
     }

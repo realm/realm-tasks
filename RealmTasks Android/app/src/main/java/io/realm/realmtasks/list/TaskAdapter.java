@@ -16,18 +16,20 @@
 
 package io.realm.realmtasks.list;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
+import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.realmtasks.model.Task;
 
 public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapter {
 
-    public TaskAdapter(List<Task> items) {
-        super(items);
+    public TaskAdapter(Context context, OrderedRealmCollection<Task> items) {
+        super(context, items);
     }
 
     @Override

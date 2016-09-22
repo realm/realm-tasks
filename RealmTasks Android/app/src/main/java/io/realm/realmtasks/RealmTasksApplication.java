@@ -18,9 +18,13 @@ package io.realm.realmtasks;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.log.AndroidLogger;
+import io.realm.log.LogLevel;
+import io.realm.log.RealmLog;
 import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.model.TaskListList;
 
@@ -33,5 +37,6 @@ public class RealmTasksApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
+        RealmLog.add(new AndroidLogger(Log.VERBOSE));
     }
 }
