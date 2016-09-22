@@ -305,6 +305,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func endEditingCells() {
         view.window?.makeFirstResponder(self)
+        currentlyEditingCellView = nil
     }
 
     // MARK: NSGestureRecognizerDelegate
@@ -392,6 +393,11 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         guard !list.items[index].completed else {
+            endEditingCells()
+            return
+        }
+
+        guard currentlyEditingCellView == nil else {
             endEditingCells()
             return
         }
@@ -516,7 +522,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             }
         }
 
-        currentlyEditingCellView = nil
+        // In case if Return key was pressed we need to reset table view selection
+        tableView.selectRowIndexes(NSIndexSet(), byExtendingSelection: false)
     }
 
     private func findItemForCellView(view: NSView) -> (item: ItemType, index: Int)? {
