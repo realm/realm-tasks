@@ -49,6 +49,7 @@ public class TouchHelper {
     private static final int POINTER_ID_NONE = -1;
 
     private final Callback callback;
+    private final CommonAdapter adapter;
 
     private int pointerId = POINTER_ID_NONE;
     private int scaledTouchSlop;
@@ -63,14 +64,13 @@ public class TouchHelper {
     private RealmTasksViewHolder currentEditing;
     private RecyclerView recyclerView;
     private View overdrawChild;
-    private View previousFirstChild;
     private int overdrawChildPosition;
     private List<ViewHolder> swapTargets;
     private List<Integer> distances;
     private TasksOnItemTouchListener.TasksChildDrawingOrderCallback childDrawingOrderCallback;
     private TasksOnItemTouchListener onItemTouchListener;
     private TasksItemDecoration itemDecoration;
-    private boolean isAddingCancled;
+    private boolean isAddingCanceled;
 
     @IntDef({ACTION_STATE_IDLE, ACTION_STATE_SWIPE, ACTION_STATE_DRAG, ACTION_STATE_PULL})
     @Retention(RetentionPolicy.SOURCE)
@@ -97,11 +97,12 @@ public class TouchHelper {
     int pullState = PULL_STATE_ADD;
 
     private TouchHelper() {
-        this(null);
+        this(null, null);
     }
 
-    public TouchHelper(Callback callback) {
+    public TouchHelper(Callback callback, CommonAdapter adapter) {
         this.callback = callback;
+        this.adapter = adapter;
     }
 
     public void attachToRecyclerView(RecyclerView recyclerView) {
@@ -119,6 +120,7 @@ public class TouchHelper {
         itemDecoration = new TasksItemDecoration();
         recyclerView.addOnItemTouchListener(onItemTouchListener);
         recyclerView.addItemDecoration(itemDecoration);
+        recyclerView.setAdapter(adapter);
         final Context context = this.recyclerView.getContext();
         final ViewConfiguration viewConfiguration = ViewConfiguration.get(context);
         scaledTouchSlop = viewConfiguration.getScaledTouchSlop();
@@ -127,11 +129,14 @@ public class TouchHelper {
         systemService.getDefaultDisplay().getMetrics(metrics);
         logicalDensity = metrics.density;
         overdrawChildPosition = -1;
+        adapter.setOnItemAddedListener(new OnItemAddedListener());
     }
 
     private void destroyCallbacks() {
         recyclerView.removeOnItemTouchListener(onItemTouchListener);
         recyclerView.removeItemDecoration(itemDecoration);
+        adapter.setOnItemAddedListener(null);
+        recyclerView.setAdapter(null);
         onItemTouchListener = null;
         itemDecoration = null;
     }
@@ -186,9 +191,9 @@ public class TouchHelper {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
                         if (dy > height * 4 && pullState == PULL_STATE_CANCEL_ADD) {
-                            if (!isAddingCancled) {
+                            if (!isAddingCanceled) {
                                 callback.onReverted(true);
-                                isAddingCancled = true;
+                                isAddingCanceled = true;
                             }
                             callback.onExited();
                         } else if (dy > height) {
@@ -205,18 +210,12 @@ public class TouchHelper {
                             pullState = PULL_STATE_ADD;
                         }
                     }
-                    ViewCompat.setPaddingRelative(recyclerView, 0, (int) dy / 2, 0, 0);
+                    ViewCompat.setPaddingRelative(recyclerView, 0, (int) dy - selected.itemView.getHeight(), 0, 0);
                     recyclerView.scrollToPosition(0);
                 }
             } else if (actionState == ACTION_STATE_PULL) {
-                ViewCompat.setPaddingRelative(recyclerView, 0, (int) dy / 2, 0, 0);
+                ViewCompat.setPaddingRelative(recyclerView, 0, (int) dy, 0, 0);
                 recyclerView.scrollToPosition(0);
-                final View firstChild = recyclerView.getChildAt(0);
-                if (firstChild != previousFirstChild && firstChild != null) {
-                    final ViewHolder childViewHolder = recyclerView.getChildViewHolder(firstChild);
-                    recyclerView.scrollToPosition(0);
-                    selected = (RealmTasksViewHolder) childViewHolder;
-                }
             }
         }
     }
@@ -238,7 +237,7 @@ public class TouchHelper {
                 final int pointerIndex = motionEvent.findPointerIndex(pointerId);
                 initialX = motionEvent.getX(pointerIndex);
                 initialY = motionEvent.getY(pointerIndex);
-                isAddingCancled = false;
+                isAddingCanceled = false;
             } else if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
                 pointerId = POINTER_ID_NONE;
                 selectView(null, ACTION_STATE_IDLE);
@@ -399,7 +398,6 @@ public class TouchHelper {
                     if (dy > 10) {
                         initialY = motionEvent.getY(pointerIndex);
                         callback.onAdded();
-                        previousFirstChild = firstChild;
                         pullState = PULL_STATE_ADD;
                         selectView(null, ACTION_STATE_PULL);
                         return true;
@@ -472,9 +470,9 @@ public class TouchHelper {
                     TouchHelper.this.selected.itemView.setTranslationY(0);
                     if (pullState == PULL_STATE_CANCEL_ADD) {
                         TouchHelper.this.selected.itemView.setAlpha(0);
-                        if (!isAddingCancled) {
+                        if (!isAddingCanceled) {
                             callback.onReverted(true);
-                            isAddingCancled = true;
+                            isAddingCanceled = true;
                         }
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
@@ -601,6 +599,14 @@ public class TouchHelper {
                 }
                 return iteration < overdrawChildPosition ? iteration : iteration + 1;
             }
+        }
+    }
+
+    private class OnItemAddedListener implements CommonAdapter.OnItemAddedListener {
+
+        @Override
+        public void added(ViewHolder viewHolder) {
+            selected = (RealmTasksViewHolder) viewHolder;
         }
     }
 }

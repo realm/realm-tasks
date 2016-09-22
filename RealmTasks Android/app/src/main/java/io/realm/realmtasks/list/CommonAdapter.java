@@ -33,6 +33,7 @@ import io.realm.realmtasks.R;
 public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapter<T, RecyclerView.ViewHolder> {
 
     protected List<T> items;
+    protected OnItemAddedListener onItemAddedListener;
 
     public CommonAdapter(Context context, OrderedRealmCollection<T> items) {
         super(context, items, true);
@@ -50,6 +51,9 @@ public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapte
         final RealmTasksViewHolder realmTasksViewHolder = (RealmTasksViewHolder) holder;
         realmTasksViewHolder.reset();
         realmTasksViewHolder.resetBackgroundColor();
+        if (onItemAddedListener != null && position == 0) {
+            onItemAddedListener.added(holder);
+        }
     }
 
     protected void moveItems(int fromPosition, int toPosition) {
@@ -76,5 +80,14 @@ public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapte
     public void setItems(List<T> items) {
         this.items = items;
         notifyDataSetChanged();
+    }
+
+    public void setOnItemAddedListener(OnItemAddedListener onItemAddedListener) {
+        this.onItemAddedListener = onItemAddedListener;
+    }
+
+    public static interface OnItemAddedListener {
+
+        void added(RecyclerView.ViewHolder viewHolder);
     }
 }

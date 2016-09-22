@@ -61,8 +61,7 @@ public class TaskActivity extends AppCompatActivity {
             items = realm.where(TaskList.class).equalTo("id", id).findFirst().getItems();
         }
         adapter = new TaskAdapter(this, items);
-        recyclerView.setAdapter(adapter);
-        touchHelper = new TouchHelper(new Callback());
+        touchHelper = new TouchHelper(new Callback(), adapter);
         touchHelper.attachToRecyclerView(recyclerView);
     }
 

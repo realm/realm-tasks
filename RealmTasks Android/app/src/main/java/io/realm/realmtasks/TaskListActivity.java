@@ -58,8 +58,7 @@ public class TaskListActivity extends AppCompatActivity {
             public void onChange(RealmResults<TaskListList> results) {
                 if (results.size() > 0) {
                     adapter = new TaskListAdapter(TaskListActivity.this, list.first().getItems());
-                    recyclerView.setAdapter(adapter);
-                    touchHelper = new TouchHelper(new Callback());
+                    touchHelper = new TouchHelper(new Callback(), adapter);
                     touchHelper.attachToRecyclerView(recyclerView);
                 }
             }
