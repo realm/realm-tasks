@@ -19,8 +19,6 @@ package io.realm.realmtasks.list;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
-import java.util.List;
-
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmList;

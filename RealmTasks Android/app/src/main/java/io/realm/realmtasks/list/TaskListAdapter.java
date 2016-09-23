@@ -19,14 +19,12 @@ package io.realm.realmtasks.list;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
-import java.util.List;
 import java.util.UUID;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.realmtasks.model.TaskList;
-import io.realm.realmtasks.model.TaskListList;
 
 public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHelperAdapter {
 
