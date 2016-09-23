@@ -58,7 +58,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
         notificationToken?.stop()
     }
 
