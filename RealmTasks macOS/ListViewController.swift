@@ -131,21 +131,25 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     // MARK: Actions
 
-    @IBAction func newTask(sender: AnyObject?) {
+    @IBAction func newItem(sender: AnyObject?) {
         try! list.realm?.write {
             self.list.items.insert(ItemType(), atIndex: 0)
         }
 
-        NSView.animate() {
+        NSView.animate(animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
-            self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false)?.becomeFirstResponder()
+        }) {
+            if let newItemCellView = self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false) as? ItemCellView {
+                self.beginEditingCell(newItemCellView)
+            }
+
             self.view.window?.update()
         }
     }
 
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
-        if theItem.action == #selector(newTask) && currentlyEditingCellView != nil {
+        if theItem.action == #selector(newItem) && currentlyEditingCellView != nil {
             return false
         }
 

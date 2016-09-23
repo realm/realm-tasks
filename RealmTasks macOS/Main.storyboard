@@ -60,7 +60,7 @@
                                     <items>
                                         <menuItem title="New" keyEquivalent="n" id="RlT-1b-HrP">
                                             <connections>
-                                                <action selector="newDocument:" target="VaM-de-JXt" id="6Q4-Ek-0A3"/>
+                                                <action selector="newItem:" target="VaM-de-JXt" id="OtT-Tp-uOI"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Open…" keyEquivalent="o" id="m6V-zC-Op3">
@@ -391,7 +391,7 @@
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="e0G-Eu-e1o"/>
                                 <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New" paletteLabel="New" tag="-1" image="NSAddTemplate" id="4CH-Dy-gYb">
                                     <connections>
-                                        <action selector="newTask:" target="tRP-hs-BBi" id="I6C-2d-lm3"/>
+                                        <action selector="newItem:" target="tRP-hs-BBi" id="Xf6-Bv-6Kr"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="562656E7-21C7-4E03-8486-96B2A2B00472" explicitItemIdentifier="TitleLabel" label="Custom View" paletteLabel="Custom View" id="Il8-PQ-I6o">
