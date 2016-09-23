@@ -40,9 +40,11 @@ class RegisterViewController: UIViewController {
         passwordTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
         confirmationTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
 
-        if let userName = initialUserName {
+        if let userName = initialUserName where userName.characters.count > 0 {
             userNameTextField.text = userName
             passwordTextField.becomeFirstResponder()
+        } else {
+            userNameTextField.becomeFirstResponder()
         }
 
         updateUI()

@@ -51,7 +51,7 @@ class RegisterViewController: NSViewController {
     override func viewWillAppear() {
         super.viewWillAppear()
 
-        if userName != nil {
+        if userName?.characters.count > 0 {
             view.window?.initialFirstResponder = passwordTextField
         }
     }
