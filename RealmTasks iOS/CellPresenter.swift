@@ -34,20 +34,20 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
     }
 
     func deleteItem(item: Item) {
-        guard !(item as Object).invalidated else {
-            return
-        }
+        try! items.realm?.write { [unowned self] in
+            guard !(item as Object).invalidated else {
+                return
+            }
 
-        guard let index = items.indexOf(item) else {
-            return
-        }
+            guard let index = self.items.indexOf(item) else {
+                return
+            }
 
-        try! items.realm?.write {
-            items.realm?.delete(item)
-        }
+            self.items.realm?.delete(item)
 
-        viewController.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        viewController.didUpdateList()
+            self.viewController.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
+            self.viewController.didUpdateList()
+        }
     }
 
     func completeItem(item: Item) {
