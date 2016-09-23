@@ -29,6 +29,10 @@ protocol RegisterViewControllerDelegate: class {
 
 class RegisterViewController: NSViewController {
 
+    @IBOutlet private weak var userNameTextField: NSTextField!
+    @IBOutlet private weak var passwordTextField: NSTextField!
+    @IBOutlet private weak var confirmationTextField: NSTextField!
+
     weak var delegate: RegisterViewControllerDelegate?
 
     var userName: String?
@@ -42,6 +46,14 @@ class RegisterViewController: NSViewController {
     // Some KVO magic, see https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVODependentKeys.html
     static func keyPathsForValuesAffectingConfirmationMatchesPassword() -> NSSet {
         return NSSet(array: ["password", "confirmation"])
+    }
+
+    override func viewWillAppear() {
+        super.viewWillAppear()
+
+        if userName != nil {
+            view.window?.initialFirstResponder = passwordTextField
+        }
     }
 
     @IBAction func register(sender: AnyObject?) {
