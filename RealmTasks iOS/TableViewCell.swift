@@ -351,6 +351,12 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         alpha = 1
         contentView.alpha = 1
         temporarilyIgnoreSaveChanges = false
+
+        // Force any active gesture recognizers to reset
+        for gestureRecognizer in gestureRecognizers! {
+            gestureRecognizer.enabled = false
+            gestureRecognizer.enabled = true
+        }
     }
 
     // MARK: Actions
