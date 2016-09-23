@@ -22,7 +22,30 @@ import Cartography
 import RealmSwift
 import UIKit
 
-class ContainerViewController: UIViewController {
+enum NavDirection {
+  case Up, Down
+}
+
+//MARK: Container View Controller Protocol
+enum Position {
+    case Up
+}
+
+protocol ContainerNavigationProtocol {
+    func isTopChild(position: NavDirection) -> Bool
+    
+    func auxViewController(position: NavDirection) -> UIViewController?
+    func setAuxViewController(position: NavDirection, _ viewController: UIViewController?)
+    func createAuxViewController(position: NavDirection) -> (() -> (UIViewController))?
+    func setCreateAuxViewController(position: NavDirection, _ handler: (() -> (UIViewController))?)
+
+    func canCreateViewControllerAt(position: NavDirection) -> Bool
+    func removeViewControllerAt(position: NavDirection)
+}
+
+//MARK: Container View Controller
+
+class ContainerViewController: UIViewController, ContainerNavigationProtocol {
     private var titleLabel = UILabel()
     private var titleTopConstraint: NSLayoutConstraint?
     override var title: String? {
@@ -50,7 +73,7 @@ class ContainerViewController: UIViewController {
 
     private func addChildVC() {
         let firstList = try! Realm().objects(TaskList.self).first!
-        let vc = ViewController(parent: firstList, colors: UIColor.taskColors())
+        let vc = ViewController(navigation: self, parent: firstList, colors: UIColor.taskColors())
         title = firstList.text
         addChildViewController(vc)
         view.addSubview(vc.view)
@@ -80,4 +103,58 @@ class ContainerViewController: UIViewController {
             titleTopConstraint = (titleLabel.top == titleLabel.superview!.top + 20)
         }
     }
+
+    var topChildViewController: ViewControllerProtocol {
+        return childViewControllers.last as! ViewControllerProtocol
+    }
+
+    private var nextConstraints: ConstraintGroup?
+
+    // Top/Bottom View Controllers
+    // MARK: ContainerNavigationProtocol methods
+    private var createTopViewController: (() -> (UIViewController))?
+    private var topViewController: UIViewController?
+    private var createBottomViewController: (() -> (UIViewController))?
+    private var bottomViewController: UIViewController?
+
+    func isTopChild(position: NavDirection) -> Bool {
+        return topChildViewController === auxViewController(position)
+    }
+
+    func auxViewController(position: NavDirection) -> UIViewController? {
+        return (position == .Up) ? topViewController : bottomViewController
+    }
+
+    func setAuxViewController(position: NavDirection, _ viewController: UIViewController?) {
+        if position == .Up {
+            topViewController = viewController
+        } else {
+            bottomViewController = viewController
+        }
+    }
+
+    func createAuxViewController(position: NavDirection) -> (() -> (UIViewController))? {
+        return (position == .Up) ? createTopViewController : createBottomViewController
+    }
+
+    func setCreateAuxViewController(position: NavDirection, _ handler: (() -> (UIViewController))?) {
+        if position == .Up {
+            createTopViewController = handler
+        } else {
+            createBottomViewController = handler
+        }
+    }
+
+    func canCreateViewControllerAt(position: NavDirection) -> Bool {
+        print("can create vc at \(position)")
+        return ((position == .Up) ? createTopViewController : createBottomViewController) != nil
+    }
+
+    func removeViewControllerAt(position: NavDirection) {
+        if let viewController = auxViewController(position) {
+            viewController.view.removeFromSuperview()
+            viewController.removeFromParentViewController()
+        }
+    }
+
 }

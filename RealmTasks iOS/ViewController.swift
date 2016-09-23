@@ -40,10 +40,6 @@ extension UIView {
 
 private var tableViewBoundsKVOContext = 0
 
-private enum NavDirection {
-    case Up, Down
-}
-
 // MARK: View Controller Protocol
 protocol ViewControllerProtocol: UIScrollViewDelegate {
     var tableView: UITableView {get}
@@ -105,13 +101,15 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: MTT
     private var listPresenter: ListPresenter<Item, Parent>!
+    private var navigation: ContainerNavigationProtocol!
 
     // MARK: View Lifecycle
 
-    init(parent: Parent, colors: [UIColor]) {
+    init(navigation navigator: ContainerNavigationProtocol, parent: Parent, colors: [UIColor]) {
         if Item.self == Task.self {
             createTopViewController = {
                 ViewController<TaskList, TaskListList>(
+                    navigation: navigator,
                     parent: try! Realm().objects(TaskListList.self).first!,
                     colors: UIColor.listColors()
                 )
@@ -121,6 +119,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             createTopViewController = nil
             createBottomViewController = {
                 ViewController<Task, TaskList>(
+                    navigation: navigator,
                     parent: try! Realm().objects(TaskList.self).first!,
                     colors: UIColor.taskColors()
                 )
@@ -280,6 +279,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func navigateToBottomViewController(item: Item) {
         bottomViewController = ViewController<Task, TaskList>(
+            navigation: navigation,
             parent: item as! TaskList,
             colors: UIColor.taskColors()
         )
