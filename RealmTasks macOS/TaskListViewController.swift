@@ -80,9 +80,9 @@ class TaskListViewController: NSViewController {
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
         notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
-            // Do not perform an update if the user is editing a cell at this moment
+            // Do not perform an update if the user is editing or reordering cells at this moment
             // (The table will be reloaded by the 'end editing' call of the active cell)
-            guard self.currentlyEditingCellView == nil else {
+            guard self.currentlyEditingCellView == nil && !self.reordering else {
                 return
             }
             
@@ -403,7 +403,7 @@ extension TaskListViewController: TaskCellViewDelegate {
     }
 
     func cellViewDidDelete(view: TaskCellView) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let item = findItemForCellView(view)?.item else {
             return
         }
 
@@ -438,7 +438,7 @@ extension TaskListViewController: TaskCellViewDelegate {
     }
 
     func cellViewDidEndEditing(view: TaskCellView) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let item = findItemForCellView(view)?.item else {
             return
         }
 
