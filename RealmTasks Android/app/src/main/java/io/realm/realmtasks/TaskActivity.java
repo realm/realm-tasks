@@ -132,7 +132,6 @@ public class TaskActivity extends AppCompatActivity {
         @Override
         public void onAdded() {
             adapter.onItemAdded();
-            adapter.notifyDataSetChanged();
         }
 
         @Override

@@ -159,7 +159,7 @@ public class TouchHelper {
         public void onDraw(Canvas c, RecyclerView parent, State state) {
             overdrawChildPosition = -1;
             if (selected != null) {
-                final RealmTasksViewHolder selectedViewHolder = (RealmTasksViewHolder) selected;
+                final RealmTasksViewHolder selectedViewHolder = selected;
                 final View selectedItemView = selectedViewHolder.itemView;
                 if (actionState == ACTION_STATE_SWIPE) {
                     final float translationX = selectedInitialX + dx - selected.itemView.getLeft();
@@ -605,12 +605,9 @@ public class TouchHelper {
 
     private class OnFirstItemUpdateListener implements CommonAdapter.OnFirstItemUpdateListener {
 
-        private static final String TAG = "OFI";
-
         @Override
         public void updated(ViewHolder viewHolder) {
-            Log.d(TAG, "actionState: " + actionState + " selected: " + selected + " viewHolder: " + viewHolder);
-            if (actionState == ACTION_STATE_PULL && selected == null) {
+            if (actionState == ACTION_STATE_PULL) {
                 selected = (RealmTasksViewHolder) viewHolder;
             }
         }
