@@ -79,7 +79,29 @@ func configureDefaultRealm() -> Bool {
     return false
 }
 
-func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
+func prepopulateInitialList() {
+    if realm == nil {
+        realm = try! Realm()
+    }
+
+    #if os(iOS)
+    let initialListItems = Constants.onboardItemsPhone
+    #else
+    let initialListItems = Constants.onboardItemsMac
+    #endif
+
+    try! realm.write {
+        let list = realm.objects(TaskList.self).first!
+        for item in initialListItems {
+            let task = Task()
+            task.text = item
+            realm.add(task)
+            list.items.append(task)
+        }
+    }
+}
+
+func authenticate(username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
     User.authenticateWithCredential(.usernamePassword(username, password: password, actions: register ? [.CreateAccount] : []),
                                     authServerURL: Constants.syncAuthURL) { user, error in
         if let user = user {

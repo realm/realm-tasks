@@ -68,12 +68,13 @@ extension AppDelegate: NSApplicationDelegate {
 
 extension AppDelegate {
     func performAuthentication(viewController: NSViewController, username: String, password: String, register: Bool) {
-        authenticate(username: username, password: password, register: register) { error in
+        authenticate(username, password: password, register: register) { error in
             // FIXME: Sync API methods callbacks should be executed on main thread
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = error {
                     NSApp.presentError(error)
                 } else {
+                    prepopulateInitialList()
                     viewController.dismissController(nil)
                     let taskListVC = (self.mainWindowController.contentViewController as! TaskListViewController)
                     taskListVC.items = try! Realm().objects(TaskList.self).first!.items
