@@ -21,14 +21,10 @@
 import Foundation
 
 struct Constants {
-    #if DEBUG
     #if os(OSX)
     static let syncHost = "127.0.0.1"
     #else
     static let syncHost = localIPAddress
-    #endif
-    #else
-    static let syncHost = "SPECIFY_PRODUCTION_HOST_HERE"
     #endif
 
     static let syncRealmPath = "realmtasks"
