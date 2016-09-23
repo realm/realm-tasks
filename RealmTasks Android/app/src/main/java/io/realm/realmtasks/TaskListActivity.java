@@ -70,6 +70,8 @@ public class TaskListActivity extends AppCompatActivity {
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
             recyclerView.setAdapter(null);
+            adapter = null;
+            touchHelper = null;
         }
         realm.close();
         super.onStop();
