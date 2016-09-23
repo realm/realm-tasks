@@ -19,7 +19,7 @@ package io.realm.realmtasks.list;
 public interface TouchHelperAdapter {
 
     void onItemAdded();
-    void onItemArchived(int posision);
+    void onItemArchived(int position);
     void onItemDismissed(int position);
     void onItemMoved(int fromPosition, int toPosition);
     void onItemChanged(RealmTasksViewHolder viewHolder);
