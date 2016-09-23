@@ -39,6 +39,14 @@ class ListCellView: ItemCellView {
         }
     }
 
+    override var isUserInteractionEnabled: Bool {
+        didSet {
+            if !isUserInteractionEnabled {
+                acceptsEditing = false
+            }
+        }
+    }
+
     required init(identifier: String) {
         super.init(identifier: identifier)
 

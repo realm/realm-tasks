@@ -68,6 +68,13 @@ class ItemCellView: NSTableCellView {
         }
     }
 
+    var isUserInteractionEnabled = true {
+        didSet {
+            highlightView.hidden = true
+            updateTrackingAreas()
+        }
+    }
+
     var backgroundColor: NSColor {
         set {
             contentView.backgroundColor = newValue
@@ -128,7 +135,11 @@ class ItemCellView: NSTableCellView {
     }
 
     override func updateTrackingAreas() {
-        setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
+        if isUserInteractionEnabled {
+            setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
+        } else {
+            resetTrackingAreas()
+        }
     }
 
     private func setupUI() {
@@ -216,7 +227,7 @@ class ItemCellView: NSTableCellView {
     override func mouseEntered(theEvent: NSEvent) {
         super.mouseEntered(theEvent)
 
-        guard !completed && !editable && alphaValue == 1 else {
+        guard !completed && !editable else {
             return
         }
 

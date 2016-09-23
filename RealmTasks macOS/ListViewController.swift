@@ -169,6 +169,12 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
+        tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+            if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+                view.isUserInteractionEnabled = false
+            }
+        }
+
         currentlyMovingRowSnapshotView = SnapshotView(sourceView: currentlyMovingRowView!)
         currentlyMovingRowView!.alphaValue = 0
 
@@ -231,6 +237,12 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             self.currentlyMovingRowSnapshotView = nil
 
             self.updateColors()
+
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+                    view.isUserInteractionEnabled = true
+                }
+            }
         }
     }
 
@@ -312,8 +324,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         NSView.animate() {
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) {
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
+                    view.isUserInteractionEnabled = false
                 }
             }
         }
