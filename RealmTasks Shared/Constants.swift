@@ -41,16 +41,18 @@ struct Constants {
     static let appID = NSBundle.mainBundle().bundleIdentifier!
 
     static let onboardItemsPhone = [
-        "1. Swipe right to mark as done",
-        "2. Swipe left to delete",
-        "3. Swipe down to add a new item",
-        "4. Pull down to switch lists",
-        "5. Pull up to clear all completed items"
+        "1. Tap an item to edit it",
+        "2. Swipe right to mark as done",
+        "3. Swipe left to delete",
+        "4. Swipe down to add a new item",
+        "5. Pull down to switch lists",
+        "6. Pull up to clear all completed items"
     ]
 
     static let onboardItemsMac = [
-        "1. Swipe right to mark as done",
-        "2. Swipe left to delete",
-        "3. Click (+) to create a new item"
+        "1. Click an item to edit it",
+        "2. Swipe right to mark as done",
+        "3. Swipe left to delete",
+        "4. Click (+) to create a new item"
     ]
 }
