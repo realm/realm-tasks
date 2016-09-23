@@ -586,10 +586,16 @@ private final class SnapshotView: NSView {
     init(sourceView: NSView) {
         super.init(frame: sourceView.frame)
 
+        let imageRepresentation = sourceView.bitmapImageRepForCachingDisplayInRect(sourceView.bounds)!
+        sourceView.cacheDisplayInRect(sourceView.bounds, toBitmapImageRep: imageRepresentation)
+
+        let snapshotImage = NSImage(size: sourceView.bounds.size)
+        snapshotImage.addRepresentation(imageRepresentation)
+
         wantsLayer = true
         shadow = NSShadow() // Workaround to activate layer-backed shadow
 
-        layer?.contents = NSImage(data: sourceView.dataWithPDFInsideRect(sourceView.bounds))!
+        layer?.contents = snapshotImage
         layer?.shadowColor = NSColor.blackColor().CGColor
         layer?.shadowOpacity = 1
         layer?.shadowRadius = 5
