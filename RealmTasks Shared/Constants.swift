@@ -51,8 +51,8 @@ struct Constants {
 
     static let onboardItemsMac = [
         "1. Click an item to edit it",
-        "2. Swipe right to mark as done",
-        "3. Swipe left to delete",
+        "2. Click and drag right to mark as done",
+        "3. Click and drag left to delete",
         "4. Click (+) to create a new item"
     ]
 }
