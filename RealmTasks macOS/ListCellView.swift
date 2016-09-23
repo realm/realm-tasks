@@ -24,10 +24,11 @@ import Cartography
 class ListCellView: ItemCellView {
 
     private let countLabel = NSTextField()
+    private let badgeView = ColorView(backgroundColor: NSColor(white: 1, alpha: 0.15))
 
     private(set) var acceptsEditing = false {
         didSet {
-            textView.backgroundColor = acceptsEditing ? NSColor(white: 0, alpha: 0.3) : .clearColor()
+            textView.backgroundColor = acceptsEditing ? NSColor(white: 0, alpha: 0.15) : .clearColor()
             window?.invalidateCursorRectsForView(self)
         }
     }
@@ -42,6 +43,7 @@ class ListCellView: ItemCellView {
         super.init(identifier: identifier)
 
         setupCountBadge()
+        setupTextView()
 
         textView.layer?.cornerRadius = 5
     }
@@ -51,14 +53,12 @@ class ListCellView: ItemCellView {
     }
 
     private func setupCountBadge() {
-        let badgeBackgroundView = ColorView(backgroundColor: NSColor.whiteColor().colorWithAlphaComponent(0.15))
-
-        contentView.addSubview(badgeBackgroundView)
-        constrain(badgeBackgroundView) { badgeBackgroundView in
+        contentView.addSubview(badgeView)
+        constrain(badgeView) { badgeBackgroundView in
             badgeBackgroundView.top == badgeBackgroundView.superview!.top
             badgeBackgroundView.bottom == badgeBackgroundView.superview!.bottom
             badgeBackgroundView.right == badgeBackgroundView.superview!.right
-            badgeBackgroundView.width == badgeBackgroundView.height
+            badgeBackgroundView.width == 44
         }
 
         countLabel.usesSingleLineMode = true
@@ -70,12 +70,25 @@ class ListCellView: ItemCellView {
         countLabel.alignment = .Center
         countLabel.editable = false
 
-        badgeBackgroundView.addSubview(countLabel)
+        badgeView.addSubview(countLabel)
         constrain(countLabel) { countLabel in
             countLabel.width == countLabel.superview!.width
             countLabel.height == 19
             countLabel.center == countLabel.superview!.center
         }
+    }
+
+    private func setupTextView() {
+        constrain(textView, badgeView, replace: textViewConstraintGroup) { textView, badgeView in
+            textView.left == textView.superview!.left + 13
+            textView.top == textView.superview!.top + 11
+            textView.bottom == textView.superview!.bottom - 11
+            textView.right == badgeView.left - 13
+        }
+
+        // It's not a good idea but seems to work
+        textView.wantsLayer = true
+        textView.layer?.cornerRadius = 4
     }
 
     override func configure(item: CellPresentable) {

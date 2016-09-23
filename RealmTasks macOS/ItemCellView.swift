@@ -79,7 +79,9 @@ class ItemCellView: NSTableCellView {
     }
 
     let contentView = ColorView()
+
     let textView: NSTextField = ItemTextField()
+    let textViewConstraintGroup = ConstraintGroup()
 
     private let highlightView = HighlightView()
     private let overlayView = ColorView()
@@ -200,7 +202,7 @@ class ItemCellView: NSTableCellView {
 
         contentView.addSubview(textView)
 
-        constrain(textView) { textView in
+        constrain(textView, replace: textViewConstraintGroup) { textView in
             textView.edges == inset(textView.superview!.edges, 13, 11)
         }
     }
