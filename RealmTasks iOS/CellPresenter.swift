@@ -34,6 +34,10 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
     }
 
     func deleteItem(item: Item) {
+        guard !(item as Object).invalidated else {
+            return
+        }
+
         guard let index = items.indexOf(item) else {
             return
         }
