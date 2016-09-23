@@ -354,8 +354,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
         // Force any active gesture recognizers to reset
         for gestureRecognizer in gestureRecognizers! {
-            gestureRecognizer.enabled = false
-            gestureRecognizer.enabled = true
+            gestureRecognizer.reset()
         }
     }
 
@@ -412,5 +411,14 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     func textViewDidChange(textView: UITextView) {
         presenter.cellDidChangeText(self)
+    }
+}
+
+// Mark: Gesture Recognizer Reset
+
+extension UIGestureRecognizer {
+    func reset() {
+        enabled = false
+        enabled = true
     }
 }
