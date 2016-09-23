@@ -1,4 +1,3 @@
-source 'git@github.com:realm/cocoapods-specs-private.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 abstract_target 'RealmTasks' do
@@ -7,8 +6,9 @@ abstract_target 'RealmTasks' do
     # source podspec
     # pod 'RealmSwift', '1.0.2-15'
 
-    # binary podspec
-    pod 'RealmSwift', '1.1.0-0-sync-1.0.0-beta-34.0'
+    # podspec using binaries for core+sync
+    pod 'Realm', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'sync', submodules: true
+    pod 'RealmSwift', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'sync', submodules: true
     
     pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
     
