@@ -40,7 +40,7 @@ public class Task extends RealmObject implements Competable {
     }
 
     @Override
-    public boolean isCompetable() {
+    public boolean isCompletable() {
         return true;
     }
 }

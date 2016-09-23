@@ -73,7 +73,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                if (!task.isCompleted() && task.isCompetable()) {
+                if (!task.isCompleted()) {
                     task.setCompleted(true);
                     moveItems(position, count - 1);
                 } else {

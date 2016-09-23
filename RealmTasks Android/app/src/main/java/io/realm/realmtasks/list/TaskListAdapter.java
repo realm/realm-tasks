@@ -18,12 +18,14 @@ package io.realm.realmtasks.list;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.util.UUID;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.realmtasks.R;
 import io.realm.realmtasks.model.TaskList;
 
 public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHelperAdapter {
@@ -75,9 +77,13 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                if (!taskList.isCompleted() && taskList.isCompetable()) {
-                    taskList.setCompleted(true);
-                    moveItems(position, count - 1);
+                if (!taskList.isCompleted()) {
+                    if (taskList.isCompletable()) {
+                        taskList.setCompleted(true);
+                        moveItems(position, count - 1);
+                    } else {
+                        Toast.makeText(context, R.string.unfinished_items, Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     taskList.setCompleted(false);
                     moveItems(position, count);
