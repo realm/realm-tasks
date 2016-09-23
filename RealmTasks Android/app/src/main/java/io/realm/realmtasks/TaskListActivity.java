@@ -56,7 +56,7 @@ public class TaskListActivity extends AppCompatActivity {
         list.addChangeListener(new RealmChangeListener<RealmResults<TaskListList>>() {
             @Override
             public void onChange(RealmResults<TaskListList> results) {
-                if (results.size() > 0) {
+                if (results.size() > 0 && adapter == null) {
                     adapter = new TaskListAdapter(TaskListActivity.this, list.first().getItems());
                     touchHelper = new TouchHelper(new Callback(), adapter);
                     touchHelper.attachToRecyclerView(recyclerView);
