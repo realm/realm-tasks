@@ -351,6 +351,11 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         alpha = 1
         contentView.alpha = 1
         temporarilyIgnoreSaveChanges = false
+
+        // Force any active gesture recognizers to reset
+        for gestureRecognizer in gestureRecognizers! {
+            gestureRecognizer.reset()
+        }
     }
 
     // MARK: Actions
@@ -406,5 +411,14 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     func textViewDidChange(textView: UITextView) {
         presenter.cellDidChangeText(self)
+    }
+}
+
+// Mark: Gesture Recognizer Reset
+
+extension UIGestureRecognizer {
+    func reset() {
+        enabled = false
+        enabled = true
     }
 }

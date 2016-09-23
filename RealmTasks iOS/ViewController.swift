@@ -263,8 +263,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 return
             }
         } else {
-            let row = items.filter("completed = false").count
+            var row: Int = 0
             try! items.realm?.write {
+                row = items.filter("completed = false").count
                 items.insert(Item(), atIndex: row)
             }
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
@@ -414,15 +415,15 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             if bottomViewController === parentViewController?.childViewControllers.last {
                 finishMovingToNextViewController(.Down)
             } else {
-                let itemsToDelete = items.filter("completed = true")
-                let numberOfItemsToDelete = itemsToDelete.count
-                guard numberOfItemsToDelete != 0 else { return }
+                try! items.realm?.write { [unowned self] in
+                    let itemsToDelete = self.items.filter("completed = true")
+                    let numberOfItemsToDelete = itemsToDelete.count
+                    guard numberOfItemsToDelete != 0 else { return }
 
-                try! items.realm?.write {
-                    items.realm?.delete(itemsToDelete)
+                    self.items.realm?.delete(itemsToDelete)
+
+                    vibrate()
                 }
-
-                vibrate()
             }
             return
         }

@@ -34,38 +34,44 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
     }
 
     func deleteItem(item: Item) {
-        guard let index = items.indexOf(item) else {
-            return
-        }
+        try! items.realm?.write { [unowned self] in
+            guard !(item as Object).invalidated else {
+                return
+            }
 
-        try! items.realm?.write {
-            items.realm?.delete(item)
-        }
+            guard let index = self.items.indexOf(item) else {
+                return
+            }
 
-        viewController.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-        viewController.didUpdateList()
+            self.items.realm?.delete(item)
+
+            self.viewController.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
+            self.viewController.didUpdateList()
+        }
     }
 
     func completeItem(item: Item) {
-        guard !(item as Object).invalidated, let index = items.indexOf(item) else {
-            return
-        }
-        let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
-        let destinationIndexPath: NSIndexPath
-        if item.completed {
-            // move cell to bottom
-            destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
-        } else {
-            // move cell just above the first completed item
-            let completedCount = items.filter("completed = true").count
-            destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
-        }
-        try! items.realm?.write {
-            items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
-        }
+        try! items.realm?.write { [unowned self] in
+            guard !(item as Object).invalidated, let index = self.items.indexOf(item) else {
+                return
+            }
 
-        viewController.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-        viewController.didUpdateList()
+            let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
+            let destinationIndexPath: NSIndexPath
+            if item.completed {
+                // move cell to bottom
+                destinationIndexPath = NSIndexPath(forRow: self.items.count - 1, inSection: 0)
+            } else {
+                // move cell just above the first completed item
+                let completedCount = self.items.filter("completed = true").count
+                destinationIndexPath = NSIndexPath(forRow: self.items.count - completedCount - 1, inSection: 0)
+            }
+
+            self.items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
+
+            self.viewController.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
+            self.viewController.didUpdateList()
+        }
     }
 
     // MARK: Editing
