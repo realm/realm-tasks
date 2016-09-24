@@ -124,14 +124,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // MARK: UI
 
     private func setupUI() {
-        setupTableView()
-        onboardView.toggle(isVisible: items.isEmpty)
-    }
-
-    private func setupTableView() {
         listPresenter.tablePresenter.setupTableView(inView: view, topConstraint: &topConstraint, listTitle: title)
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
+        onboardView.toggle(isVisible: items.isEmpty)
     }
 
     // MARK: Gesture Recognizers
