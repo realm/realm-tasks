@@ -74,12 +74,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // Onboard view
     private lazy var onboardView: OnboardView = {
-        let onboardView = OnboardView()
-        if onboardView.superview == nil {
-            self.tableView.addSubview(onboardView)
-            onboardView.center = self.tableView.center
-        }
-        return onboardView
+        return OnboardView(inTableView: self.tableView)
     }()
 
     // Top/Bottom View Controllers
