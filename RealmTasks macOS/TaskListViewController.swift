@@ -18,6 +18,9 @@
  *
  **************************************************************************/
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import Cocoa
 import RealmSwift
 
@@ -44,9 +47,6 @@ class TaskListViewController: NSViewController {
     }
 
     private var notificationToken: NotificationToken?
-    private var realmNotificationToken: NotificationToken?
-    private var skipNotification = false
-    private var reloadOnNotification = false
 
     private let prototypeCell = PrototypeTaskCellView(identifier: taskCellPrototypeIdentifier)
 
@@ -61,7 +61,6 @@ class TaskListViewController: NSViewController {
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
         notificationToken?.stop()
-        realmNotificationToken?.stop()
     }
 
     override func viewDidLoad() {
@@ -81,37 +80,14 @@ class TaskListViewController: NSViewController {
     private func setupNotifications() {
         // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
         notificationToken = items.filter("TRUEPREDICATE").addNotificationBlock { changes in
-            if self.skipNotification {
-                self.skipNotification = false
-                self.reloadOnNotification = true
-                return
-            } else if self.reloadOnNotification {
-                self.tableView.reloadData()
-                self.reloadOnNotification = false
+            // Do not perform an update if the user is editing or reordering cells at this moment
+            // (The table will be reloaded by the 'end editing' call of the active cell)
+            guard self.currentlyEditingCellView == nil && !self.reordering else {
                 return
             }
-
-            switch changes {
-            case .Initial:
-                self.tableView.reloadData()
-            case .Update(_, let deletions, let insertions, let modifications):
-                self.tableView.beginUpdates()
-                self.tableView.removeRowsAtIndexes(deletions.toIndexSet(), withAnimation: .EffectFade)
-                self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectFade)
-                self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
-                self.tableView.endUpdates()
-
-                self.updateColors()
-                self.updateTableViewHeightOfRows(modifications.toIndexSet())
-            case .Error(let error):
-                fatalError(String(error))
-            }
+            
+            self.tableView.reloadData()
         }
-    }
-
-    private func skipNextNotification() {
-        skipNotification = true
-        reloadOnNotification = false
     }
 
     private func setupGestureRecognizers() {
@@ -145,8 +121,6 @@ extension TaskListViewController {
         try! items.realm?.write {
             self.items.insert(Task(), atIndex: 0)
         }
-
-        skipNextNotification()
 
         NSView.animateWithDuration(0.2, animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
@@ -216,7 +190,6 @@ extension TaskListViewController {
             try! items.realm?.write {
                 items.move(from: sourceRow, to: destinationRow)
             }
-            skipNextNotification()
             tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
         }
     }
@@ -230,7 +203,7 @@ extension TaskListViewController {
     }
 
     private func endReordering() {
-        NSView.animateWithDuration(0.2, animations: { 
+        NSView.animateWithDuration(0.2, animations: {
             self.currentlyMovingRowSnapshotView?.frame = self.view.convertRect(self.currentlyMovingRowView!.frame, fromView: self.tableView)
         }) {
             self.currentlyMovingRowView?.alphaValue = 1
@@ -302,7 +275,8 @@ extension TaskListViewController {
 
 extension TaskListViewController: NSGestureRecognizerDelegate {
 
-    func gestureRecognizer(gestureRecognizer: NSGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+    func gestureRecognizer(gestureRecognizer: NSGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
         return true
     }
 
@@ -311,7 +285,8 @@ extension TaskListViewController: NSGestureRecognizerDelegate {
         case is NSPressGestureRecognizer:
             let targetRow = tableView.rowAtPoint(gestureRecognizer.locationInView(tableView))
 
-            guard targetRow >= 0, let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? TaskCellView else {
+            guard targetRow >= 0,
+                let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? TaskCellView else {
                 return false
             }
 
@@ -412,12 +387,11 @@ extension TaskListViewController: TaskCellViewDelegate {
         }
 
         delay(0.2) {
-            self.skipNextNotification()
 
             try! item.realm?.write {
                 item.completed = complete
 
-                if (index != destinationIndex) {
+                if index != destinationIndex {
                     self.items.removeAtIndex(index)
                     self.items.insert(item, atIndex: destinationIndex)
                 }
@@ -429,17 +403,13 @@ extension TaskListViewController: TaskCellViewDelegate {
     }
 
     func cellViewDidDelete(view: TaskCellView) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let item = findItemForCellView(view)?.item else {
             return
         }
-
-        skipNextNotification()
 
         try! item.realm?.write {
             items.realm?.delete(item)
         }
-
-        tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
     }
 
     func cellViewDidBeginEditing(cellView: TaskCellView) {
@@ -468,21 +438,15 @@ extension TaskListViewController: TaskCellViewDelegate {
     }
 
     func cellViewDidEndEditing(view: TaskCellView) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let item = findItemForCellView(view)?.item else {
             return
         }
-
-        skipNextNotification()
 
         try! item.realm?.write {
             if !view.text.isEmpty {
                 item.text = view.text
             } else {
                 item.realm!.delete(item)
-
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
-                }
             }
         }
 
@@ -500,6 +464,8 @@ extension TaskListViewController: TaskCellViewDelegate {
         })
 
         currentlyEditingCellView = nil
+        
+        self.tableView.reloadData()
     }
 
     private func findItemForCellView(view: NSView) -> (item: Task, index: Int)? {
@@ -548,7 +514,8 @@ private final class PrototypeTaskCellView: TaskCellView {
         }
 
         if widthConstraint == nil {
-            widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: width)
+            widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil,
+                                                 attribute: .NotAnAttribute, multiplier: 1, constant: width)
             addConstraint(widthConstraint!)
         }
 

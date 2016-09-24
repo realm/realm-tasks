@@ -1,0 +1,7 @@
+excluded: Pods
+line_length: 160
+disabled_rules:
+  - force_cast
+  - force_try
+  - function_body_length
+  - todo

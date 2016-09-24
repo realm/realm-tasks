@@ -26,7 +26,7 @@ import RealmSwift
 class RealmTasksTests: XCTestCase {
 
     lazy var realm = try! Realm()
-    var vc: ViewController<Task, TaskList>!
+    var vc: ViewController<Task, TaskList>! // swiftlint:disable:this variable_name
     let window = UIWindow()
 
     override func setUp() {
@@ -62,7 +62,7 @@ class RealmTasksTests: XCTestCase {
         if realm.inWriteTransaction {
             realm.cancelWrite()
         }
-        
+
         if let textView = vc.view.currentFirstResponder as? UITextView {
             textView.delegate = nil
             endEditing()

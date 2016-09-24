@@ -45,7 +45,8 @@ final class CellTextView: UITextView {
 
     func strike(fraction: Double = 1) {
         let mutableAttributedString = attributedText!.mutableCopy() as! NSMutableAttributedString
-        mutableAttributedString.addAttribute(NSStrikethroughStyleAttributeName, value: 2, range: NSMakeRange(0, Int(fraction * Double(mutableAttributedString.length))))
+        let range = NSRange(location: 0, length: Int(fraction * Double(mutableAttributedString.length)))
+        mutableAttributedString.addAttribute(NSStrikethroughStyleAttributeName, value: 2, range: range)
         attributedText = mutableAttributedString.copy() as? NSAttributedString
     }
 
@@ -54,7 +55,8 @@ final class CellTextView: UITextView {
         mutableTypingAttributes.removeValueForKey(NSStrikethroughStyleAttributeName)
         typingAttributes = mutableTypingAttributes
         let mutableAttributedString = attributedText!.mutableCopy() as! NSMutableAttributedString
-        mutableAttributedString.removeAttribute(NSStrikethroughStyleAttributeName, range: NSMakeRange(0, mutableAttributedString.length))
+        let range = NSRange(location: 0, length: mutableAttributedString.length)
+        mutableAttributedString.removeAttribute(NSStrikethroughStyleAttributeName, range: range)
         attributedText = mutableAttributedString.copy() as? NSAttributedString
     }
 }

@@ -18,6 +18,9 @@
  *
  **************************************************************************/
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import Cocoa
 import Cartography
 
@@ -241,6 +244,8 @@ extension TaskCellView: NSGestureRecognizerDelegate {
         return fabs(event.deltaX) > fabs(event.deltaY)
     }
 
+    // FIXME: This could easily be refactored to avoid such a high CC.
+    // swiftlint:disable:next cyclomatic_complexity
     private dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
         let originalDoneIconOffset = iconOffset
         let originalDeleteIconOffset = bounds.width - deleteIconView.bounds.width - iconOffset
@@ -434,7 +439,7 @@ private final class ColorView: NSView {
 
     override func drawRect(dirtyRect: NSRect) {
         backgroundColor.setFill()
-        NSRectFillUsingOperation(dirtyRect, .CompositeSourceOver)
+        NSRectFillUsingOperation(dirtyRect, .SourceOver)
     }
 
 }
@@ -448,7 +453,8 @@ private extension NSTextField {
             unstrike()
         }
 
-        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: NSMakeRange(0, Int(fraction * Double(stringValue.characters.count))))
+        let range = NSRange(location: 0, length: Int(fraction * Double(stringValue.characters.count)))
+        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: range)
     }
 
     func unstrike() {
@@ -457,7 +463,8 @@ private extension NSTextField {
 
     private func setAttribute(name: String, value: AnyObject, range: NSRange? = nil) {
         let mutableAttributedString = NSMutableAttributedString(attributedString: attributedStringValue)
-        mutableAttributedString.addAttribute(name, value: value, range: range ?? NSMakeRange(0, mutableAttributedString.length))
+        let range = range ?? NSRange(location: 0, length: mutableAttributedString.length)
+        mutableAttributedString.addAttribute(name, value: value, range: range)
         attributedStringValue = mutableAttributedString
     }
 
