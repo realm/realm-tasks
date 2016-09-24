@@ -25,26 +25,13 @@ import Cartography
 import RealmSwift
 import UIKit
 
-extension UIView {
-    private func removeAllConstraints() {
-        var view: UIView? = self
-        while let superview = view?.superview {
-            for c in superview.constraints where c.firstItem === self || c.secondItem === self {
-                superview.removeConstraint(c)
-            }
-            view = superview.superview
-        }
-        translatesAutoresizingMaskIntoConstraints = true
-    }
-}
-
-//MARK: Container View Controller Protocol
-enum ViewControllerPosition {
+//MARK: Aux view controller enums
+private enum ViewControllerPosition {
     case Up(ViewControllerType)
     case Down(ViewControllerType)
 }
 
-enum ViewControllerType {
+private enum ViewControllerType {
     case Lists
     case DefaultListTasks
     case Tasks(TaskList)
