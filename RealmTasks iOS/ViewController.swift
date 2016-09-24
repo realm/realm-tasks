@@ -38,6 +38,10 @@ extension UIView {
     }
 }
 
+private enum NavDirection {
+    case Up, Down
+}
+
 private var tableViewBoundsKVOContext = 0
 
 // MARK: View Controller Protocol
@@ -56,12 +60,19 @@ protocol ViewControllerProtocol: UIScrollViewDelegate {
     func removeFromParentViewController()
 }
 
+// MARK: Navigation Protocol
+
+protocol NavigationProtocol {
+    var auxViewController: ViewControllerPosition? {get set}
+    func createAuxController() -> UIViewController?
+}
+
 // MARK: View Controller
 
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
+    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol, NavigationProtocol {
 
     // MARK: Properties
     var items: List<Item> {
@@ -94,41 +105,30 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private let onboardView = OnboardView()
 
     // Top/Bottom View Controllers
-    private let createTopViewController: (() -> (UIViewController))?
+    //private let createTopViewController: (() -> (UIViewController))?
     private var topViewController: UIViewController?
-    private let createBottomViewController: (() -> (UIViewController))?
+    //private let createBottomViewController: (() -> (UIViewController))?
     private var bottomViewController: UIViewController?
 
     // MARK: MTT
     private var listPresenter: ListPresenter<Item, Parent>!
-    private var navigation: ContainerNavigationProtocol!
+    private var navigation: NavigationProtocol!
 
     // MARK: View Lifecycle
 
-    init(navigation navigator: ContainerNavigationProtocol, parent: Parent, colors: [UIColor]) {
-        if Item.self == Task.self {
-            createTopViewController = {
-                ViewController<TaskList, TaskListList>(
-                    navigation: navigator,
-                    parent: try! Realm().objects(TaskListList.self).first!,
-                    colors: UIColor.listColors()
-                )
-            }
-            createBottomViewController = nil
-        } else {
-            createTopViewController = nil
-            createBottomViewController = {
-                ViewController<Task, TaskList>(
-                    navigation: navigator,
-                    parent: try! Realm().objects(TaskList.self).first!,
-                    colors: UIColor.taskColors()
-                )
-            }
-        }
+    init(parent: Parent, colors: [UIColor], navigation: NavigationProtocol! = nil) {
         super.init(nibName: nil, bundle: nil)
 
         listPresenter = ListPresenter(parent: parent, colors: colors)
         listPresenter.viewController = self
+
+        self.navigation = navigation ?? self
+
+        if Item.self == Task.self {
+            self.navigation.auxViewController = .Up(.Lists)
+        } else {
+            self.navigation.auxViewController = .Down(.DefaultListTasks)
+        }
     }
 
     deinit {
@@ -256,9 +256,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         let location = recognizer.locationInView(tableView)
         let cell: TableViewCell<Item>!
         if let indexPath = tableView.indexPathForRowAtPoint(location),
-            typedCell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
+            let typedCell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
             cell = typedCell
-            if createBottomViewController != nil && location.x > tableView.bounds.width / 2 {
+            if case .Down(_) = navigation.auxViewController! where location.x > tableView.bounds.width / 2 {
                 navigateToBottomViewController(cell.item)
                 return
             }
@@ -279,11 +279,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     private func navigateToBottomViewController(item: Item) {
-        bottomViewController = ViewController<Task, TaskList>(
-            navigation: navigation,
-            parent: item as! TaskList,
-            colors: UIColor.taskColors()
-        )
+        guard let list = item as? TaskList else {
+            return
+        }
+        navigation.auxViewController = .Down(.Tasks(list))
+        bottomViewController = navigation.createAuxController()
+
         startMovingToNextViewController(.Down)
         finishMovingToNextViewController(.Down)
     }
@@ -343,10 +344,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
         }
 
-        if distancePulledUp > tableView.rowHeight, let createBottomViewController = createBottomViewController {
+        if case .Down(_) = navigation.auxViewController! where distancePulledUp > tableView.rowHeight {
             if bottomViewController === parentViewController?.childViewControllers.last { return }
+
             if bottomViewController == nil {
-                bottomViewController = createBottomViewController()
+                bottomViewController = navigation.createAuxController()
             }
             startMovingToNextViewController(.Down)
             return
@@ -385,10 +387,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
             placeHolderCell.layer.transform = CATransform3DIdentity
             placeHolderCell.textView.text = "Release to Create Item"
-        } else if let createTopViewController = createTopViewController {
+        } else if case .Up(_) = navigation.auxViewController! {
             if topViewController === parentViewController?.childViewControllers.last { return }
             if topViewController == nil {
-                topViewController = createTopViewController()
+                topViewController = navigation.createAuxController()
             }
             startMovingToNextViewController(.Up)
             placeHolderCell.navHintView.hintText = "Switch to Lists"
@@ -464,5 +466,40 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     func setListTitle(title: String) {
         self.title = title
         parentViewController?.title = title
+    }
+
+    // MARK: ContainerNavigationProtocol methods
+
+    var auxViewController: ViewControllerPosition?
+
+    func createAuxController() -> UIViewController? {
+        let listType: ViewControllerType
+
+        guard let auxViewControllerType = auxViewController else {
+            return nil
+        }
+
+        switch auxViewControllerType {
+        case .Up(let type): listType = type
+        case .Down(let type): listType = type
+        }
+
+        switch listType {
+        case .Lists:
+            return ViewController<TaskList, TaskListList>(
+                parent: try! Realm().objects(TaskListList.self).first!,
+                colors: UIColor.listColors()
+            )
+        case .DefaultListTasks:
+            return ViewController<Task, TaskList>(
+                parent: try! Realm().objects(TaskList.self).first!,
+                colors: UIColor.taskColors()
+            )
+        case .Tasks(let list):
+            return ViewController<Task, TaskList>(
+                parent: list,
+                colors: UIColor.taskColors()
+            )
+        }
     }
 }
