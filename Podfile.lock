@@ -1,26 +1,26 @@
 PODS:
   - Cartography (0.7.0)
-  - Realm (1.1.0-0):
-    - Realm/Headers (= 1.1.0-0)
-  - Realm/Headers (1.1.0-0)
-  - RealmSwift (1.1.0-0):
-    - Realm (= 1.1.0-0)
+  - Realm (1.1.0-2):
+    - Realm/Headers (= 1.1.0-2)
+  - Realm/Headers (1.1.0-2)
+  - RealmSwift (1.1.0-2):
+    - Realm (= 1.1.0-2)
 
 DEPENDENCIES:
   - Cartography (from `https://github.com/robb/Cartography.git`, branch `master`)
-  - Realm (from `git@github.com:realm/realm-cocoa-private.git`, branch `sync`)
-  - RealmSwift (from `git@github.com:realm/realm-cocoa-private.git`, branch `sync`)
+  - Realm (from `git@github.com:realm/realm-cocoa-private.git`, branch `v1.1.0-2`)
+  - RealmSwift (from `git@github.com:realm/realm-cocoa-private.git`, branch `v1.1.0-2`)
 
 EXTERNAL SOURCES:
   Cartography:
     :branch: master
     :git: https://github.com/robb/Cartography.git
   Realm:
-    :branch: sync
+    :branch: v1.1.0-2
     :git: git@github.com:realm/realm-cocoa-private.git
     :submodules: true
   RealmSwift:
-    :branch: sync
+    :branch: v1.1.0-2
     :git: git@github.com:realm/realm-cocoa-private.git
     :submodules: true
 
@@ -29,19 +29,19 @@ CHECKOUT OPTIONS:
     :commit: ecdeffda56a6ce9dc8bb571b5455a6395d403b03
     :git: https://github.com/robb/Cartography.git
   Realm:
-    :commit: 51130cf16b9a3b0884b2971d8bfcded361229357
+    :commit: 6226ef2865a434f0d829fad3761d0a358408001c
     :git: git@github.com:realm/realm-cocoa-private.git
     :submodules: true
   RealmSwift:
-    :commit: 51130cf16b9a3b0884b2971d8bfcded361229357
+    :commit: 6226ef2865a434f0d829fad3761d0a358408001c
     :git: git@github.com:realm/realm-cocoa-private.git
     :submodules: true
 
 SPEC CHECKSUMS:
   Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
-  Realm: d4bb137eb73efe04454025bcd095fc2f127d14af
-  RealmSwift: 2d58d493feb51af99cfb8e0f33689978f5995904
+  Realm: 720e2ce605fa338e2309c807c5f2bf1a34c0c601
+  RealmSwift: 39753c46ee0982224c8f13e9028e7b019ecebbb1
 
-PODFILE CHECKSUM: 3552e7dd4dd020d3a7f4dae277a27130386c91f0
+PODFILE CHECKSUM: 83c055883713df625c471ecb766baed524dc921b
 
 COCOAPODS: 1.0.1

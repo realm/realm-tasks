@@ -7,8 +7,8 @@ abstract_target 'RealmTasks' do
     # pod 'RealmSwift', '1.0.2-15'
 
     # podspec using binaries for core+sync
-    pod 'Realm', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'sync', submodules: true
-    pod 'RealmSwift', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'sync', submodules: true
+    pod 'Realm', git: 'git@github.com:realm/realm-cocoa-private.git', branch: ‘v1.1.0-2’, submodules: true
+    pod 'RealmSwift', git: 'git@github.com:realm/realm-cocoa-private.git', branch: ‘v1.1.0-2’, submodules: true
     
     pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
     
