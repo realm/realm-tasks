@@ -42,6 +42,9 @@ def embed_realm_frameworks(folder, platform_name)
   target = @project.targets.find { |target| target.to_s == "RealmTasks #{platform_name}" }
   frameworks_build_phase = target.build_phases.find { |build_phase| build_phase.to_s == 'FrameworksBuildPhase' }
 
+  # Remove CocoaPods Manifest check since we're removing the Podfile
+  target.build_phases.reject! { |build_phase| build_phase.to_s == '[CP] Check Pods Manifest.lock' }
+
   # Add new "Embed Frameworks" build phase to target
   embed_frameworks_build_phase = @project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
   embed_frameworks_build_phase.name = 'Embed Frameworks'
