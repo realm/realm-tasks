@@ -73,5 +73,4 @@ class NavHintView: UIView {
             hintImageView.right == textLabel.left - 10
         }
     }
-
 }
