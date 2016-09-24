@@ -162,19 +162,12 @@
 		225201931D3DD648009E45FA /* RealmTasks iOS */ = {
 			isa = PBXGroup;
 			children = (
-				22FEFEBB1D91789B00523E21 /* RealmTasks.entitlements */,
+				9CDBACEE1D9688370089DA59 /* Assets */,
 				225201941D3DD648009E45FA /* AppDelegate.swift */,
-				2252019C1D3DD648009E45FA /* CellTextView.swift */,
-				E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */,
-				225201981D3DD648009E45FA /* Info.plist */,
-				225201951D3DD648009E45FA /* iOS.xcassets */,
-				225201961D3DD648009E45FA /* LaunchScreen.storyboard */,
 				E89CE6821D409D0400BB4521 /* LogInViewController */,
-				220C33491D3DE1F40043A885 /* OnboardView.swift */,
-				22092D851D5C5BCB0016E757 /* NavHintView.swift */,
-				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
+				E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */,
+				9CDBACED1D9687F10089DA59 /* AuxViews */,
 				2252019D1D3DD648009E45FA /* ViewController.swift */,
-				9CDBACE91D96809A0089DA59 /* UIView+constraints.swift */,
 				9C24AA031D8FED0800192CE3 /* ViewController */,
 			);
 			path = "RealmTasks iOS";
@@ -189,6 +182,29 @@
 				9C24AA0A1D8FFC0400192CE3 /* TablePresenter.swift */,
 			);
 			name = ViewController;
+			sourceTree = "<group>";
+		};
+		9CDBACED1D9687F10089DA59 /* AuxViews */ = {
+			isa = PBXGroup;
+			children = (
+				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
+				2252019C1D3DD648009E45FA /* CellTextView.swift */,
+				220C33491D3DE1F40043A885 /* OnboardView.swift */,
+				22092D851D5C5BCB0016E757 /* NavHintView.swift */,
+				9CDBACE91D96809A0089DA59 /* UIView+constraints.swift */,
+			);
+			name = AuxViews;
+			sourceTree = "<group>";
+		};
+		9CDBACEE1D9688370089DA59 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				225201961D3DD648009E45FA /* LaunchScreen.storyboard */,
+				22FEFEBB1D91789B00523E21 /* RealmTasks.entitlements */,
+				225201981D3DD648009E45FA /* Info.plist */,
+				225201951D3DD648009E45FA /* iOS.xcassets */,
+			);
+			name = Assets;
 			sourceTree = "<group>";
 		};
 		C23EB01E1D46329400D3E0AC /* RealmTasks macOS */ = {
