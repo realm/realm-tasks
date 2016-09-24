@@ -41,35 +41,10 @@ private enum NavDirection {
     case Up, Down
 }
 
-// MARK: View Controller Protocol
-protocol ViewControllerProtocol: UIScrollViewDelegate {
-    var tableView: UITableView {get}
-    var tableViewContentView: UIView {get}
-    var view: UIView! {get}
-
-    func didUpdateList()
-
-    func setTopConstraintTo(constant constant: CGFloat)
-    func setPlaceholderAlpha(alpha: CGFloat)
-
-    func setListTitle(title: String)
-
-    func removeFromParentViewController()
-}
-
-// MARK: Navigation Protocol
-
-protocol AuxViewControllerProtocol {
-    var auxViewController: ViewControllerPosition? {get set}
-    func createAuxController() -> UIViewController?
-}
-
-// MARK: View Controller
-
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol, AuxViewControllerProtocol {
+    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
 
     // MARK: Properties
     var items: List<Item> {
@@ -402,9 +377,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: ContainerNavigationProtocol
 
-    var auxViewController: ViewControllerPosition?
+    private var auxViewController: ViewControllerPosition?
 
-    func createAuxController() -> UIViewController? {
+    private func createAuxController() -> UIViewController? {
+
         let listType: ViewControllerType
 
         guard let auxViewControllerType = auxViewController else {
