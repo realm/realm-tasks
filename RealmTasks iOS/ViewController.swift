@@ -73,7 +73,14 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }()
 
     // Onboard view
-    private let onboardView = OnboardView()
+    private lazy var onboardView: OnboardView = {
+        let onboardView = OnboardView()
+        if onboardView.superview == nil {
+            self.tableView.addSubview(onboardView)
+            onboardView.center = self.tableView.center
+        }
+        return onboardView
+    }()
 
     // Top/Bottom View Controllers
     private var topViewController: UIViewController?
@@ -103,19 +110,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         setupGestureRecognizers()
     }
 
-    // MARK: UI
-
-    private func setupUI() {
-        setupTableView()
-        toggleOnboardView()
-    }
-
-    private func setupTableView() {
-        listPresenter.tablePresenter.setupTableView(inView: view, topConstraint: &topConstraint, listTitle: title)
-        tableView.dataSource = listPresenter.tablePresenter
-        tableView.delegate = listPresenter.tablePresenter
-    }
-
     override func didMoveToParentViewController(parent: UIViewController?) {
         guard parent == nil else { // we're being removed from our parent controller
             return
@@ -127,21 +121,17 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
     }
 
-    private func toggleOnboardView(animated animated: Bool = false) {
-        if onboardView.superview == nil {
-            tableView.addSubview(onboardView)
-            onboardView.center = tableView.center
-        }
+    // MARK: UI
 
-        func updateAlpha() {
-            onboardView.alpha = items.isEmpty ? 1 : 0
-        }
+    private func setupUI() {
+        setupTableView()
+        onboardView.toggle(isVisible: items.isEmpty)
+    }
 
-        if animated {
-            UIView.animateWithDuration(0.3, animations: updateAlpha)
-        } else {
-            updateAlpha()
-        }
+    private func setupTableView() {
+        listPresenter.tablePresenter.setupTableView(inView: view, topConstraint: &topConstraint, listTitle: title)
+        tableView.dataSource = listPresenter.tablePresenter
+        tableView.delegate = listPresenter.tablePresenter
     }
 
     // MARK: Gesture Recognizers
@@ -175,7 +165,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
             tableView.reloadData()
-            toggleOnboardView(animated: true)
+            onboardView.toggle(animated: true, isVisible: items.isEmpty)
             cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
         }
         let textView = cell.textView
@@ -359,7 +349,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     func didUpdateList() {
         listPresenter.tablePresenter.updateColors()
         tableView.reloadData()
-        toggleOnboardView()
+        onboardView.toggle(isVisible: items.isEmpty)
     }
 
     func setTopConstraintTo(constant constant: CGFloat) {
