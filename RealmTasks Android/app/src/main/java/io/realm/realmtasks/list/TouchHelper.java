@@ -539,7 +539,7 @@ public class TouchHelper {
                 final int top = viewHolder.itemView.getTop() + textView.getTop();
                 boolean isHit = checkHit(textView, motionEvent.getX(), motionEvent.getY(), left, top);
                 if (currentEditing == viewHolder) {
-                    if (isHit) {
+                    if (motionEvent.getX() < viewHolder.itemView.getWidth() / 2) {
                         return false;
                     } else {
                         doEndOfEditing();
