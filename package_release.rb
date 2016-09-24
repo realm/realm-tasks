@@ -76,5 +76,5 @@ embed_realm_frameworks('osx', 'macOS')
 # 4. Build RealmTasks macOS
 ################################################################
 
-`xcodebuild -workspace RealmTasks.xcworkspace -scheme "RealmTasks macOS" -derivedDataPath 'build' DEVELOPMENT_TEAM=QX5CR2FTN2 clean build`
+`xcodebuild -workspace RealmTasks.xcworkspace -scheme "RealmTasks macOS" -derivedDataPath 'build' DEVELOPMENT_TEAM=QX5CR2FTN2 clean build -configuration Debug PROVISIONING_PROFILE=42568216-dcbb-4f07-b5ef-cda9ddfaa31e`
 `mv "build/Build/Products/Debug/RealmTasks.app" .`
