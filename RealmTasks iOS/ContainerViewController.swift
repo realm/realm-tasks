@@ -22,18 +22,6 @@ import Cartography
 import RealmSwift
 import UIKit
 
-//MARK: Container View Controller Protocol
-enum ViewControllerPosition {
-    case Up(ViewControllerType)
-    case Down(ViewControllerType)
-}
-
-enum ViewControllerType {
-    case Lists
-    case DefaultListTasks
-    case Tasks(TaskList)
-}
-
 //MARK: Container View Controller
 
 class ContainerViewController: UIViewController {
