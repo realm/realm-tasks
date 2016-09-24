@@ -23,6 +23,8 @@ import RealmSwift
 import UIKit
 import Cartography
 
+private var tableViewBoundsKVOContext = 0
+
 class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
@@ -42,6 +44,52 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
         self.parent = parent
         self.colors = colors
     }
+
+    deinit {
+        viewController.tableView.removeObserver(self, forKeyPath: "bounds")
+    }
+
+    // MARK: Setup
+
+    func setupTableView(inView view: UIView, inout topConstraint: NSLayoutConstraint?, listTitle title: String?) {
+        let tableView = viewController.tableView
+        let tableViewContentView = viewController.tableViewContentView
+
+        view.addSubview(tableView)
+        constrain(tableView) { tableView in
+            topConstraint = (tableView.top == tableView.superview!.top)
+            tableView.right == tableView.superview!.right
+            tableView.bottom == tableView.superview!.bottom
+            tableView.left == tableView.superview!.left
+        }
+        tableView.registerClass(TableViewCell<Parent.Item>.self, forCellReuseIdentifier: "cell")
+        tableView.separatorStyle = .None
+        tableView.backgroundColor = .blackColor()
+        tableView.rowHeight = 54
+        tableView.contentInset = UIEdgeInsets(top: (title != nil) ? 41 : 20, left: 0, bottom: 54, right: 0)
+        tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
+        tableView.showsVerticalScrollIndicator = false
+
+        view.addSubview(tableViewContentView)
+        tableViewContentView.hidden = true
+
+        tableView.addObserver(self, forKeyPath: "bounds", options: .New, context: &tableViewBoundsKVOContext)
+    }
+
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        let tableView = viewController.tableView
+        let tableViewContentView = viewController.tableViewContentView
+        let view = tableView.superview!
+
+        if context == &tableViewBoundsKVOContext {
+            let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
+            tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
+        } else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
+
+
 
     // MARK: UITableViewDataSource
 

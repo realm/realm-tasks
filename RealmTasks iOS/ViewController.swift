@@ -54,8 +54,6 @@ private enum NavDirection {
     case Up, Down
 }
 
-private var tableViewBoundsKVOContext = 0
-
 // MARK: View Controller Protocol
 protocol ViewControllerProtocol: UIScrollViewDelegate {
     var tableView: UITableView {get}
@@ -143,7 +141,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     deinit {
-        tableView.removeObserver(self, forKeyPath: "bounds")
         notificationToken?.stop()
     }
 
@@ -162,35 +159,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     private func setupTableView() {
-        view.addSubview(tableView)
-        constrain(tableView) { tableView in
-            topConstraint = (tableView.top == tableView.superview!.top)
-            tableView.right == tableView.superview!.right
-            tableView.bottom == tableView.superview!.bottom
-            tableView.left == tableView.superview!.left
-        }
+        listPresenter.tablePresenter.setupTableView(inView: view, topConstraint: &topConstraint, listTitle: title)
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
-        tableView.registerClass(TableViewCell<Item>.self, forCellReuseIdentifier: "cell")
-        tableView.separatorStyle = .None
-        tableView.backgroundColor = .blackColor()
-        tableView.rowHeight = 54
-        tableView.contentInset = UIEdgeInsets(top: (title != nil) ? 41 : 20, left: 0, bottom: 54, right: 0)
-        tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
-        tableView.showsVerticalScrollIndicator = false
-
-        view.addSubview(tableViewContentView)
-        tableViewContentView.hidden = true
-        tableView.addObserver(self, forKeyPath: "bounds", options: .New, context: &tableViewBoundsKVOContext)
-    }
-
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        if context == &tableViewBoundsKVOContext {
-            let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
-            tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
-        } else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-        }
     }
 
     override func didMoveToParentViewController(parent: UIViewController?) {
