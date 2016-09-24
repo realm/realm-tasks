@@ -22,6 +22,8 @@ import android.util.Log;
 import io.realm.Realm;
 import io.realm.log.AndroidLogger;
 import io.realm.log.RealmLog;
+import io.realm.realmtasks.model.TaskList;
+import io.realm.realmtasks.model.TaskListList;
 
 public class RealmTasksApplication extends Application {
 
@@ -33,5 +35,23 @@ public class RealmTasksApplication extends Application {
         super.onCreate();
         Realm.init(this);
         RealmLog.add(new AndroidLogger(Log.VERBOSE));
+        populateDefaultList();
+    }
+
+    private void populateDefaultList() {
+        final Realm realm = Realm.getDefaultInstance();
+        if (realm.isEmpty()) {
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                  final TaskListList taskListList = realm.createObject(TaskListList.class);
+                  final TaskList taskList = new TaskList();
+                  taskList.setId(TaskList.DEFAULT_ID);
+                  taskList.setText(TaskList.DEFAULT_LIST_NAME);
+                  taskListList.getItems().add(taskList);
+                }
+            });
+        }
+        realm.close();
     }
 }
