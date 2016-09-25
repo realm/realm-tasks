@@ -37,12 +37,14 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-        final Task taskList = items.get(position);
-        final TextView text = itemViewHolder.getText();
-        text.setText(taskList.getText());
-        narrowRightMargin(text);
-        narrowRightMargin(itemViewHolder.getEditText());
-        itemViewHolder.setCompleted(taskList.isCompleted());
+        final Task task = items.get(position);
+        if (task.isValid()) {
+            final TextView text = itemViewHolder.getText();
+            text.setText(task.getText());
+            narrowRightMargin(text);
+            narrowRightMargin(itemViewHolder.getEditText());
+            itemViewHolder.setCompleted(task.isCompleted());
+        }
     }
 
     private void narrowRightMargin(View view) {

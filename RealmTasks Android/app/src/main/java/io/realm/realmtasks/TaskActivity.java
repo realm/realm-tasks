@@ -32,7 +32,7 @@ import io.realm.realmtasks.model.TaskList;
 
 public class TaskActivity extends AppCompatActivity {
 
-    public static final String EXTRA_ID = "extra.id";
+    public static final String EXTRA_LIST_ID = "extra.list_id";
 
     private Realm realm;
     private RecyclerView recyclerView;
@@ -47,10 +47,10 @@ public class TaskActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final Intent intent = getIntent();
-        if (!intent.hasExtra(EXTRA_ID)) {
-            throw new IllegalArgumentException(EXTRA_ID + " required");
+        if (!intent.hasExtra(EXTRA_LIST_ID)) {
+            throw new IllegalArgumentException(EXTRA_LIST_ID + " required");
         }
-        id = intent.getStringExtra(EXTRA_ID);
+        id = intent.getStringExtra(EXTRA_LIST_ID);
     }
 
     @Override
