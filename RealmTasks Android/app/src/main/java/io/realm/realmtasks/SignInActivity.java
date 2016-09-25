@@ -21,6 +21,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -39,6 +40,7 @@ import android.widget.Toast;
 import io.realm.Credentials;
 import io.realm.ObjectServerError;
 import io.realm.User;
+import io.realm.realmtasks.model.TaskList;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -89,7 +91,10 @@ public class SignInActivity extends AppCompatActivity {
 
     private void loginComplete(User user) {
         UserManager.setActiveUser(user);
-        startActivity(new Intent(this, TaskListActivity.class));
+        Intent listActivity = new Intent(this, TaskListActivity.class);
+        Intent tasksActivity = new Intent(this, TaskActivity.class);
+        tasksActivity.putExtra(TaskActivity.EXTRA_LIST_ID, RealmTasksApplication.DEFAULT_LIST_ID);
+        startActivities(new Intent[] { listActivity, tasksActivity} );
         finish();
     }
 

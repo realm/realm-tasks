@@ -144,24 +144,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registrationComplete(User user) {
         UserManager.setActiveUser(user);
-        final Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                final TaskListList taskListList = realm.createObject(TaskListList.class, 1);
-                final TaskList taskList = new TaskList();
-                taskList.setId(TaskList.DEFAULT_ID);
-                taskList.setText(TaskList.DEFAULT_LIST_NAME);
-                taskListList.getItems().add(taskList);
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                realm.close();
-                startActivity(new Intent(RegisterActivity.this, TaskListActivity.class));
-                finish();
-            }
-        });
+        Intent listActivity = new Intent(this, TaskListActivity.class);
+        Intent tasksActivity = new Intent(this, TaskActivity.class);
+        tasksActivity.putExtra(TaskActivity.EXTRA_LIST_ID, RealmTasksApplication.DEFAULT_LIST_ID);
+        startActivities(new Intent[] { listActivity, tasksActivity} );
+        finish();
     }
 
     private void showProgress(final boolean show) {

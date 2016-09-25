@@ -10,11 +10,11 @@
                 <application id="Zvz-2S-6iE" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="9fd-jl-Hxw">
                         <items>
-                            <menuItem title="Realm Tasks" id="806-7U-5xb">
+                            <menuItem title="RealmTasks" id="806-7U-5xb">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Realm Tasks" systemMenu="apple" id="MXj-sn-qvF">
+                                <menu key="submenu" title="RealmTasks" systemMenu="apple" id="MXj-sn-qvF">
                                     <items>
-                                        <menuItem title="About Realm Tasks" id="bB8-Il-uhO">
+                                        <menuItem title="About RealmTasks" id="bB8-Il-uhO">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="VaM-de-JXt" id="NVj-O8-hDT"/>
@@ -28,7 +28,7 @@
                                             <menu key="submenu" title="Services" systemMenu="services" id="Jqf-Ae-TzX"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="bha-eU-LHt"/>
-                                        <menuItem title="Hide Realm Tasks" keyEquivalent="h" id="kAU-ni-qHH">
+                                        <menuItem title="Hide RealmTasks" keyEquivalent="h" id="kAU-ni-qHH">
                                             <connections>
                                                 <action selector="hide:" target="VaM-de-JXt" id="hbU-Y7-vi6"/>
                                             </connections>
@@ -46,7 +46,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="q3u-wr-TN1"/>
-                                        <menuItem title="Quit Realm Tasks" keyEquivalent="q" id="Gx4-Qq-IWX">
+                                        <menuItem title="Quit RealmTasks" keyEquivalent="q" id="Gx4-Qq-IWX">
                                             <connections>
                                                 <action selector="terminate:" target="VaM-de-JXt" id="46P-i3-6xB"/>
                                             </connections>
@@ -381,7 +381,7 @@
         <scene sceneID="Eh9-Oq-vpp">
             <objects>
                 <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="CrP-T3-Pfk" sceneMemberID="viewController">
-                    <window key="window" title="Realm Tasks" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="UPX-nY-FVZ">
+                    <window key="window" title="RealmTasks" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="UPX-nY-FVZ">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>

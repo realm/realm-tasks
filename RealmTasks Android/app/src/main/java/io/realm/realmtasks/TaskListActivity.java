@@ -27,7 +27,7 @@ import android.view.MenuItem;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-import io.realm.realmtasks.list.RealmTasksViewHolder;
+import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskListAdapter;
 import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
@@ -57,7 +57,7 @@ public class TaskListActivity extends AppCompatActivity {
             @Override
             public void onChange(RealmResults<TaskListList> results) {
                 if (results.size() > 0 && adapter == null) {
-                    adapter = new TaskListAdapter(TaskListActivity.this, list.first().getItems());
+                    adapter = new TaskListAdapter(TaskListActivity.this, results.first().getItems());
                     touchHelper = new TouchHelper(new Callback(), adapter);
                     touchHelper.attachToRecyclerView(recyclerView);
                 }
@@ -69,9 +69,7 @@ public class TaskListActivity extends AppCompatActivity {
     protected void onStop() {
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
-            recyclerView.setAdapter(null);
             adapter = null;
-            touchHelper = null;
         }
         realm.close();
         super.onStop();
@@ -101,7 +99,7 @@ public class TaskListActivity extends AppCompatActivity {
     private class Callback implements TouchHelper.Callback {
 
         @Override
-        public void onMoved(RecyclerView recyclerView, RealmTasksViewHolder from, RealmTasksViewHolder to) {
+        public void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
             adapter.onItemMoved(fromPosition, toPosition);
@@ -109,31 +107,36 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onArchived(RealmTasksViewHolder viewHolder) {
+        public void onArchived(ItemViewHolder viewHolder) {
             adapter.onItemArchived(viewHolder.getAdapterPosition());
             adapter.notifyDataSetChanged();
         }
 
         @Override
-        public void onDismissed(RealmTasksViewHolder viewHolder) {
+        public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
             adapter.notifyItemRemoved(position);
         }
 
         @Override
-        public boolean onClicked(RealmTasksViewHolder viewHolder) {
+        public boolean canDismissed() {
+            return false;
+        }
+
+        @Override
+        public boolean onClicked(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             final TaskList taskList = adapter.getItems().get(position);
             final String id = taskList.getId();
             final Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
-            intent.putExtra("id", id);
+            intent.putExtra(TaskActivity.EXTRA_LIST_ID, id);
             TaskListActivity.this.startActivity(intent);
             return true;
         }
 
         @Override
-        public void onChanged(RealmTasksViewHolder viewHolder) {
+        public void onChanged(ItemViewHolder viewHolder) {
             adapter.onItemChanged(viewHolder);
             adapter.notifyItemChanged(viewHolder.getAdapterPosition());
         }
@@ -141,7 +144,7 @@ public class TaskListActivity extends AppCompatActivity {
         @Override
         public void onAdded() {
             adapter.onItemAdded();
-            adapter.notifyDataSetChanged();
+            adapter.notifyItemInserted(0);
         }
 
         @Override
@@ -153,8 +156,7 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onExited() {
-            finish();
+        public void onExit() {
         }
     }
 }

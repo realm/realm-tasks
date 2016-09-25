@@ -34,7 +34,7 @@ protocol CellPresentable {
 
 final class TaskListList: Object, ListPresentable {
     let items = List<TaskList>()
-    dynamic var id = 0
+    dynamic var id = 0 // swiftlint:disable:this variable_name
 
     override static func primaryKey() -> String? {
         return "id"
@@ -44,7 +44,7 @@ final class TaskListList: Object, ListPresentable {
 final class TaskList: Object, CellPresentable, ListPresentable {
     dynamic var text = ""
     dynamic var completed = false
-    dynamic var id = NSUUID().UUIDString
+    dynamic var id = NSUUID().UUIDString // swiftlint:disable:this variable_name
     let items = List<Task>()
 
     var isCompletable: Bool {
@@ -65,22 +65,5 @@ final class Task: Object, CellPresentable {
     convenience init(text: String) {
         self.init()
         self.text = text
-    }
-}
-
-final class PersistedUser: Object {
-    dynamic var identity = ""
-    dynamic var refreshToken = ""
-    dynamic var authenticationServer = ""
-
-    var user: User {
-        return User(identity: identity, refreshToken: refreshToken, authServerURL: NSURL(string: authenticationServer)!)
-    }
-
-    convenience init(user: User) {
-        self.init()
-        identity = user.identity
-        refreshToken = user.refreshToken()
-        authenticationServer = user.authenticationServer!.absoluteString
     }
 }

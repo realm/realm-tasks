@@ -25,14 +25,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.realmtasks.list.RealmTasksViewHolder;
+import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
-import io.realm.realmtasks.model.Task;
 import io.realm.realmtasks.model.TaskList;
 
 public class TaskActivity extends AppCompatActivity {
+
+    public static final String EXTRA_LIST_ID = "extra.list_id";
 
     private Realm realm;
     private RecyclerView recyclerView;
@@ -47,28 +47,33 @@ public class TaskActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final Intent intent = getIntent();
-        id = intent.getStringExtra("id");
+        if (!intent.hasExtra(EXTRA_LIST_ID)) {
+            throw new IllegalArgumentException(EXTRA_LIST_ID + " required");
+        }
+        id = intent.getStringExtra(EXTRA_LIST_ID);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         realm = Realm.getDefaultInstance();
-        RealmList<Task> items;
-        if (id == null || id.isEmpty()) {
-            items = realm.where(TaskList.class).findFirst().getItems();
+        TaskList list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findFirst();
+        if (list.isValid()) {
+            setTitle(list.getText());
+            adapter = new TaskAdapter(this, list.getItems());
+            touchHelper = new TouchHelper(new Callback(), adapter);
+            touchHelper.attachToRecyclerView(recyclerView);
         } else {
-            items = realm.where(TaskList.class).equalTo("id", id).findFirst().getItems();
+            setTitle(getString(R.string.title_deleted));
+            // TODO Handle that list was deleted
         }
-        adapter = new TaskAdapter(this, items);
-        touchHelper = new TouchHelper(new Callback(), adapter);
-        touchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
     protected void onStop() {
-        touchHelper.attachToRecyclerView(null);
-        recyclerView.setAdapter(null);
+        if (adapter != null) {
+            touchHelper.attachToRecyclerView(null);
+        }
         realm.close();
         super.onStop();
     }
@@ -98,7 +103,7 @@ public class TaskActivity extends AppCompatActivity {
     private class Callback implements TouchHelper.Callback {
 
         @Override
-        public void onMoved(RecyclerView recyclerView, RealmTasksViewHolder from, RealmTasksViewHolder to) {
+        public void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
             adapter.onItemMoved(fromPosition, toPosition);
@@ -106,25 +111,30 @@ public class TaskActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onArchived(RealmTasksViewHolder viewHolder) {
+        public void onArchived(ItemViewHolder viewHolder) {
             adapter.onItemArchived(viewHolder.getAdapterPosition());
             adapter.notifyDataSetChanged();
         }
 
         @Override
-        public void onDismissed(RealmTasksViewHolder viewHolder) {
+        public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
             adapter.notifyItemRemoved(position);
         }
 
         @Override
-        public boolean onClicked(RealmTasksViewHolder viewHolder) {
+        public boolean canDismissed() {
+            return true;
+        }
+
+        @Override
+        public boolean onClicked(ItemViewHolder viewHolder) {
             return false;
         }
 
         @Override
-        public void onChanged(RealmTasksViewHolder viewHolder) {
+        public void onChanged(ItemViewHolder viewHolder) {
             adapter.onItemChanged(viewHolder);
             adapter.notifyItemChanged(viewHolder.getAdapterPosition());
         }
@@ -132,6 +142,7 @@ public class TaskActivity extends AppCompatActivity {
         @Override
         public void onAdded() {
             adapter.onItemAdded();
+            adapter.notifyItemInserted(0);
         }
 
         @Override
@@ -143,8 +154,9 @@ public class TaskActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onExited() {
+        public void onExit() {
             finish();
+            realm.close();
         }
     }
 }

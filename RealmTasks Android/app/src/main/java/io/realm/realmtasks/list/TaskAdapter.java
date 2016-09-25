@@ -18,6 +18,9 @@ package io.realm.realmtasks.list;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
@@ -33,10 +36,20 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        final RealmTasksViewHolder realmTasksViewHolder = (RealmTasksViewHolder) holder;
-        final Task taskList = items.get(position);
-        realmTasksViewHolder.getText().setText(taskList.getText());
-        realmTasksViewHolder.setStrike(taskList.isCompleted());
+        final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+        final Task task = items.get(position);
+        if (task.isValid()) {
+            final TextView text = itemViewHolder.getText();
+            text.setText(task.getText());
+            narrowRightMargin(text);
+            narrowRightMargin(itemViewHolder.getEditText());
+            itemViewHolder.setCompleted(task.isCompleted());
+        }
+    }
+
+    private void narrowRightMargin(View view) {
+        final RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+        layoutParams.rightMargin = (int) (layoutParams.rightMargin * 0.2);
     }
 
     @Override
@@ -46,7 +59,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
             @Override
             public void execute(Realm realm) {
                 final Task task = realm.createObject(Task.class);
-                task.setText("New task");
+                task.setText("");
                 items.add(0, task);
             }
         });
@@ -69,7 +82,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
     public void onItemArchived(final int position) {
         final Task task = items.get(position);
         final Realm realm = Realm.getDefaultInstance();
-        final int count = (int) ((RealmList<Task>) items).where().equalTo("completed", false).count();
+        final int count = (int) ((RealmList<Task>) items).where().equalTo(Task.FIELD_COMPLETED, false).count();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -114,11 +127,11 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
 
     @Override
     public int generatedRowColor(int row) {
-        return RealmTasksViewHolder.ColorHelper.getColor(RealmTasksViewHolder.ColorHelper.taskColors, row, getItemCount());
+        return ItemViewHolder.ColorHelper.getColor(ItemViewHolder.ColorHelper.taskColors, row, getItemCount());
     }
 
     @Override
-    public void onItemChanged(final RealmTasksViewHolder viewHolder) {
+    public void onItemChanged(final ItemViewHolder viewHolder) {
         final Realm realm = Realm.getDefaultInstance();
         final int position = viewHolder.getAdapterPosition();
         if (position < 0) {

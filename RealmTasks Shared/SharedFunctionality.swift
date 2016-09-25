@@ -25,10 +25,6 @@ import RealmSwift
 
 private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here. https://github.com/realm/realm-sync/issues/694
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
-private let userRealmConfiguration = Realm.Configuration(
-    fileURL: Realm.Configuration.defaultConfiguration.fileURL?.URLByDeletingLastPathComponent?.URLByAppendingPathComponent("user.realm"),
-    objectTypes: [PersistedUser.self]
-)
 
 private func setDefaultRealmConfigurationWithUser(user: User) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
@@ -49,19 +45,24 @@ private func setDefaultRealmConfigurationWithUser(user: User) {
     }
 
     // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
-    deduplicationNotificationToken = realm.objects(TaskListList.self).first!.items.addNotificationBlock { _ in
+    deduplicationNotificationToken = realm.addNotificationBlock { _, realm in
+        guard realm.objects(TaskListList.self).first!.items.count > 1 else {
+            return
+        }
         // Deduplicate
-        let items = try! Realm().objects(TaskListList.self).first!.items
-        let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
-        guard listReferenceIDs.count > 1 else { return }
+        dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
+            let items = try! Realm().objects(TaskListList.self).first!.items
+            guard items.count > 1 else { return }
 
-        try! items.realm!.write {
-            for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
-                let id = id as! String
-                let indexesToRemove = items.enumerate().flatMap { index, element in
-                    return element.id == id ? index : nil
+            try! items.realm!.write {
+                let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
+                for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
+                    let id = id as! String
+                    let indexesToRemove = items.enumerate().flatMap { index, element in
+                        return element.id == id ? index : nil
+                    }
+                    indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
                 }
-                indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
             }
         }
     }
@@ -71,8 +72,7 @@ private func setDefaultRealmConfigurationWithUser(user: User) {
 
 // returns true on success
 func configureDefaultRealm() -> Bool {
-    if let userRealm = try? Realm(configuration: userRealmConfiguration),
-        let user = userRealm.objects(PersistedUser.self).first?.user {
+    if let user = User.all().first {
         setDefaultRealmConfigurationWithUser(user)
         return true
     }
@@ -80,16 +80,9 @@ func configureDefaultRealm() -> Bool {
 }
 
 func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
-    User.authenticateWithCredential(.UsernamePassword(username: username, password: password),
-                                    actions: register ? [.CreateAccount] : [],
+    User.authenticateWithCredential(.usernamePassword(username, password: password, actions: register ? [.CreateAccount] : []),
                                     authServerURL: Constants.syncAuthURL) { user, error in
         if let user = user {
-            dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-                let userRealm = try! Realm(configuration: userRealmConfiguration)
-                try! userRealm.write {
-                    userRealm.add(PersistedUser(user: user))
-                }
-            }
             setDefaultRealmConfigurationWithUser(user)
         }
         callback(error)

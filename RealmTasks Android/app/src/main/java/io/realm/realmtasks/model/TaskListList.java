@@ -21,10 +21,9 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class TaskListList extends RealmObject {
-
-    private RealmList<TaskList> items;
     @PrimaryKey
-    private Integer id;
+    private long id;
+    private RealmList<TaskList> items;
 
     public RealmList<TaskList> getItems() {
         return items;
@@ -34,7 +33,7 @@ public class TaskListList extends RealmObject {
         this.items = items;
     }
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 }

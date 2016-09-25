@@ -18,6 +18,9 @@
  *
  **************************************************************************/
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import AudioToolbox
 import Cartography
 import RealmSwift
@@ -43,6 +46,8 @@ private let iconWidth: CGFloat = 60
 
 // MARK: Table View Cell
 
+// FIXME: This class should be split up.
+// swiftlint:disable type_body_length
 final class TableViewCell<Item: Object where Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
 
     // MARK: Properties
@@ -69,11 +74,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     let navHintView = NavHintView()
 
     // Callbacks
-    var itemCompleted: ((Item) -> ())? = nil
-    var itemDeleted: ((Item) -> ())? = nil
-    var cellDidBeginEditing: ((TableViewCell) -> ())? = nil
-    var cellDidEndEditing: ((TableViewCell) -> ())? = nil
-    var cellDidChangeText: ((TableViewCell) -> ())? = nil
+    var presenter: CellPresenter<Item>!
 
     // Private Properties
     private var originalDoneIconCenter = CGPoint()
@@ -113,6 +114,10 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             setupCountBadge()
         }
         setupNavHintView()
+    }
+
+    func reset() {
+        presenter = nil
     }
 
     private func setupBackgroundView() {
@@ -222,6 +227,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         addGestureRecognizer(recognizer)
     }
 
+    // FIXME: This could easily be refactored to avoid such a high CC.
+    // swiftlint:disable:next cyclomatic_complexity
     func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .Began:
@@ -307,7 +314,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                     self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
                 }
                 completionBlock = {
-                    self.itemDeleted?(self.item)
+                    self.presenter.deleteItem(self.item)
                 }
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()
@@ -344,6 +351,11 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         alpha = 1
         contentView.alpha = 1
         temporarilyIgnoreSaveChanges = false
+
+        // Force any active gesture recognizers to reset
+        for gestureRecognizer in gestureRecognizers! {
+            gestureRecognizer.reset()
+        }
     }
 
     // MARK: Actions
@@ -362,7 +374,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
             vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
-            itemCompleted?(item)
+            presenter.completeItem(item)
         } else {
             updateColor()
         }
@@ -384,22 +396,29 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func textViewDidBeginEditing(textView: UITextView) {
-        cellDidBeginEditing?(self)
+        presenter.cellDidBeginEditing(self)
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        if !temporarilyIgnoreSaveChanges {
-            if !(item as Object).invalidated {
-                try! item.realm!.write {
-                    item.text = textView.text
-                }
+        if !temporarilyIgnoreSaveChanges && !(item as Object).invalidated {
+            try! item.realm!.write {
+                item.text = textView.text.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
             }
         }
         textView.userInteractionEnabled = false
-        cellDidEndEditing?(self)
+        presenter.cellDidEndEditing(self)
     }
 
     func textViewDidChange(textView: UITextView) {
-        cellDidChangeText?(self)
+        presenter.cellDidChangeText(self)
+    }
+}
+
+// Mark: Gesture Recognizer Reset
+
+extension UIGestureRecognizer {
+    func reset() {
+        enabled = false
+        enabled = true
     }
 }

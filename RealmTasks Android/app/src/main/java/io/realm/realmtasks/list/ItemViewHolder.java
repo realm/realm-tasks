@@ -16,28 +16,36 @@
 
 package io.realm.realmtasks.list;
 
+import android.content.Context;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import io.realm.realmtasks.R;
 
-public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
+public class ItemViewHolder extends RecyclerView.ViewHolder {
+
+    private static final int UNUSED_COLOR = 0xFF000000;
+    private static final int COMPLETED_BACKGROUND_COLOR = 0xFF262626;
+    private static final int NO_ITEM_COLOR = 0x4CFFFFFF;
+    private static final int DEFAULT_COLOR = 0xFFFFFFFF;
 
     private final RelativeLayout iconBar;
     private final RelativeLayout row;
-    private final TextView text;
     private final EditText editText;
+    private final TextView badge;
+    private final TextView text;
     private final RecyclerView.Adapter adapter;
 
-    public RealmTasksViewHolder(View itemView, RecyclerView.Adapter adapter) {
+    public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
         iconBar = (RelativeLayout) itemView.findViewById(R.id.icon_bar);
         row = (RelativeLayout) itemView.findViewById(R.id.row);
-        row.setBackgroundColor(generateBackgroundColor());
+        badge = (TextView) row.findViewById(R.id.badge);
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
         this.adapter = adapter;
@@ -47,16 +55,19 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
         if (adapter != null && adapter instanceof TouchHelperAdapter) {
             return ((TouchHelperAdapter) adapter).generatedRowColor(getAdapterPosition());
         } else {
-            return 0xFF000000;
+            return UNUSED_COLOR;
         }
     }
 
-    public void setStrike(boolean set) {
+    public void setCompleted(boolean completed) {
         int paintFlags = text.getPaintFlags();
-        if (set) {
+        if (completed) {
+            text.setTextColor(NO_ITEM_COLOR);
             text.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+            row.setBackgroundColor(COMPLETED_BACKGROUND_COLOR);
         } else {
             text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            row.setBackgroundColor(generateBackgroundColor());
         }
     }
 
@@ -68,6 +79,10 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
             text.setVisibility(View.GONE);
             editText.setVisibility(View.VISIBLE);
             editText.requestFocus();
+            final Context context = editText.getContext();
+            final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+
         } else {
             if (isEditable() == true) {
                 text.setText(editText.getText().toString());
@@ -81,6 +96,25 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
         return editText.getVisibility() == View.VISIBLE;
     }
 
+    public void setBadgeVisible(boolean visible) {
+        if (visible) {
+            badge.setVisibility(View.VISIBLE);
+        } else {
+            badge.setVisibility(View.GONE);
+        }
+    }
+
+    public void setBadgeCount(int count) {
+        badge.setText(Integer.toString(count));
+        if (count == 0) {
+            text.setTextColor(NO_ITEM_COLOR);
+            badge.setTextColor(NO_ITEM_COLOR);
+        } else {
+            text.setTextColor(DEFAULT_COLOR);
+            badge.setTextColor(DEFAULT_COLOR);
+        }
+    }
+
     public void reset() {
         itemView.setTranslationX(0);
         itemView.setTranslationY(0);
@@ -88,7 +122,7 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
         itemView.setAlpha(1f);
         row.setTranslationX(0);
         setIconBarAlpha(1f);
-        setStrike(false);
+        setCompleted(false);
     }
 
     public void resetBackgroundColor() {
@@ -97,6 +131,10 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
 
     public RelativeLayout getRow() {
         return row;
+    }
+
+    public TextView getBadge() {
+        return badge;
     }
 
     public TextView getText() {

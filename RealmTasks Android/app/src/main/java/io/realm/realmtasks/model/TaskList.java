@@ -19,16 +19,19 @@ package io.realm.realmtasks.model;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class TaskList extends RealmObject implements Competable {
 
-    public static String DEFAULT_ID = "80EB1620-165B-4600-A1B1-D97032FDD9A0";
-    public static String DEFAULT_LIST_NAME = "defaultListName";
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_TEXT = "text";
+    public static final String FIELD_COMPLETED = "completed";
 
+    @PrimaryKey @Required
+    private String id;
+    @Required
     private String text;
     private boolean completed;
-    @PrimaryKey
-    private String id;
     private RealmList<Task> items;
 
     public String getText() {

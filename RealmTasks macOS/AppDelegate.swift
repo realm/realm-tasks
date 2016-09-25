@@ -21,20 +21,22 @@
 import Cocoa
 import RealmSwift
 
+let mainStoryboard = NSStoryboard(name: "Main", bundle: nil)
+
 @NSApplicationMain
 class AppDelegate: NSObject {
 
     private(set) var mainWindowController: NSWindowController!
 
     func logIn() {
-        let logInViewController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("LogInViewController") as! LogInViewController
+        let logInViewController = mainStoryboard.instantiateControllerWithIdentifier("LogInViewController") as! LogInViewController
         logInViewController.delelegate = self
 
         mainWindowController.contentViewController?.presentViewControllerAsSheet(logInViewController, preventApplicationTermination: false)
     }
 
     func register() {
-        let registerViewController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("RegisterViewController") as! RegisterViewController
+        let registerViewController = mainStoryboard.instantiateControllerWithIdentifier("RegisterViewController") as! RegisterViewController
         registerViewController.delegate = self
 
         mainWindowController.contentViewController?.presentViewControllerAsSheet(registerViewController, preventApplicationTermination: false)
@@ -45,7 +47,7 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
+        mainWindowController = mainStoryboard.instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
         mainWindowController.window?.titleVisibility = .Hidden
         mainWindowController.showWindow(nil)
         if configureDefaultRealm() {
@@ -111,7 +113,7 @@ extension NSViewController {
 
     func presentViewControllerAsSheet(viewController: NSViewController, preventApplicationTermination: Bool) {
         presentViewControllerAsSheet(viewController)
-        viewController.view.window?.preventsApplicationTerminationWhenModal = preventApplicationTermination;
+        viewController.view.window?.preventsApplicationTerminationWhenModal = preventApplicationTermination
     }
 
 }

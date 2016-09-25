@@ -17,5 +17,5 @@
     <string name="activity_register_label">Register</string>
 
     <string name="menu_item_register">Register</string>
-    <string name="unfinished_items">There are unfinished tasks.</string>
+    <string name="title_deleted">Deleted</string>
 </resources>
