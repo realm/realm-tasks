@@ -33,10 +33,7 @@ import android.widget.Toast;
 
 import io.realm.Credentials;
 import io.realm.ObjectServerError;
-import io.realm.Realm;
 import io.realm.User;
-import io.realm.realmtasks.model.TaskList;
-import io.realm.realmtasks.model.TaskListList;
 
 import static android.text.TextUtils.isEmpty;
 import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
