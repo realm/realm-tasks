@@ -60,6 +60,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     public void setCompleted(boolean completed) {
         int paintFlags = text.getPaintFlags();
         if (completed) {
+            text.setTextColor(NO_ITEM_COLOR);
             text.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(COMPLETED_BACKGROUND_COLOR);
         } else {
