@@ -32,6 +32,8 @@ import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
 
+import static android.R.id.list;
+
 public class TaskActivity extends AppCompatActivity {
 
     public static final String EXTRA_LIST_ID = "extra.list_id";
@@ -41,6 +43,7 @@ public class TaskActivity extends AppCompatActivity {
     private TaskAdapter adapter;
     private TouchHelper touchHelper;
     private String id;
+    RealmResults<TaskList> list;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,25 +66,30 @@ public class TaskActivity extends AppCompatActivity {
         }
         adapter = null;
         realm = Realm.getDefaultInstance();
-        RealmResults<TaskList> list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findAllAsync();
+        list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findAll();
         list.addChangeListener(new RealmChangeListener<RealmResults<TaskList>>() {
             @Override
             public void onChange(RealmResults<TaskList> results) {
-                // Use `findAllAsync` because change listeners are not called when items are deleted and using `findFirst()`
-                // See https://github.com/realm/realm-java/issues/3138
-                if (results.size() > 0) {
-                    TaskList element = results.first();
-                    setTitle(element.getText());
-                    if (adapter == null) {
-                        adapter = new TaskAdapter(TaskActivity.this, element.getItems());
-                        touchHelper = new TouchHelper(new Callback(), adapter);
-                        touchHelper.attachToRecyclerView(recyclerView);
-                    }
-                } else {
-                    setTitle(getString(R.string.title_deleted));
-                }
+                updateList(results);
             }
         });
+        updateList(list);
+    }
+
+    private void updateList(RealmResults<TaskList> results) {
+        // Use `findAllAsync` because change listeners are not called when items are deleted and using `findFirst()`
+        // See https://github.com/realm/realm-java/issues/3138
+        if (results.size() > 0) {
+            TaskList element = results.first();
+            setTitle(element.getText());
+            if (adapter == null) {
+                adapter = new TaskAdapter(TaskActivity.this, element.getItems());
+                touchHelper = new TouchHelper(new Callback(), adapter);
+                touchHelper.attachToRecyclerView(recyclerView);
+            }
+        } else {
+            setTitle(getString(R.string.title_deleted));
+        }
     }
 
     @Override

@@ -57,17 +57,22 @@ public class TaskListActivity extends AppCompatActivity {
         }
         adapter = null;
         realm = Realm.getDefaultInstance();
-        list = realm.where(TaskListList.class).findAllAsync();
+        list = realm.where(TaskListList.class).findAll();
         list.addChangeListener(new RealmChangeListener<RealmResults<TaskListList>>() {
             @Override
             public void onChange(RealmResults<TaskListList> results) {
-                if (results.size() > 0 && adapter == null) {
-                    adapter = new TaskListAdapter(TaskListActivity.this, results.first().getItems());
-                    touchHelper = new TouchHelper(new Callback(), adapter);
-                    touchHelper.attachToRecyclerView(recyclerView);
-                }
+                updateList(results);
             }
         });
+        updateList(list);
+    }
+
+    private void updateList(RealmResults<TaskListList> results) {
+        if (results.size() > 0 && adapter == null) {
+            adapter = new TaskListAdapter(TaskListActivity.this, results.first().getItems());
+            touchHelper = new TouchHelper(new Callback(), adapter);
+            touchHelper.attachToRecyclerView(recyclerView);
+        }
     }
 
     @Override
