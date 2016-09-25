@@ -131,8 +131,8 @@ public class TaskActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onArchived(ItemViewHolder viewHolder) {
-            adapter.onItemArchived(viewHolder.getAdapterPosition());
+        public void onCompleted(ItemViewHolder viewHolder) {
+            adapter.onItemCompleted(viewHolder.getAdapterPosition());
             adapter.notifyDataSetChanged();
         }
 

@@ -20,4 +20,5 @@
     <string name="title_deleted">Deleted</string>
     <string name="release_to_create_item">Relase to Create Item</string>
     <string name="pull_to_create_item">Pull to Create Item</string>
+    <string name="no_item">There is no item to complete</string>
 </resources>

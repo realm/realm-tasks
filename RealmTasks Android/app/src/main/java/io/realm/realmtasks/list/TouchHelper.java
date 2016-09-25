@@ -152,7 +152,7 @@ public class TouchHelper {
     public interface Callback {
 
         void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to);
-        void onArchived(ItemViewHolder viewHolder);
+        void onCompleted(ItemViewHolder viewHolder);
         void onDismissed(ItemViewHolder viewHolder);
         boolean canDismissed();
         boolean onClicked(ItemViewHolder viewHolder);
@@ -488,7 +488,7 @@ public class TouchHelper {
                         if (previousTranslationX < 0) {
                             callback.onDismissed(TouchHelper.this.selected);
                         } else {
-                            callback.onArchived(TouchHelper.this.selected);
+                            callback.onCompleted(TouchHelper.this.selected);
                         }
                     }
                 }
