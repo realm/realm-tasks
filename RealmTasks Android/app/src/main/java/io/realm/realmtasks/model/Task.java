@@ -21,6 +21,9 @@ import io.realm.annotations.Required;
 
 public class Task extends RealmObject implements Competable {
 
+    public static final String FIELD_TEXT = "text";
+    public static final String FIELD_COMPLETED = "completed";
+
     @Required
     private String text;
     private boolean completed;

@@ -23,6 +23,10 @@ import io.realm.annotations.Required;
 
 public class TaskList extends RealmObject implements Competable {
 
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_TEXT = "text";
+    public static final String FIELD_COMPLETED = "completed";
+
     @PrimaryKey @Required
     private String id;
     @Required
