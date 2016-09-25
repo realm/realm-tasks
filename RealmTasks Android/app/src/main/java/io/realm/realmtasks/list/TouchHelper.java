@@ -190,23 +190,27 @@ public class TouchHelper {
                     } else {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
-                        if (dy > height * 4 && pullState == PULL_STATE_CANCEL_ADD) {
+                        final int actionBaseline = (int) (recyclerView.getHeight() * 0.35);
+                        if (dy > actionBaseline + (height * 1) && pullState == PULL_STATE_CANCEL_ADD) {
                             if (!isAddingCanceled) {
-                                callback.onReverted(true);
+                                TouchHelper.this.selected.itemView.setAlpha(0);
+                                callback.onReverted(false);
                                 isAddingCanceled = true;
                             }
                             callback.onExited();
-                        } else if (dy > height) {
-                            final float reverseHeight = height * 2 - dy;
-                            float reverseRatio = reverseHeight * 2 / height;
-                            if (reverseRatio > 1) {
-                                reverseRatio = 1;
+                        } else if (dy > actionBaseline) {
+                            final float h = dy - actionBaseline;
+                            float ratio = h / height;
+                            if (ratio > 1) {
+                                ratio = 1;
                             }
-                            selected.itemView.setAlpha(reverseRatio);
+                            selected.itemView.setRotationX(ratio * 90);
+                            selected.itemView.setTranslationY(height * ratio);
                         }
-                        if (pullState == PULL_STATE_ADD && dy > height * 2) {
+                        final double revertBaseline = actionBaseline + (height * 0.7);
+                        if (pullState == PULL_STATE_ADD && dy > revertBaseline) {
                             pullState = PULL_STATE_CANCEL_ADD;
-                        } else if (pullState == PULL_STATE_CANCEL_ADD && dy < height * 1.5) {
+                        } else if (pullState == PULL_STATE_CANCEL_ADD && dy < revertBaseline) {
                             pullState = PULL_STATE_ADD;
                         }
                     }
@@ -467,7 +471,7 @@ public class TouchHelper {
                     if (pullState == PULL_STATE_CANCEL_ADD) {
                         TouchHelper.this.selected.itemView.setAlpha(0);
                         if (!isAddingCanceled) {
-                            callback.onReverted(true);
+                            callback.onReverted(false);
                             isAddingCanceled = true;
                         }
                     } else {
