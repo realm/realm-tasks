@@ -2,20 +2,21 @@
 
 buildscript {
     repositories {
-        maven {
-            credentials(AwsCredentials) {
-                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
-                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
-            }
-            url "s3://realm-ci-artifacts/maven/releases/"
-        }
-        maven {
-            credentials(AwsCredentials) {
-                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
-                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
-            }
-            url "s3://realm-ci-artifacts/maven/snapshots/"
-        }
+//        maven {
+//            credentials(AwsCredentials) {
+//                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
+//                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
+//            }
+//            url "s3://realm-ci-artifacts/maven/releases/"
+//        }
+//        maven {
+//            credentials(AwsCredentials) {
+//                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
+//                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
+//            }
+//            url "s3://realm-ci-artifacts/maven/snapshots/"
+//        }
+        mavenLocal()
         jcenter()
     }
     dependencies {
@@ -26,20 +27,21 @@ buildscript {
 
 allprojects {
     repositories {
-        maven {
-            credentials(AwsCredentials) {
-                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
-                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
-            }
-            url "s3://realm-ci-artifacts/maven/releases/"
-        }
-        maven {
-            credentials(AwsCredentials) {
-                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
-                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
-            }
-            url "s3://realm-ci-artifacts/maven/snapshots/"
-        }
+//        maven {
+//            credentials(AwsCredentials) {
+//                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
+//                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
+//            }
+//            url "s3://realm-ci-artifacts/maven/releases/"
+//        }
+//        maven {
+//            credentials(AwsCredentials) {
+//                accessKey project.hasProperty('s3AccessKey') ? s3AccessKey : 'noAccessKey'
+//                secretKey project.hasProperty('s3SecretKey') ? s3SecretKey : 'noSecretKey'
+//            }
+//            url "s3://realm-ci-artifacts/maven/snapshots/"
+//        }
+        mavenLocal()
         jcenter()
     }
 }
