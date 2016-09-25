@@ -42,6 +42,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.realmtasks.R;
+
 import static android.support.v7.widget.RecyclerView.ItemDecoration;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.State;
@@ -195,6 +197,11 @@ public class TouchHelper {
                         selectedItemView.setTranslationY(height - (height * ratio));
                         float rotationX = 90f - (90f * ratio);
                         selectedItemView.setRotationX(rotationX);
+                        if (rotationX < 15) {
+                            selectedViewHolder.getText().setText(R.string.release_to_create_item);
+                        } else {
+                            selectedViewHolder.getText().setText(R.string.pull_to_create_item);
+                        }
                     } else {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
@@ -501,6 +508,7 @@ public class TouchHelper {
                         }
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
+                        TouchHelper.this.selected.getText().setText("");
                         currentEditing = TouchHelper.this.selected;
                         TouchHelper.this.selected.setEditable(true);
                     }
