@@ -65,7 +65,6 @@ public class TaskActivity extends AppCompatActivity {
             touchHelper.attachToRecyclerView(recyclerView);
         } else {
             setTitle(getString(R.string.title_deleted));
-            // TODO Handle that list was deleted
         }
     }
 
