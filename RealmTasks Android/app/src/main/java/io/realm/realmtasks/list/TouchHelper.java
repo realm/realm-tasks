@@ -197,6 +197,7 @@ public class TouchHelper {
                                 callback.onReverted(false);
                                 isAddingCanceled = true;
                             }
+                            recyclerView.setVisibility(View.INVISIBLE);
                             callback.onExited();
                         } else if (dy > actionBaseline) {
                             final float h = dy - actionBaseline;
