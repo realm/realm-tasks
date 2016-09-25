@@ -38,7 +38,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         final TaskList taskList = items.get(position);
         itemViewHolder.getText().setText(taskList.getText());
-        itemViewHolder.setStrike(taskList.isCompleted());
+        itemViewHolder.setCompleted(taskList.isCompleted());
         itemViewHolder.setBadgeVisible(true);
         int badgeCount = taskList.getItems().size();
         itemViewHolder.setBadgeCount(badgeCount);

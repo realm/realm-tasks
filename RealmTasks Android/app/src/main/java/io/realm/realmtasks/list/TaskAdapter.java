@@ -42,7 +42,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         text.setText(taskList.getText());
         narrowRightMargin(text);
         narrowRightMargin(itemViewHolder.getEditText());
-        itemViewHolder.setStrike(taskList.isCompleted());
+        itemViewHolder.setCompleted(taskList.isCompleted());
     }
 
     private void narrowRightMargin(View view) {
