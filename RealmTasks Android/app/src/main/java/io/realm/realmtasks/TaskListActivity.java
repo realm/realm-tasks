@@ -97,6 +97,12 @@ public class TaskListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.action_add:
+                if (adapter != null) {
+                    adapter.onItemAdded();
+                }
+                return true;
+
             case R.id.action_logout:
                 Intent intent = new Intent(TaskListActivity.this, SignInActivity.class);
                 intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
