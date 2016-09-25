@@ -17,9 +17,11 @@
 package io.realm.realmtasks.model;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Required;
 
 public class Task extends RealmObject implements Competable {
 
+    @Required
     private String text;
     private boolean completed;
 
