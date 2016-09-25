@@ -190,7 +190,7 @@ public class TouchHelper {
                     } else {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
-                        final int actionBaseline = (int) (recyclerView.getHeight() * 0.35);
+                        final int actionBaseline = (int) (recyclerView.getHeight() * 0.4);
                         if (dy > actionBaseline + (height * 1) && pullState == PULL_STATE_CANCEL_ADD) {
                             if (!isAddingCanceled) {
                                 TouchHelper.this.selected.itemView.setAlpha(0);
