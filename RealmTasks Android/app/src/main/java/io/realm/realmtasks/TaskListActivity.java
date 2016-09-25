@@ -122,6 +122,11 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
+        public boolean canDismissed() {
+            return false;
+        }
+
+        @Override
         public boolean onClicked(RealmTasksViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             final TaskList taskList = adapter.getItems().get(position);
@@ -153,8 +158,7 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onExited() {
-            finish();
+        public void onExit() {
         }
     }
 }
