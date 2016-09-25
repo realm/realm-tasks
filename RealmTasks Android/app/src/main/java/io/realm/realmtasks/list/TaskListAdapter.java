@@ -39,8 +39,8 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         final TaskList taskList = items.get(position);
         itemViewHolder.getText().setText(taskList.getText());
         itemViewHolder.setBadgeVisible(true);
-        final int badgeCount = taskList.getItems().size();
-        itemViewHolder.setBadgeCount(badgeCount);
+        final long badgeCount = taskList.getItems().where().equalTo(TaskList.FIELD_COMPLETED, false).count();
+        itemViewHolder.setBadgeCount((int) badgeCount);
         itemViewHolder.setCompleted(taskList.isCompleted());
     }
 
@@ -74,7 +74,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
     public void onItemArchived(final int position) {
         final TaskList taskList = items.get(position);
         final Realm realm = Realm.getDefaultInstance();
-        final int count = (int) ((RealmList<TaskList>) items).where().equalTo("completed", false).count();
+        final int count = (int) ((RealmList<TaskList>) items).where().equalTo(TaskList.FIELD_COMPLETED, false).count();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

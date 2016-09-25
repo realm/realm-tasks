@@ -82,7 +82,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
     public void onItemArchived(final int position) {
         final Task task = items.get(position);
         final Realm realm = Realm.getDefaultInstance();
-        final int count = (int) ((RealmList<Task>) items).where().equalTo("completed", false).count();
+        final int count = (int) ((RealmList<Task>) items).where().equalTo(Task.FIELD_COMPLETED, false).count();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
