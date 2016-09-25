@@ -39,3 +39,7 @@ We recommend that you run at least two instances of the app together to really s
 1. Launch the "Realm Browser" app included in the package obtained above and click "Open Sync URL...".
 2. Paste the following into the Realm Browser's Sync Server URL field: `realm://127.0.0.1:7800/~/realmtasks`.
 3. Enter the same username and password as you used when running RealmTasks and click "Open".
+
+## License
+
+The source code for RealmTasks is licensed under the [Apache License 2.0](LICENSE).
