@@ -73,7 +73,6 @@ public class TaskActivity extends AppCompatActivity {
     protected void onStop() {
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
-            recyclerView.setAdapter(null);
         }
         realm.close();
         super.onStop();
