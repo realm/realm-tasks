@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
@@ -56,25 +57,45 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        realm = Realm.getDefaultInstance();
-        TaskList list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findFirst();
-        if (list != null && list.isValid()) {
-            setTitle(list.getText());
-            adapter = new TaskAdapter(this, list.getItems());
-            touchHelper = new TouchHelper(new Callback(), adapter);
-            touchHelper.attachToRecyclerView(recyclerView);
-        } else {
-            setTitle(getString(R.string.title_deleted));
+        if (touchHelper != null) {
+            touchHelper.attachToRecyclerView(null);
         }
+        adapter = null;
+        realm = Realm.getDefaultInstance();
+        TaskList list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findFirstAsync();
+        list.addChangeListener(new RealmChangeListener<TaskList>() {
+            @Override
+            public void onChange(TaskList element) {
+                if (element != null && element.isValid()) {
+                    setTitle(element.getText());
+                    if (adapter == null) {
+                        adapter = new TaskAdapter(TaskActivity.this, element.getItems());
+                        touchHelper = new TouchHelper(new Callback(), adapter);
+                        touchHelper.attachToRecyclerView(recyclerView);
+                    }
+                } else {
+                    setTitle(getString(R.string.title_deleted));
+                }
+            }
+        });
     }
 
     @Override
     protected void onStop() {
+        closeRealmAndRecyclerView();
+        super.onStop();
+    }
+
+    private void closeRealmAndRecyclerView() {
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
+            adapter = null;
         }
-        realm.close();
-        super.onStop();
+        if (realm != null) {
+            realm.removeAllChangeListeners();
+            realm.close();
+            realm = null;
+        }
     }
 
     @Override
@@ -90,7 +111,7 @@ public class TaskActivity extends AppCompatActivity {
                 Intent intent = new Intent(TaskActivity.this, SignInActivity.class);
                 intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
                 startActivity(intent);
-                realm.close();
+                closeRealmAndRecyclerView();
                 finish();
                 return true;
 
@@ -154,8 +175,8 @@ public class TaskActivity extends AppCompatActivity {
 
         @Override
         public void onExit() {
+            closeRealmAndRecyclerView();
             finish();
-            realm.close();
         }
     }
 }

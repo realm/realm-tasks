@@ -18,10 +18,13 @@ package io.realm.realmtasks.list;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.IntDef;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnItemTouchListener;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -91,9 +94,10 @@ public class TouchHelper {
 
     private static final int PULL_STATE_ADD = 0;
     private static final int PULL_STATE_CANCEL_ADD = 1;
-    private
     @PullState
-    int pullState = PULL_STATE_ADD;
+    private int pullState = PULL_STATE_ADD;
+
+    private Handler handler;
 
     private TouchHelper() {
         this(null, null);
@@ -102,6 +106,7 @@ public class TouchHelper {
     public TouchHelper(Callback callback, CommonAdapter adapter) {
         this.callback = callback;
         this.adapter = adapter;
+        handler = new Handler(Looper.getMainLooper());
     }
 
     public void attachToRecyclerView(RecyclerView recyclerView) {
@@ -117,6 +122,7 @@ public class TouchHelper {
         }
         onItemTouchListener = new TasksOnItemTouchListener(recyclerView.getContext());
         itemDecoration = new TasksItemDecoration();
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.addOnItemTouchListener(onItemTouchListener);
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setAdapter(adapter);
@@ -132,10 +138,11 @@ public class TouchHelper {
     }
 
     private void destroyCallbacks() {
-        recyclerView.removeOnItemTouchListener(onItemTouchListener);
-        recyclerView.removeItemDecoration(itemDecoration);
         adapter.setOnFirstItemUpdateListener(null);
         recyclerView.setAdapter(null);
+        recyclerView.setLayoutManager(null);
+        recyclerView.removeItemDecoration(itemDecoration);
+        recyclerView.removeOnItemTouchListener(onItemTouchListener);
         onItemTouchListener = null;
         itemDecoration = null;
     }
@@ -199,8 +206,13 @@ public class TouchHelper {
                                     callback.onReverted(false);
                                     isAddingCanceled = true;
                                 }
-                                callback.onExit();
                                 recyclerView.setVisibility(View.INVISIBLE);
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onExit();
+                                    }
+                                });
                             } else if (dy > actionBaseline) {
                                 final float h = dy - actionBaseline;
                                 float ratio = h / height;

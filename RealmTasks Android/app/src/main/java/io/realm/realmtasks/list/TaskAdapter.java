@@ -135,6 +135,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         final Realm realm = Realm.getDefaultInstance();
         final int position = viewHolder.getAdapterPosition();
         if (position < 0) {
+            realm.close();
             return;
         }
         realm.executeTransaction(new Realm.Transaction() {

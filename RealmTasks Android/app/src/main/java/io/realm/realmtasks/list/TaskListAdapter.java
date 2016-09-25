@@ -50,8 +50,9 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                final TaskList taskList = realm.createObject(TaskList.class, UUID.randomUUID().toString());
-                taskList.setText("New task list");
+                final TaskList taskList = new TaskList();
+                taskList.setId(UUID.randomUUID().toString());
+                taskList.setText("");
                 items.add(0, taskList);
             }
         });
@@ -127,6 +128,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         final Realm realm = Realm.getDefaultInstance();
         final int position = viewHolder.getAdapterPosition();
         if (position < 0) {
+            realm.close();
             return;
         }
         realm.executeTransaction(new Realm.Transaction() {

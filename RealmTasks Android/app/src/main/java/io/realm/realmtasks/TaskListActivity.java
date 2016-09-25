@@ -52,6 +52,10 @@ public class TaskListActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        if (touchHelper != null) {
+            touchHelper.attachToRecyclerView(null);
+        }
+        adapter = null;
         realm = Realm.getDefaultInstance();
         list = realm.where(TaskListList.class).findAllAsync();
         list.addChangeListener(new RealmChangeListener<RealmResults<TaskListList>>() {
@@ -67,13 +71,31 @@ public class TaskListActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onStop() {
+        closeRealmAndRecyclerView();
+        super.onStop();
+    }
+
+    private void closeRealmAndRecyclerView() {
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
             adapter = null;
         }
-        realm.close();
-        super.onStop();
+        if (realm != null) {
+            realm.removeAllChangeListeners();
+            realm.close();
+            realm = null;
+        }
     }
 
     @Override
@@ -89,7 +111,8 @@ public class TaskListActivity extends AppCompatActivity {
                 Intent intent = new Intent(TaskListActivity.this, SignInActivity.class);
                 intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
                 startActivity(intent);
-                realm.close();
+                closeRealmAndRecyclerView();
+                finish();
                 return true;
 
             default:
