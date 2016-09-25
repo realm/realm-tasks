@@ -36,7 +36,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-        final TaskList taskList = items.get(position);
+        final TaskList taskList = getItem(position);
         itemViewHolder.getText().setText(taskList.getText());
         itemViewHolder.setBadgeVisible(true);
         final long badgeCount = taskList.getItems().where().equalTo(TaskList.FIELD_COMPLETED, false).count();
@@ -53,7 +53,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
                 final TaskList taskList = new TaskList();
                 taskList.setId(UUID.randomUUID().toString());
                 taskList.setText("");
-                items.add(0, taskList);
+                getData().add(0, taskList);
             }
         });
         realm.close();
@@ -73,9 +73,9 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
 
     @Override
     public void onItemArchived(final int position) {
-        final TaskList taskList = items.get(position);
+        final TaskList taskList = getItem(position);
         final Realm realm = Realm.getDefaultInstance();
-        final int count = (int) ((RealmList<TaskList>) items).where().equalTo(TaskList.FIELD_COMPLETED, false).count();
+        final int count = (int) getData().where().equalTo(TaskList.FIELD_COMPLETED, false).count();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -97,7 +97,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                items.remove(position);
+                getData().remove(position);
             }
         });
         realm.close();
@@ -105,14 +105,14 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
 
     @Override
     public void onItemReverted() {
-        if (items.size() == 0) {
+        if (getData().size() == 0) {
             return;
         }
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                items.remove(0);
+                getData().remove(0);
             }
         });
         realm.close();
@@ -134,7 +134,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                TaskList taskList = items.get(position);
+                TaskList taskList = getItem(position);
                 taskList.setText(viewHolder.getText().getText().toString());
             }
         });

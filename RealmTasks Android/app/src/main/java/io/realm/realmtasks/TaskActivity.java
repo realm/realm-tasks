@@ -26,6 +26,7 @@ import android.view.MenuItem;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
@@ -62,11 +63,14 @@ public class TaskActivity extends AppCompatActivity {
         }
         adapter = null;
         realm = Realm.getDefaultInstance();
-        TaskList list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findFirstAsync();
-        list.addChangeListener(new RealmChangeListener<TaskList>() {
+        RealmResults<TaskList> list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findAllAsync();
+        list.addChangeListener(new RealmChangeListener<RealmResults<TaskList>>() {
             @Override
-            public void onChange(TaskList element) {
-                if (element != null && element.isValid()) {
+            public void onChange(RealmResults<TaskList> results) {
+                // Use `findAllAsync` because change listeners are not called when items are deleted and using `findFirst()`
+                // See https://github.com/realm/realm-java/issues/3138
+                if (results.size() > 0) {
+                    TaskList element = results.first();
                     setTitle(element.getText());
                     if (adapter == null) {
                         adapter = new TaskAdapter(TaskActivity.this, element.getItems());

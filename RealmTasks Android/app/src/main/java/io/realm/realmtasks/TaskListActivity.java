@@ -71,16 +71,6 @@ public class TaskListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     protected void onStop() {
         closeRealmAndRecyclerView();
         super.onStop();
@@ -151,7 +141,7 @@ public class TaskListActivity extends AppCompatActivity {
         @Override
         public boolean onClicked(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
-            final TaskList taskList = adapter.getItems().get(position);
+            final TaskList taskList = adapter.getItem(position);
             final String id = taskList.getId();
             final Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
             intent.putExtra(TaskActivity.EXTRA_LIST_ID, id);

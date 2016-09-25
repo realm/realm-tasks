@@ -37,7 +37,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-        final Task task = items.get(position);
+        final Task task = getItem(position);
         if (task.isValid()) {
             final TextView text = itemViewHolder.getText();
             text.setText(task.getText());
@@ -58,9 +58,12 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                final Task task = realm.createObject(Task.class);
-                task.setText("");
-                items.add(0, task);
+                // TaskList might have been deleted, in that case, don't create any new.
+                if (getData().isValid()) {
+                    final Task task = realm.createObject(Task.class);
+                    task.setText("");
+                    getData().add(0, task);
+                }
             }
         });
         realm.close();
@@ -80,9 +83,9 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
 
     @Override
     public void onItemArchived(final int position) {
-        final Task task = items.get(position);
+        final Task task = getData().get(position);
         final Realm realm = Realm.getDefaultInstance();
-        final int count = (int) ((RealmList<Task>) items).where().equalTo(Task.FIELD_COMPLETED, false).count();
+        final int count = (int) ((RealmList<Task>) getData()).where().equalTo(Task.FIELD_COMPLETED, false).count();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -104,7 +107,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                items.remove(position);
+                getData().remove(position);
             }
         });
         realm.close();
@@ -112,14 +115,14 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
 
     @Override
     public void onItemReverted() {
-        if (items.size() == 0) {
+        if (getData().size() == 0) {
             return;
         }
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                items.remove(0);
+                getData().remove(0);
             }
         });
         realm.close();
@@ -141,7 +144,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Task task = items.get(position);
+                Task task = getData().get(position);
                 task.setText(viewHolder.getText().getText().toString());
             }
         });

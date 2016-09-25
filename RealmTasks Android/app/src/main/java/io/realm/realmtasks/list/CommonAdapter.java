@@ -32,12 +32,10 @@ import io.realm.realmtasks.R;
 
 public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapter<T, RecyclerView.ViewHolder> {
 
-    protected List<T> items;
     protected OnFirstItemUpdateListener onFirstItemUpdateListener;
 
     public CommonAdapter(Context context, OrderedRealmCollection<T> items) {
         super(context, items, true);
-        this.items = items;
     }
 
     @Override
@@ -59,27 +57,13 @@ public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapte
     protected void moveItems(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(items, i, i + 1);
+                Collections.swap(getData(), i, i + 1);
             }
         } else {
             for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(items, i, i - 1);
+                Collections.swap(getData(), i, i - 1);
             }
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return items.size();
-    }
-
-    public List<T> getItems() {
-        return items;
-    }
-
-    public void setItems(List<T> items) {
-        this.items = items;
-        notifyDataSetChanged();
     }
 
     public void setOnFirstItemUpdateListener(OnFirstItemUpdateListener onFirstItemUpdateListener) {
