@@ -141,7 +141,7 @@ public class TaskListActivity extends AppCompatActivity {
         @Override
         public void onAdded() {
             adapter.onItemAdded();
-            adapter.notifyDataSetChanged();
+            adapter.notifyItemInserted(0);
         }
 
         @Override

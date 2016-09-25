@@ -213,9 +213,6 @@ public class TouchHelper {
                     ViewCompat.setPaddingRelative(recyclerView, 0, (int) dy - selected.itemView.getHeight(), 0, 0);
                     recyclerView.scrollToPosition(0);
                 }
-            } else if (actionState == ACTION_STATE_PULL) {
-                ViewCompat.setPaddingRelative(recyclerView, 0, (int) dy, 0, 0);
-                recyclerView.scrollToPosition(0);
             }
         }
     }
@@ -463,7 +460,6 @@ public class TouchHelper {
                 TouchHelper.this.selected.itemView.setTranslationY(0);
                 removeChildDrawingOrder();
             } else if (previousActionState == ACTION_STATE_PULL) {
-                recyclerView.scrollToPosition(0);
                 ViewCompat.setPaddingRelative(recyclerView, 0, 0, 0, 0);
                 if (TouchHelper.this.selected != null) {
                     TouchHelper.this.selected.itemView.setRotationX(0);
@@ -478,7 +474,6 @@ public class TouchHelper {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
                     }
                     TouchHelper.this.selected = null;
-                    recyclerView.invalidate();
                 }
             }
             TouchHelper.this.selected = selected;
