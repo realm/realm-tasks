@@ -27,7 +27,7 @@ import android.view.MenuItem;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-import io.realm.realmtasks.list.RealmTasksViewHolder;
+import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskListAdapter;
 import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
@@ -101,7 +101,7 @@ public class TaskListActivity extends AppCompatActivity {
     private class Callback implements TouchHelper.Callback {
 
         @Override
-        public void onMoved(RecyclerView recyclerView, RealmTasksViewHolder from, RealmTasksViewHolder to) {
+        public void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
             adapter.onItemMoved(fromPosition, toPosition);
@@ -109,13 +109,13 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onArchived(RealmTasksViewHolder viewHolder) {
+        public void onArchived(ItemViewHolder viewHolder) {
             adapter.onItemArchived(viewHolder.getAdapterPosition());
             adapter.notifyDataSetChanged();
         }
 
         @Override
-        public void onDismissed(RealmTasksViewHolder viewHolder) {
+        public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
             adapter.notifyItemRemoved(position);
@@ -127,7 +127,7 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean onClicked(RealmTasksViewHolder viewHolder) {
+        public boolean onClicked(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             final TaskList taskList = adapter.getItems().get(position);
             final String id = taskList.getId();
@@ -138,7 +138,7 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onChanged(RealmTasksViewHolder viewHolder) {
+        public void onChanged(ItemViewHolder viewHolder) {
             adapter.onItemChanged(viewHolder);
             adapter.notifyItemChanged(viewHolder.getAdapterPosition());
         }

@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -60,8 +59,8 @@ public class TouchHelper {
     private float selectedInitialX;
     private float selectedInitialY;
     private float logicalDensity;
-    private RealmTasksViewHolder selected;
-    private RealmTasksViewHolder currentEditing;
+    private ItemViewHolder selected;
+    private ItemViewHolder currentEditing;
     private RecyclerView recyclerView;
     private View overdrawChild;
     private int overdrawChildPosition;
@@ -143,12 +142,12 @@ public class TouchHelper {
 
     public interface Callback {
 
-        void onMoved(RecyclerView recyclerView, RealmTasksViewHolder from, RealmTasksViewHolder to);
-        void onArchived(RealmTasksViewHolder viewHolder);
-        void onDismissed(RealmTasksViewHolder viewHolder);
+        void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to);
+        void onArchived(ItemViewHolder viewHolder);
+        void onDismissed(ItemViewHolder viewHolder);
         boolean canDismissed();
-        boolean onClicked(RealmTasksViewHolder viewHolder);
-        void onChanged(RealmTasksViewHolder viewHolder);
+        boolean onClicked(ItemViewHolder viewHolder);
+        void onChanged(ItemViewHolder viewHolder);
         void onAdded();
         void onReverted(boolean shouldUpdateUI);
         void onExit();
@@ -160,7 +159,7 @@ public class TouchHelper {
         public void onDraw(Canvas c, RecyclerView parent, State state) {
             overdrawChildPosition = -1;
             if (selected != null) {
-                final RealmTasksViewHolder selectedViewHolder = selected;
+                final ItemViewHolder selectedViewHolder = selected;
                 final View selectedItemView = selectedViewHolder.itemView;
                 if (actionState == ACTION_STATE_SWIPE) {
                     final float translationX = selectedInitialX + dx - selected.itemView.getLeft();
@@ -368,7 +367,7 @@ public class TouchHelper {
                 distances.clear();
                 return;
             }
-            callback.onMoved(recyclerView, (RealmTasksViewHolder) fromViewHolder, (RealmTasksViewHolder) toViewHolder);
+            callback.onMoved(recyclerView, (ItemViewHolder) fromViewHolder, (ItemViewHolder) toViewHolder);
             if (layoutManager instanceof ItemTouchHelper.ViewDropHandler) {
                 final ItemTouchHelper.ViewDropHandler viewDropHandler = (ItemTouchHelper.ViewDropHandler) layoutManager;
                 viewDropHandler.prepareForDrop(fromViewHolder.itemView, toViewHolder.itemView, 0, selectedTop);
@@ -451,10 +450,10 @@ public class TouchHelper {
                 return;
             }
             TouchHelper.this.dx = TouchHelper.this.dy = 0;
-            selectView((RealmTasksViewHolder) childViewHolder, ACTION_STATE_SWIPE);
+            selectView((ItemViewHolder) childViewHolder, ACTION_STATE_SWIPE);
         }
 
-        private void selectView(RealmTasksViewHolder selected, @ActionState int actionState) {
+        private void selectView(ItemViewHolder selected, @ActionState int actionState) {
             if (selected == TouchHelper.this.selected && actionState == TouchHelper.this.actionState) {
                 return;
             }
@@ -542,15 +541,11 @@ public class TouchHelper {
                     }
                     return false;
                 }
-                final RealmTasksViewHolder viewHolder = (RealmTasksViewHolder) recyclerView.getChildViewHolder(childView);
+                final ItemViewHolder viewHolder = (ItemViewHolder) recyclerView.getChildViewHolder(childView);
                 if (viewHolder == null) {
                     doEndOfEditing();
                     return false;
                 }
-                final TextView textView = viewHolder.getText();
-                final int left = textView.getLeft();
-                final int top = viewHolder.itemView.getTop() + textView.getTop();
-                boolean isHit = checkHit(textView, motionEvent.getX(), motionEvent.getY(), left, top);
                 if (currentEditing == viewHolder) {
                     if (motionEvent.getX() < viewHolder.itemView.getWidth() / 2) {
                         return false;
@@ -563,7 +558,7 @@ public class TouchHelper {
                     doEndOfEditing();
                     return false;
                 }
-                if (!isHit) {
+                if (motionEvent.getX() > viewHolder.itemView.getWidth() - viewHolder.getBadge().getWidth()) {
                     if (callback.onClicked(viewHolder)) {
                         return true;
                     }
@@ -594,7 +589,7 @@ public class TouchHelper {
                 initialX = motionEvent.getX(pointerIndex);
                 initialY = motionEvent.getY(pointerIndex);
                 dx = dy = 0;
-                selectView((RealmTasksViewHolder) viewHolder, ACTION_STATE_DRAG);
+                selectView((ItemViewHolder) viewHolder, ACTION_STATE_DRAG);
             }
         }
 
@@ -621,7 +616,7 @@ public class TouchHelper {
         @Override
         public void updated(ViewHolder viewHolder) {
             if (actionState == ACTION_STATE_PULL) {
-                selected = (RealmTasksViewHolder) viewHolder;
+                selected = (ItemViewHolder) viewHolder;
             }
         }
     }

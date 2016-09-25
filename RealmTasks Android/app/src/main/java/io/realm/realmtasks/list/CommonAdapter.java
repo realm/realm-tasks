@@ -43,14 +43,14 @@ public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapte
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rowItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
-        return new RealmTasksViewHolder(rowItem, this);
+        return new ItemViewHolder(rowItem, this);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final RealmTasksViewHolder realmTasksViewHolder = (RealmTasksViewHolder) holder;
-        realmTasksViewHolder.reset();
-        realmTasksViewHolder.resetBackgroundColor();
+        final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+        itemViewHolder.reset();
+        itemViewHolder.resetBackgroundColor();
         if (onFirstItemUpdateListener != null && position == 0) {
             onFirstItemUpdateListener.updated(holder);
         }

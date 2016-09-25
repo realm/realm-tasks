@@ -25,19 +25,22 @@ import android.widget.TextView;
 
 import io.realm.realmtasks.R;
 
-public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
+public class ItemViewHolder extends RecyclerView.ViewHolder {
 
+    public static final int UNUSED_COLOR = 0xFF000000;
     private final RelativeLayout iconBar;
     private final RelativeLayout row;
-    private final TextView text;
     private final EditText editText;
+    private final TextView badge;
+    private final TextView text;
     private final RecyclerView.Adapter adapter;
 
-    public RealmTasksViewHolder(View itemView, RecyclerView.Adapter adapter) {
+    public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
         iconBar = (RelativeLayout) itemView.findViewById(R.id.icon_bar);
         row = (RelativeLayout) itemView.findViewById(R.id.row);
         row.setBackgroundColor(generateBackgroundColor());
+        badge = (TextView) row.findViewById(R.id.badge);
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
         this.adapter = adapter;
@@ -47,7 +50,7 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
         if (adapter != null && adapter instanceof TouchHelperAdapter) {
             return ((TouchHelperAdapter) adapter).generatedRowColor(getAdapterPosition());
         } else {
-            return 0xFF000000;
+            return UNUSED_COLOR;
         }
     }
 
@@ -81,6 +84,25 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
         return editText.getVisibility() == View.VISIBLE;
     }
 
+    public void setBadgeVisible(boolean visible) {
+        if (visible) {
+            badge.setVisibility(View.VISIBLE);
+        } else {
+            badge.setVisibility(View.GONE);
+        }
+    }
+
+    public void setBadgeCount(int count) {
+        badge.setText(Integer.toString(count));
+        if (count == 0) {
+            text.setTextColor(0x4CFFFFFF);
+            badge.setTextColor(0x4CFFFFFF);
+        } else {
+            text.setTextColor(0xFFFFFFFF);
+            badge.setTextColor(0xFFFFFFFF);
+        }
+    }
+
     public void reset() {
         itemView.setTranslationX(0);
         itemView.setTranslationY(0);
@@ -97,6 +119,10 @@ public class RealmTasksViewHolder extends RecyclerView.ViewHolder {
 
     public RelativeLayout getRow() {
         return row;
+    }
+
+    public TextView getBadge() {
+        return badge;
     }
 
     public TextView getText() {

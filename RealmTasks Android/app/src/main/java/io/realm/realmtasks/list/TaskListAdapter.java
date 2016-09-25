@@ -37,10 +37,13 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        final RealmTasksViewHolder realmTasksViewHolder = (RealmTasksViewHolder) holder;
+        final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         final TaskList taskList = items.get(position);
-        realmTasksViewHolder.getText().setText(taskList.getText());
-        realmTasksViewHolder.setStrike(taskList.isCompleted());
+        itemViewHolder.getText().setText(taskList.getText());
+        itemViewHolder.setStrike(taskList.isCompleted());
+        itemViewHolder.setBadgeVisible(true);
+        int badgeCount = taskList.getItems().size();
+        itemViewHolder.setBadgeCount(badgeCount);
     }
 
     @Override
@@ -122,11 +125,11 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
 
     @Override
     public int generatedRowColor(int row) {
-        return RealmTasksViewHolder.ColorHelper.getColor(RealmTasksViewHolder.ColorHelper.listColors, row, getItemCount());
+        return ItemViewHolder.ColorHelper.getColor(ItemViewHolder.ColorHelper.listColors, row, getItemCount());
     }
 
     @Override
-    public void onItemChanged(final RealmTasksViewHolder viewHolder) {
+    public void onItemChanged(final ItemViewHolder viewHolder) {
         final Realm realm = Realm.getDefaultInstance();
         final int position = viewHolder.getAdapterPosition();
         if (position < 0) {

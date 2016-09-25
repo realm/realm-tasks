@@ -22,7 +22,7 @@ public interface TouchHelperAdapter {
     void onItemArchived(int position);
     void onItemDismissed(int position);
     void onItemMoved(int fromPosition, int toPosition);
-    void onItemChanged(RealmTasksViewHolder viewHolder);
+    void onItemChanged(ItemViewHolder viewHolder);
     void onItemReverted();
     int generatedRowColor(int row);
 }

@@ -33,10 +33,10 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        final RealmTasksViewHolder realmTasksViewHolder = (RealmTasksViewHolder) holder;
+        final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         final Task taskList = items.get(position);
-        realmTasksViewHolder.getText().setText(taskList.getText());
-        realmTasksViewHolder.setStrike(taskList.isCompleted());
+        itemViewHolder.getText().setText(taskList.getText());
+        itemViewHolder.setStrike(taskList.isCompleted());
     }
 
     @Override
@@ -114,11 +114,11 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
 
     @Override
     public int generatedRowColor(int row) {
-        return RealmTasksViewHolder.ColorHelper.getColor(RealmTasksViewHolder.ColorHelper.taskColors, row, getItemCount());
+        return ItemViewHolder.ColorHelper.getColor(ItemViewHolder.ColorHelper.taskColors, row, getItemCount());
     }
 
     @Override
-    public void onItemChanged(final RealmTasksViewHolder viewHolder) {
+    public void onItemChanged(final ItemViewHolder viewHolder) {
         final Realm realm = Realm.getDefaultInstance();
         final int position = viewHolder.getAdapterPosition();
         if (position < 0) {
