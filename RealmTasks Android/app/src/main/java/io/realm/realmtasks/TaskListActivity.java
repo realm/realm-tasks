@@ -57,7 +57,7 @@ public class TaskListActivity extends AppCompatActivity {
             @Override
             public void onChange(RealmResults<TaskListList> results) {
                 if (results.size() > 0 && adapter == null) {
-                    adapter = new TaskListAdapter(TaskListActivity.this, list.first().getItems());
+                    adapter = new TaskListAdapter(TaskListActivity.this, results.first().getItems());
                     touchHelper = new TouchHelper(new Callback(), adapter);
                     touchHelper.attachToRecyclerView(recyclerView);
                 }
@@ -130,7 +130,7 @@ public class TaskListActivity extends AppCompatActivity {
             final TaskList taskList = adapter.getItems().get(position);
             final String id = taskList.getId();
             final Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
-            intent.putExtra(TaskActivity.EXTRA_ID, id);
+            intent.putExtra(TaskActivity.EXTRA_LIST_ID, id);
             TaskListActivity.this.startActivity(intent);
             return true;
         }
