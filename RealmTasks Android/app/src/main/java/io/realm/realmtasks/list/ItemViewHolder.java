@@ -16,9 +16,11 @@
 
 package io.realm.realmtasks.list;
 
+import android.content.Context;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -77,6 +79,10 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             text.setVisibility(View.GONE);
             editText.setVisibility(View.VISIBLE);
             editText.requestFocus();
+            final Context context = editText.getContext();
+            final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+
         } else {
             if (isEditable() == true) {
                 text.setText(editText.getText().toString());

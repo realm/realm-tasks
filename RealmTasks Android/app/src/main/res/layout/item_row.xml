@@ -54,6 +54,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="75dp"
+            android:textColor="@android:color/white"
             android:visibility="gone"/>
 
         <TextView
