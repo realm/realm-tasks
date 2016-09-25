@@ -183,10 +183,11 @@ public class TouchHelper {
                     ViewCompat.setTranslationY(selectedItemView, translationY);
                 } else if (actionState == ACTION_STATE_PULL) {
                     final int height = selected.itemView.getHeight();
-                    if (dy < height) {
+                    if (dy >= 0 && dy < height) {
                         float ratio = dy / height;
                         selectedItemView.setTranslationY(height - (height * ratio));
-                        selectedItemView.setRotationX(90f - (90f * ratio));
+                        float rotationX = 90f - (90f * ratio);
+                        selectedItemView.setRotationX(rotationX);
                     } else {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
@@ -215,7 +216,11 @@ public class TouchHelper {
                             pullState = PULL_STATE_ADD;
                         }
                     }
-                    ViewCompat.setPaddingRelative(recyclerView, 0, (int) dy - selected.itemView.getHeight(), 0, 0);
+                    int paddingTop = (int) dy - selected.itemView.getHeight();
+                    if (paddingTop < 0 - selected.itemView.getHeight()) {
+                        paddingTop = 0 - selected.itemView.getHeight();
+                    }
+                    ViewCompat.setPaddingRelative(recyclerView, 0, paddingTop, 0, 0);
                     recyclerView.scrollToPosition(0);
                 }
             }
