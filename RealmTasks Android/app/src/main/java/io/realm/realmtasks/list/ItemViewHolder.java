@@ -27,7 +27,11 @@ import io.realm.realmtasks.R;
 
 public class ItemViewHolder extends RecyclerView.ViewHolder {
 
-    public static final int UNUSED_COLOR = 0xFF000000;
+    private static final int UNUSED_COLOR = 0xFF000000;
+    private static final int COMPLETED_BACKGROUND_COLOR = 0xFF262626;
+    private static final int NO_ITEM_COLOR = 0x4CFFFFFF;
+    private static final int DEFAULT_COLOR = 0xFFFFFFFF;
+
     private final RelativeLayout iconBar;
     private final RelativeLayout row;
     private final EditText editText;
@@ -39,7 +43,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         iconBar = (RelativeLayout) itemView.findViewById(R.id.icon_bar);
         row = (RelativeLayout) itemView.findViewById(R.id.row);
-        row.setBackgroundColor(generateBackgroundColor());
         badge = (TextView) row.findViewById(R.id.badge);
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
@@ -54,12 +57,14 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void setStrike(boolean set) {
+    public void setCompleted(boolean completed) {
         int paintFlags = text.getPaintFlags();
-        if (set) {
+        if (completed) {
             text.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+            row.setBackgroundColor(COMPLETED_BACKGROUND_COLOR);
         } else {
             text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            row.setBackgroundColor(generateBackgroundColor());
         }
     }
 
@@ -95,11 +100,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     public void setBadgeCount(int count) {
         badge.setText(Integer.toString(count));
         if (count == 0) {
-            text.setTextColor(0x4CFFFFFF);
-            badge.setTextColor(0x4CFFFFFF);
+            text.setTextColor(NO_ITEM_COLOR);
+            badge.setTextColor(NO_ITEM_COLOR);
         } else {
-            text.setTextColor(0xFFFFFFFF);
-            badge.setTextColor(0xFFFFFFFF);
+            text.setTextColor(DEFAULT_COLOR);
+            badge.setTextColor(DEFAULT_COLOR);
         }
     }
 
@@ -110,7 +115,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         itemView.setAlpha(1f);
         row.setTranslationX(0);
         setIconBarAlpha(1f);
-        setStrike(false);
+        setCompleted(false);
     }
 
     public void resetBackgroundColor() {

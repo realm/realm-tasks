@@ -18,14 +18,12 @@ package io.realm.realmtasks.list;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 import java.util.UUID;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.realmtasks.R;
 import io.realm.realmtasks.model.TaskList;
 
 public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHelperAdapter {
@@ -40,7 +38,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         final TaskList taskList = items.get(position);
         itemViewHolder.getText().setText(taskList.getText());
-        itemViewHolder.setStrike(taskList.isCompleted());
+        itemViewHolder.setCompleted(taskList.isCompleted());
         itemViewHolder.setBadgeVisible(true);
         int badgeCount = taskList.getItems().size();
         itemViewHolder.setBadgeCount(badgeCount);
@@ -81,12 +79,8 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
             @Override
             public void execute(Realm realm) {
                 if (!taskList.isCompleted()) {
-                    if (taskList.isCompletable()) {
-                        taskList.setCompleted(true);
-                        moveItems(position, count - 1);
-                    } else {
-                        Toast.makeText(context, R.string.unfinished_items, Toast.LENGTH_SHORT).show();
-                    }
+                    taskList.setCompleted(true);
+                    moveItems(position, count - 1);
                 } else {
                     taskList.setCompleted(false);
                     moveItems(position, count);

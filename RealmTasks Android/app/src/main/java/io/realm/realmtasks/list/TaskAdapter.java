@@ -18,6 +18,9 @@ package io.realm.realmtasks.list;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
@@ -35,8 +38,16 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         super.onBindViewHolder(holder, position);
         final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         final Task taskList = items.get(position);
-        itemViewHolder.getText().setText(taskList.getText());
-        itemViewHolder.setStrike(taskList.isCompleted());
+        final TextView text = itemViewHolder.getText();
+        text.setText(taskList.getText());
+        narrowRightMargin(text);
+        narrowRightMargin(itemViewHolder.getEditText());
+        itemViewHolder.setCompleted(taskList.isCompleted());
+    }
+
+    private void narrowRightMargin(View view) {
+        final RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+        layoutParams.rightMargin = (int) (layoutParams.rightMargin * 0.2);
     }
 
     @Override
