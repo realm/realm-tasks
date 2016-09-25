@@ -42,6 +42,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.realmtasks.R;
+
 import static android.support.v7.widget.RecyclerView.ItemDecoration;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.State;
@@ -150,7 +152,7 @@ public class TouchHelper {
     public interface Callback {
 
         void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to);
-        void onArchived(ItemViewHolder viewHolder);
+        void onCompleted(ItemViewHolder viewHolder);
         void onDismissed(ItemViewHolder viewHolder);
         boolean canDismissed();
         boolean onClicked(ItemViewHolder viewHolder);
@@ -195,6 +197,11 @@ public class TouchHelper {
                         selectedItemView.setTranslationY(height - (height * ratio));
                         float rotationX = 90f - (90f * ratio);
                         selectedItemView.setRotationX(rotationX);
+                        if (rotationX < 15) {
+                            selectedViewHolder.getText().setText(R.string.release_to_create_item);
+                        } else {
+                            selectedViewHolder.getText().setText(R.string.pull_to_create_item);
+                        }
                     } else {
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
@@ -481,7 +488,7 @@ public class TouchHelper {
                         if (previousTranslationX < 0) {
                             callback.onDismissed(TouchHelper.this.selected);
                         } else {
-                            callback.onArchived(TouchHelper.this.selected);
+                            callback.onCompleted(TouchHelper.this.selected);
                         }
                     }
                 }
@@ -501,6 +508,7 @@ public class TouchHelper {
                         }
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
+                        TouchHelper.this.selected.getText().setText("");
                         currentEditing = TouchHelper.this.selected;
                         TouchHelper.this.selected.setEditable(true);
                     }
