@@ -59,7 +59,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
             @Override
             public void execute(Realm realm) {
                 final Task task = realm.createObject(Task.class);
-                task.setText("New task");
+                task.setText("");
                 items.add(0, task);
             }
         });

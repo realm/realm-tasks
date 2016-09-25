@@ -156,6 +156,7 @@ public class TaskActivity extends AppCompatActivity {
         @Override
         public void onExit() {
             finish();
+            realm.close();
         }
     }
 }

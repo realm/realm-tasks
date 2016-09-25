@@ -489,6 +489,8 @@ public class TouchHelper {
                         }
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
+                        currentEditing = TouchHelper.this.selected;
+                        TouchHelper.this.selected.setEditable(true);
                     }
                     TouchHelper.this.selected = null;
                 }
