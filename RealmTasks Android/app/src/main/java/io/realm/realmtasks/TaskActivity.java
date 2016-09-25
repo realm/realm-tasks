@@ -119,6 +119,11 @@ public class TaskActivity extends AppCompatActivity {
         }
 
         @Override
+        public boolean canDismissed() {
+            return true;
+        }
+
+        @Override
         public boolean onClicked(RealmTasksViewHolder viewHolder) {
             return false;
         }
@@ -144,7 +149,7 @@ public class TaskActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onExited() {
+        public void onExit() {
             finish();
         }
     }
