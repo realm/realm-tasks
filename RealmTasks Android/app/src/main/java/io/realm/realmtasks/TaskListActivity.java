@@ -39,6 +39,7 @@ public class TaskListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TaskListAdapter adapter;
     private TouchHelper touchHelper;
+    private RealmResults<TaskListList> list;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class TaskListActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         realm = Realm.getDefaultInstance();
-        final RealmResults<TaskListList> list = realm.where(TaskListList.class).findAllAsync();
+        list = realm.where(TaskListList.class).findAllAsync();
         list.addChangeListener(new RealmChangeListener<RealmResults<TaskListList>>() {
             @Override
             public void onChange(RealmResults<TaskListList> results) {

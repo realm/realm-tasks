@@ -58,7 +58,7 @@ public class TaskActivity extends AppCompatActivity {
         super.onStart();
         realm = Realm.getDefaultInstance();
         TaskList list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findFirst();
-        if (list.isValid()) {
+        if (list != null && list.isValid()) {
             setTitle(list.getText());
             adapter = new TaskAdapter(this, list.getItems());
             touchHelper = new TouchHelper(new Callback(), adapter);
