@@ -227,6 +227,9 @@ public class TouchHelper {
                     recyclerView.scrollToPosition(0);
                 }
             }
+            if (actionState == ACTION_STATE_PULL && selected == null) {
+                recyclerView.scrollBy(0, (int) dy * -1);
+            }
         }
     }
 
@@ -286,7 +289,9 @@ public class TouchHelper {
                 if (actionState == ACTION_STATE_PULL || viewHolder != null) {
                     dx = motionEvent.getX(pointerIndex) - initialX;
                     dy = motionEvent.getY(pointerIndex) - initialY;
-                    moveIfNecessary(viewHolder);
+                    if (actionState != ACTION_STATE_PULL) {
+                        moveIfNecessary(viewHolder);
+                    }
                     TouchHelper.this.recyclerView.invalidate();
                 }
             }
