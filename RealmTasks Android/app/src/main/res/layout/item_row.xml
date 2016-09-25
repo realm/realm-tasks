@@ -2,13 +2,14 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="55dp"
-    android:background="@android:color/black">
+    android:layout_height="wrap_content"
+    android:background="@android:color/black"
+    android:minHeight="55dp">
 
     <RelativeLayout
         android:id="@+id/icon_bar"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="match_parent"
         android:alpha="0">
 
         <ImageView
@@ -32,7 +33,7 @@
     <RelativeLayout
         android:id="@+id/row"
         android:layout_width="match_parent"
-        android:layout_height="55dp">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/text"
@@ -41,6 +42,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
+            android:layout_marginRight="75dp"
             android:text="Text"
             android:textColor="@android:color/white"
             android:textSize="18dp"/>
@@ -57,7 +59,7 @@
         <TextView
             android:id="@+id/badge"
             android:layout_width="60dp"
-            android:layout_height="55dp"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:background="#26FFFFFF"
             android:gravity="center"
