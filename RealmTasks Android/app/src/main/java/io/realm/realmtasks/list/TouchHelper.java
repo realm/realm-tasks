@@ -35,6 +35,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -170,6 +172,7 @@ public class TouchHelper {
                         if (translationX > 0) {
                             ViewCompat.setTranslationX(selectedViewHolder.getRow(), maxNiche);
                             ViewCompat.setTranslationX(selectedItemView, translationX - maxNiche);
+                            selectedViewHolder.preCompleted();
                         } else {
                             ViewCompat.setTranslationX(selectedViewHolder.getRow(), maxNiche * -1);
                             ViewCompat.setTranslationX(selectedItemView, translationX + maxNiche);
@@ -367,15 +370,16 @@ public class TouchHelper {
             if (previousActionState == ACTION_STATE_SWIPE) {
                 if (TouchHelper.this.selected != null) {
                     final float maxNiche = logicalDensity * 66 / 2;
-                    final float itemViewTranslationX = TouchHelper.this.selected.itemView.getTranslationX();
+                    final View selectedItemView = TouchHelper.this.selected.itemView;
+                    final float itemViewTranslationX = selectedItemView.getTranslationX();
                     final float rowTranslationX = TouchHelper.this.selected.getRow().getTranslationX();
                     final float previousTranslationX = itemViewTranslationX + rowTranslationX;
                     TouchHelper.this.selected.reset();
                     if (Math.abs(previousTranslationX) > maxNiche) {
                         if (previousTranslationX < 0) {
-                            callback.onDismissed(TouchHelper.this.selected);
+                            animateDismissItem(selectedItemView, rowTranslationX);
                         } else {
-                            callback.onCompleted(TouchHelper.this.selected);
+                            animateCompleteItem(selectedItemView, rowTranslationX);
                         }
                     }
                 }
@@ -417,6 +421,22 @@ public class TouchHelper {
             final ViewParent viewParent = recyclerView.getParent();
             viewParent.requestDisallowInterceptTouchEvent(TouchHelper.this.selected != null);
             recyclerView.invalidate();
+        }
+
+        private void animateDismissItem(View selectedItemView, float translationX) {
+            final TranslateAnimation translateAnimation =
+                    new TranslateAnimation(translationX, 0 - selectedItemView.getWidth(), 0, 0);
+            translateAnimation.setDuration(150);
+            translateAnimation.setAnimationListener(new DismissAnimationListener(TouchHelper.this.selected));
+            selectedItemView.startAnimation(translateAnimation);
+        }
+
+        private void animateCompleteItem(View selectedItemView, float translationX) {
+            final TranslateAnimation translateAnimation =
+                    new TranslateAnimation(translationX, 0, 0, 0);
+            translateAnimation.setDuration(50);
+            translateAnimation.setAnimationListener(new CompleteAnimationListener(TouchHelper.this.selected));
+            selectedItemView.startAnimation(translateAnimation);
         }
 
         private class TasksSimpleOnGestureListener extends SimpleOnGestureListener {
@@ -468,6 +488,48 @@ public class TouchHelper {
                 currentEditing.setEditable(false);
                 callback.onChanged(currentEditing);
                 currentEditing = null;
+            }
+        }
+
+        private class DismissAnimationListener implements Animation.AnimationListener {
+            private final ItemViewHolder itemViewHolder;
+
+            public DismissAnimationListener(ItemViewHolder itemViewHolder) {
+                this.itemViewHolder = itemViewHolder;
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                callback.onDismissed(itemViewHolder);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        }
+
+        private class CompleteAnimationListener implements Animation.AnimationListener {
+            private final ItemViewHolder itemViewHolder;
+
+            public CompleteAnimationListener(ItemViewHolder itemViewHolder) {
+                this.itemViewHolder = itemViewHolder;
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                callback.onCompleted(itemViewHolder);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
             }
         }
     }
