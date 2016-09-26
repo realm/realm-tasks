@@ -13,6 +13,13 @@ android {
         versionName "1.0"
     }
     buildTypes {
+        debug {
+            // This will automatically detect the IP address of the machine building RealmTasks.
+            // It is assumed that this machine is also running the Object Server.
+            // If not, replace 'host' with the IP of the machine hosting the server.
+            def host = InetAddress.getLocalHost().getCanonicalHostName()
+            buildConfigField "String", "OBJECT_SERVER_IP", "\"${host}\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

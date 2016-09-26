@@ -25,8 +25,8 @@ import io.realm.log.RealmLog;
 
 public class RealmTasksApplication extends Application {
 
-    public static final String AUTH_URL = "http://192.168.1.21:8080/auth";
-    public static final String REALM_URL = "realm://192.168.1.21:7800/~/realmtasks";
+    public static final String AUTH_URL = "http://" + BuildConfig.OBJECT_SERVER_IP + ":9080/auth";
+    public static final String REALM_URL = "realm://" + BuildConfig.OBJECT_SERVER_IP + ":9080/~/realmtasks";
     public static final String DEFAULT_LIST_ID = "80EB1620-165B-4600-A1B1-D97032FDD9A0";
     public static String DEFAULT_LIST_NAME = "My Tasks";
 
