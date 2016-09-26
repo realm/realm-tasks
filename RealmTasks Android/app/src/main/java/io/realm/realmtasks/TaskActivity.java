@@ -98,20 +98,15 @@ public class TaskActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        closeRealmAndRecyclerView();
-        super.onStop();
-    }
-
-    private void closeRealmAndRecyclerView() {
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
             adapter = null;
         }
-        if (realm != null) {
-            realm.removeAllChangeListeners();
-            realm.close();
-            realm = null;
-        }
+        realm.removeAllChangeListeners();
+        realm.close();
+        realm = null;
+
+        super.onStop();
     }
 
     @Override
@@ -134,7 +129,6 @@ public class TaskActivity extends AppCompatActivity {
                 intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                closeRealmAndRecyclerView();
                 return true;
 
             default:
@@ -197,7 +191,6 @@ public class TaskActivity extends AppCompatActivity {
 
         @Override
         public void onExit() {
-            closeRealmAndRecyclerView();
             finish();
         }
     }

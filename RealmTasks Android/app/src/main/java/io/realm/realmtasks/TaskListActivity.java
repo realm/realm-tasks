@@ -107,20 +107,14 @@ public class TaskListActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         list.removeChangeListeners();
-        closeRealmAndRecyclerView();
-        super.onStop();
-    }
-
-    private void closeRealmAndRecyclerView() {
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
             adapter = null;
         }
-        if (realm != null) {
-            realm.removeAllChangeListeners();
-            realm.close();
-            realm = null;
-        }
+        realm.removeAllChangeListeners();
+        realm.close();
+        realm = null;
+        super.onStop();
     }
 
     @Override
@@ -143,7 +137,6 @@ public class TaskListActivity extends AppCompatActivity {
                 intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                closeRealmAndRecyclerView();
                 return true;
 
             default:
