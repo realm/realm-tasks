@@ -76,6 +76,7 @@ extension LogInViewController {
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let viewController = segue.destinationViewController as? RegisterViewController {
+            viewController.initialUserName = userNameTextField.text
             viewController.completionHandler = { userName, password, returnCode in
                 if returnCode == .Register {
                     self.dismissViewControllerAnimated(true) {

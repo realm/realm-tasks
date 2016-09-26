@@ -33,9 +33,10 @@ class AppDelegate: NSObject {
         mainWindowController.contentViewController?.presentViewControllerAsSheet(logInViewController, preventApplicationTermination: false)
     }
 
-    func register() {
+    func register(userName userName: String?) {
         let registerViewController = mainStoryboard.instantiateControllerWithIdentifier("RegisterViewController") as! RegisterViewController
         registerViewController.delegate = self
+        registerViewController.userName = userName
 
         mainWindowController.contentViewController?.presentViewControllerAsSheet(registerViewController, preventApplicationTermination: false)
     }
@@ -89,7 +90,7 @@ extension AppDelegate: LogInViewControllerDelegate {
 
     func logInViewControllerDidRegister(viewController: LogInViewController) {
         viewController.dismissController(nil)
-        register()
+        register(userName: viewController.userName)
     }
 
 }
