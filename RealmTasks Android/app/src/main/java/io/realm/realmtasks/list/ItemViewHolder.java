@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -134,10 +135,13 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         }
         if (visible) {
             hintPanel.setVisibility(View.VISIBLE);
-            final RotateAnimation rotate = new RotateAnimation(
+            final AlphaAnimation alphaAnimation = new AlphaAnimation(0.2f, 1.0f);
+            alphaAnimation.setDuration(150);
+            hintPanel.setAnimation(alphaAnimation);
+            final RotateAnimation rotateAnimation = new RotateAnimation(
                     -90, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-            rotate.setDuration(100);
-            arrow.startAnimation(rotate);
+            rotateAnimation.setDuration(500);
+            arrow.startAnimation(rotateAnimation);
         } else {
             hintPanel.setVisibility(View.GONE);
         }
