@@ -31,8 +31,8 @@ protocol CellPresentable {
 }
 
 final class TaskListList: Object, ListPresentable {
-    let items = List<TaskList>()
     dynamic var id = 0 // swiftlint:disable:this variable_name
+    let items = List<TaskList>()
 
     override static func primaryKey() -> String? {
         return "id"
@@ -40,9 +40,9 @@ final class TaskListList: Object, ListPresentable {
 }
 
 final class TaskList: Object, CellPresentable, ListPresentable {
+    dynamic var id = NSUUID().UUIDString // swiftlint:disable:this variable_name
     dynamic var text = ""
     dynamic var completed = false
-    dynamic var id = NSUUID().UUIDString // swiftlint:disable:this variable_name
     let items = List<Task>()
 
     var isCompletable: Bool {
