@@ -76,9 +76,8 @@ public class TouchHelper {
     private static final int ACTION_STATE_IDLE = 0;
     private static final int ACTION_STATE_SWIPE = 1;
     private static final int ACTION_STATE_PULL = 2;
-    private
     @ActionState
-    int actionState = ACTION_STATE_IDLE;
+    private int actionState = ACTION_STATE_IDLE;
 
     @IntDef({PULL_STATE_ADD, PULL_STATE_CANCEL_ADD})
     @Retention(RetentionPolicy.SOURCE)
@@ -408,6 +407,8 @@ public class TouchHelper {
                             callback.onReverted(false);
                             isAddingCanceled = true;
                         }
+                    } else if (dy < logicalDensity * 46) {
+                        callback.onReverted(false);
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
                         TouchHelper.this.selected.getText().setText("");
