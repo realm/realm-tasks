@@ -108,6 +108,10 @@ public class TaskActivity extends AppCompatActivity {
         realm.close();
         realm = null;
         if (logoutAfterClose) {
+            /*
+             * We need call logout() here since onCreate() of the next Activity is already
+             * executed before reaching here.
+             */
             User.currentUser().logout();
             logoutAfterClose = false;
         }
