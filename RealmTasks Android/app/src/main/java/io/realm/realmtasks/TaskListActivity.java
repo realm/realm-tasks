@@ -24,6 +24,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -33,6 +39,8 @@ import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.model.TaskListList;
 import io.realm.realmtasks.view.RecyclerViewWithEmptyViewSupport;
+
+import static android.R.attr.id;
 
 public class TaskListActivity extends AppCompatActivity {
 
@@ -70,7 +78,26 @@ public class TaskListActivity extends AppCompatActivity {
     }
 
     private void updateList(RealmResults<TaskListList> results) {
+
         if (results.size() > 0 && adapter == null) {
+
+            // The default list is being added on all devices, so according to the merge rules the default list might
+            // be added multiple times. This is just a temporary fix. Proper ordered sets are being tracked here:
+            // https://github.com/realm/realm-core/issues/1206
+            realm.beginTransaction();
+            Set<String> seen = new HashSet<>();
+            Iterator<TaskList> it = results.first().getItems().iterator();
+            while (it.hasNext()) {
+                TaskList list = it.next();
+                String id = list.getId();
+                if (seen.contains(id)) {
+                    it.remove();
+                }
+                seen.add(id);
+            }
+            realm.commitTransaction();
+
+            // Create Adapter
             adapter = new TaskListAdapter(TaskListActivity.this, results.first().getItems());
             touchHelper = new TouchHelper(new Callback(), adapter);
             touchHelper.attachToRecyclerView(recyclerView);
