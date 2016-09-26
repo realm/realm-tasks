@@ -123,7 +123,6 @@ public class RegisterActivity extends AppCompatActivity {
             User.loginAsync(Credentials.usernamePassword(username, password, true), AUTH_URL, new User.Callback() {
                 @Override
                 public void onSuccess(User user) {
-                    showProgress(false);
                     registrationComplete(user);
                 }
 
@@ -159,37 +158,30 @@ public class RegisterActivity extends AppCompatActivity {
         });
         realm.close();
 
-        Intent listActivity = new Intent(this, TaskListActivity.class);
-        Intent tasksActivity = new Intent(this, TaskActivity.class);
-        tasksActivity.putExtra(TaskActivity.EXTRA_LIST_ID, RealmTasksApplication.DEFAULT_LIST_ID);
-        startActivities(new Intent[] { listActivity, tasksActivity} );
-        finish();
+        Intent intent = new Intent(this, SignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     private void showProgress(final boolean show) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            registerFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        registerFormView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            progressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        progressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 }
