@@ -19,8 +19,6 @@ package io.realm.realmtasks;
 import io.realm.Realm;
 import io.realm.SyncConfiguration;
 import io.realm.User;
-import io.realm.realmtasks.model.TaskList;
-import io.realm.realmtasks.model.TaskListList;
 
 public class UserManager {
 

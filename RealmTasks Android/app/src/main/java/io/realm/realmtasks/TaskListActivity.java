@@ -106,6 +106,7 @@ public class TaskListActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        list.removeChangeListeners();
         closeRealmAndRecyclerView();
         super.onStop();
     }
