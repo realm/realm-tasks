@@ -33,7 +33,10 @@ import android.widget.Toast;
 
 import io.realm.Credentials;
 import io.realm.ObjectServerError;
+import io.realm.Realm;
 import io.realm.User;
+import io.realm.realmtasks.model.TaskList;
+import io.realm.realmtasks.model.TaskListList;
 
 import static android.text.TextUtils.isEmpty;
 import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
@@ -141,6 +144,21 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registrationComplete(User user) {
         UserManager.setActiveUser(user);
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                if (realm.isEmpty()) {
+                    final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
+                    final TaskList taskList = new TaskList();
+                    taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
+                    taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
+                    taskListList.getItems().set(0, taskList);
+                }
+            }
+        });
+        realm.close();
+
         Intent listActivity = new Intent(this, TaskListActivity.class);
         Intent tasksActivity = new Intent(this, TaskActivity.class);
         tasksActivity.putExtra(TaskActivity.EXTRA_LIST_ID, RealmTasksApplication.DEFAULT_LIST_ID);
