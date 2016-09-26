@@ -115,6 +115,11 @@ class TaskListViewController: NSViewController {
 extension TaskListViewController {
 
     @IBAction func newTask(sender: AnyObject?) {
+        if currentlyEditingCellView != nil {
+            currentlyEditingCellView?.window?.makeFirstResponder(nil)
+            return
+        }
+        
         try! items.realm?.write {
             self.items.insert(Task(), atIndex: 0)
         }
@@ -127,15 +132,6 @@ extension TaskListViewController {
             self.view.window?.toolbar?.validateVisibleItems()
         }
     }
-
-    override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
-        if theItem.action == #selector(newTask) && currentlyEditingCellView != nil {
-            return false
-        }
-
-        return true
-    }
-
 }
 
 // MARK: Reordering
