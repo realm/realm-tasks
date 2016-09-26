@@ -204,6 +204,13 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             placeHolderCell.right == placeHolderCell.superview!.superview!.right
             placeHolderCell.height == tableView.rowHeight
         }
+        
+        constrain(placeHolderCell, placeHolderCell.contentView) { placeHolderCell, contentView in
+            contentView.top == placeHolderCell.top
+            contentView.left == placeHolderCell.left
+            contentView.bottom == placeHolderCell.bottom
+            contentView.right == placeHolderCell.right
+        }
     }
 
     private func toggleOnboardView(animated animated: Bool = false) {
