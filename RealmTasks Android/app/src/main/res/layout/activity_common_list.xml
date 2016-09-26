@@ -5,11 +5,21 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <android.support.v7.widget.RecyclerView
+    <io.realm.realmtasks.view.RecyclerViewWithEmptyViewSupport
         android:id="@+id/recycler_view"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        />
 
-    </android.support.v7.widget.RecyclerView>
+    <ImageView
+        android:src="@drawable/pull_down_to_start"
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="visible"
+        android:paddingBottom="@dimen/padding_bottom_pull_down"
+        />
 
 </RelativeLayout>

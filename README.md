@@ -8,7 +8,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 ## Prerequisites
 
-* Xcode 7.3.1.
+* Xcode 8.
 * CocoaPods 1.0.1.
 * Access to <https://labs.realm.io>.
 * Git configured with SSH and access to the <https://github.com/realm/cocoapods-specs-private> repo.
@@ -21,7 +21,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 ## 2. Build and Run RealmTasks
 
 1. Run `pod install` from the root of this repo.
-2. Open `RealmTasks.xcworkspace` with Xcode 7.3.1.
+2. Open `RealmTasks.xcworkspace` with Xcode 8.
 3. Select either the "RealmTasks macOS" or "RealmTasks iOS" depending on which platform you'd like to try the app on.
 4. Click the "Build and Run" icon in the upper left of Xcode (play icon).
 5. When the app launches, tap/click "Register" if this is the first time you're trying the app, or "Log In" if you've
@@ -37,5 +37,9 @@ We recommend that you run at least two instances of the app together to really s
 ## 3. Access Realm Files with the Realm Browser
 
 1. Launch the "Realm Browser" app included in the package obtained above and click "Open Sync URL...".
-2. Paste the following into the Realm Browser's Sync Server URL field: `realm://127.0.0.1:7800/~/realmtasks`.
+2. Paste the following into the Realm Browser's Sync Server URL field: `realm://127.0.0.1:9080/~/realmtasks`.
 3. Enter the same username and password as you used when running RealmTasks and click "Open".
+
+## License
+
+The source code for RealmTasks is licensed under the [Apache License 2.0](LICENSE).

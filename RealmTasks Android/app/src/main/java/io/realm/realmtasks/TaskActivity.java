@@ -31,6 +31,7 @@ import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
+import io.realm.realmtasks.view.RecyclerViewWithEmptyViewSupport;
 
 import static android.R.id.list;
 
@@ -39,7 +40,7 @@ public class TaskActivity extends AppCompatActivity {
     public static final String EXTRA_LIST_ID = "extra.list_id";
 
     private Realm realm;
-    private RecyclerView recyclerView;
+    private RecyclerViewWithEmptyViewSupport recyclerView;
     private TaskAdapter adapter;
     private TouchHelper touchHelper;
     private String id;
@@ -49,8 +50,11 @@ public class TaskActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_common_list);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        recyclerView = (RecyclerViewWithEmptyViewSupport) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setEmptyView(findViewById(R.id.empty_view));
+
         final Intent intent = getIntent();
         if (!intent.hasExtra(EXTRA_LIST_ID)) {
             throw new IllegalArgumentException(EXTRA_LIST_ID + " required");
