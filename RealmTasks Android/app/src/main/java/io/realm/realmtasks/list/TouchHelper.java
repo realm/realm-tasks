@@ -172,7 +172,7 @@ public class TouchHelper {
                         if (translationX > 0) {
                             ViewCompat.setTranslationX(selectedViewHolder.getRow(), maxNiche);
                             ViewCompat.setTranslationX(selectedItemView, translationX - maxNiche);
-                            selectedViewHolder.preCompleted();
+                            selectedViewHolder.changeBackgroundColorIfNeeded();
                         } else {
                             ViewCompat.setTranslationX(selectedViewHolder.getRow(), maxNiche * -1);
                             ViewCompat.setTranslationX(selectedItemView, translationX + maxNiche);
@@ -434,7 +434,7 @@ public class TouchHelper {
         private void animateCompleteItem(View selectedItemView, float translationX) {
             final TranslateAnimation translateAnimation =
                     new TranslateAnimation(translationX, 0, 0, 0);
-            translateAnimation.setDuration(50);
+            translateAnimation.setDuration(150);
             translateAnimation.setAnimationListener(new CompleteAnimationListener(TouchHelper.this.selected));
             selectedItemView.startAnimation(translateAnimation);
         }

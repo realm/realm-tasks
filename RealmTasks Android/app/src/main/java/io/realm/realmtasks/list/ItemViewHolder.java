@@ -42,6 +42,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView text;
     private final RecyclerView.Adapter adapter;
     private boolean completed;
+    private int completedVersion;
+    private int backgroundColorVersion;
 
     public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
@@ -52,6 +54,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         badge = (TextView) row.findViewById(R.id.badge);
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
+        backgroundColorVersion = -1;
         this.adapter = adapter;
     }
 
@@ -64,6 +67,10 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setCompleted(boolean completed) {
+        if (completed == this.completed) {
+            return;
+        }
+        completedVersion++;
         this.completed = completed;
         int paintFlags = text.getPaintFlags();
         final int noItemColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_no_item_color);
@@ -165,6 +172,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         setIconBarAlpha(1f);
         setCompleted(false);
         setHintPanelVisible(false);
+        backgroundColorVersion = -1;
     }
 
     public void resetBackgroundColor() {
@@ -191,12 +199,16 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         iconBar.setAlpha(alpha);
     }
 
-    public void preCompleted() {
+    public void changeBackgroundColorIfNeeded() {
+        if (backgroundColorVersion == completedVersion) {
+            return;
+        }
         if (getCompleted()) {
             row.setBackgroundColor(generateBackgroundColor());
         } else {
             row.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.pre_completed));
         }
+        backgroundColorVersion = completedVersion;
     }
 
     public static class ColorHelper {
