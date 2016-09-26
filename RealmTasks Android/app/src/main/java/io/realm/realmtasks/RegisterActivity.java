@@ -146,29 +146,24 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void showProgress(final boolean show) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            registerFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        registerFormView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            progressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        progressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 }
