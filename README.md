@@ -46,7 +46,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 2. Run `./gradlew installDebug`
 3. The RealmTask app should now be installed on all attached Android devices and emulators. You need to launch the app manually.
 
-** Using RealmTasks
+**Using RealmTasks**
 
 At this point, you can login, start creating items, managing lists, and you'll see your actions reflected in real time in other
 running instances of the app wether it is the Android, iOS or Mac OS app.
