@@ -66,6 +66,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             text.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(COMPLETED_BACKGROUND_COLOR);
         } else {
+            if (getBadge().getVisibility() == View.VISIBLE && getBadge().getText().equals("0")) {
+                text.setTextColor(NO_ITEM_COLOR);
+            } else {
+                text.setTextColor(DEFAULT_COLOR);
+            }
             text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(generateBackgroundColor());
         }
