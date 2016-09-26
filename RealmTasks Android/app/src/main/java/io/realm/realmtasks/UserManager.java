@@ -30,11 +30,13 @@ public class UserManager {
                 .initialData(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
-                        final TaskList taskList = new TaskList();
-                        taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
-                        taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
-                        taskListList.getItems().add(taskList);
+                        if (realm.isEmpty() || realm.where(TaskListList.class).count() == 0) {
+                            final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
+                            final TaskList taskList = new TaskList();
+                            taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
+                            taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
+                            taskListList.getItems().add(taskList);
+                        }
                     }
                 })
                 .build();

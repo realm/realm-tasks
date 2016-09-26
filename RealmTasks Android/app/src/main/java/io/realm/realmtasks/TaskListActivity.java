@@ -32,11 +32,12 @@ import io.realm.realmtasks.list.TaskListAdapter;
 import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.model.TaskListList;
+import io.realm.realmtasks.view.RecyclerViewWithEmptyViewSupport;
 
 public class TaskListActivity extends AppCompatActivity {
 
     private Realm realm;
-    private RecyclerView recyclerView;
+    private RecyclerViewWithEmptyViewSupport recyclerView;
     private TaskListAdapter adapter;
     private TouchHelper touchHelper;
 
@@ -44,8 +45,9 @@ public class TaskListActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_common_list);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerViewWithEmptyViewSupport) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setEmptyView(findViewById(R.id.empty_view));
     }
 
     @Override

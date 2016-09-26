@@ -4,5 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="signin_horizontal_margin">128dp</dimen>
+    <dimen name="padding_bottom_pull_down">16dp</dimen>
 
 </resources>
