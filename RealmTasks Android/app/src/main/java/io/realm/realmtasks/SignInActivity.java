@@ -19,7 +19,6 @@ package io.realm.realmtasks;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -42,7 +41,7 @@ import io.realm.User;
 
 public class SignInActivity extends AppCompatActivity {
 
-    public static final String ACTION_LOGOUT_EXISTING_USER = "action.logoutExistingUser";
+    public static final String ACTION_IGNORE_CURRENT_USER = "action.ignoreCurrentUser";
 
     private AutoCompleteTextView usernameView;
     private EditText passwordView;
@@ -78,11 +77,12 @@ public class SignInActivity extends AppCompatActivity {
         progressView = findViewById(R.id.sign_in_progress);
 
         // Check if we already got a user, if yes, just continue automatically
-        if (savedInstanceState == null && User.currentUser() != null) {
-            if (ACTION_LOGOUT_EXISTING_USER.equals(getIntent().getAction())) {
-                User.currentUser().logout();
-            } else {
-                loginComplete(User.currentUser());
+        if (savedInstanceState == null) {
+            if (!ACTION_IGNORE_CURRENT_USER.equals(getIntent().getAction())) {
+                final User user = User.currentUser();
+                if (user != null) {
+                    loginComplete(user);
+                }
             }
         }
     }

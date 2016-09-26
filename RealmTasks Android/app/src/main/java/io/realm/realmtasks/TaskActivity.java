@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+import io.realm.User;
 import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
@@ -45,6 +46,7 @@ public class TaskActivity extends AppCompatActivity {
     private TouchHelper touchHelper;
     private String id;
     RealmResults<TaskList> list;
+    private boolean logoutAfterClose;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,10 @@ public class TaskActivity extends AppCompatActivity {
         realm.removeAllChangeListeners();
         realm.close();
         realm = null;
+        if (logoutAfterClose) {
+            User.currentUser().logout();
+            logoutAfterClose = false;
+        }
 
         super.onStop();
     }
@@ -126,9 +132,10 @@ public class TaskActivity extends AppCompatActivity {
 
             case R.id.action_logout:
                 Intent intent = new Intent(TaskActivity.this, SignInActivity.class);
-                intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
+                intent.setAction(SignInActivity.ACTION_IGNORE_CURRENT_USER);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                logoutAfterClose = true;
                 return true;
 
             default:
