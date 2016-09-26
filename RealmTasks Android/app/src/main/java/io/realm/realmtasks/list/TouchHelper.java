@@ -192,20 +192,7 @@ public class TouchHelper {
                         selectedItemView.setRotationX(0f);
                         if (callback.canDismissed()) {
                             final int actionBaseline = (int) (recyclerView.getHeight() * 0.4);
-                            if (dy > actionBaseline + (height * 1) && pullState == PULL_STATE_CANCEL_ADD) {
-                                if (!isAddingCanceled) {
-                                    TouchHelper.this.selected.itemView.setAlpha(0);
-                                    callback.onReverted(false);
-                                    isAddingCanceled = true;
-                                }
-                                recyclerView.setVisibility(View.INVISIBLE);
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        callback.onExit();
-                                    }
-                                });
-                            } else if (dy > actionBaseline) {
+                            if (dy > actionBaseline) {
                                 final float h = dy - actionBaseline;
                                 float ratio = h / height;
                                 if (ratio > 1) {
@@ -406,6 +393,17 @@ public class TouchHelper {
                         if (!isAddingCanceled) {
                             callback.onReverted(false);
                             isAddingCanceled = true;
+                        }
+                        final int height = TouchHelper.this.selected.itemView.getHeight();
+                        final int actionBaseline = (int) (recyclerView.getHeight() * 0.4);
+                        if (dy > actionBaseline + (height * 1) && pullState == PULL_STATE_CANCEL_ADD) {
+                            recyclerView.setVisibility(View.INVISIBLE);
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onExit();
+                                }
+                            });
                         }
                     } else if (dy < logicalDensity * 46) {
                         callback.onReverted(false);
