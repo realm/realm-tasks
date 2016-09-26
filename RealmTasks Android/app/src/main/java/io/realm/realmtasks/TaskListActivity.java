@@ -84,30 +84,29 @@ public class TaskListActivity extends AppCompatActivity {
             // The default list is being added on all devices, so according to the merge rules the default list might
             // be added multiple times. This is just a temporary fix. Proper ordered sets are being tracked here:
             // https://github.com/realm/realm-core/issues/1206
-            if (realm != null) {// This method might be called on the background, onStop is called and realm set to null.
-                realm.beginTransaction();
-                Set<String> seen = new HashSet<>();
-                Iterator<TaskList> it = results.first().getItems().iterator();
-                while (it.hasNext()) {
-                    TaskList list = it.next();
-                    String id = list.getId();
-                    if (seen.contains(id)) {
-                        it.remove();
-                    }
-                    seen.add(id);
+            realm.beginTransaction();
+            Set<String> seen = new HashSet<>();
+            Iterator<TaskList> it = results.first().getItems().iterator();
+            while (it.hasNext()) {
+                TaskList list = it.next();
+                String id = list.getId();
+                if (seen.contains(id)) {
+                    it.remove();
                 }
-                realm.commitTransaction();
-
-                // Create Adapter
-                adapter = new TaskListAdapter(TaskListActivity.this, results.first().getItems());
-                touchHelper = new TouchHelper(new Callback(), adapter);
-                touchHelper.attachToRecyclerView(recyclerView);
+                seen.add(id);
             }
+            realm.commitTransaction();
+
+            // Create Adapter
+            adapter = new TaskListAdapter(TaskListActivity.this, results.first().getItems());
+            touchHelper = new TouchHelper(new Callback(), adapter);
+            touchHelper.attachToRecyclerView(recyclerView);
         }
     }
 
     @Override
     protected void onStop() {
+        list.removeChangeListeners();
         closeRealmAndRecyclerView();
         super.onStop();
     }
@@ -185,8 +184,7 @@ public class TaskListActivity extends AppCompatActivity {
             final TaskList taskList = adapter.getItem(position);
             final String id = taskList.getId();
             final Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(TaskActivity.EXTRA_LIST_ID, id);
+                intent.putExtra(TaskActivity.EXTRA_LIST_ID, id);
             TaskListActivity.this.startActivity(intent);
             return true;
         }
