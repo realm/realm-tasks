@@ -132,9 +132,9 @@ public class TaskActivity extends AppCompatActivity {
             case R.id.action_logout:
                 Intent intent = new Intent(TaskActivity.this, SignInActivity.class);
                 intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 closeRealmAndRecyclerView();
-                finish();
                 return true;
 
             default:
