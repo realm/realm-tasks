@@ -16,7 +16,6 @@ buildscript {
             }
             url "s3://realm-ci-artifacts/maven/snapshots/"
         }
-        mavenLocal()
         jcenter()
     }
     dependencies {
@@ -41,7 +40,6 @@ allprojects {
             }
             url "s3://realm-ci-artifacts/maven/snapshots/"
         }
-        mavenLocal()
         jcenter()
     }
 }
