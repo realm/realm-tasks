@@ -158,8 +158,9 @@ public class TouchHelper {
             if (selected != null) {
                 final ItemViewHolder selectedViewHolder = selected;
                 final View selectedItemView = selectedViewHolder.itemView;
+                final int height = selectedItemView.getHeight();
                 if (actionState == ACTION_STATE_SWIPE) {
-                    final float translationX = selectedInitialX + dx - selected.itemView.getLeft();
+                    final float translationX = selectedInitialX + dx - selectedItemView.getLeft();
                     final float absDx = Math.abs(translationX);
                     final float maxNiche = logicalDensity * 66;
                     if (absDx < maxNiche) {
@@ -176,24 +177,19 @@ public class TouchHelper {
                         }
                     }
                 } else if (actionState == ACTION_STATE_PULL) {
-                    final int height = selected.itemView.getHeight();
                     boolean hintPanelVisible = false;
                     if (dy >= 0 && dy < height) {
+                        selectedViewHolder.getText().setText(R.string.pull_to_create_item);
                         double ratio = dy / height;
                         float rotationX = (float) (90 - Math.toDegrees(Math.asin(ratio)));
                         selectedItemView.setRotationX(rotationX);
                         selectedItemView.setPivotY(height);
-
-                        if (rotationX < 15) {
-                            selectedViewHolder.getText().setText(R.string.release_to_create_item);
-                        } else {
-                            selectedViewHolder.getText().setText(R.string.pull_to_create_item);
-                        }
                     } else {
+                        selectedViewHolder.getText().setText(R.string.release_to_create_item);
                         selectedItemView.setTranslationY(0);
                         selectedItemView.setRotationX(0f);
                         if (callback.canDismissed()) {
-                            final int actionBaseline = (int) (recyclerView.getHeight() * 0.4);
+                            final int actionBaseline = height * 2;
                             if (dy > actionBaseline) {
                                 hintPanelVisible = true;
                             }
@@ -205,9 +201,9 @@ public class TouchHelper {
                         }
                     }
                     selected.setHintPanelVisible(hintPanelVisible);
-                    int paddingTop = (int) dy - selected.itemView.getHeight();
-                    if (paddingTop < 0 - selected.itemView.getHeight()) {
-                        paddingTop = 0 - selected.itemView.getHeight();
+                    int paddingTop = (int) dy - height;
+                    if (paddingTop < 0 - height) {
+                        paddingTop = 0 - height;
                     }
                     ViewCompat.setPaddingRelative(recyclerView, 0, paddingTop, 0, 0);
                     recyclerView.scrollToPosition(0);
