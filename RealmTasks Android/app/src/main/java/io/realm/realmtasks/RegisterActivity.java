@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
                     final TaskList taskList = new TaskList();
                     taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
                     taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
-                    taskListList.getItems().set(0, taskList);
+                    taskListList.getItems().add(taskList);
                 }
             }
         });
