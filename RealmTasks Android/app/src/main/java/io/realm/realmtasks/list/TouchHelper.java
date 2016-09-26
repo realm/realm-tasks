@@ -177,6 +177,7 @@ public class TouchHelper {
                     }
                 } else if (actionState == ACTION_STATE_PULL) {
                     final int height = selected.itemView.getHeight();
+                    boolean hintPanelVisible = false;
                     if (dy >= 0 && dy < height) {
                         float ratio = dy / height;
                         selectedItemView.setTranslationY(height - (height * ratio));
@@ -193,22 +194,16 @@ public class TouchHelper {
                         if (callback.canDismissed()) {
                             final int actionBaseline = (int) (recyclerView.getHeight() * 0.4);
                             if (dy > actionBaseline) {
-                                final float h = dy - actionBaseline;
-                                float ratio = h / height;
-                                if (ratio > 1) {
-                                    ratio = 1;
-                                }
-                                selected.itemView.setRotationX(ratio * 90);
-                                selected.itemView.setTranslationY(height * ratio);
+                                hintPanelVisible = true;
                             }
-                            final double revertBaseline = actionBaseline + (height * 0.7);
-                            if (pullState == PULL_STATE_ADD && dy > revertBaseline) {
+                            if (pullState == PULL_STATE_ADD && dy > actionBaseline) {
                                 pullState = PULL_STATE_CANCEL_ADD;
-                            } else if (pullState == PULL_STATE_CANCEL_ADD && dy < revertBaseline) {
+                            } else if (pullState == PULL_STATE_CANCEL_ADD && dy < actionBaseline) {
                                 pullState = PULL_STATE_ADD;
                             }
                         }
                     }
+                    selected.setHintPanelVisible(hintPanelVisible);
                     int paddingTop = (int) dy - selected.itemView.getHeight();
                     if (paddingTop < 0 - selected.itemView.getHeight()) {
                         paddingTop = 0 - selected.itemView.getHeight();
@@ -394,17 +389,13 @@ public class TouchHelper {
                             callback.onReverted(false);
                             isAddingCanceled = true;
                         }
-                        final int height = TouchHelper.this.selected.itemView.getHeight();
-                        final int actionBaseline = (int) (recyclerView.getHeight() * 0.4);
-                        if (dy > actionBaseline + (height * 1) && pullState == PULL_STATE_CANCEL_ADD) {
-                            recyclerView.setVisibility(View.INVISIBLE);
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.onExit();
-                                }
-                            });
-                        }
+                        recyclerView.setVisibility(View.INVISIBLE);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onExit();
+                            }
+                        });
                     } else if (dy < logicalDensity * 46) {
                         callback.onReverted(false);
                     } else {
