@@ -20,8 +20,10 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,6 +38,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
     private final RelativeLayout iconBar;
     private final RelativeLayout row;
+    private final RelativeLayout hintPanel;
+    private final ImageView arrow;
     private final EditText editText;
     private final TextView badge;
     private final TextView text;
@@ -45,6 +49,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         iconBar = (RelativeLayout) itemView.findViewById(R.id.icon_bar);
         row = (RelativeLayout) itemView.findViewById(R.id.row);
+        hintPanel = (RelativeLayout) itemView.findViewById(R.id.hint_panel);
+        arrow = (ImageView) hintPanel.findViewById(R.id.arrow);
         badge = (TextView) row.findViewById(R.id.badge);
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
@@ -120,6 +126,23 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    public void setHintPanelVisible(boolean visible) {
+        final int visibility = hintPanel.getVisibility();
+        boolean previousVisible = visibility == View.VISIBLE;
+        if (previousVisible == visible) {
+            return;
+        }
+        if (visible) {
+            hintPanel.setVisibility(View.VISIBLE);
+            final RotateAnimation rotate = new RotateAnimation(
+                    -90, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+            rotate.setDuration(100);
+            arrow.startAnimation(rotate);
+        } else {
+            hintPanel.setVisibility(View.GONE);
+        }
+    }
+
     public void reset() {
         itemView.setTranslationX(0);
         itemView.setTranslationY(0);
@@ -128,6 +151,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         row.setTranslationX(0);
         setIconBarAlpha(1f);
         setCompleted(false);
+        setHintPanelVisible(false);
     }
 
     public void resetBackgroundColor() {
