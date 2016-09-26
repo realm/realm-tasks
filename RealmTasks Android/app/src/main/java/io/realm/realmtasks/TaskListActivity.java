@@ -184,7 +184,7 @@ public class TaskListActivity extends AppCompatActivity {
             final TaskList taskList = adapter.getItem(position);
             final String id = taskList.getId();
             final Intent intent = new Intent(TaskListActivity.this, TaskActivity.class);
-                intent.putExtra(TaskActivity.EXTRA_LIST_ID, id);
+            intent.putExtra(TaskActivity.EXTRA_LIST_ID, id);
             TaskListActivity.this.startActivity(intent);
             return true;
         }
