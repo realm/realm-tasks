@@ -377,9 +377,9 @@ public class TouchHelper {
                     TouchHelper.this.selected.reset();
                     if (Math.abs(previousTranslationX) > maxNiche) {
                         if (previousTranslationX < 0) {
-                            animateDismissItem(selectedItemView, rowTranslationX);
+                            animateDismissItem(selectedItemView, previousTranslationX);
                         } else {
-                            animateCompleteItem(selectedItemView, rowTranslationX);
+                            animateCompleteItem(selectedItemView, previousTranslationX);
                         }
                     }
                 }
