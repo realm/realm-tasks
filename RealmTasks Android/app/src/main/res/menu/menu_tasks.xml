@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".CounterActivity">
+
+    <item
+        android:id="@+id/action_add"
+        android:orderInCategory="50"
+        android:title="Add"
+        android:icon="@drawable/ic_playlist_add_white_24dp"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="100"
+        android:title="Logout"
+        android:icon="@drawable/ic_exit_to_app_white_24dp"
+        app:showAsAction="always"/>
+</menu>

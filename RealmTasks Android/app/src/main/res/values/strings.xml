@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">RealmTasks</string>
+
+    <string name="prompt_username">User Name</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_password_conformation">Confirmation</string>
+    <string name="action_sign_in">Log In</string>
+    <string name="action_log_in_short">Sign in</string>
+    <string name="action_register">Register</string>
+    <string name="action_register_short">Register</string>
+    <string name="error_invalid_email">Username required</string>
+    <string name="error_invalid_password">Password required</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <string name="activity_sign_in_label">Sign In</string>
+    <string name="activity_register_label">Register</string>
+
+    <string name="menu_item_register">Register</string>
+    <string name="title_deleted">Deleted</string>
+    <string name="release_to_create_item">Relase to Create Item</string>
+    <string name="pull_to_create_item">Pull to Create Item</string>
+    <string name="no_item">There is no item to complete</string>
+</resources>
