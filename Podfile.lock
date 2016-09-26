@@ -1,26 +1,26 @@
 PODS:
   - Cartography (0.7.0)
-  - Realm (1.1.0-2):
-    - Realm/Headers (= 1.1.0-2)
-  - Realm/Headers (1.1.0-2)
-  - RealmSwift (1.1.0-2):
-    - Realm (= 1.1.0-2)
+  - Realm (1.1.0-3):
+    - Realm/Headers (= 1.1.0-3)
+  - Realm/Headers (1.1.0-3)
+  - RealmSwift (1.1.0-3):
+    - Realm (= 1.1.0-3)
 
 DEPENDENCIES:
   - Cartography (from `https://github.com/robb/Cartography.git`, branch `master`)
-  - Realm (from `git@github.com:realm/realm-cocoa-private.git`, branch `v1.1.0-2`)
-  - RealmSwift (from `git@github.com:realm/realm-cocoa-private.git`, branch `v1.1.0-2`)
+  - Realm (from `git@github.com:realm/realm-cocoa-private.git`, branch `v1.1.0-3`)
+  - RealmSwift (from `git@github.com:realm/realm-cocoa-private.git`, branch `v1.1.0-3`)
 
 EXTERNAL SOURCES:
   Cartography:
     :branch: master
     :git: https://github.com/robb/Cartography.git
   Realm:
-    :branch: v1.1.0-2
+    :branch: v1.1.0-3
     :git: git@github.com:realm/realm-cocoa-private.git
     :submodules: true
   RealmSwift:
-    :branch: v1.1.0-2
+    :branch: v1.1.0-3
     :git: git@github.com:realm/realm-cocoa-private.git
     :submodules: true
 
@@ -29,19 +29,19 @@ CHECKOUT OPTIONS:
     :commit: ecdeffda56a6ce9dc8bb571b5455a6395d403b03
     :git: https://github.com/robb/Cartography.git
   Realm:
-    :commit: 6226ef2865a434f0d829fad3761d0a358408001c
+    :commit: 5ae7f66cb5889d752cb4c0b8ad43f7a7a168b055
     :git: git@github.com:realm/realm-cocoa-private.git
     :submodules: true
   RealmSwift:
-    :commit: 6226ef2865a434f0d829fad3761d0a358408001c
+    :commit: 5ae7f66cb5889d752cb4c0b8ad43f7a7a168b055
     :git: git@github.com:realm/realm-cocoa-private.git
     :submodules: true
 
 SPEC CHECKSUMS:
   Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
-  Realm: 720e2ce605fa338e2309c807c5f2bf1a34c0c601
-  RealmSwift: 39753c46ee0982224c8f13e9028e7b019ecebbb1
+  Realm: 8760dba66d380cd822d03a4780039f768c58ae31
+  RealmSwift: ed4ebf5510de4521a9dee543a6d176d0796f341b
 
-PODFILE CHECKSUM: b79d18f35f712e41c2b54776c552ce34e8e60753
+PODFILE CHECKSUM: 419fd757f77e94cf93156cc681816b0eec6e0783
 
 COCOAPODS: 1.0.1
