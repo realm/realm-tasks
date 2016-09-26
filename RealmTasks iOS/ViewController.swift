@@ -232,7 +232,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             guard self.listPresenter.cellPresenter.currentlyEditingCell == nil else {
                 return
             }
-            
+
             self.tableView.reloadData()
         }
     }

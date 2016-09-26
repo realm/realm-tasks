@@ -82,7 +82,7 @@ class TaskListViewController: NSViewController {
             guard self.currentlyEditingCellView == nil && !self.reordering else {
                 return
             }
-            
+
             self.tableView.reloadData()
         }
     }
@@ -461,7 +461,7 @@ extension TaskListViewController: TaskCellViewDelegate {
         })
 
         currentlyEditingCellView = nil
-        
+
         self.tableView.reloadData()
     }
 
