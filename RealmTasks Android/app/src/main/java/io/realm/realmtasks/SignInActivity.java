@@ -78,7 +78,7 @@ public class SignInActivity extends AppCompatActivity {
         progressView = findViewById(R.id.sign_in_progress);
 
         // Check if we already got a user, if yes, just continue automatically
-        if (User.currentUser() != null) {
+        if (savedInstanceState == null && User.currentUser() != null) {
             if (ACTION_LOGOUT_EXISTING_USER.equals(getIntent().getAction())) {
                 User.currentUser().logout();
             } else {

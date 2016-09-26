@@ -120,7 +120,6 @@ public class RegisterActivity extends AppCompatActivity {
             User.loginAsync(Credentials.usernamePassword(username, password, true), AUTH_URL, new User.Callback() {
                 @Override
                 public void onSuccess(User user) {
-                    showProgress(false);
                     registrationComplete(user);
                 }
 
@@ -141,11 +140,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registrationComplete(User user) {
         UserManager.setActiveUser(user);
-        Intent listActivity = new Intent(this, TaskListActivity.class);
-        Intent tasksActivity = new Intent(this, TaskActivity.class);
-        tasksActivity.putExtra(TaskActivity.EXTRA_LIST_ID, RealmTasksApplication.DEFAULT_LIST_ID);
-        startActivities(new Intent[] { listActivity, tasksActivity} );
-        finish();
+        Intent intent = new Intent(this, SignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     private void showProgress(final boolean show) {
