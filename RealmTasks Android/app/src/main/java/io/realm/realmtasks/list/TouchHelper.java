@@ -179,10 +179,11 @@ public class TouchHelper {
                     final int height = selected.itemView.getHeight();
                     boolean hintPanelVisible = false;
                     if (dy >= 0 && dy < height) {
-                        float ratio = dy / height;
-                        selectedItemView.setTranslationY(height - (height * ratio));
-                        float rotationX = 90f - (90f * ratio);
+                        double ratio = dy / height;
+                        float rotationX = (float) (90 - Math.toDegrees(Math.asin(ratio)));
                         selectedItemView.setRotationX(rotationX);
+                        selectedItemView.setPivotY(height);
+
                         if (rotationX < 15) {
                             selectedViewHolder.getText().setText(R.string.release_to_create_item);
                         } else {
