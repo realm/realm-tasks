@@ -307,8 +307,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
 
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) where view != cellView {
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView where view != cellView {
                     view.alphaValue = 0.3
+                    view.isUserInteractionEnabled = false
                 }
             }
         }
@@ -327,7 +328,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
                 if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
-                    view.isUserInteractionEnabled = false
+                    view.isUserInteractionEnabled = true
                 }
             }
         }
