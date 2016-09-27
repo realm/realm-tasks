@@ -1,27 +1,27 @@
 PODS:
   - Cartography (0.7.0)
-  - Realm (1.1.0-3):
-    - Realm/Headers (= 1.1.0-3)
-  - Realm/Headers (1.1.0-3)
-  - RealmSwift (1.1.0-3):
-    - Realm (= 1.1.0-3)
+  - Realm (2.0.0):
+    - Realm/Headers (= 2.0.0)
+  - Realm/Headers (2.0.0)
+  - RealmSwift (2.0.0):
+    - Realm (= 2.0.0)
 
 DEPENDENCIES:
   - Cartography (from `https://github.com/robb/Cartography.git`, branch `master`)
-  - Realm (from `git@github.com:realm/realm-cocoa-private.git`, branch `v1.1.0-3`)
-  - RealmSwift (from `git@github.com:realm/realm-cocoa-private.git`, branch `v1.1.0-3`)
+  - Realm (from `git@github.com:realm/realm-cocoa.git`, branch `master`)
+  - RealmSwift (from `git@github.com:realm/realm-cocoa.git`, branch `master`)
 
 EXTERNAL SOURCES:
   Cartography:
     :branch: master
     :git: https://github.com/robb/Cartography.git
   Realm:
-    :branch: v1.1.0-3
-    :git: git@github.com:realm/realm-cocoa-private.git
+    :branch: master
+    :git: git@github.com:realm/realm-cocoa.git
     :submodules: true
   RealmSwift:
-    :branch: v1.1.0-3
-    :git: git@github.com:realm/realm-cocoa-private.git
+    :branch: master
+    :git: git@github.com:realm/realm-cocoa.git
     :submodules: true
 
 CHECKOUT OPTIONS:
@@ -29,19 +29,19 @@ CHECKOUT OPTIONS:
     :commit: ecdeffda56a6ce9dc8bb571b5455a6395d403b03
     :git: https://github.com/robb/Cartography.git
   Realm:
-    :commit: 5ae7f66cb5889d752cb4c0b8ad43f7a7a168b055
-    :git: git@github.com:realm/realm-cocoa-private.git
+    :commit: dfbec5b9f3c82280bf4e4e3dda5e4ca5b7d72945
+    :git: git@github.com:realm/realm-cocoa.git
     :submodules: true
   RealmSwift:
-    :commit: 5ae7f66cb5889d752cb4c0b8ad43f7a7a168b055
-    :git: git@github.com:realm/realm-cocoa-private.git
+    :commit: dfbec5b9f3c82280bf4e4e3dda5e4ca5b7d72945
+    :git: git@github.com:realm/realm-cocoa.git
     :submodules: true
 
 SPEC CHECKSUMS:
   Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
-  Realm: 8760dba66d380cd822d03a4780039f768c58ae31
-  RealmSwift: ed4ebf5510de4521a9dee543a6d176d0796f341b
+  Realm: 6dda421ae4b3e9a09742fc2cf4b876d459cbedcd
+  RealmSwift: 7d015f34a2781a50889be9b5a15c36c08597ea0e
 
-PODFILE CHECKSUM: 419fd757f77e94cf93156cc681816b0eec6e0783
+PODFILE CHECKSUM: 6c97c49a27c51d0321b3c43e9c6b70e335c91602
 
 COCOAPODS: 1.0.1
