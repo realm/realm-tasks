@@ -1,22 +1,20 @@
-/*************************************************************************
- *
- * REALM CONFIDENTIAL
- * __________________
- *
- *  [2016] Realm Inc
- *  All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
- *
- **************************************************************************/
+////////////////////////////////////////////////////////////////////////////
+//
+// Copyright 2016 Realm Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////
 
 // FIXME: This file should be split up.
 // swiftlint:disable file_length
@@ -74,11 +72,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     let navHintView = NavHintView()
 
     // Callbacks
-    var itemCompleted: ((Item) -> ())? = nil
-    var itemDeleted: ((Item) -> ())? = nil
-    var cellDidBeginEditing: ((TableViewCell) -> ())? = nil
-    var cellDidEndEditing: ((TableViewCell) -> ())? = nil
-    var cellDidChangeText: ((TableViewCell) -> ())? = nil
+    var presenter: CellPresenter<Item>!
 
     // Private Properties
     private var originalDoneIconCenter = CGPoint()
@@ -121,11 +115,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func reset() {
-        itemCompleted = nil
-        itemDeleted = nil
-        cellDidBeginEditing = nil
-        cellDidEndEditing = nil
-        cellDidChangeText = nil
+        presenter = nil
     }
 
     private func setupBackgroundView() {
@@ -322,7 +312,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                     self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
                 }
                 completionBlock = {
-                    self.itemDeleted?(self.item)
+                    self.presenter.deleteItem(self.item)
                 }
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()
@@ -359,6 +349,11 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         alpha = 1
         contentView.alpha = 1
         temporarilyIgnoreSaveChanges = false
+
+        // Force any active gesture recognizers to reset
+        for gestureRecognizer in gestureRecognizers! {
+            gestureRecognizer.reset()
+        }
     }
 
     // MARK: Actions
@@ -377,7 +372,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
             vibrate()
             UIView.animateWithDuration(0.2, animations: updateColor)
-            itemCompleted?(item)
+            presenter.completeItem(item)
         } else {
             updateColor()
         }
@@ -399,7 +394,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func textViewDidBeginEditing(textView: UITextView) {
-        cellDidBeginEditing?(self)
+        presenter.cellDidBeginEditing(self)
     }
 
     func textViewDidEndEditing(textView: UITextView) {
@@ -409,10 +404,19 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
         }
         textView.userInteractionEnabled = false
-        cellDidEndEditing?(self)
+        presenter.cellDidEndEditing(self)
     }
 
     func textViewDidChange(textView: UITextView) {
-        cellDidChangeText?(self)
+        presenter.cellDidChangeText(self)
+    }
+}
+
+// Mark: Gesture Recognizer Reset
+
+extension UIGestureRecognizer {
+    func reset() {
+        enabled = false
+        enabled = true
     }
 }

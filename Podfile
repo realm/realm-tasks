@@ -1,4 +1,3 @@
-source 'git@github.com:realm/cocoapods-specs-private.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 abstract_target 'RealmTasks' do
@@ -7,8 +6,9 @@ abstract_target 'RealmTasks' do
     # source podspec
     # pod 'RealmSwift', '1.0.2-15'
 
-    # binary podspec
-    pod 'RealmSwift', '1.0.2-16-sync-1.0.0-beta-32.0'
+    # podspec using binaries for core+sync
+    pod 'Realm', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'v1.1.0-3', submodules: true
+    pod 'RealmSwift', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'v1.1.0-3', submodules: true
     
     pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
     
@@ -23,4 +23,12 @@ abstract_target 'RealmTasks' do
     target 'RealmTasks iOS Tests' do
         platform :ios, '9.0'
     end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '2.3'
+    end
+  end
 end

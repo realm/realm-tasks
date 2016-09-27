@@ -25,7 +25,7 @@ class TitleLabel: NSTextField {
     // NSToolBar sets contentSize to .SmallControlSize, ignore this
     override var controlSize: NSControlSize {
         get {
-            return .RegularControlSize
+            return .Regular
         }
 
         set {

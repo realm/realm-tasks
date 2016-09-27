@@ -1,22 +1,20 @@
-/*************************************************************************
- *
- * REALM CONFIDENTIAL
- * __________________
- *
- *  [2016] Realm Inc
- *  All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Realm Incorporated and its suppliers,
- * if any.  The intellectual and technical concepts contained
- * herein are proprietary to Realm Incorporated
- * and its suppliers and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Realm Incorporated.
- *
- **************************************************************************/
+////////////////////////////////////////////////////////////////////////////
+//
+// Copyright 2016 Realm Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////
 
 // FIXME: This file should be split up.
 // swiftlint:disable file_length
@@ -34,8 +32,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     typealias ItemType = ListType.Item
 
     let list: ListType
-
-    var topConstraint: NSLayoutConstraint?
 
     private let tableView = NSTableView()
 
@@ -95,14 +91,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         setupNotifications()
         setupGestureRecognizers()
 
-        tableView.setDelegate(self)
-        tableView.setDataSource(self)
+        tableView.delegate = self
+        tableView.dataSource = self
     }
 
     private func setupNotifications() {
-        // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
-        notificationToken = list.items.filter("TRUEPREDICATE").addNotificationBlock { changes in
-            if !self.reordering {
+        notificationToken = list.items.addNotificationBlock { changes in
+            if !self.reordering && !self.editing {
                 self.tableView.reloadData()
             }
         }
@@ -110,6 +105,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func setupGestureRecognizers() {
         let pressGestureRecognizer = NSPressGestureRecognizer(target: self, action: #selector(handlePressGestureRecognizer))
+        pressGestureRecognizer.minimumPressDuration = 0.2
+
         let panGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(handlePanGestureRecognizer))
 
         for recognizer in [pressGestureRecognizer, panGestureRecognizer] {
@@ -301,6 +298,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     // MARK: Editing
 
+    var editing: Bool {
+        return currentlyEditingCellView != nil
+    }
+
     private func beginEditingCell(cellView: ItemCellView) {
         NSView.animate() {
             self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
@@ -482,7 +483,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             destinationIndex = list.items.count - completedCount
         }
 
-        delay(0.2) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
             try! item.realm?.write {
                 item.completed = complete
 
@@ -549,23 +550,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         return (list.items[index], index)
     }
 
-}
-
-// MARK: Private Extensions
-
-private extension CollectionType where Generator.Element == Int {
-
-    func toIndexSet() -> NSIndexSet {
-        return reduce(NSMutableIndexSet()) { $0.addIndex($1); return $0 }
-    }
-
-}
-
-// MARK: Private Functions
-
-private func delay(time: Double, block: () -> ()) {
-    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
-    dispatch_after(delayTime, dispatch_get_main_queue(), block)
 }
 
 // MARK: Private Classes

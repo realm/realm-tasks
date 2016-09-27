@@ -740,6 +740,11 @@ Gw
                             <constraint firstItem="XQ5-Da-goe" firstAttribute="centerX" secondItem="j4D-cr-uHK" secondAttribute="centerX" id="zR8-O1-OWE"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="confirmationTextField" destination="DYP-ma-osA" id="9lW-y8-WmQ"/>
+                        <outlet property="passwordTextField" destination="OOi-AF-17P" id="8ob-Or-Phm"/>
+                        <outlet property="userNameTextField" destination="XQ5-Da-goe" id="loa-t0-kXd"/>
+                    </connections>
                 </viewController>
                 <customObject id="JLq-sR-82T" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
