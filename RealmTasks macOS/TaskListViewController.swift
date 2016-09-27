@@ -115,10 +115,8 @@ class TaskListViewController: NSViewController {
 extension TaskListViewController {
 
     @IBAction func newTask(sender: AnyObject?) {
-        if currentlyEditingCellView != nil {
-            currentlyEditingCellView?.window?.makeFirstResponder(nil)
-            return
-        }
+        // Commit any currently editing cells
+        currentlyEditingCellView?.window?.makeFirstResponder(nil)
         
         try! items.realm?.write {
             self.items.insert(Task(), atIndex: 0)
