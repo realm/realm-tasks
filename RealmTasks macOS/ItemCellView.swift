@@ -267,6 +267,12 @@ extension ItemCellView: ItemTextFieldDelegate {
         delegate?.cellViewDidEndEditing(self)
     }
 
+    // Called when esc key was pressesed
+    override func cancelOperation(sender: AnyObject?) {
+        editable = false
+        delegate?.cellViewDidEndEditing(self)
+    }
+
 }
 
 // MARK: NSGestureRecognizerDelegate
