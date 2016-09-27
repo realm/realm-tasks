@@ -368,7 +368,7 @@
 					C23EB01C1D46329400D3E0AC = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 0800;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
