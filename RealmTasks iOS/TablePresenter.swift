@@ -133,14 +133,11 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
             destinationIndexPath = indexPath
 
             // Add the snapshot as subview, aligned with the cell
-            var snapshotImage: UIImage
-            UIGraphicsBeginImageContextWithOptions(cell.frame.size, true, 0.0)
-            cell.layer.renderInContext(UIGraphicsGetCurrentContext()!)
-            snapshotImage = UIGraphicsGetImageFromCurrentImageContext()!
-            UIGraphicsEndImageContext()
-            
             var center = cell.center
-            snapshot = UIImageView(image: snapshotImage)
+            UIGraphicsBeginImageContextWithOptions(cell.frame.size, true, 0)
+            cell.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+            snapshot = UIImageView(image: UIGraphicsGetImageFromCurrentImageContext()!)
+            UIGraphicsEndImageContext()
             snapshot.layer.shadowColor = UIColor.blackColor().CGColor
             snapshot.layer.shadowOffset = CGSize(width: -5, height: 0)
             snapshot.layer.shadowRadius = 5
