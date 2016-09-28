@@ -6,7 +6,7 @@ abstract_target 'RealmTasks' do
     pod 'Realm', git: 'git@github.com:realm/realm-cocoa.git', branch: 'master', submodules: true
     pod 'RealmSwift', git: 'git@github.com:realm/realm-cocoa.git', branch: 'master', submodules: true
     
-    pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
+    pod 'Cartography', git: 'git@github.com:robb/Cartography.git', tag: '0.7.0'
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
