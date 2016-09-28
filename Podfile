@@ -3,10 +3,9 @@ source 'https://github.com/CocoaPods/Specs.git'
 abstract_target 'RealmTasks' do
     use_frameworks!
     
-    pod 'Realm', git: 'git@github.com:realm/realm-cocoa.git', branch: 'master', submodules: true
-    pod 'RealmSwift', git: 'git@github.com:realm/realm-cocoa.git', branch: 'master', submodules: true
+    pod 'RealmSwift'
     
-    pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
+    pod 'Cartography', '~> 0.7'
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
