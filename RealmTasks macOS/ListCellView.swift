@@ -113,9 +113,11 @@ class ListCellView: ItemCellView {
     }
 
     private func updateTextColor() {
+        let textAlphaValue: CGFloat = countLabel.integerValue > 0 || editable ? 1 : 0.3
+
         NSView.animate(duration: 0.1) {
-            self.countLabel.alphaValue = self.countLabel.integerValue == 0 ? 0.3 : 1
-            self.textView.alphaValue = self.countLabel.integerValue == 0 ? 0.3 : 1
+            self.countLabel.alphaValue = textAlphaValue
+            self.textView.alphaValue = textAlphaValue
         }
     }
 
@@ -136,7 +138,7 @@ class ListCellView: ItemCellView {
             self.textView.alphaValue = 1
         }
 
-        performSelector(#selector(delayedSetAcceptEditing), withObject: nil, afterDelay: 1.2)
+        performSelector(#selector(delayedSetAcceptsEditing), withObject: nil, afterDelay: 1.2)
     }
 
     override func mouseExited(theEvent: NSEvent) {
@@ -146,14 +148,20 @@ class ListCellView: ItemCellView {
             return
         }
 
-        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: #selector(delayedSetAcceptEditing), object: nil)
+        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: #selector(delayedSetAcceptsEditing), object: nil)
         acceptsEditing = false
 
         updateTextColor()
     }
 
-    private dynamic func delayedSetAcceptEditing() {
+    private dynamic func delayedSetAcceptsEditing() {
         acceptsEditing = true
+    }
+
+    override func textFieldDidBecomeFirstResponder(textField: NSTextField) {
+        super.textFieldDidBecomeFirstResponder(textField)
+
+        updateTextColor()
     }
 
     override func controlTextDidEndEditing(obj: NSNotification) {
