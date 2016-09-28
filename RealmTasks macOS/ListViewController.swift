@@ -139,9 +139,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }) {
             if let newItemCellView = self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false) as? ItemCellView {
                 self.beginEditingCell(newItemCellView)
+                self.tableView.selectRowIndexes(NSIndexSet(index: 0), byExtendingSelection: false)
             }
-
-            self.view.window?.update()
         }
     }
 
@@ -303,7 +302,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func beginEditingCell(cellView: ItemCellView) {
-        NSView.animate() {
+        NSView.animate(animations: {
             self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
 
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
@@ -312,6 +311,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                     view.isUserInteractionEnabled = false
                 }
             }
+        }) {
+            self.view.window?.update()
         }
 
         cellView.editable = true
@@ -322,15 +323,17 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func endEditingCells() {
         view.window?.makeFirstResponder(self)
-        currentlyEditingCellView = nil
 
-        NSView.animate() {
+        NSView.animate(animations: {
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
                 if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
                     view.isUserInteractionEnabled = true
                 }
             }
+        }) {
+            self.currentlyEditingCellView = nil
+            self.view.window?.update()
         }
     }
 
@@ -421,12 +424,12 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
-        guard currentlyEditingCellView == nil else {
-            endEditingCells()
+        guard let cellView = tableView.viewAtColumn(0, row: index, makeIfNecessary: false) as? ItemCellView where cellView != currentlyEditingCellView else {
             return
         }
 
-        guard let cellView = tableView.viewAtColumn(0, row: index, makeIfNecessary: false) as? ItemCellView where cellView != currentlyEditingCellView else {
+        guard currentlyEditingCellView == nil else {
+            endEditingCells()
             return
         }
 
@@ -522,17 +525,19 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
-        // FIXME: workaround for tuple mutability
-        var item = tmpItem
+        if view.text != tmpItem.text || view.text.isEmpty {
+            // Workaround for tuple mutability
+            var item = tmpItem
 
-        try! item.realm?.write {
-            if !view.text.isEmpty {
-                item.text = view.text
-            } else {
-                item.realm!.delete(item)
+            try! item.realm?.write {
+                if !view.text.isEmpty {
+                    item.text = view.text
+                } else {
+                    item.realm!.delete(item)
 
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+                    }
                 }
             }
         }

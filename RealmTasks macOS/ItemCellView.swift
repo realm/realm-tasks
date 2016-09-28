@@ -263,14 +263,18 @@ extension ItemCellView: ItemTextFieldDelegate {
     }
 
     override func controlTextDidEndEditing(obj: NSNotification) {
-        editable = false
-        delegate?.cellViewDidEndEditing(self)
+        if editable {
+            editable = false
+            delegate?.cellViewDidEndEditing(self)
+        }
     }
 
     // Called when esc key was pressesed
     override func cancelOperation(sender: AnyObject?) {
-        editable = false
-        delegate?.cellViewDidEndEditing(self)
+        if editable {
+            editable = false
+            delegate?.cellViewDidEndEditing(self)
+        }
     }
 
 }
