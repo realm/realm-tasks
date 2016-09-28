@@ -96,7 +96,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func setupNotifications() {
-        notificationToken = list.items.addNotificationBlock { changes in
+        notificationToken = list.items.addNotificationBlock { [unowned self] changes in
             if !self.reordering && !self.editing {
                 self.tableView.reloadData()
             }
