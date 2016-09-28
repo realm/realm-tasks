@@ -3,12 +3,8 @@ source 'https://github.com/CocoaPods/Specs.git'
 abstract_target 'RealmTasks' do
     use_frameworks!
     
-    # source podspec
-    # pod 'RealmSwift', '1.0.2-15'
-
-    # podspec using binaries for core+sync
-    pod 'Realm', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'v1.1.0-3', submodules: true
-    pod 'RealmSwift', git: 'git@github.com:realm/realm-cocoa-private.git', branch: 'v1.1.0-3', submodules: true
+    pod 'Realm', git: 'git@github.com:realm/realm-cocoa.git', branch: 'master', submodules: true
+    pod 'RealmSwift', git: 'git@github.com:realm/realm-cocoa.git', branch: 'master', submodules: true
     
     pod 'Cartography', git: 'https://github.com/robb/Cartography.git', branch: 'master'
     
