@@ -32,25 +32,20 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
     }
 
     func deleteItem(item: Item) {
-        try! items.realm?.write { [unowned self] in
-            guard !(item as Object).invalidated else {
+        try! items.realm?.write {
+            guard !(item as Object).invalidated, let index = items.indexOf(item) else {
                 return
             }
 
-            guard let index = self.items.indexOf(item) else {
-                return
-            }
-
-            self.items.realm?.delete(item)
-
-            self.viewController.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-            self.viewController.didUpdateList()
+            items.realm?.delete(item)
+            viewController.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
+            viewController.didUpdateList()
         }
     }
 
     func completeItem(item: Item) {
-        try! items.realm?.write { [unowned self] in
-            guard !(item as Object).invalidated, let index = self.items.indexOf(item) else {
+        try! items.realm?.write {
+            guard !(item as Object).invalidated, let index = items.indexOf(item) else {
                 return
             }
 
@@ -58,17 +53,16 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
             let destinationIndexPath: NSIndexPath
             if item.completed {
                 // move cell to bottom
-                destinationIndexPath = NSIndexPath(forRow: self.items.count - 1, inSection: 0)
+                destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
             } else {
                 // move cell just above the first completed item
-                let completedCount = self.items.filter("completed = true").count
-                destinationIndexPath = NSIndexPath(forRow: self.items.count - completedCount - 1, inSection: 0)
+                let completedCount = items.filter("completed = true").count
+                destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
             }
 
-            self.items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
-
-            self.viewController.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-            self.viewController.didUpdateList()
+            items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
+            viewController.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
+            viewController.didUpdateList()
         }
     }
 
@@ -101,7 +95,7 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
             for cell in tableView.visibleCells where cell !== editingCell {
                 cell.alpha = editingCellAlpha
             }
-        }, completion: {_ in
+        }, completion: { _ in
             tableView.bounces = true
         })
     }
@@ -154,7 +148,7 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
 
     func cellHeightForText(text: String) -> CGFloat {
         guard let view = viewController.tableView.superview else {
-            return 0.0
+            return 0
         }
 
         return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),

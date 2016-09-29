@@ -416,12 +416,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             if bottomViewController === parentViewController?.childViewControllers.last {
                 finishMovingToNextViewController(.Down)
             } else {
-                try! items.realm?.write { [unowned self] in
-                    let itemsToDelete = self.items.filter("completed = true")
+                try! items.realm?.write {
+                    let itemsToDelete = items.filter("completed = true")
                     let numberOfItemsToDelete = itemsToDelete.count
                     guard numberOfItemsToDelete != 0 else { return }
 
-                    self.items.realm?.delete(itemsToDelete)
+                    items.realm?.delete(itemsToDelete)
 
                     vibrate()
                 }
