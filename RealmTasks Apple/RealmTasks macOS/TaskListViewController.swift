@@ -132,11 +132,7 @@ extension TaskListViewController {
     }
 
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
-        if theItem.action == #selector(newTask) && currentlyEditingCellView != nil && currentlyEditingCellView?.text.characters.count == 0 {
-            return false
-        }
-
-        return true
+        return theItem.action != #selector(newTask) || currentlyEditingCellView?.text.isEmpty == false
     }
 }
 
