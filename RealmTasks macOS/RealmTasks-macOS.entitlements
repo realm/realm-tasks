@@ -6,9 +6,5 @@
 	<true/>
 	<key>com.apple.security.network.client</key>
 	<true/>
-	<key>keychain-access-groups</key>
-	<array>
-		<string>$(AppIdentifierPrefix)io.realm.realmtasks.ios</string>
-	</array>
 </dict>
 </plist>
