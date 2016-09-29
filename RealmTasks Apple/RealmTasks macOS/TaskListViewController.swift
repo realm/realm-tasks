@@ -119,7 +119,7 @@ extension TaskListViewController {
         currentlyEditingCellView?.window?.makeFirstResponder(nil)
 
         try! items.realm?.write {
-            self.items.insert(Task(), atIndex: 0)
+            items.insert(Task(), atIndex: 0)
         }
 
         NSView.animateWithDuration(0.2, animations: {
@@ -433,7 +433,7 @@ extension TaskListViewController: TaskCellViewDelegate {
     func cellViewDidChangeText(view: TaskCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
-            self.view.window?.toolbar?.validateVisibleItems()
+            view.window?.toolbar?.validateVisibleItems()
         }
     }
 
@@ -465,7 +465,7 @@ extension TaskListViewController: TaskCellViewDelegate {
 
         currentlyEditingCellView = nil
 
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
 
     private func findItemForCellView(view: NSView) -> (item: Task, index: Int)? {
