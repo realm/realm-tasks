@@ -51,6 +51,7 @@ class RegisterViewController: NSViewController {
 
         if userName?.isEmpty == false {
             view.window?.initialFirstResponder = passwordTextField
+            view.window?.recalculateKeyViewLoop()
         }
     }
 
