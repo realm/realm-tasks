@@ -130,7 +130,7 @@ extension TaskListViewController {
             self.view.window?.toolbar?.validateVisibleItems()
         }
     }
-    
+
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
         if theItem.action == #selector(newTask) && currentlyEditingCellView != nil && currentlyEditingCellView?.text.characters.count == 0 {
             return false
@@ -433,7 +433,7 @@ extension TaskListViewController: TaskCellViewDelegate {
     func cellViewDidChangeText(view: TaskCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
-            self.currentlyEditingCellView?.window?.toolbar?.validateVisibleItems()
+            self.view.window?.toolbar?.validateVisibleItems()
         }
     }
 
