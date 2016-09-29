@@ -204,7 +204,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             placeHolderCell.right == placeHolderCell.superview!.superview!.right
             placeHolderCell.height == tableView.rowHeight
         }
-        
+
         constrain(placeHolderCell.contentView, placeHolderCell) { contentView, placeHolderCell in
             contentView.edges == placeHolderCell.edges
         }
