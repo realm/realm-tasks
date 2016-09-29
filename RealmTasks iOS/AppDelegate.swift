@@ -46,10 +46,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 return
             }
-            authenticate(username: username, password: password, register: returnCode == .Register) { error in
+            authenticate(username, password: password, register: returnCode == .Register) { error in
                 if let error = error {
                     self.presentError(error)
                 } else {
+                    prepopulateInitialList()
                     self.window?.rootViewController = ContainerViewController()
                 }
             }
