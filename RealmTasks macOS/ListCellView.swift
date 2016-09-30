@@ -155,19 +155,15 @@ class ListCellView: ItemCellView {
     }
 
     private dynamic func delayedSetAcceptsEditing() {
-        acceptsEditing = true
+        if isUserInteractionEnabled {
+            acceptsEditing = true
+        }
     }
 
     override func textFieldDidBecomeFirstResponder(textField: NSTextField) {
         super.textFieldDidBecomeFirstResponder(textField)
 
         updateTextColor()
-    }
-
-    override func controlTextDidEndEditing(obj: NSNotification) {
-        super.controlTextDidEndEditing(obj)
-
-        acceptsEditing = false
     }
 
 }

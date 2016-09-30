@@ -132,6 +132,7 @@ class ItemCellView: NSTableCellView {
         contentView.frame.origin.x = 0
         editable = false
         highlightView.hidden = true
+        isUserInteractionEnabled = true
     }
 
     override func updateTrackingAreas() {
@@ -301,8 +302,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 
         switch recognizer.state {
         case .Began:
-            window?.makeFirstResponder(nil)
-
+            isUserInteractionEnabled = false
             releaseAction = nil
         case .Changed:
             let translation = recognizer.translationInView(self)
@@ -390,6 +390,8 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 
                 self.doneIconView.frame.origin.x = originalDoneIconOffset
                 self.deleteIconView.frame.origin.x = originalDeleteIconOffset
+
+                self.isUserInteractionEnabled = true
             }
         default:
             break
