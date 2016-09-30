@@ -96,11 +96,10 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     }
 
     func setOnboardAlpha(alpha: CGFloat) {
-        guard parent.items.isEmpty else {
+        if parent.items.isEmpty {
+            onboardView.alpha = alpha
+        } else {
             updateOnboardView()
-            return
         }
-
-        onboardView.alpha = alpha
     }
 }
