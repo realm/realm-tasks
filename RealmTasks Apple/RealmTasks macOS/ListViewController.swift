@@ -45,6 +45,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private var currentlyMovingRowSnapshotView: SnapshotView?
     private var movingStarted = false
 
+    private var animating = false
+    private var needsReloadTableView = true
+
     private var autoscrollTimer: NSTimer?
 
     init(list: ListType) {
@@ -98,9 +101,18 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func setupNotifications() {
         notificationToken = list.items.addNotificationBlock { [unowned self] changes in
-            if !self.reordering && !self.editing {
-                self.tableView.reloadData()
+            self.needsReloadTableView = true
+
+            if !self.reordering && !self.editing && !self.animating {
+                self.reloadTableViewIfNeeded()
             }
+        }
+    }
+
+    private func reloadTableViewIfNeeded() {
+        if needsReloadTableView {
+            self.tableView.reloadData()
+            needsReloadTableView = false
         }
     }
 
@@ -136,6 +148,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             self.list.items.insert(ItemType(), atIndex: 0)
         }
 
+        self.animating = true
         NSView.animate(animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
@@ -144,6 +157,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                 self.beginEditingCell(newItemCellView)
                 self.tableView.selectRowIndexes(NSIndexSet(index: 0), byExtendingSelection: false)
             }
+
+            self.animating = false
         }
     }
 
@@ -244,7 +259,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             self.currentlyMovingRowSnapshotView?.removeFromSuperview()
             self.currentlyMovingRowSnapshotView = nil
 
-            self.tableView.reloadData()
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+                    view.isUserInteractionEnabled = true
+                }
+            }
+
+            self.reloadTableViewIfNeeded()
         }
     }
 
@@ -336,14 +357,15 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         NSView.animate(animations: {
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) {
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
+                    view.isUserInteractionEnabled = true
                 }
             }
         }) {
             self.currentlyEditingCellView = nil
             self.view.window?.update()
-            self.tableView.reloadData()
+            self.reloadTableViewIfNeeded()
         }
     }
 
@@ -497,7 +519,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             destinationIndex = list.items.count - completedCount
         }
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
             try! item.realm?.write {
                 item.completed = complete
 
@@ -507,8 +529,14 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                 }
             }
 
-            self.tableView.moveRowAtIndex(index, toIndex: destinationIndex)
-            self.updateColors()
+            self.animating = true
+            NSView.animate(duration: 0.3, animations: {
+                NSAnimationContext.currentContext().allowsImplicitAnimation = false
+                self.tableView.moveRowAtIndex(index, toIndex: destinationIndex)
+            }) {
+                self.animating = false
+                self.reloadTableViewIfNeeded()
+            }
         }
     }
 
@@ -521,7 +549,14 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             list.realm?.delete(item)
         }
 
-        tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
+        animating = true
+        NSView.animate(animations: {
+            NSAnimationContext.currentContext().allowsImplicitAnimation = false
+            self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
+        }) {
+            self.animating = false
+            self.reloadTableViewIfNeeded()
+        }
     }
 
     func cellViewDidChangeText(view: ItemCellView) {
