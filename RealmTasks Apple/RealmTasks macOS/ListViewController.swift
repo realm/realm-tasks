@@ -43,7 +43,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private var currentlyMovingRowView: NSTableRowView?
     private var currentlyMovingRowSnapshotView: SnapshotView?
-    private var movingStarted = false
 
     private var animating = false
     private var needsReloadTableView = true
@@ -250,6 +249,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func endReordering() {
+        guard reordering else {
+            return
+        }
+
         NSView.animate(animations: {
             self.currentlyMovingRowSnapshotView?.frame = self.view.convertRect(self.currentlyMovingRowView!.frame, fromView: self.tableView)
         }) {
@@ -265,6 +268,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                 }
             }
 
+            self.updateColors()
             self.reloadTableViewIfNeeded()
         }
     }
@@ -273,13 +277,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         switch recognizer.state {
         case .Began:
             beginReorderingRow(tableView.rowAtPoint(recognizer.locationInView(tableView)), screenPoint: recognizer.locationInView(nil))
-        case .Ended:
+        case .Ended, .Cancelled:
             endReordering()
-        case .Cancelled:
-            // Handle the case when press recognizer is canceled while pan wasn't started
-            if !movingStarted {
-                endReordering()
-            }
         default:
             break
         }
@@ -288,16 +287,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private dynamic func handlePanGestureRecognizer(recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .Began:
-            movingStarted = true
             startAutoscrolling()
         case .Changed:
             handleReorderingForScreenPoint(recognizer.locationInView(nil))
         case .Ended:
-            movingStarted = false
-            endReordering()
             stopAutoscrolling()
         default:
-            ()
+            break
         }
     }
 
