@@ -19,6 +19,7 @@
 import Foundation
 import RealmSwift
 import UIKit
+import Cartography
 
 class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
@@ -240,4 +241,26 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
             completion?()
         })
     }
+
+    // MARK: Placeholder cell
+    func setupPlaceholderCell(inTableView tableView: UITableView) -> TableViewCell<Parent.Item>  {
+        let placeHolderCell = TableViewCell<Parent.Item>(style: .Default, reuseIdentifier: "cell")
+        placeHolderCell.alpha = 0
+        placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
+        placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
+        tableView.addSubview(placeHolderCell)
+        constrain(placeHolderCell) { placeHolderCell in
+            placeHolderCell.bottom == placeHolderCell.superview!.topMargin - 7 + 26
+            placeHolderCell.left == placeHolderCell.superview!.superview!.left
+            placeHolderCell.right == placeHolderCell.superview!.superview!.right
+            placeHolderCell.height == tableView.rowHeight
+        }
+
+        constrain(placeHolderCell.contentView, placeHolderCell) { contentView, placeHolderCell in
+            contentView.edges == placeHolderCell.edges
+        }
+
+        return placeHolderCell
+    }
+
 }
