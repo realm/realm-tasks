@@ -16,10 +16,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import Cartography
 import Foundation
 import RealmSwift
 import UIKit
-import Cartography
 
 private var tableViewBoundsKVOContext = 0
 
