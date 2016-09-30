@@ -130,6 +130,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     // MARK: Actions
 
     @IBAction func newItem(sender: AnyObject?) {
+        endEditingCells()
+
         try! list.realm?.write {
             self.list.items.insert(ItemType(), atIndex: 0)
         }
@@ -145,12 +147,21 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
     }
 
-    override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
-        if theItem.action == #selector(newItem) && currentlyEditingCellView != nil {
-            return false
-        }
+    override func validateToolbarItem(toolbarItem: NSToolbarItem) -> Bool {
+        return validateSelector(toolbarItem.action)
+    }
 
-        return true
+    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
+        return validateSelector(menuItem.action)
+    }
+
+    private func validateSelector(selector: Selector) -> Bool {
+        switch selector {
+        case #selector(newItem):
+            return !editing || currentlyEditingCellView?.text.isEmpty == false
+        default:
+            return true
+        }
     }
 
     // MARK: Reordering
@@ -317,6 +328,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func endEditingCells() {
+        guard editing else {
+            return
+        }
+
         view.window?.makeFirstResponder(self)
 
         NSView.animate(animations: {
@@ -512,6 +527,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     func cellViewDidChangeText(view: ItemCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
+            view.window?.toolbar?.validateVisibleItems()
         }
     }
 
