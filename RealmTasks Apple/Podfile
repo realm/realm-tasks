@@ -3,7 +3,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 abstract_target 'RealmTasks' do
     use_frameworks!
     
-    pod 'RealmSwift'
+    pod 'RealmSwift', '~> 2.0.0'
     
     pod 'Cartography', '~> 0.7'
     
