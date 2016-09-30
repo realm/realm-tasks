@@ -37,6 +37,8 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
             } else if observingText {
                 parent.removeObserver(self, forKeyPath: "text")
             }
+
+            setupNotifications()
         }
     }
 
@@ -48,10 +50,14 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
         tablePresenter.cellPresenter = cellPresenter
     }
 
+    deinit {
+        notificationToken?.stop()
+    }
+
     // MARK: List title
     private var observingText = false
 
-    func observeListTitle() {
+    private func observeListTitle() {
         if let parent = parent as? CellPresentable {
             (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
             viewController.setListTitle(parent.text)
@@ -62,6 +68,22 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if context == &titleKVOContext {
             viewController.setListTitle((parent as! CellPresentable).text)
+        }
+    }
+
+    // MARK: Notifications
+    private var notificationToken: NotificationToken?
+
+    private func setupNotifications() {
+        // TODO: Remove filter once https://github.com/realm/realm-cocoa-private/issues/226 is fixed
+        notificationToken = parent.items.filter("TRUEPREDICATE").addNotificationBlock { [unowned self] changes in
+            // Do not perform an update if the user is editing a cell at this moment
+            // (The table will be reloaded by the 'end editing' call of the active cell)
+            guard self.cellPresenter.currentlyEditingCell == nil else {
+                return
+            }
+
+            self.viewController.tableView.reloadData()
         }
     }
 }

@@ -22,6 +22,8 @@
 		9C24AA071D8FEEB500192CE3 /* CellPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA061D8FEEB500192CE3 /* CellPresenter.swift */; };
 		9C24AA0B1D8FFC0400192CE3 /* TablePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA0A1D8FFC0400192CE3 /* TablePresenter.swift */; };
 		9C24AA0D1D8FFEA200192CE3 /* ListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA0C1D8FFEA200192CE3 /* ListPresenter.swift */; };
+		9CDBACEA1D96809A0089DA59 /* UIView+constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDBACE91D96809A0089DA59 /* UIView+constraints.swift */; };
+		9CDBACEC1D96826D0089DA59 /* ViewControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDBACEB1D96826D0089DA59 /* ViewControllerProtocol.swift */; };
 		AF6DB3B195E188C570802C2B /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C1FC133460B9224E2A98CBE /* Pods_RealmTasks_RealmTasks_macOS.framework */; };
 		C23EB0201D46329400D3E0AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB01F1D46329400D3E0AC /* AppDelegate.swift */; };
 		C23EB0221D46329400D3E0AC /* macOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C23EB0211D46329400D3E0AC /* macOS.xcassets */; };
@@ -83,6 +85,8 @@
 		9C24AA0A1D8FFC0400192CE3 /* TablePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TablePresenter.swift; sourceTree = "<group>"; };
 		9C24AA0C1D8FFEA200192CE3 /* ListPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListPresenter.swift; sourceTree = "<group>"; };
 		9CCE23B978EF7565F4866B4B /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		9CDBACE91D96809A0089DA59 /* UIView+constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+constraints.swift"; sourceTree = "<group>"; };
+		9CDBACEB1D96826D0089DA59 /* ViewControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerProtocol.swift; sourceTree = "<group>"; };
 		C23EB01D1D46329400D3E0AC /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23EB01F1D46329400D3E0AC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C23EB0211D46329400D3E0AC /* macOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = macOS.xcassets; sourceTree = "<group>"; };
@@ -158,17 +162,11 @@
 		225201931D3DD648009E45FA /* RealmTasks iOS */ = {
 			isa = PBXGroup;
 			children = (
-				22FEFEBB1D91789B00523E21 /* RealmTasks.entitlements */,
+				9CDBACEE1D9688370089DA59 /* Assets */,
 				225201941D3DD648009E45FA /* AppDelegate.swift */,
-				2252019C1D3DD648009E45FA /* CellTextView.swift */,
-				E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */,
-				225201981D3DD648009E45FA /* Info.plist */,
-				225201951D3DD648009E45FA /* iOS.xcassets */,
-				225201961D3DD648009E45FA /* LaunchScreen.storyboard */,
 				E89CE6821D409D0400BB4521 /* LogInViewController */,
-				220C33491D3DE1F40043A885 /* OnboardView.swift */,
-				22092D851D5C5BCB0016E757 /* NavHintView.swift */,
-				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
+				E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */,
+				9CDBACED1D9687F10089DA59 /* AuxViews */,
 				2252019D1D3DD648009E45FA /* ViewController.swift */,
 				9C24AA031D8FED0800192CE3 /* ViewController */,
 			);
@@ -178,11 +176,35 @@
 		9C24AA031D8FED0800192CE3 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				9CDBACEB1D96826D0089DA59 /* ViewControllerProtocol.swift */,
 				9C24AA0C1D8FFEA200192CE3 /* ListPresenter.swift */,
 				9C24AA061D8FEEB500192CE3 /* CellPresenter.swift */,
 				9C24AA0A1D8FFC0400192CE3 /* TablePresenter.swift */,
 			);
 			name = ViewController;
+			sourceTree = "<group>";
+		};
+		9CDBACED1D9687F10089DA59 /* AuxViews */ = {
+			isa = PBXGroup;
+			children = (
+				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
+				2252019C1D3DD648009E45FA /* CellTextView.swift */,
+				220C33491D3DE1F40043A885 /* OnboardView.swift */,
+				22092D851D5C5BCB0016E757 /* NavHintView.swift */,
+				9CDBACE91D96809A0089DA59 /* UIView+constraints.swift */,
+			);
+			name = AuxViews;
+			sourceTree = "<group>";
+		};
+		9CDBACEE1D9688370089DA59 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				225201961D3DD648009E45FA /* LaunchScreen.storyboard */,
+				22FEFEBB1D91789B00523E21 /* RealmTasks.entitlements */,
+				225201981D3DD648009E45FA /* Info.plist */,
+				225201951D3DD648009E45FA /* iOS.xcassets */,
+			);
+			name = Assets;
 			sourceTree = "<group>";
 		};
 		C23EB01E1D46329400D3E0AC /* RealmTasks macOS */ = {
@@ -644,6 +666,7 @@
 				225201A51D3DD648009E45FA /* CellTextView.swift in Sources */,
 				E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */,
 				9C24AA071D8FEEB500192CE3 /* CellPresenter.swift in Sources */,
+				9CDBACEA1D96809A0089DA59 /* UIView+constraints.swift in Sources */,
 				C23EB0381D4643B900D3E0AC /* Constants.swift in Sources */,
 				225201A31D3DD648009E45FA /* TableViewCell.swift in Sources */,
 				E8A1E6501D59354500D8B04A /* ContainerViewController.swift in Sources */,
@@ -652,6 +675,7 @@
 				E89CE68E1D409D3500BB4521 /* LogInViewController.swift in Sources */,
 				E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */,
 				225201A41D3DD648009E45FA /* Models.swift in Sources */,
+				9CDBACEC1D96826D0089DA59 /* ViewControllerProtocol.swift in Sources */,
 				225201A21D3DD648009E45FA /* RealmColor.swift in Sources */,
 				9C24AA0B1D8FFC0400192CE3 /* TablePresenter.swift in Sources */,
 			);

@@ -27,7 +27,7 @@ class OnboardView: UIView {
     private let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.imageWithRenderingMode(.AlwaysTemplate))
     private let labelView = UILabel()
 
-    init() {
+    init(inTableView tableView: UITableView) {
         labelView.text = "Pull Down to Start"
         labelView.font = .systemFontOfSize(20, weight: UIFontWeightMedium)
         labelView.textColor = contentColor
@@ -48,6 +48,9 @@ class OnboardView: UIView {
         autoresizingMask = [.FlexibleBottomMargin, .FlexibleTopMargin, .FlexibleLeftMargin, .FlexibleRightMargin]
 
         setupConstraints()
+
+        tableView.addSubview(self)
+        center = tableView.center
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -61,6 +64,18 @@ class OnboardView: UIView {
 
             imageView.centerX == imageView.superview!.centerX
             imageView.top == imageView.superview!.top
+        }
+    }
+
+    func toggle(animated animated: Bool = false, isVisible: Bool) {
+        func updateAlpha() {
+            alpha = isVisible ? 1 : 0
+        }
+
+        if animated {
+            UIView.animateWithDuration(0.3, animations: updateAlpha)
+        } else {
+            updateAlpha()
         }
     }
 }
