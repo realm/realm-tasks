@@ -51,11 +51,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     // Table View
-    let tableView = UITableView()
+    internal let tableView = UITableView()
     internal let tableViewContentView = UIView()
-
-    // Notifications
-    private var notificationToken: NotificationToken?
 
     // Scrolling
     private var distancePulledDown: CGFloat {
@@ -98,14 +95,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
     }
 
-    deinit {
-        notificationToken?.stop()
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupNotifications()
         setupGestureRecognizers()
     }
 
@@ -147,20 +139,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             UIView.animateWithDuration(0.3, animations: updateAlpha)
         } else {
             updateAlpha()
-        }
-    }
-
-    // MARK: Notifications
-
-    private func setupNotifications() {
-        notificationToken = items.addNotificationBlock { [unowned self] changes in
-            // Do not perform an update if the user is editing a cell at this moment
-            // (The table will be reloaded by the 'end editing' call of the active cell)
-            guard self.listPresenter.cellPresenter.currentlyEditingCell == nil else {
-                return
-            }
-
-            self.tableView.reloadData()
         }
     }
 
