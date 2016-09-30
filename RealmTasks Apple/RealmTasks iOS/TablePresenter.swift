@@ -23,6 +23,13 @@ import Cartography
 
 private var tableViewBoundsKVOContext = 0
 
+enum PlaceholderState {
+    case pullToCreate(distance: CGFloat)
+    case releaseToCreate
+    case switchToLists
+    case alpha(CGFloat)
+}
+
 class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
@@ -289,8 +296,11 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     // MARK: Placeholder cell
-    func placeholderCell(inTableView tableView: UITableView) -> TableViewCell<Parent.Item>  {
-        let placeHolderCell = TableViewCell<Parent.Item>(style: .Default, reuseIdentifier: "cell")
+
+    // Placeholder cell to use before being adding to the table view
+    private let placeHolderCell = TableViewCell<Parent.Item>(style: .Default, reuseIdentifier: "cell")
+
+    func setupPlaceholderCell(inTableView tableView: UITableView)  {
         placeHolderCell.alpha = 0
         placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
@@ -305,7 +315,48 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
         constrain(placeHolderCell.contentView, placeHolderCell) { contentView, placeHolderCell in
             contentView.edges == placeHolderCell.edges
         }
+    }
 
-        return placeHolderCell
+    func adjustPlaceholder(state: PlaceholderState) {
+        switch state {
+            case .pullToCreate(let distancePulledDown):
+
+                UIView.animateWithDuration(0.1) { [unowned self] in
+                    self.placeHolderCell.navHintView.alpha = 0
+                }
+                placeHolderCell.textView.text = "Pull to Create Item"
+
+                let cellHeight = viewController.tableView.rowHeight
+                let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
+
+                var transform = CATransform3DIdentity
+                transform.m34 = 1 / -(1000 * 0.2)
+                transform = CATransform3DRotate(transform, angle, 1, 0, 0)
+
+                placeHolderCell.layer.transform = transform
+
+            case .releaseToCreate:
+
+                UIView.animateWithDuration(0.1) { [unowned self] in
+                    self.placeHolderCell.navHintView.alpha = 0
+                }
+                placeHolderCell.layer.transform = CATransform3DIdentity
+                placeHolderCell.textView.text = "Release to Create Item"
+
+            case .switchToLists:
+
+                placeHolderCell.navHintView.hintText = "Switch to Lists"
+                placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
+
+                UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5,
+                    options: [], animations: { [unowned self] in
+
+                    self.placeHolderCell.navHintView.alpha = 1
+                    self.placeHolderCell.navHintView.hintArrowTransfom  = CGAffineTransformIdentity
+                }, completion: nil)
+            
+            case .alpha(let alpha):
+                placeHolderCell.alpha = alpha
+        }
     }
 }

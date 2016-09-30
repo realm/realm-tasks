@@ -66,9 +66,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private var topConstraint: NSLayoutConstraint?
     private var nextConstraints: ConstraintGroup?
 
-    // Placeholder cell to use before being adding to the table view
-    private var placeHolderCell: TableViewCell<Item>!
-
     // Onboard view
     private lazy var onboardView: OnboardView = {
         return OnboardView.add(inView: self.tableView)
@@ -105,7 +102,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func setupUI() {
         listPresenter.tablePresenter.setupTableView(inView: view, topConstraint: &topConstraint, listTitle: title)
-        placeHolderCell = listPresenter.tablePresenter.placeholderCell(inTableView: tableView)
+        listPresenter.tablePresenter.setupPlaceholderCell(inTableView: tableView)
 
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
@@ -243,20 +240,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             return
         }
 
+        let cellHeight = tableView.rowHeight
+
         if distancePulledDown <= tableView.rowHeight {
-            UIView.animateWithDuration(0.1) { [unowned self] in
-                self.placeHolderCell.navHintView.alpha = 0
-            }
-            placeHolderCell.textView.text = "Pull to Create Item"
 
-            let cellHeight = tableView.rowHeight
-            let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
-
-            var transform = CATransform3DIdentity
-            transform.m34 = 1 / -(1000 * 0.2)
-            transform = CATransform3DRotate(transform, angle, 1, 0, 0)
-
-            placeHolderCell.layer.transform = transform
+            listPresenter.tablePresenter
+                .adjustPlaceholder(.pullToCreate(distance: distancePulledDown))
 
             if items.isEmpty {
                 onboardView.alpha = max(0, 1 - (distancePulledDown / cellHeight))
@@ -264,33 +253,24 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 onboardView.alpha = 0
             }
         } else if distancePulledDown <= tableView.rowHeight * 2 {
-            UIView.animateWithDuration(0.1) { [unowned self] in
-                self.placeHolderCell.navHintView.alpha = 0
-            }
-            placeHolderCell.layer.transform = CATransform3DIdentity
-            placeHolderCell.textView.text = "Release to Create Item"
+
+            listPresenter.tablePresenter.adjustPlaceholder(.releaseToCreate)
+
         } else if case .Up(_) = auxViewController! {
             if topViewController === parentViewController?.childViewControllers.last { return }
             if topViewController == nil {
                 topViewController = createAuxController()
             }
             startMovingToNextViewController(.Up)
-            placeHolderCell.navHintView.hintText = "Switch to Lists"
-            placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
 
-            UIView.animateWithDuration(0.4, delay: 0.0,
-                                       usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5,
-                                       options: [], animations: { [unowned self] in
-                self.placeHolderCell.navHintView.alpha = 1
-                self.placeHolderCell.navHintView.hintArrowTransfom  = CGAffineTransformIdentity
-            }, completion: nil)
+            listPresenter.tablePresenter.adjustPlaceholder(.switchToLists)
 
             return
         }
 
         if scrollView.dragging {
             removeVC(topViewController)
-            placeHolderCell.alpha = min(1, distancePulledDown / tableView.rowHeight)
+            setPlaceholderAlpha(min(1, distancePulledDown / tableView.rowHeight))
         }
     }
 
@@ -342,7 +322,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     func setPlaceholderAlpha(alpha: CGFloat) {
-        placeHolderCell.alpha = alpha
+        listPresenter.tablePresenter.adjustPlaceholder(.alpha(alpha))
     }
 
     func setListTitle(title: String) {
