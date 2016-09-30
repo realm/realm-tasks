@@ -42,8 +42,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView text;
     private final RecyclerView.Adapter adapter;
     private boolean completed;
-    private int completedVersion;
-    private int backgroundColorVersion;
+    private boolean shouldChangingBackgroundColor;
 
     public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
@@ -54,7 +53,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         badge = (TextView) row.findViewById(R.id.badge);
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
-        backgroundColorVersion = -1;
+        shouldChangingBackgroundColor = true;
         this.adapter = adapter;
     }
 
@@ -70,7 +69,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         if (completed == this.completed) {
             return;
         }
-        completedVersion++;
         this.completed = completed;
         int paintFlags = text.getPaintFlags();
         final int noItemColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_no_item_color);
@@ -172,7 +170,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         setIconBarAlpha(1f);
         setCompleted(false);
         setHintPanelVisible(false);
-        backgroundColorVersion = -1;
+        shouldChangingBackgroundColor = true;
     }
 
     public void resetBackgroundColor() {
@@ -200,15 +198,23 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void changeBackgroundColorIfNeeded() {
-        if (backgroundColorVersion == completedVersion) {
+        if (!shouldChangingBackgroundColor) {
             return;
         }
-        if (getCompleted()) {
+        if (completed) {
             row.setBackgroundColor(generateBackgroundColor());
         } else {
-            row.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.pre_completed));
+            row.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.completing));
         }
-        backgroundColorVersion = completedVersion;
+        shouldChangingBackgroundColor = false;
+    }
+
+    public void revertBackgroundColorIfNeeded() {
+        if (shouldChangingBackgroundColor) {
+            return;
+        }
+        row.setBackgroundColor(generateBackgroundColor());
+        shouldChangingBackgroundColor = true;
     }
 
     public static class ColorHelper {

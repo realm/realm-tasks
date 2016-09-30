@@ -167,6 +167,9 @@ public class TouchHelper {
                     if (absDx < maxNiche) {
                         selectedViewHolder.setIconBarAlpha(absDx / maxNiche);
                         ViewCompat.setTranslationX(selectedViewHolder.getRow(), translationX);
+                        if (translationX > 0) {
+                            selectedViewHolder.revertBackgroundColorIfNeeded();
+                        }
                     } else {
                         selectedViewHolder.setIconBarAlpha(1);
                         if (translationX > 0) {
