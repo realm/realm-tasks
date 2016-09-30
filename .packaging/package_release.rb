@@ -9,15 +9,15 @@ require 'xcodeproj'
 # 3. Embed Realm frameworks for iOS & macOS targets
 # 4. Build RealmTasks macOS
 
-fail 'Usage: ./package_release.rb <realm-cocoa-version>' unless ARGV.count == 1
+fail 'Usage: .packaging/package_release.rb <realm-cocoa-version>' unless ARGV.count == 1
 realm_cocoa_version = ARGV[0]
 
 ################################################################
 # 1. Comment out Realm & RealmSwift pods in Podfile
 ################################################################
 
-podfile_contents = File.read('Podfile')
-File.open('Podfile', 'w') do |file|
+podfile_contents = File.read('RealmTasks Apple/Podfile')
+File.open('RealmTasks Apple/Podfile', 'w') do |file|
   file.puts podfile_contents.gsub("    pod 'Realm", "    # pod 'Realm")
 end
 
@@ -25,15 +25,15 @@ end
 # 2. Install Cartography
 ################################################################
 
-`pod install`
+`pod install --project-directory="RealmTasks Apple"`
 
 ################################################################
 # 3. Embed Realm frameworks for iOS & macOS targets
 ################################################################
 
 # Get useful variables
-@realm_release_root = "../../SDKs/realm-cocoa_#{realm_cocoa_version}"
-@project = Xcodeproj::Project.open('RealmTasks.xcodeproj')
+@realm_release_root = "../../../SDKs/realm-cocoa_#{realm_cocoa_version}"
+@project = Xcodeproj::Project.open('RealmTasks Apple/RealmTasks.xcodeproj')
 @frameworks_group = @project.groups.find { |group| group.display_name == 'Frameworks' }
 
 def embed_realm_frameworks(folder, platform_name)

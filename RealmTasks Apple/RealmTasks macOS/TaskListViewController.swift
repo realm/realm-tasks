@@ -115,8 +115,11 @@ class TaskListViewController: NSViewController {
 extension TaskListViewController {
 
     @IBAction func newTask(sender: AnyObject?) {
+        // Commit any currently editing cells
+        currentlyEditingCellView?.window?.makeFirstResponder(nil)
+
         try! items.realm?.write {
-            self.items.insert(Task(), atIndex: 0)
+            items.insert(Task(), atIndex: 0)
         }
 
         NSView.animateWithDuration(0.2, animations: {
@@ -129,13 +132,8 @@ extension TaskListViewController {
     }
 
     override func validateToolbarItem(theItem: NSToolbarItem) -> Bool {
-        if theItem.action == #selector(newTask) && currentlyEditingCellView != nil {
-            return false
-        }
-
-        return true
+        return theItem.action != #selector(newTask) || currentlyEditingCellView?.text.isEmpty == false
     }
-
 }
 
 // MARK: Reordering
@@ -431,6 +429,7 @@ extension TaskListViewController: TaskCellViewDelegate {
     func cellViewDidChangeText(view: TaskCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
+            view.window?.toolbar?.validateVisibleItems()
         }
     }
 
@@ -462,7 +461,7 @@ extension TaskListViewController: TaskCellViewDelegate {
 
         currentlyEditingCellView = nil
 
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
 
     private func findItemForCellView(view: NSView) -> (item: Task, index: Int)? {

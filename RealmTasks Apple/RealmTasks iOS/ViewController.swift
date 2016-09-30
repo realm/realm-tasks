@@ -204,12 +204,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             placeHolderCell.right == placeHolderCell.superview!.superview!.right
             placeHolderCell.height == tableView.rowHeight
         }
-        
-        constrain(placeHolderCell, placeHolderCell.contentView) { placeHolderCell, contentView in
-            contentView.top == placeHolderCell.top
-            contentView.left == placeHolderCell.left
-            contentView.bottom == placeHolderCell.bottom
-            contentView.right == placeHolderCell.right
+
+        constrain(placeHolderCell.contentView, placeHolderCell) { contentView, placeHolderCell in
+            contentView.edges == placeHolderCell.edges
         }
     }
 
@@ -419,12 +416,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             if bottomViewController === parentViewController?.childViewControllers.last {
                 finishMovingToNextViewController(.Down)
             } else {
-                try! items.realm?.write { [unowned self] in
-                    let itemsToDelete = self.items.filter("completed = true")
+                try! items.realm?.write {
+                    let itemsToDelete = items.filter("completed = true")
                     let numberOfItemsToDelete = itemsToDelete.count
                     guard numberOfItemsToDelete != 0 else { return }
 
-                    self.items.realm?.delete(itemsToDelete)
+                    items.realm?.delete(itemsToDelete)
 
                     vibrate()
                 }
