@@ -54,11 +54,6 @@ enum ViewControllerPosition {
     case Down(ViewControllerType)
 }
 
-protocol NavigationProtocol {
-    var auxViewController: ViewControllerPosition? {get set}
-    func createAuxController() -> UIViewController?
-}
-
 // MARK: View Controller Protocol
 protocol ViewControllerProtocol: UIScrollViewDelegate {
     var tableView: UITableView {get}
@@ -80,7 +75,7 @@ protocol ViewControllerProtocol: UIScrollViewDelegate {
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol, NavigationProtocol {
+    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
 
     // MARK: Properties
     var items: List<Item> {
@@ -107,34 +102,31 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private var nextConstraints: ConstraintGroup?
 
     // Placeholder cell to use before being adding to the table view
-    private let placeHolderCell = TableViewCell<Item>(style: .Default, reuseIdentifier: "cell")
+    private lazy var placeHolderCell: TableViewCell<Item> = {
+        return self.listPresenter.tablePresenter.setupPlaceholderCell(inTableView: self.tableView)
+    }()
 
     // Onboard view
     private let onboardView = OnboardView()
 
     // Top/Bottom View Controllers
-    //private let createTopViewController: (() -> (UIViewController))?
     private var topViewController: UIViewController?
-    //private let createBottomViewController: (() -> (UIViewController))?
     private var bottomViewController: UIViewController?
 
     private var listPresenter: ListPresenter<Item, Parent>!
-    private var navigation: NavigationProtocol!
 
     // MARK: View Lifecycle
 
-    init(parent: Parent, colors: [UIColor], navigation: NavigationProtocol! = nil) {
+    init(parent: Parent, colors: [UIColor]) {
         super.init(nibName: nil, bundle: nil)
 
         listPresenter = ListPresenter(parent: parent, colors: colors)
         listPresenter.viewController = self
 
-        self.navigation = navigation ?? self
-
         if Item.self == Task.self {
-            self.navigation.auxViewController = .Up(.Lists)
+            auxViewController = .Up(.Lists)
         } else {
-            self.navigation.auxViewController = .Down(.DefaultListTasks)
+            auxViewController = .Down(.DefaultListTasks)
         }
     }
 
@@ -154,7 +146,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func setupUI() {
         setupTableView()
-        setupPlaceholderCell()
         toggleOnboardView()
     }
 
@@ -198,23 +189,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         let visibleCells = tableView.visibleCells
         for cell in visibleCells {
             (cell as! TableViewCell<Item>).reset()
-        }
-    }
-
-    private func setupPlaceholderCell() {
-        placeHolderCell.alpha = 0
-        placeHolderCell.backgroundView!.backgroundColor = listPresenter.tablePresenter.colorForRow(0)
-        placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
-        tableView.addSubview(placeHolderCell)
-        constrain(placeHolderCell) { placeHolderCell in
-            placeHolderCell.bottom == placeHolderCell.superview!.topMargin - 7 + 26
-            placeHolderCell.left == placeHolderCell.superview!.superview!.left
-            placeHolderCell.right == placeHolderCell.superview!.superview!.right
-            placeHolderCell.height == tableView.rowHeight
-        }
-
-        constrain(placeHolderCell.contentView, placeHolderCell) { contentView, placeHolderCell in
-            contentView.edges == placeHolderCell.edges
         }
     }
 
@@ -268,7 +242,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         if let indexPath = tableView.indexPathForRowAtPoint(location),
             let typedCell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
             cell = typedCell
-            if case .Down(_) = navigation.auxViewController! where location.x > tableView.bounds.width / 2 {
+            if case .Down(_) = auxViewController! where location.x > tableView.bounds.width / 2 {
                 navigateToBottomViewController(cell.item)
                 return
             }
@@ -291,8 +265,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private func navigateToBottomViewController(item: Item) {
         guard let list = item as? TaskList else { return }
 
-        navigation.auxViewController = .Down(.Tasks(list))
-        bottomViewController = navigation.createAuxController()
+        auxViewController = .Down(.Tasks(list))
+        bottomViewController = createAuxController()
 
         startMovingToNextViewController(.Down)
         finishMovingToNextViewController(.Down)
@@ -353,10 +327,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
         }
 
-        if case .Down(_) = navigation.auxViewController! where distancePulledUp > tableView.rowHeight {
+        if case .Down(_) = auxViewController! where distancePulledUp > tableView.rowHeight {
             if bottomViewController === parentViewController?.childViewControllers.last { return }
             if bottomViewController == nil {
-                bottomViewController = navigation.createAuxController()
+                bottomViewController = createAuxController()
             }
             startMovingToNextViewController(.Down)
             return
@@ -395,10 +369,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
             placeHolderCell.layer.transform = CATransform3DIdentity
             placeHolderCell.textView.text = "Release to Create Item"
-        } else if case .Up(_) = navigation.auxViewController! {
+        } else if case .Up(_) = auxViewController! {
             if topViewController === parentViewController?.childViewControllers.last { return }
             if topViewController == nil {
-                topViewController = navigation.createAuxController()
+                topViewController = createAuxController()
             }
             startMovingToNextViewController(.Up)
             placeHolderCell.navHintView.hintText = "Switch to Lists"
