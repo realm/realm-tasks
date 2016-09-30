@@ -40,11 +40,11 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
     weak var cellPresenter: CellPresenter<Parent.Item>!
 
-    var items: List<Parent.Item> {
+    private var items: List<Parent.Item> {
         return parent.items
     }
 
-    let parent: Parent
+    private let parent: Parent
     init(parent: Parent, colors: [UIColor]) {
         self.parent = parent
         self.colors = colors
@@ -158,7 +158,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     private var startIndexPath: NSIndexPath?
     private var destinationIndexPath: NSIndexPath?
 
-    func setupMovingGesture() {
+    private func setupMovingGesture() {
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureRecognized(_:)))
         longPressGestureRecognizer.delegate = self
         viewController.tableView.addGestureRecognizer(longPressGestureRecognizer)
