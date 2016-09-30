@@ -82,11 +82,10 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        let tableView = viewController.tableView
-        let tableViewContentView = viewController.tableViewContentView
-        let view = tableView.superview!
-
         if context == &tableViewBoundsKVOContext {
+            let tableView = viewController.tableView
+            let tableViewContentView = viewController.tableViewContentView
+            let view = tableView.superview!
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
         } else {
