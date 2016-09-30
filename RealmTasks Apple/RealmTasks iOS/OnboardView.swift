@@ -27,6 +27,13 @@ class OnboardView: UIView {
     private let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.imageWithRenderingMode(.AlwaysTemplate))
     private let labelView = UILabel()
 
+    static func add(inView tableView: UITableView) -> OnboardView {
+        let onBoard = OnboardView()
+        tableView.addSubview(onBoard)
+        onBoard.center = tableView.center
+        return onBoard
+    }
+
     init() {
         labelView.text = "Pull Down to Start"
         labelView.font = .systemFontOfSize(20, weight: UIFontWeightMedium)
