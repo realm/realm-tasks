@@ -86,8 +86,10 @@ func authenticate(username username: String, password: String, register: Bool, c
 
         if let error = error where error.code == SyncError.HTTPStatusCodeError.rawValue && (error.userInfo["statusCode"] as? Int) == 400 {
             // FIXME: workararound for https://github.com/realm/realm-cocoa-private/issues/204
-            // Note: "account not found" and "wrong password" have the same error code, so will show general error message for now
-            callback(NSError(error: error, description: "Incorrect username or password.", recoverySuggestion: "Please check username and password or register a new account."))
+            let improvedError = NSError(error: error,
+                                        description: "Incorrect username or password.",
+                                        recoverySuggestion: "Please check username and password or register a new account.")
+            callback(improvedError)
         } else {
             callback(error)
         }

@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="rJr-HE-H8k">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="rJr-HE-H8k">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Log In View Controller-->
         <scene sceneID="bXo-yz-fW9">
             <objects>
-                <viewController id="rJr-HE-H8k" customClass="LogInViewController" customModule="RealmSyncAuth" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="rJr-HE-H8k" customClass="LogInViewController" customModule="RealmTasks" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="LU8-e6-soi"/>
                         <viewControllerLayoutGuide type="bottom" id="TjS-R3-qgZ"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="7ja-wW-f1E">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SqV-zr-VDA">
-                                <rect key="frame" x="0.0" y="20" width="600" height="44"/>
+                            <navigationBar contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SqV-zr-VDA">
+                                <frame key="frameInset" minY="20" width="600" height="44"/>
                                 <items>
                                     <navigationItem title="Sign In" id="ChH-pA-bA5">
-                                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="ff3-z7-QlM">
-                                            <connections>
-                                                <action selector="cancel:" destination="rJr-HE-H8k" id="H5b-Wf-asr"/>
-                                            </connections>
-                                        </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" title="Register" id="tGb-WQ-ACr">
                                             <connections>
                                                 <segue destination="exZ-BH-3tP" kind="presentation" id="k1W-9f-frD"/>
@@ -37,8 +33,8 @@
                                     <outlet property="delegate" destination="rJr-HE-H8k" id="BgC-4R-8a0"/>
                                 </connections>
                             </navigationBar>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="User Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="jQh-y8-bZX">
-                                <rect key="frame" x="200" y="184" width="200" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="User Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="jQh-y8-bZX">
+                                <frame key="frameInset" minX="200" minY="184" width="200" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="hFo-RS-ePU"/>
                                 </constraints>
@@ -48,23 +44,23 @@
                                     <outlet property="delegate" destination="rJr-HE-H8k" id="eYw-gf-euY"/>
                                 </connections>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Bbf-ry-9dU">
-                                <rect key="frame" x="200" y="238" width="200" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Bbf-ry-9dU">
+                                <frame key="frameInset" minX="200" minY="238" width="200" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="go" enablesReturnKeyAutomatically="YES" secureTextEntry="YES"/>
                                 <connections>
                                     <outlet property="delegate" destination="rJr-HE-H8k" id="1ki-Nh-B3H"/>
                                 </connections>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k8X-f5-PQg">
-                                <rect key="frame" x="279" y="298" width="42" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k8X-f5-PQg">
+                                <frame key="frameInset" minX="279" minY="298" width="42" height="30"/>
                                 <state key="normal" title="Log In"/>
                                 <connections>
                                     <action selector="logIn:" destination="rJr-HE-H8k" eventType="touchUpInside" id="btr-ar-zOd"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="k8X-f5-PQg" firstAttribute="top" secondItem="Bbf-ry-9dU" secondAttribute="bottom" constant="30" id="3qB-Py-QZ9"/>
                             <constraint firstItem="jQh-y8-bZX" firstAttribute="centerX" secondItem="7ja-wW-f1E" secondAttribute="centerX" id="4nD-nE-eR8"/>
@@ -91,17 +87,17 @@
         <!--Register View Controller-->
         <scene sceneID="3hS-eC-kMa">
             <objects>
-                <viewController id="exZ-BH-3tP" customClass="RegisterViewController" customModule="RealmSyncAuth" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="exZ-BH-3tP" customClass="RegisterViewController" customModule="RealmTasks" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="mof-3i-Jm3"/>
                         <viewControllerLayoutGuide type="bottom" id="Fm9-HK-a89"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="FNj-Nf-lES">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="User Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SkO-qn-K6m">
-                                <rect key="frame" x="200" y="144" width="200" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="User Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SkO-qn-K6m">
+                                <frame key="frameInset" minX="200" minY="144" width="200" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="KdP-KR-3bt"/>
                                 </constraints>
@@ -111,31 +107,31 @@
                                     <outlet property="delegate" destination="exZ-BH-3tP" id="k5w-T6-OCu"/>
                                 </connections>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rZI-xO-NuZ">
-                                <rect key="frame" x="242" y="312" width="117" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rZI-xO-NuZ">
+                                <frame key="frameInset" minX="242" minY="312" width="117" height="30"/>
                                 <state key="normal" title="Register &amp; Log In"/>
                                 <connections>
                                     <action selector="register:" destination="exZ-BH-3tP" eventType="touchUpInside" id="Sdr-IE-tY8"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lpn-FI-L4m">
-                                <rect key="frame" x="200" y="198" width="200" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lpn-FI-L4m">
+                                <frame key="frameInset" minX="200" minY="198" width="200" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="next" enablesReturnKeyAutomatically="YES" secureTextEntry="YES"/>
                                 <connections>
                                     <outlet property="delegate" destination="exZ-BH-3tP" id="Xo0-ux-zEU"/>
                                 </connections>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirmation" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qZ7-Ev-LR9">
-                                <rect key="frame" x="200" y="252" width="200" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Confirmation" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qZ7-Ev-LR9">
+                                <frame key="frameInset" minX="200" minY="252" width="200" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" returnKeyType="go" enablesReturnKeyAutomatically="YES" secureTextEntry="YES"/>
                                 <connections>
                                     <outlet property="delegate" destination="exZ-BH-3tP" id="VaL-BX-NEx"/>
                                 </connections>
                             </textField>
-                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="90z-sx-7bo">
-                                <rect key="frame" x="0.0" y="20" width="600" height="44"/>
+                            <navigationBar contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="90z-sx-7bo">
+                                <frame key="frameInset" minY="20" width="600" height="44"/>
                                 <items>
                                     <navigationItem title="Register" id="U0X-mK-a8N">
                                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="7Ac-0B-jKL">
@@ -150,7 +146,7 @@
                                 </connections>
                             </navigationBar>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="lpn-FI-L4m" firstAttribute="width" secondItem="SkO-qn-K6m" secondAttribute="width" id="1t8-Z7-3wa"/>
                             <constraint firstItem="qZ7-Ev-LR9" firstAttribute="width" secondItem="lpn-FI-L4m" secondAttribute="width" id="4w1-tF-KzO"/>

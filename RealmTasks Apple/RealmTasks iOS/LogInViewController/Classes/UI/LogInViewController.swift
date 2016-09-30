@@ -49,12 +49,6 @@ class LogInViewController: UIViewController {
         }
     }
 
-    @IBAction func cancel(sender: AnyObject?) {
-        dismissViewControllerAnimated(true) {
-            self.completionHandler?(userName: nil, password: nil, returnCode: .Cancel)
-        }
-    }
-
     private dynamic func updateUI() {
         logInButton.enabled = userInputValid()
     }

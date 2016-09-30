@@ -64,6 +64,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
             self.logIn()
         })
-        self.window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+        window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
     }
 }
