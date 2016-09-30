@@ -22,8 +22,9 @@ import Cartography
 
 class ContainerViewController: NSViewController {
 
-    var currentListViewController: NSViewController?
-    var constraintGroup = ConstraintGroup()
+    private(set) var currentListViewController: NSViewController?
+    private var constraintGroup = ConstraintGroup()
+    private var notificationToken: NotificationToken?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -107,6 +108,14 @@ class ContainerViewController: NSViewController {
         currentListViewController = listViewController
 
         updateToolbarForList(list)
+
+        notificationToken?.stop()
+        notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in
+            // Show all lists if list is deleted on other device
+            if (list as Object).invalidated {
+                self.showAllLists(nil)
+            }
+        }
     }
 
     private func updateToolbarForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
