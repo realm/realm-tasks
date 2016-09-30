@@ -55,6 +55,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     deinit {
         notificationToken?.stop()
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
     override func loadView() {
@@ -232,13 +233,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             self.currentlyMovingRowSnapshotView?.removeFromSuperview()
             self.currentlyMovingRowSnapshotView = nil
 
-            self.updateColors()
-
-            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
-                    view.isUserInteractionEnabled = true
-                }
-            }
+            self.tableView.reloadData()
         }
     }
 
@@ -326,14 +321,14 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         NSView.animate(animations: {
             self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) {
                     view.alphaValue = 1
-                    view.isUserInteractionEnabled = true
                 }
             }
         }) {
             self.currentlyEditingCellView = nil
             self.view.window?.update()
+            self.tableView.reloadData()
         }
     }
 
