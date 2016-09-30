@@ -341,7 +341,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     func gestureRecognizer(gestureRecognizer: NSGestureRecognizer,
                            shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
-        return true
+        return gestureRecognizer is NSPanGestureRecognizer
     }
 
     func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
@@ -354,7 +354,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                 return false
             }
 
-            return !cellView.completed
+            return cellView != currentlyEditingCellView && !cellView.completed
         case is NSPanGestureRecognizer:
             return reordering
         default:
