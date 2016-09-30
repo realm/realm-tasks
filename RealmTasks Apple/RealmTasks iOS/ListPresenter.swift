@@ -85,4 +85,22 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
             self.viewController.tableView.reloadData()
         }
     }
+
+    // MARK: Onboarding
+    lazy var onboardView: OnboardView = {
+        return OnboardView.add(inView: self.viewController.tableView)
+    }()
+
+    func updateOnboardView(animated: Bool = false) {
+        onboardView.toggle(animated: animated, isVisible: parent.items.isEmpty)
+    }
+
+    func setOnboardAlpha(alpha: CGFloat) {
+        guard parent.items.isEmpty else {
+            updateOnboardView()
+            return
+        }
+        
+        onboardView.alpha = alpha
+    }
 }

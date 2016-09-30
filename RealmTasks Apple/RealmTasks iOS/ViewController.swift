@@ -66,11 +66,6 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private var topConstraint: NSLayoutConstraint?
     private var nextConstraints: ConstraintGroup?
 
-    // Onboard view
-    private lazy var onboardView: OnboardView = {
-        return OnboardView.add(inView: self.tableView)
-    }()
-
     // Top/Bottom View Controllers
     private var topViewController: UIViewController?
     private var bottomViewController: UIViewController?
@@ -106,7 +101,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
-        onboardView.toggle(isVisible: items.isEmpty)
+        
+        listPresenter.updateOnboardView()
     }
 
     override func didMoveToParentViewController(parent: UIViewController?) {
@@ -151,7 +147,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
             tableView.reloadData()
-            onboardView.toggle(animated: true, isVisible: items.isEmpty)
+            listPresenter.updateOnboardView(true)
             cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
         }
         let textView = cell.textView
@@ -247,11 +243,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             listPresenter.tablePresenter
                 .adjustPlaceholder(.pullToCreate(distance: distancePulledDown))
 
-            if items.isEmpty {
-                onboardView.alpha = max(0, 1 - (distancePulledDown / cellHeight))
-            } else {
-                onboardView.alpha = 0
-            }
+            listPresenter.setOnboardAlpha(max(0, 1 - (distancePulledDown / cellHeight)))
+            
         } else if distancePulledDown <= tableView.rowHeight * 2 {
 
             listPresenter.tablePresenter.adjustPlaceholder(.releaseToCreate)
@@ -313,8 +306,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // MARK: ViewControllerProtocol
     func didUpdateList() {
         listPresenter.tablePresenter.updateColors()
+        listPresenter.updateOnboardView()
         tableView.reloadData()
-        onboardView.toggle(isVisible: items.isEmpty)
     }
 
     func setTopConstraintTo(constant constant: CGFloat) {
