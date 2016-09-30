@@ -289,7 +289,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     // MARK: Placeholder cell
-    func setupPlaceholderCell(inTableView tableView: UITableView) -> TableViewCell<Parent.Item>  {
+    func placeholderCell(inTableView tableView: UITableView) -> TableViewCell<Parent.Item>  {
         let placeHolderCell = TableViewCell<Parent.Item>(style: .Default, reuseIdentifier: "cell")
         placeHolderCell.alpha = 0
         placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
@@ -308,5 +308,4 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
 
         return placeHolderCell
     }
-
 }

@@ -67,9 +67,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private var nextConstraints: ConstraintGroup?
 
     // Placeholder cell to use before being adding to the table view
-    private lazy var placeHolderCell: TableViewCell<Item> = {
-        return self.listPresenter.tablePresenter.setupPlaceholderCell(inTableView: self.tableView)
-    }()
+    private var placeHolderCell: TableViewCell<Item>!
 
     // Onboard view
     private lazy var onboardView: OnboardView = {
@@ -107,6 +105,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     private func setupUI() {
         listPresenter.tablePresenter.setupTableView(inView: view, topConstraint: &topConstraint, listTitle: title)
+        placeHolderCell = listPresenter.tablePresenter.placeholderCell(inTableView: tableView)
+
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
         onboardView.toggle(isVisible: items.isEmpty)
