@@ -56,6 +56,7 @@ class ContainerViewController: NSViewController {
                     newView.bottom == newView.superview!.top
                 }
 
+                newView.left == newView.superview!.left
                 newView.size == newView.superview!.size
             }
 
@@ -70,6 +71,7 @@ class ContainerViewController: NSViewController {
                     oldView.top == oldView.superview!.bottom
                 }
 
+                oldView.left == oldView.superview!.left
                 oldView.size == oldView.superview!.size
             }
 
