@@ -100,7 +100,7 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
             updateOnboardView()
             return
         }
-        
+
         onboardView.alpha = alpha
     }
 }

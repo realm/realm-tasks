@@ -300,7 +300,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell<Parent.Item>(style: .Default, reuseIdentifier: "cell")
 
-    func setupPlaceholderCell(inTableView tableView: UITableView)  {
+    func setupPlaceholderCell(inTableView tableView: UITableView) {
         placeHolderCell.alpha = 0
         placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
@@ -354,7 +354,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
                     self.placeHolderCell.navHintView.alpha = 1
                     self.placeHolderCell.navHintView.hintArrowTransfom  = CGAffineTransformIdentity
                 }, completion: nil)
-            
+
             case .alpha(let alpha):
                 placeHolderCell.alpha = alpha
         }

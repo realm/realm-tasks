@@ -101,7 +101,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
-        
+
         listPresenter.updateOnboardView()
     }
 
@@ -244,7 +244,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                 .adjustPlaceholder(.pullToCreate(distance: distancePulledDown))
 
             listPresenter.setOnboardAlpha(max(0, 1 - (distancePulledDown / cellHeight)))
-            
+
         } else if distancePulledDown <= tableView.rowHeight * 2 {
 
             listPresenter.tablePresenter.adjustPlaceholder(.releaseToCreate)
