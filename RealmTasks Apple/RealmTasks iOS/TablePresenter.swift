@@ -348,7 +348,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
                 placeHolderCell.navHintView.hintText = "Switch to Lists"
                 placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
 
-                UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5,
+                UIView.animateWithDuration(0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5,
                     options: [], animations: { [unowned self] in
 
                     self.placeHolderCell.navHintView.alpha = 1
