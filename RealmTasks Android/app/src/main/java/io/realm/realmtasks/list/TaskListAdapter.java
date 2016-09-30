@@ -103,7 +103,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
             @Override
             public void execute(Realm realm) {
                 final TaskList taskList = getData().get(position);
-                getData().remove(position);
+                taskList.getItems().deleteAllFromRealm();
                 taskList.deleteFromRealm();
             }
         });
@@ -120,7 +120,7 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
             @Override
             public void execute(Realm realm) {
                 final TaskList taskList = getData().get(0);
-                getData().remove(0);
+                taskList.getItems().deleteAllFromRealm();
                 taskList.deleteFromRealm();
             }
         });

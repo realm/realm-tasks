@@ -108,7 +108,6 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
             @Override
             public void execute(Realm realm) {
                 final Task task = getData().get(position);
-                getData().remove(position);
                 task.deleteFromRealm();
             }
         });
@@ -125,7 +124,6 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
             @Override
             public void execute(Realm realm) {
                 final Task task = getData().get(0);
-                getData().remove(0);
                 task.deleteFromRealm();
             }
         });
