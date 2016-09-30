@@ -38,7 +38,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
             setupMovingGesture()
         }
     }
-    weak var cellPresenter: CellPresenter<Parent.Item>?
+    weak var cellPresenter: CellPresenter<Parent.Item>!
 
     var items: List<Parent.Item> {
         return parent.items
@@ -102,9 +102,6 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = viewController.tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Parent.Item>
-        guard let cellPresenter = cellPresenter else {
-            return cell
-        }
 
         cell.item = items[indexPath.row]
         cell.presenter = cellPresenter
@@ -119,10 +116,6 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        guard let cellPresenter = cellPresenter else {
-            return 0.0
-        }
-
         if cellPresenter.currentlyEditingIndexPath?.row == indexPath.row {
             return floor(cellPresenter.cellHeightForText(cellPresenter.currentlyEditingCell!.textView.text))
         }
@@ -143,9 +136,6 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         cell.contentView.backgroundColor = colorForRow(indexPath.row)
-        guard let cellPresenter = cellPresenter else {
-            return
-        }
         cell.alpha = cellPresenter.currentlyEditing ? editingCellAlpha : 1
     }
 
