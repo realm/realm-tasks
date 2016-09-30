@@ -23,19 +23,6 @@ import Cartography
 import RealmSwift
 import UIKit
 
-extension UIView {
-    private func removeAllConstraints() {
-        var view: UIView? = self
-        while let superview = view?.superview {
-            for c in superview.constraints where c.firstItem === self || c.secondItem === self {
-                superview.removeConstraint(c)
-            }
-            view = superview.superview
-        }
-        translatesAutoresizingMaskIntoConstraints = true
-    }
-}
-
 private enum NavDirection {
     case Up, Down
 }
