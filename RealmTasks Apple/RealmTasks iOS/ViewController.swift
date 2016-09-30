@@ -16,9 +16,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-// FIXME: This file should be split up.
-// swiftlint:disable file_length
-
 import Cartography
 import RealmSwift
 import UIKit
@@ -40,8 +37,6 @@ enum ViewControllerPosition {
 
 // MARK: View Controller
 
-// FIXME: This class should be split up.
-// swiftlint:disable type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
     UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
 
