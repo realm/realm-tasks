@@ -42,6 +42,23 @@ private enum NavDirection {
     case Up, Down
 }
 
+// MARK: Navigation Protocol
+enum ViewControllerType {
+    case Lists
+    case DefaultListTasks
+    case Tasks(TaskList)
+}
+
+enum ViewControllerPosition {
+    case Up(ViewControllerType)
+    case Down(ViewControllerType)
+}
+
+protocol NavigationProtocol {
+    var auxViewController: ViewControllerPosition? {get set}
+    func createAuxController() -> UIViewController?
+}
+
 // MARK: View Controller Protocol
 protocol ViewControllerProtocol: UIScrollViewDelegate {
     var tableView: UITableView {get}
@@ -465,5 +482,40 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     func setListTitle(title: String) {
         self.title = title
         parentViewController?.title = title
+    }
+
+    // MARK: NavigationProtocol
+
+    var auxViewController: ViewControllerPosition?
+
+    func createAuxController() -> UIViewController? {
+        let listType: ViewControllerType
+
+        guard let auxViewControllerType = auxViewController else {
+            return nil
+        }
+
+        switch auxViewControllerType {
+        case .Up(let type): listType = type
+        case .Down(let type): listType = type
+        }
+
+        switch listType {
+        case .Lists:
+            return ViewController<TaskList, TaskListList>(
+                parent: try! Realm().objects(TaskListList.self).first!,
+                colors: UIColor.listColors()
+            )
+        case .DefaultListTasks:
+            return ViewController<Task, TaskList>(
+                parent: try! Realm().objects(TaskList.self).first!,
+                colors: UIColor.taskColors()
+            )
+        case .Tasks(let list):
+            return ViewController<Task, TaskList>(
+                parent: list,
+                colors: UIColor.taskColors()
+            )
+        }
     }
 }
