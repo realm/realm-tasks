@@ -25,6 +25,20 @@ class ContainerViewController: NSViewController {
     var currentListViewController: NSViewController?
     var constraintGroup = ConstraintGroup()
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        if let visualEffectView = view as? NSVisualEffectView {
+            if #available(OSX 10.11, *) {
+                visualEffectView.material = .UltraDark
+            } else {
+                visualEffectView.material = .Dark
+            }
+
+            visualEffectView.state = .Active
+        }
+    }
+
     @IBAction func showAllLists(sender: AnyObject?) {
         let rootList = try! Realm().objects(TaskListList.self).first!
 
