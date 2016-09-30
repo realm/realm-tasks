@@ -144,6 +144,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     // MARK: UIScrollViewDelegate
+
     func scrollViewDidScroll(scrollView: UIScrollView) {
         viewController.scrollViewDidScroll?(scrollView)
     }
@@ -153,6 +154,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     // MARK: Moving
+
     private var snapshot: UIView!
     private var startIndexPath: NSIndexPath?
     private var destinationIndexPath: NSIndexPath?
@@ -261,6 +263,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     // MARK: Colors
+
     private let colors: [UIColor]
 
     func colorForRow(row: Int) -> UIColor {
@@ -309,7 +312,6 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     func adjustPlaceholder(state: PlaceholderState) {
         switch state {
             case .pullToCreate(let distancePulledDown):
-
                 UIView.animateWithDuration(0.1) { [unowned self] in
                     self.placeHolderCell.navHintView.alpha = 0
                 }
@@ -323,17 +325,13 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
                 transform = CATransform3DRotate(transform, angle, 1, 0, 0)
 
                 placeHolderCell.layer.transform = transform
-
             case .releaseToCreate:
-
                 UIView.animateWithDuration(0.1) { [unowned self] in
                     self.placeHolderCell.navHintView.alpha = 0
                 }
                 placeHolderCell.layer.transform = CATransform3DIdentity
                 placeHolderCell.textView.text = "Release to Create Item"
-
             case .switchToLists:
-
                 placeHolderCell.navHintView.hintText = "Switch to Lists"
                 placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
 
