@@ -18,6 +18,7 @@ package io.realm.realmtasks.list;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -33,6 +34,15 @@ import io.realm.realmtasks.R;
 
 public class ItemViewHolder extends RecyclerView.ViewHolder {
 
+    @ColorInt
+    private final int cellUnusedColor;
+    @ColorInt
+    private final int cellNoItemColor;
+    @ColorInt
+    private final int cellCompletedBackgroundColor;
+    @ColorInt
+    private final int cellDefaultColor;
+
     private final RelativeLayout iconBar;
     private final RelativeLayout row;
     private final RelativeLayout hintPanel;
@@ -42,7 +52,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView text;
     private final RecyclerView.Adapter adapter;
     private boolean completed;
-    private boolean shouldChangingBackgroundColor;
+    private boolean shouldChangeBackgroundColor;
 
     public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
@@ -53,7 +63,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         badge = (TextView) row.findViewById(R.id.badge);
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
-        shouldChangingBackgroundColor = true;
+        cellUnusedColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_unused_color);
+        cellNoItemColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_no_item_color);
+        cellCompletedBackgroundColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_background_color);
+        cellDefaultColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_default_color);
+        shouldChangeBackgroundColor = true;
         this.adapter = adapter;
     }
 
@@ -61,7 +75,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         if (adapter != null && adapter instanceof TouchHelperAdapter) {
             return ((TouchHelperAdapter) adapter).generatedRowColor(getAdapterPosition());
         } else {
-            return ContextCompat.getColor(itemView.getContext(), R.color.cell_unused_color);
+            return cellUnusedColor;
         }
     }
 
@@ -71,27 +85,20 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         }
         this.completed = completed;
         int paintFlags = text.getPaintFlags();
-        final int noItemColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_no_item_color);
         if (completed) {
-            text.setTextColor(noItemColor);
+            text.setTextColor(cellNoItemColor);
             text.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(
-                    ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_background_color));
+                    cellCompletedBackgroundColor);
         } else {
             if (getBadge().getVisibility() == View.VISIBLE && getBadge().getText().equals("0")) {
-                text.setTextColor(noItemColor);
+                text.setTextColor(cellNoItemColor);
             } else {
-                text.setTextColor(
-                        ContextCompat.getColor(itemView.getContext(), R.color.cell_default_color)
-                );
+                text.setTextColor(cellDefaultColor);
             }
             text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(generateBackgroundColor());
         }
-    }
-
-    public boolean getCompleted() {
-        return completed;
     }
 
     public void setEditable(boolean set) {
@@ -131,13 +138,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     public void setBadgeCount(int count) {
         badge.setText(Integer.toString(count));
         if (count == 0) {
-            final int noItemColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_no_item_color);
-            text.setTextColor(noItemColor);
-            badge.setTextColor(noItemColor);
+            text.setTextColor(cellNoItemColor);
+            badge.setTextColor(cellNoItemColor);
         } else {
-            final int defaultColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_default_color);
-            text.setTextColor(defaultColor);
-            badge.setTextColor(defaultColor);
+            text.setTextColor(cellDefaultColor);
+            badge.setTextColor(cellDefaultColor);
         }
     }
 
@@ -170,7 +175,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         setIconBarAlpha(1f);
         setCompleted(false);
         setHintPanelVisible(false);
-        shouldChangingBackgroundColor = true;
+        shouldChangeBackgroundColor = true;
     }
 
     public void resetBackgroundColor() {
@@ -198,7 +203,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void changeBackgroundColorIfNeeded() {
-        if (!shouldChangingBackgroundColor) {
+        if (!shouldChangeBackgroundColor) {
             return;
         }
         if (completed) {
@@ -206,15 +211,15 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         } else {
             row.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.completing));
         }
-        shouldChangingBackgroundColor = false;
+        shouldChangeBackgroundColor = false;
     }
 
     public void revertBackgroundColorIfNeeded() {
-        if (shouldChangingBackgroundColor) {
+        if (shouldChangeBackgroundColor) {
             return;
         }
         row.setBackgroundColor(generateBackgroundColor());
-        shouldChangingBackgroundColor = true;
+        shouldChangeBackgroundColor = true;
     }
 
     public static class ColorHelper {
