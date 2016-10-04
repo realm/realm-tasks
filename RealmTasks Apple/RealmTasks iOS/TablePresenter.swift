@@ -16,9 +16,19 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import Cartography
 import Foundation
 import RealmSwift
 import UIKit
+
+private var tableViewBoundsKVOContext = 0
+
+enum PlaceholderState {
+    case pullToCreate(distance: CGFloat)
+    case releaseToCreate
+    case switchToLists
+    case alpha(CGFloat)
+}
 
 class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
@@ -28,16 +38,59 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
             setupMovingGesture()
         }
     }
-    weak var cellPresenter: CellPresenter<Parent.Item>?
+    weak var cellPresenter: CellPresenter<Parent.Item>!
 
-    var items: List<Parent.Item> {
+    private var items: List<Parent.Item> {
         return parent.items
     }
 
-    let parent: Parent
+    private let parent: Parent
     init(parent: Parent, colors: [UIColor]) {
         self.parent = parent
         self.colors = colors
+    }
+
+    deinit {
+        viewController.tableView.removeObserver(self, forKeyPath: "bounds")
+    }
+
+    // MARK: Setup table view
+
+    func setupTableView(inView view: UIView, inout topConstraint: NSLayoutConstraint?, listTitle title: String?) {
+        let tableView = viewController.tableView
+        let tableViewContentView = viewController.tableViewContentView
+
+        view.addSubview(tableView)
+        constrain(tableView) { tableView in
+            topConstraint = (tableView.top == tableView.superview!.top)
+            tableView.right == tableView.superview!.right
+            tableView.bottom == tableView.superview!.bottom
+            tableView.left == tableView.superview!.left
+        }
+        tableView.registerClass(TableViewCell<Parent.Item>.self, forCellReuseIdentifier: "cell")
+        tableView.separatorStyle = .None
+        tableView.backgroundColor = .blackColor()
+        tableView.rowHeight = 54
+        tableView.contentInset = UIEdgeInsets(top: (title != nil) ? 41 : 20, left: 0, bottom: 54, right: 0)
+        tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
+        tableView.showsVerticalScrollIndicator = false
+
+        view.addSubview(tableViewContentView)
+        tableViewContentView.hidden = true
+
+        tableView.addObserver(self, forKeyPath: "bounds", options: .New, context: &tableViewBoundsKVOContext)
+    }
+
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        if context == &tableViewBoundsKVOContext {
+            let tableView = viewController.tableView
+            let tableViewContentView = viewController.tableViewContentView
+            let view = tableView.superview!
+            let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
+            tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
+        } else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
     }
 
     // MARK: UITableViewDataSource
@@ -48,9 +101,6 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = viewController.tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TableViewCell<Parent.Item>
-        guard let cellPresenter = cellPresenter else {
-            return cell
-        }
 
         cell.item = items[indexPath.row]
         cell.presenter = cellPresenter
@@ -65,10 +115,6 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        guard let cellPresenter = cellPresenter else {
-            return 0.0
-        }
-
         if cellPresenter.currentlyEditingIndexPath?.row == indexPath.row {
             return floor(cellPresenter.cellHeightForText(cellPresenter.currentlyEditingCell!.textView.text))
         }
@@ -89,9 +135,6 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
 
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         cell.contentView.backgroundColor = colorForRow(indexPath.row)
-        guard let cellPresenter = cellPresenter else {
-            return
-        }
         cell.alpha = cellPresenter.currentlyEditing ? editingCellAlpha : 1
     }
 
@@ -101,6 +144,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     // MARK: UIScrollViewDelegate
+
     func scrollViewDidScroll(scrollView: UIScrollView) {
         viewController.scrollViewDidScroll?(scrollView)
     }
@@ -110,11 +154,12 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     // MARK: Moving
+
     private var snapshot: UIView!
     private var startIndexPath: NSIndexPath?
     private var destinationIndexPath: NSIndexPath?
 
-    func setupMovingGesture() {
+    private func setupMovingGesture() {
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureRecognized(_:)))
         longPressGestureRecognizer.delegate = self
         viewController.tableView.addGestureRecognizer(longPressGestureRecognizer)
@@ -218,6 +263,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
     }
 
     // MARK: Colors
+
     private let colors: [UIColor]
 
     func colorForRow(row: Int) -> UIColor {
@@ -239,5 +285,65 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
         }, completion: { _ in
             completion?()
         })
+    }
+
+    // MARK: Placeholder cell
+
+    // Placeholder cell to use before being adding to the table view
+    private let placeHolderCell = TableViewCell<Parent.Item>(style: .Default, reuseIdentifier: "cell")
+
+    func setupPlaceholderCell(inTableView tableView: UITableView) {
+        placeHolderCell.alpha = 0
+        placeHolderCell.backgroundView!.backgroundColor = colorForRow(0)
+        placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
+        tableView.addSubview(placeHolderCell)
+        constrain(placeHolderCell) { placeHolderCell in
+            placeHolderCell.bottom == placeHolderCell.superview!.topMargin - 7 + 26
+            placeHolderCell.left == placeHolderCell.superview!.superview!.left
+            placeHolderCell.right == placeHolderCell.superview!.superview!.right
+            placeHolderCell.height == tableView.rowHeight
+        }
+
+        constrain(placeHolderCell.contentView, placeHolderCell) { contentView, placeHolderCell in
+            contentView.edges == placeHolderCell.edges
+        }
+    }
+
+    func adjustPlaceholder(state: PlaceholderState) {
+        switch state {
+            case .pullToCreate(let distancePulledDown):
+                UIView.animateWithDuration(0.1) { [unowned self] in
+                    self.placeHolderCell.navHintView.alpha = 0
+                }
+                placeHolderCell.textView.text = "Pull to Create Item"
+
+                let cellHeight = viewController.tableView.rowHeight
+                let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
+
+                var transform = CATransform3DIdentity
+                transform.m34 = 1 / -(1000 * 0.2)
+                transform = CATransform3DRotate(transform, angle, 1, 0, 0)
+
+                placeHolderCell.layer.transform = transform
+            case .releaseToCreate:
+                UIView.animateWithDuration(0.1) { [unowned self] in
+                    self.placeHolderCell.navHintView.alpha = 0
+                }
+                placeHolderCell.layer.transform = CATransform3DIdentity
+                placeHolderCell.textView.text = "Release to Create Item"
+            case .switchToLists:
+                placeHolderCell.navHintView.hintText = "Switch to Lists"
+                placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransformRotate(CGAffineTransformIdentity, CGFloat(M_PI))
+
+                UIView.animateWithDuration(0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5,
+                    options: [], animations: { [unowned self] in
+
+                    self.placeHolderCell.navHintView.alpha = 1
+                    self.placeHolderCell.navHintView.hintArrowTransfom  = CGAffineTransformIdentity
+                }, completion: nil)
+
+            case .alpha(let alpha):
+                placeHolderCell.alpha = alpha
+        }
     }
 }

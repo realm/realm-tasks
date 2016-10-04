@@ -27,6 +27,8 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     var cellPresenter: CellPresenter<Item>!
     var tablePresenter: TablePresenter<Parent>!
 
+    private var notificationToken: NotificationToken?
+
     var viewController: ViewControllerProtocol! {
         didSet {
             cellPresenter.viewController = viewController
@@ -37,6 +39,8 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
             } else if observingText {
                 parent.removeObserver(self, forKeyPath: "text")
             }
+
+            notificationToken = setupNotifications()
         }
     }
 
@@ -46,6 +50,10 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
         cellPresenter = CellPresenter(items: parent.items)
         tablePresenter = TablePresenter(parent: parent, colors: colors)
         tablePresenter.cellPresenter = cellPresenter
+    }
+
+    deinit {
+        notificationToken?.stop()
     }
 
     // MARK: List title
@@ -62,6 +70,36 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         if context == &titleKVOContext {
             viewController.setListTitle((parent as! CellPresentable).text)
+        }
+    }
+
+    // MARK: Notifications
+    private func setupNotifications() -> NotificationToken {
+        return parent.items.addNotificationBlock { [unowned self] changes in
+            // Do not perform an update if the user is editing a cell at this moment
+            // (The table will be reloaded by the 'end editing' call of the active cell)
+            guard self.cellPresenter.currentlyEditingCell == nil else {
+                return
+            }
+
+            self.viewController.tableView.reloadData()
+        }
+    }
+
+    // MARK: Onboarding
+    lazy var onboardView: OnboardView = {
+        return OnboardView.add(inView: self.viewController.tableView)
+    }()
+
+    func updateOnboardView(animated: Bool = false) {
+        onboardView.toggle(animated: animated, isVisible: parent.items.isEmpty)
+    }
+
+    func setOnboardAlpha(alpha: CGFloat) {
+        if parent.items.isEmpty {
+            onboardView.alpha = alpha
+        } else {
+            updateOnboardView()
         }
     }
 }
