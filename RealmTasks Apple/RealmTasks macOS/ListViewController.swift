@@ -27,7 +27,8 @@ private let taskCellIdentifier = "TaskCell"
 private let listCellIdentifier = "ListCell"
 private let prototypeCellIdentifier = "PrototypeCell"
 
-final class ListViewController<ListType: ListPresentable where ListType: Object>: NSViewController, NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecognizerDelegate {
+final class ListViewController<ListType: ListPresentable where ListType: Object>: NSViewController,
+    NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecognizerDelegate {
 
     typealias ItemType = ListType.Item
 
