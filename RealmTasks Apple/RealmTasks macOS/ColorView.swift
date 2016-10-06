@@ -35,5 +35,5 @@ final class ColorView: NSView {
         backgroundColor.setFill()
         NSRectFillUsingOperation(dirtyRect, .SourceOver)
     }
-    
+
 }

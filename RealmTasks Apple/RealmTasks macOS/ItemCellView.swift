@@ -114,7 +114,7 @@ class ItemCellView: NSTableCellView {
 
         setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -419,7 +419,7 @@ private class HighlightView: NSView {
 protocol ItemTextFieldDelegate: NSTextFieldDelegate {
 
     func textFieldDidBecomeFirstResponder(textField: NSTextField)
-    
+
 }
 
 private class ItemTextField: NSTextField {
@@ -481,16 +481,16 @@ private extension NSTextField {
         let range = NSRange(location: 0, length: Int(fraction * Double(stringValue.characters.count)))
         setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: range)
     }
-    
+
     func unstrike() {
         setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleNone.rawValue)
     }
-    
+
     private func setAttribute(name: String, value: AnyObject, range: NSRange? = nil) {
         let mutableAttributedString = NSMutableAttributedString(attributedString: attributedStringValue)
         let range = range ?? NSRange(location: 0, length: mutableAttributedString.length)
         mutableAttributedString.addAttribute(name, value: value, range: range)
         attributedStringValue = mutableAttributedString
     }
-    
+
 }

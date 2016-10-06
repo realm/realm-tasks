@@ -621,7 +621,7 @@ private final class PrototypeCellView: ItemCellView {
 
         layoutSubtreeIfNeeded()
 
-        // NSTextField's content size must be recalculated after cell size is changed  
+        // NSTextField's content size must be recalculated after cell size is changed
         textView.invalidateIntrinsicContentSize()
         layoutSubtreeIfNeeded()
 
