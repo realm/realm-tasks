@@ -229,17 +229,13 @@ extension TaskCellView: TaskTextFieldDelegate {
 extension TaskCellView: NSGestureRecognizerDelegate {
 
     func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
-        guard gestureRecognizer is NSPanGestureRecognizer else {
-            return false
-        }
-
         let currentlyEditingTextField = ((window?.firstResponder as? NSText)?.delegate as? NSTextField)
 
-        guard let event = NSApp.currentEvent where currentlyEditingTextField != textView else {
+        guard currentlyEditingTextField != textView else {
             return false
         }
 
-        return fabs(event.deltaX) > fabs(event.deltaY)
+        return true
     }
 
     // FIXME: This could easily be refactored to avoid such a high CC.
