@@ -16,6 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+// FIXME: This file should be split up.
+// swiftlint:disable file_length
+
 import Cocoa
 import Cartography
 
