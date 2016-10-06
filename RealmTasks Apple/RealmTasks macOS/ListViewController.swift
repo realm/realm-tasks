@@ -27,6 +27,8 @@ private let taskCellIdentifier = "TaskCell"
 private let listCellIdentifier = "ListCell"
 private let prototypeCellIdentifier = "PrototypeCell"
 
+// FIXME: This type should be split up.
+// swiftlint:disable:next type_body_length
 final class ListViewController<ListType: ListPresentable where ListType: Object>: NSViewController,
     NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecognizerDelegate {
 
