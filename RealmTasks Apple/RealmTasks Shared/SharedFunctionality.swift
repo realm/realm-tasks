@@ -24,7 +24,7 @@ import RealmSwift
 private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here. https://github.com/realm/realm-sync/issues/694
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
 
-private func setDefaultRealmConfigurationWithUser(user: User) {
+private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
         syncConfiguration: (user, Constants.syncServerURL!),
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
@@ -70,7 +70,7 @@ private func setDefaultRealmConfigurationWithUser(user: User) {
 
 // returns true on success
 func configureDefaultRealm() -> Bool {
-    if let user = User.all().first {
+    if let user = SyncUser.all().first {
         setDefaultRealmConfigurationWithUser(user)
         return true
     }
@@ -78,7 +78,7 @@ func configureDefaultRealm() -> Bool {
 }
 
 func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
-    User.authenticateWithCredential(.usernamePassword(username, password: password, actions: register ? [.CreateAccount] : []),
+    SyncUser.authenticateWithCredential(.usernamePassword(username, password: password, actions: register ? [.CreateAccount] : []),
                                     authServerURL: Constants.syncAuthURL) { user, error in
         if let user = user {
             setDefaultRealmConfigurationWithUser(user)

@@ -27,6 +27,13 @@ class OnboardView: UIView {
     private let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.imageWithRenderingMode(.AlwaysTemplate))
     private let labelView = UILabel()
 
+    static func add(inView tableView: UITableView) -> OnboardView {
+        let onBoard = OnboardView()
+        tableView.addSubview(onBoard)
+        onBoard.center = tableView.center
+        return onBoard
+    }
+
     init() {
         labelView.text = "Pull Down to Start"
         labelView.font = .systemFontOfSize(20, weight: UIFontWeightMedium)
@@ -61,6 +68,18 @@ class OnboardView: UIView {
 
             imageView.centerX == imageView.superview!.centerX
             imageView.top == imageView.superview!.top
+        }
+    }
+
+    func toggle(animated animated: Bool = false, isVisible: Bool) {
+        func updateAlpha() {
+            alpha = isVisible ? 1 : 0
+        }
+
+        if animated {
+            UIView.animateWithDuration(0.3, animations: updateAlpha)
+        } else {
+            updateAlpha()
         }
     }
 }
