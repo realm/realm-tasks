@@ -25,7 +25,7 @@ extension NSView {
     }
 
     static var defaultAnimationTimingFunction: CAMediaTimingFunction {
-        return .easeInEaseOut()
+        return CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
     }
 
     static func animate(duration duration: NSTimeInterval = defaultAnimationDuration,
@@ -47,26 +47,6 @@ extension NSView {
                                  timingFunction: CAMediaTimingFunction = defaultAnimationTimingFunction,
                                  animations: () -> Void) {
         animate(duration: duration, timingFunction: timingFunction, animations: animations, completion: nil)
-    }
-
-}
-
-extension CAMediaTimingFunction {
-
-    static func lineral() -> CAMediaTimingFunction {
-        return CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
-    }
-
-    static func easeIn() -> CAMediaTimingFunction {
-        return CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
-    }
-
-    static func easeOut() -> CAMediaTimingFunction {
-        return CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-    }
-
-    static func easeInEaseOut() -> CAMediaTimingFunction {
-        return CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
     }
 
 }
