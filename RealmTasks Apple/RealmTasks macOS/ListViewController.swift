@@ -380,16 +380,19 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
+        guard !editing else {
+            return false
+        }
+
         switch gestureRecognizer {
         case is NSPressGestureRecognizer:
             let targetRow = tableView.rowAtPoint(gestureRecognizer.locationInView(tableView))
 
-            guard targetRow >= 0,
-                let cellView = tableView.viewAtColumn(0, row: targetRow, makeIfNecessary: false) as? ItemCellView else {
+            guard targetRow >= 0 else {
                 return false
             }
 
-            return cellView != currentlyEditingCellView && !cellView.completed
+            return !list.items[targetRow].completed
         case is NSPanGestureRecognizer:
             return reordering
         default:
