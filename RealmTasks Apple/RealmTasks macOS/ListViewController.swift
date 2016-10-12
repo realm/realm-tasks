@@ -213,6 +213,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func handleReorderingForScreenPoint(point: NSPoint) {
+        guard reordering else {
+            return
+        }
+
         if let snapshotView = currentlyMovingRowSnapshotView {
             snapshotView.frame.origin.y = snapshotView.superview!.convertPoint(point, fromView: nil).y - snapshotView.frame.height / 2
         }
