@@ -21,6 +21,11 @@ import android.graphics.Paint;
 import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.CharacterStyle;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StrikethroughSpan;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.RotateAnimation;
@@ -37,7 +42,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     @ColorInt
     private final int cellUnusedColor;
     @ColorInt
-    private final int cellNoItemColor;
+    private final int cellCompletedColor;
     @ColorInt
     private final int cellCompletedBackgroundColor;
     @ColorInt
@@ -64,7 +69,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         text = (TextView) row.findViewById(R.id.text);
         editText = (EditText) row.findViewById(R.id.edit_text);
         cellUnusedColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_unused_color);
-        cellNoItemColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_no_item_color);
+        cellCompletedColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_color);
         cellCompletedBackgroundColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_background_color);
         cellDefaultColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_default_color);
         shouldChangeBackgroundColor = true;
@@ -86,13 +91,13 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         this.completed = completed;
         int paintFlags = text.getPaintFlags();
         if (completed) {
-            text.setTextColor(cellNoItemColor);
+            text.setTextColor(cellCompletedColor);
             text.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(
                     cellCompletedBackgroundColor);
         } else {
             if (getBadge().getVisibility() == View.VISIBLE && getBadge().getText().equals("0")) {
-                text.setTextColor(cellNoItemColor);
+                text.setTextColor(cellCompletedColor);
             } else {
                 text.setTextColor(cellDefaultColor);
             }
@@ -138,8 +143,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     public void setBadgeCount(int count) {
         badge.setText(Integer.toString(count));
         if (count == 0) {
-            text.setTextColor(cellNoItemColor);
-            badge.setTextColor(cellNoItemColor);
+            text.setTextColor(cellCompletedColor);
+            badge.setTextColor(cellCompletedColor);
         } else {
             text.setTextColor(cellDefaultColor);
             badge.setTextColor(cellDefaultColor);
@@ -220,6 +225,35 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         }
         row.setBackgroundColor(generateBackgroundColor());
         shouldChangeBackgroundColor = true;
+    }
+
+    public void setStrikeThroughRatio(float strikeThroughRatio) {
+        final CharSequence text = this.text.getText();
+        final int textLength = text.length();
+        int firstLength = (int) (textLength * strikeThroughRatio);
+        if (firstLength > textLength) {
+            firstLength = textLength;
+        } else if (firstLength == textLength - 1) {
+            firstLength = textLength;
+        }
+        final int appendedLength = textLength - firstLength;
+        final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text, 0, firstLength);
+        stringBuilder.clearSpans();
+        int paintFlags = this.text.getPaintFlags();
+        this.text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
+        final CharacterStyle firstCharStyle, secondCharStyle;
+        if (completed) {
+            firstCharStyle = new ForegroundColorSpan(cellCompletedColor);
+            secondCharStyle = new StrikethroughSpan();
+        } else {
+            firstCharStyle = new StrikethroughSpan();
+            secondCharStyle = new ForegroundColorSpan(cellDefaultColor);
+        }
+        stringBuilder.setSpan(firstCharStyle, 0, firstLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        stringBuilder.append(text, firstLength, textLength);
+        final int fullLength = stringBuilder.length();
+        stringBuilder.setSpan(secondCharStyle, fullLength - appendedLength, fullLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        this.text.setText(stringBuilder);
     }
 
     public static class ColorHelper {
