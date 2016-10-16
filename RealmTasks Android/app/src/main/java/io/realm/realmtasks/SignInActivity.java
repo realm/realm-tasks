@@ -35,11 +35,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
+
 import io.realm.Credentials;
 import io.realm.ObjectServerError;
+import io.realm.Realm;
 import io.realm.User;
+import io.realm.realmtasks.auth.facebook.FacebookAuth;
+import io.realm.realmtasks.auth.google.GoogleAuth;
+import io.realm.realmtasks.model.TaskList;
+import io.realm.realmtasks.model.TaskListList;
 
-public class SignInActivity extends AppCompatActivity {
+import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
+
+public class SignInActivity extends AppCompatActivity implements User.Callback {
 
     public static final String ACTION_IGNORE_CURRENT_USER = "action.ignoreCurrentUser";
 
@@ -47,6 +60,8 @@ public class SignInActivity extends AppCompatActivity {
     private EditText passwordView;
     private View progressView;
     private View loginFormView;
+    private FacebookAuth facebookAuth;
+    private GoogleAuth googleAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +100,58 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         }
+
+        // Setup Facebook Authentication
+        facebookAuth = new FacebookAuth((LoginButton) findViewById(R.id.login_button)) {
+            @Override
+            public void onRegistrationComplete(final LoginResult loginResult) {
+                UserManager.setAuthMode(UserManager.AUTH_MODE.FACEBOOK);
+                Credentials credentials = Credentials.facebook(loginResult.getAccessToken().getToken());
+                User.loginAsync(credentials, AUTH_URL, SignInActivity.this);
+            }
+        };
+
+        // Setup Google Authentication
+        googleAuth = new GoogleAuth((SignInButton) findViewById(R.id.google_sign_in_button), this) {
+            @Override
+            public void onRegistrationComplete(GoogleSignInResult result) {
+                UserManager.setAuthMode(UserManager.AUTH_MODE.GOOGLE);
+                GoogleSignInAccount acct = result.getSignInAccount();
+                Credentials credentials = Credentials.google(acct.getIdToken());
+                User.loginAsync(credentials, AUTH_URL, SignInActivity.this);
+            }
+
+            @Override
+            public void onError(String s) {
+                super.onError(s);
+            }
+        };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        googleAuth.onActivityResult(requestCode, resultCode, data);
+        facebookAuth.onActivityResult(requestCode, resultCode, data);
     }
 
     private void loginComplete(User user) {
         UserManager.setActiveUser(user);
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                if (realm.isEmpty()) {
+                    final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
+                    final TaskList taskList = new TaskList();
+                    taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
+                    taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
+                    taskListList.getItems().add(taskList);
+                }
+            }
+        });
+        realm.close();
+
         Intent listActivity = new Intent(this, TaskListActivity.class);
         Intent tasksActivity = new Intent(this, TaskActivity.class);
         tasksActivity.putExtra(TaskActivity.EXTRA_LIST_ID, RealmTasksApplication.DEFAULT_LIST_ID);
@@ -138,30 +201,7 @@ public class SignInActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            User.loginAsync(Credentials.usernamePassword(email, password, false), RealmTasksApplication.AUTH_URL, new User.Callback() {
-                        @Override
-                        public void onSuccess(User user) {
-                            showProgress(false);
-                            loginComplete(user);
-                        }
-
-                        @Override
-                        public void onError(ObjectServerError error) {
-                            showProgress(false);
-                            String errorMsg;
-                            switch (error.getErrorCode()) {
-                                case UNKNOWN_ACCOUNT:
-                                    errorMsg = "Account does not exists.";
-                                    break;
-                                case INVALID_CREDENTIALS:
-                                    errorMsg = "User name and password does not match";
-                                    break;
-                                default:
-                                    errorMsg = error.toString();
-                            }
-                            Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-                        }
-                    });
+            User.loginAsync(Credentials.usernamePassword(email, password, false), RealmTasksApplication.AUTH_URL, this);
         }
     }
 
@@ -185,6 +225,29 @@ public class SignInActivity extends AppCompatActivity {
                 progressView.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
+    }
+
+    @Override
+    public void onSuccess(User user) {
+        showProgress(false);
+        loginComplete(user);
+    }
+
+    @Override
+    public void onError(ObjectServerError error) {
+        showProgress(false);
+        String errorMsg;
+        switch (error.getErrorCode()) {
+            case UNKNOWN_ACCOUNT:
+                errorMsg = "Account does not exists.";
+                break;
+            case INVALID_CREDENTIALS:
+                errorMsg = "The provided credentials are invalid!"; // This message covers also expired account token
+                break;
+            default:
+                errorMsg = error.toString();
+        }
+        Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
     }
 }
 

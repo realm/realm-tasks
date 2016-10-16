@@ -117,7 +117,7 @@ public class TaskListActivity extends AppCompatActivity {
              * We need call logout() here since onCreate() of the next Activity is already
              * executed before reaching here.
              */
-            User.currentUser().logout();
+            UserManager.logoutActiveUser();
             logoutAfterClose = false;
         }
         super.onStop();
