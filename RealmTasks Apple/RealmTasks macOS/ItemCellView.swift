@@ -286,7 +286,7 @@ extension ItemCellView: ItemTextFieldDelegate {
 extension ItemCellView: NSGestureRecognizerDelegate {
 
     func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
-        let currentlyEditingTextField = ((window?.firstResponder as? NSText)?.delegate as? NSTextField)
+        let currentlyEditingTextField = (window?.firstResponder as? NSText)?.delegate as? NSTextField
 
         guard currentlyEditingTextField != textView else {
             return false
