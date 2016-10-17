@@ -389,19 +389,7 @@
                         <value key="minSize" type="size" width="250" height="200"/>
                         <toolbar key="toolbar" implicitIdentifier="6F2EB22A-AA56-4725-B70A-288A6CE2DA21" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="small" id="nsm-Fv-9B1">
                             <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New" paletteLabel="New" tag="-1" image="NSAddTemplate" id="4CH-Dy-gYb">
-                                    <connections>
-                                        <action selector="newItem:" target="tRP-hs-BBi" id="Xf6-Bv-6Kr"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="7FA9AC5A-EECD-4FE0-8E02-9AD9BCEEE4AF" explicitItemIdentifier="ShowAllListsButton" label="Lists" paletteLabel="Lists" tag="-1" image="NSListViewTemplate" id="0mI-Ud-1wl">
-                                    <size key="minSize" width="10" height="10"/>
-                                    <size key="maxSize" width="10" height="10"/>
-                                    <connections>
-                                        <action selector="showAllLists:" target="tRP-hs-BBi" id="aev-UH-Jnm"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="3DC5707D-FE50-4853-89D8-0E0B70519895" explicitItemIdentifier="TitleView" label="Title" paletteLabel="Title" tag="-1" autovalidates="NO" id="Jgg-9o-UeK">
+                                <toolbarItem implicitItemIdentifier="984735E6-5290-4FF8-95C4-3EAAE4E23851" explicitItemIdentifier="TitleView" label="Title" paletteLabel="Title" tag="-1" autovalidates="NO" id="Jgg-9o-UeK">
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="32" height="31"/>
                                     <size key="maxSize" width="99999" height="92"/>
@@ -409,6 +397,20 @@
                                         <rect key="frame" x="0.0" y="14" width="106" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     </customView>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="B03B0C06-A060-4B81-AFEC-11DD1B583D53" explicitItemIdentifier="ShowAllListsButton" label="Lists" paletteLabel="Lists" toolTip="Show lists" tag="-1" image="lists" id="0mI-Ud-1wl">
+                                    <size key="minSize" width="18" height="18"/>
+                                    <size key="maxSize" width="18" height="18"/>
+                                    <connections>
+                                        <action selector="showAllLists:" target="tRP-hs-BBi" id="aev-UH-Jnm"/>
+                                    </connections>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New" paletteLabel="New" toolTip="New" tag="-1" image="new" id="4CH-Dy-gYb">
+                                    <size key="minSize" width="18" height="18"/>
+                                    <size key="maxSize" width="18" height="18"/>
+                                    <connections>
+                                        <action selector="newItem:" target="tRP-hs-BBi" id="Xf6-Bv-6Kr"/>
+                                    </connections>
                                 </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
@@ -738,7 +740,7 @@ Gw
         </scene>
     </scenes>
     <resources>
-        <image name="NSAddTemplate" width="11" height="11"/>
-        <image name="NSListViewTemplate" width="14" height="10"/>
+        <image name="lists" width="32" height="32"/>
+        <image name="new" width="32" height="32"/>
     </resources>
 </document>
