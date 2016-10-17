@@ -31,9 +31,7 @@ public extension NSView {
     }
 
     public func resetTrackingAreas() {
-        for trackingArea in trackingAreas {
-            removeTrackingArea(trackingArea)
-        }
+        trackingAreas.forEach { removeTrackingArea($0) }
     }
 
 }
