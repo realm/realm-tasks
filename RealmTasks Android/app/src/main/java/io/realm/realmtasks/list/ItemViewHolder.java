@@ -58,6 +58,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final RecyclerView.Adapter adapter;
     private boolean completed;
     private boolean shouldChangeBackgroundColor;
+    private double previousFirstLength;
 
     public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
@@ -73,6 +74,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         cellCompletedBackgroundColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_background_color);
         cellDefaultColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_default_color);
         shouldChangeBackgroundColor = true;
+        previousFirstLength = -1;
         this.adapter = adapter;
     }
 
@@ -104,6 +106,10 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(generateBackgroundColor());
         }
+    }
+
+    public boolean getCompleted() {
+        return completed;
     }
 
     public void setEditable(boolean set) {
@@ -181,6 +187,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         setCompleted(false);
         setHintPanelVisible(false);
         shouldChangeBackgroundColor = true;
+        previousFirstLength = -1;
     }
 
     public void resetBackgroundColor() {
@@ -236,11 +243,14 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         } else if (firstLength == textLength - 1) {
             firstLength = textLength;
         }
+        if (firstLength == previousFirstLength) {
+            return;
+        }
+        previousFirstLength = firstLength;
         final int appendedLength = textLength - firstLength;
-        final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text, 0, firstLength);
+        final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text, 0, textLength);
         stringBuilder.clearSpans();
-        int paintFlags = this.text.getPaintFlags();
-        this.text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
+        this.text.setPaintFlags(this.text.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
         final CharacterStyle firstCharStyle, secondCharStyle;
         if (completed) {
             firstCharStyle = new ForegroundColorSpan(cellCompletedColor);
@@ -250,9 +260,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             secondCharStyle = new ForegroundColorSpan(cellDefaultColor);
         }
         stringBuilder.setSpan(firstCharStyle, 0, firstLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        stringBuilder.append(text, firstLength, textLength);
-        final int fullLength = stringBuilder.length();
-        stringBuilder.setSpan(secondCharStyle, fullLength - appendedLength, fullLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        stringBuilder.setSpan(secondCharStyle, textLength - appendedLength, textLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         this.text.setText(stringBuilder);
     }
 

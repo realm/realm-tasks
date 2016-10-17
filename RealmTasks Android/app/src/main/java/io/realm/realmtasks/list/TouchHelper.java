@@ -28,6 +28,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnItemTouchListener;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.text.SpannableStringBuilder;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -378,13 +379,20 @@ public class TouchHelper {
                     final float itemViewTranslationX = selectedItemView.getTranslationX();
                     final float rowTranslationX = TouchHelper.this.selected.getRow().getTranslationX();
                     final float previousTranslationX = itemViewTranslationX + rowTranslationX;
+                    boolean completed = TouchHelper.this.selected.getCompleted();
                     TouchHelper.this.selected.reset();
+                    TouchHelper.this.selected.setCompleted(completed);
                     if (Math.abs(previousTranslationX) > maxNiche) {
                         if (previousTranslationX < 0) {
                             animateDismissItem(selectedItemView, previousTranslationX);
                         } else {
                             animateCompleteItem(selectedItemView, previousTranslationX);
                         }
+                    } else {
+                        final CharSequence text = TouchHelper.this.selected.getText().getText();
+                        final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text, 0, text.length());
+                        stringBuilder.clearSpans();
+                        TouchHelper.this.selected.getText().setText(stringBuilder);
                     }
                 }
             } else if (previousActionState == ACTION_STATE_PULL) {
