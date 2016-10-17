@@ -313,7 +313,6 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 
             if abs(translation.x) > swipeThreshold {
                 doneIconView.frame.origin.x = originalDoneIconOffset + translation.x - swipeThreshold
-
                 deleteIconView.frame.origin.x = originalDeleteIconOffset + translation.x + swipeThreshold
             } else {
                 doneIconView.frame.origin.x = originalDoneIconOffset
@@ -333,8 +332,6 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 
                 if contentView.frame.origin.x > 0 {
                     textView.strike(1 - fractionOfThreshold)
-                } else {
-                    releaseAction == .Complete ? textView.unstrike() : textView.strike()
                 }
             } else {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
@@ -342,8 +339,6 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 
                 if contentView.frame.origin.x > 0 {
                     textView.strike(fractionOfThreshold)
-                } else {
-                    releaseAction == .Complete ? textView.strike() : textView.unstrike()
                 }
             }
         case .Ended:
@@ -468,32 +463,6 @@ private class ItemTextField: NSTextField {
 
         // Update height on text change
         invalidateIntrinsicContentSize()
-    }
-
-}
-
-// MARK: Private Extensions
-
-private extension NSTextField {
-
-    func strike(fraction: Double = 1) {
-        if fraction < 1 {
-            unstrike()
-        }
-
-        let range = NSRange(location: 0, length: Int(fraction * Double(stringValue.characters.count)))
-        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: range)
-    }
-
-    func unstrike() {
-        setAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleNone.rawValue)
-    }
-
-    private func setAttribute(name: String, value: AnyObject, range: NSRange? = nil) {
-        let mutableAttributedString = NSMutableAttributedString(attributedString: attributedStringValue)
-        let range = range ?? NSRange(location: 0, length: mutableAttributedString.length)
-        mutableAttributedString.addAttribute(name, value: value, range: range)
-        attributedStringValue = mutableAttributedString
     }
 
 }
