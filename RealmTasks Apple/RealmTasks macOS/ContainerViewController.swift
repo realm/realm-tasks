@@ -20,6 +20,9 @@ import Cocoa
 import RealmSwift
 import Cartography
 
+private let toolbarTitleLabelIdentifier = "TitleLabel"
+private let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"
+
 class ContainerViewController: NSViewController {
 
     private(set) var currentListViewController: NSViewController?
@@ -94,7 +97,7 @@ class ContainerViewController: NSViewController {
                 currentListViewController.view.alphaValue = 0
                 listViewController.view.alphaValue = 1
 
-                self.view.layoutSubtreeIfNeeded()
+                view.layoutSubtreeIfNeeded()
             }) {
                 currentListViewController.removeFromParentViewController()
                 currentListViewController.view.removeFromSuperview()
@@ -123,15 +126,15 @@ class ContainerViewController: NSViewController {
             return
         }
 
-        if let titleLabel = toolbar.itemWithIdentifier("TitleLabel")?.view as? NSTextField {
+        if let titleLabel = toolbar.itemWithIdentifier(toolbarTitleLabelIdentifier)?.view as? NSTextField {
             titleLabel.stringValue = (list as? CellPresentable)?.text ?? "Lists"
         }
 
         if list is CellPresentable {
-            if !toolbar.hasItemWithIdentifier("ShowAllListsButton") {
-                toolbar.insertItemWithItemIdentifier("ShowAllListsButton", atIndex: toolbar.items.count - 1)
+            if !toolbar.hasItemWithIdentifier(toolbarShowAllListsButtonIdentifier) {
+                toolbar.insertItemWithItemIdentifier(toolbarShowAllListsButtonIdentifier, atIndex: toolbar.items.count - 1)
             }
-        } else if let index = toolbar.indexOfItemWithIdentifier("ShowAllListsButton") {
+        } else if let index = toolbar.indexOfItemWithIdentifier(toolbarShowAllListsButtonIdentifier) {
             view.window?.toolbar?.removeItemAtIndex(index)
         }
 
