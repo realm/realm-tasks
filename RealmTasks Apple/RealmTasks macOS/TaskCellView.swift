@@ -20,7 +20,6 @@
 // swiftlint:disable file_length
 
 import Cocoa
-import Cartography
 
 class TaskCellView: ItemCellView {
 

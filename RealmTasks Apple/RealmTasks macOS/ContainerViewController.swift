@@ -16,9 +16,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+import Cartography
 import Cocoa
 import RealmSwift
-import Cartography
 
 private let toolbarTitleLabelIdentifier = "TitleLabel"
 private let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"

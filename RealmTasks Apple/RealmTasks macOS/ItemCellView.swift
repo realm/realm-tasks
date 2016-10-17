@@ -19,8 +19,8 @@
 // FIXME: This file should be split up.
 // swiftlint:disable file_length
 
-import Cocoa
 import Cartography
+import Cocoa
 
 protocol ItemCellViewDelegate: class {
 

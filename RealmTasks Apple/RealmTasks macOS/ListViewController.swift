@@ -19,9 +19,9 @@
 // FIXME: This file should be split up.
 // swiftlint:disable file_length
 
+import Cartography
 import Cocoa
 import RealmSwift
-import Cartography
 
 private let taskCellIdentifier = "TaskCell"
 private let listCellIdentifier = "ListCell"
