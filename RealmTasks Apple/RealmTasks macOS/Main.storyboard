@@ -389,13 +389,11 @@
                         <value key="minSize" type="size" width="250" height="200"/>
                         <toolbar key="toolbar" implicitIdentifier="6F2EB22A-AA56-4725-B70A-288A6CE2DA21" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="small" id="nsm-Fv-9B1">
                             <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="e0G-Eu-e1o"/>
                                 <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New" paletteLabel="New" tag="-1" image="NSAddTemplate" id="4CH-Dy-gYb">
                                     <connections>
                                         <action selector="newItem:" target="tRP-hs-BBi" id="Xf6-Bv-6Kr"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="6rT-T5-Ern"/>
                                 <toolbarItem implicitItemIdentifier="7FA9AC5A-EECD-4FE0-8E02-9AD9BCEEE4AF" explicitItemIdentifier="ShowAllListsButton" label="Lists" paletteLabel="Lists" tag="-1" image="NSListViewTemplate" id="0mI-Ud-1wl">
                                     <size key="minSize" width="10" height="10"/>
                                     <size key="maxSize" width="10" height="10"/>
@@ -415,7 +413,6 @@
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="Jgg-9o-UeK"/>
-                                <toolbarItem reference="e0G-Eu-e1o"/>
                                 <toolbarItem reference="0mI-Ud-1wl"/>
                                 <toolbarItem reference="4CH-Dy-gYb"/>
                             </defaultToolbarItems>

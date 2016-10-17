@@ -26,6 +26,7 @@ class TitleView: NSView {
         textField.editable = false
         textField.bordered = false
         textField.drawsBackground = false
+        textField.lineBreakMode = .ByTruncatingTail
 
         return textField
     }()
@@ -56,13 +57,16 @@ class TitleView: NSView {
     private func updateTextFieldFrame() {
         textField.sizeToFit()
 
-        // Center text view horizontally in window ...
-        var point = NSPoint(x: (window!.frame.width - textField.frame.width) / 2, y: 0)
-        point = convertPoint(point, fromView: window?.contentView)
-        // ... and vertically in self
-        point.y = (bounds.height - textField.frame.height) / 2
+        var frame = textField.frame
+        frame.size.width = min(bounds.width, frame.width)
 
-        textField.frame.origin = point
+        // Center text view horizontally in window ...
+        frame.origin = NSPoint(x: (window!.frame.width - textField.frame.width) / 2, y: 0)
+        frame.origin.x = max(convertPoint(frame.origin, fromView: window?.contentView).x, 0)
+        // ... and vertically in self
+        frame.origin.y = (bounds.height - textField.frame.height) / 2
+
+        textField.frame = frame
     }
 
 }
