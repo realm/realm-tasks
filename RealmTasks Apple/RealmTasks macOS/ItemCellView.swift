@@ -234,7 +234,7 @@ class ItemCellView: NSTableCellView {
         }
 
         NSView.animate(duration: 0.1) {
-            self.highlightView.hidden = false
+            highlightView.hidden = false
         }
     }
 
@@ -246,7 +246,7 @@ class ItemCellView: NSTableCellView {
         }
 
         NSView.animate(duration: 0.1) {
-            self.highlightView.hidden = true
+            highlightView.hidden = true
         }
     }
 

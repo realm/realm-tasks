@@ -113,7 +113,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func reloadTableViewIfNeeded() {
         if needsReloadTableView {
-            self.tableView.reloadData()
+            tableView.reloadData()
             needsReloadTableView = false
         }
     }
@@ -137,7 +137,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private func updateTableViewHeightOfRows(indexes: NSIndexSet? = nil) {
         // noteHeightOfRows animates by default, disable this
         NSView.animate(duration: 0) {
-            self.tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSRange(0...self.tableView.numberOfRows)))
+            tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSRange(0...tableView.numberOfRows)))
         }
     }
 
@@ -147,13 +147,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         endEditingCells()
 
         try! list.realm?.write {
-            self.list.items.insert(ItemType(), atIndex: 0)
+            list.items.insert(ItemType(), atIndex: 0)
         }
 
-        self.animating = true
+        animating = true
         NSView.animate(animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
-            self.tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
+            tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
         }) {
             if let newItemCellView = self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false) as? ItemCellView {
                 self.beginEditingCell(newItemCellView)
@@ -195,7 +195,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-            if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+            if let view = tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
                 view.isUserInteractionEnabled = false
             }
         }
@@ -207,8 +207,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         view.addSubview(currentlyMovingRowSnapshotView!)
 
         NSView.animate() {
-            let frame = self.currentlyMovingRowSnapshotView!.frame
-            self.currentlyMovingRowSnapshotView!.frame = frame.insetBy(dx: -frame.width * 0.02, dy: -frame.height * 0.02)
+            let frame = currentlyMovingRowSnapshotView!.frame
+            currentlyMovingRowSnapshotView!.frame = frame.insetBy(dx: -frame.width * 0.02, dy: -frame.height * 0.02)
         }
     }
 
@@ -242,7 +242,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             NSView.animate() {
                 // Disable implicit animations because tableView animates reordering via animator proxy
                 NSAnimationContext.currentContext().allowsImplicitAnimation = false
-                self.tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
+                tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
             }
         }
     }
@@ -261,7 +261,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         NSView.animate(animations: {
-            self.currentlyMovingRowSnapshotView?.frame = self.view.convertRect(self.currentlyMovingRowView!.frame, fromView: self.tableView)
+            currentlyMovingRowSnapshotView?.frame = view.convertRect(currentlyMovingRowView!.frame, fromView: tableView)
         }) {
             self.currentlyMovingRowView?.alphaValue = 1
             self.currentlyMovingRowView = nil
@@ -333,10 +333,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func beginEditingCell(cellView: ItemCellView) {
         NSView.animate(animations: {
-            self.tableView.scrollRowToVisible(self.tableView.rowForView(cellView))
+            tableView.scrollRowToVisible(tableView.rowForView(cellView))
 
-            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView where view != cellView {
+            tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView where view != cellView {
                     view.alphaValue = 0.3
                     view.isUserInteractionEnabled = false
                 }
@@ -359,8 +359,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         view.window?.makeFirstResponder(self)
 
         NSView.animate(animations: {
-            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+            tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
                     view.isUserInteractionEnabled = true
                 }
@@ -491,7 +491,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ItemCellView {
                 NSView.animate() {
-                    cellView.backgroundColor = self.colorForRow(row)
+                    cellView.backgroundColor = colorForRow(row)
                 }
             }
         }
@@ -507,13 +507,12 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     // MARK: ItemCellViewDelegate
 
     func cellView(view: ItemCellView, didComplete complete: Bool) {
-        guard let (tmpItem, index) = findItemForCellView(view) else {
+        guard let itemAndIndex = findItemForCellView(view) else {
             return
         }
 
-        // FIXME: workaround for tuple mutability
-        var item = tmpItem
-
+        var item = itemAndIndex.0
+        let index = itemAndIndex.1
         let destinationIndex: Int
 
         if complete {
@@ -558,7 +557,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         animating = true
         NSView.animate(animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false
-            self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
+            tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
         }) {
             self.animating = false
             self.reloadTableViewIfNeeded()

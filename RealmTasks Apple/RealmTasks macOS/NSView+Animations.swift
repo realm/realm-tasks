@@ -30,7 +30,7 @@ extension NSView {
 
     static func animate(duration duration: NSTimeInterval = defaultAnimationDuration,
                                  timingFunction: CAMediaTimingFunction = defaultAnimationTimingFunction,
-                                 animations: () -> Void,
+                                 @noescape animations: () -> Void,
                                  completion: (() -> Void)? = nil) {
         NSAnimationContext.runAnimationGroup({ context in
             context.allowsImplicitAnimation = true
@@ -45,7 +45,7 @@ extension NSView {
     // Convenience method for trailing closure syntax without completion handler
     static func animate(duration duration: NSTimeInterval = defaultAnimationDuration,
                                  timingFunction: CAMediaTimingFunction = defaultAnimationTimingFunction,
-                                 animations: () -> Void) {
+                                 @noescape animations: () -> Void) {
         animate(duration: duration, timingFunction: timingFunction, animations: animations, completion: nil)
     }
 

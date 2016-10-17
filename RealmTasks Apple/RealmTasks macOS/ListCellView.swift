@@ -114,8 +114,8 @@ class ListCellView: ItemCellView {
         let textAlphaValue: CGFloat = countLabel.integerValue > 0 || editable ? 1 : 0.3
 
         NSView.animate(duration: 0.1) {
-            self.countLabel.alphaValue = textAlphaValue
-            self.textView.alphaValue = textAlphaValue
+            countLabel.alphaValue = textAlphaValue
+            textView.alphaValue = textAlphaValue
         }
     }
 
@@ -132,8 +132,8 @@ class ListCellView: ItemCellView {
         }
 
         NSView.animate(duration: 0.1) {
-            self.countLabel.alphaValue = 1
-            self.textView.alphaValue = 1
+            countLabel.alphaValue = 1
+            textView.alphaValue = 1
         }
 
         performSelector(#selector(delayedSetAcceptsEditing), withObject: nil, afterDelay: 1.2)
