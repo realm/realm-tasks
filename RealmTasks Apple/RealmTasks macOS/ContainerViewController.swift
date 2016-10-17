@@ -20,7 +20,7 @@ import Cartography
 import Cocoa
 import RealmSwift
 
-private let toolbarTitleLabelIdentifier = "TitleLabel"
+private let toolbarTitleViewIdentifier = "TitleView"
 private let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"
 
 class ContainerViewController: NSViewController {
@@ -126,8 +126,8 @@ class ContainerViewController: NSViewController {
             return
         }
 
-        if let titleLabel = toolbar.itemWithIdentifier(toolbarTitleLabelIdentifier)?.view as? NSTextField {
-            titleLabel.stringValue = (list as? CellPresentable)?.text ?? "Lists"
+        if let titleView = toolbar.itemWithIdentifier(toolbarTitleViewIdentifier)?.view as? TitleView {
+            titleView.text = (list as? CellPresentable)?.text ?? "Lists"
         }
 
         if list is CellPresentable {

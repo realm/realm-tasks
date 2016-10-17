@@ -38,7 +38,7 @@
 		C23EB0591D46535F00D3E0AC /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB0581D46535F00D3E0AC /* ListViewController.swift */; };
 		C23EB05B1D4655A900D3E0AC /* TaskCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB05A1D4655A900D3E0AC /* TaskCellView.swift */; };
 		C23EB05D1D4A028A00D3E0AC /* NSView+Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */; };
-		C277A6F11D80329D00DED239 /* TitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277A6F01D80329D00DED239 /* TitleLabel.swift */; };
+		C277A6F11D80329D00DED239 /* TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277A6F01D80329D00DED239 /* TitleView.swift */; };
 		C277A6F31D8035B300DED239 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277A6F21D8035B300DED239 /* ContainerViewController.swift */; };
 		C277A6F71D80646500DED239 /* ListCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C277A6F61D80646500DED239 /* ListCellView.swift */; };
 		C27B619F1DA7DFEC00B02EF3 /* ItemCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27B619E1DA7DFEC00B02EF3 /* ItemCellView.swift */; };
@@ -106,7 +106,7 @@
 		C23EB0581D46535F00D3E0AC /* ListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		C23EB05A1D4655A900D3E0AC /* TaskCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskCellView.swift; sourceTree = "<group>"; };
 		C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSView+Animations.swift"; sourceTree = "<group>"; };
-		C277A6F01D80329D00DED239 /* TitleLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleLabel.swift; sourceTree = "<group>"; };
+		C277A6F01D80329D00DED239 /* TitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleView.swift; sourceTree = "<group>"; };
 		C277A6F21D8035B300DED239 /* ContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
 		C277A6F61D80646500DED239 /* ListCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListCellView.swift; sourceTree = "<group>"; };
 		C27B619E1DA7DFEC00B02EF3 /* ItemCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemCellView.swift; sourceTree = "<group>"; };
@@ -229,7 +229,7 @@
 				C27B619E1DA7DFEC00B02EF3 /* ItemCellView.swift */,
 				C23EB05A1D4655A900D3E0AC /* TaskCellView.swift */,
 				C277A6F61D80646500DED239 /* ListCellView.swift */,
-				C277A6F01D80329D00DED239 /* TitleLabel.swift */,
+				C277A6F01D80329D00DED239 /* TitleView.swift */,
 				C2CFD0091D915DAB00725B88 /* ColorView.swift */,
 				C23EB05C1D4A028A00D3E0AC /* NSView+Animations.swift */,
 				C2CFD00B1D91660200725B88 /* NSView+TrackingAreas.swift */,
@@ -669,7 +669,7 @@
 				C2E981E91DB4F27300288A2B /* NSAttributedString+Strikethrough.swift in Sources */,
 				E8A1E6531D59368200D8B04A /* SharedFunctionality.swift in Sources */,
 				C2CFD00C1D91660200725B88 /* NSView+TrackingAreas.swift in Sources */,
-				C277A6F11D80329D00DED239 /* TitleLabel.swift in Sources */,
+				C277A6F11D80329D00DED239 /* TitleView.swift in Sources */,
 				C23EB0301D46364000D3E0AC /* Models.swift in Sources */,
 				C23EB0321D46364000D3E0AC /* LocalIPAddress.swift in Sources */,
 				C277A6F71D80646500DED239 /* ListCellView.swift in Sources */,
