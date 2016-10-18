@@ -66,6 +66,9 @@ class TitleView: NSView {
         // ... and vertically in self
         frame.origin.y = (bounds.height - textField.frame.height) / 2
 
+        // Float values leads to blurred drawing on non-retina screens
+        frame.makeIntegralInPlace()
+
         textField.frame = frame
     }
 
