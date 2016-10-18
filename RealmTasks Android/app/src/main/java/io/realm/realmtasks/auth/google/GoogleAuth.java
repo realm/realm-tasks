@@ -31,9 +31,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import io.realm.realmtasks.R;
 
 /**
- * * Provide authentication using users Google account registered with the device.
+ * Provide authentication using users Google account registered with the device.
+ * https://developers.google.com/identity/sign-in/android/start-integrating
  */
-
 public abstract class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 10;

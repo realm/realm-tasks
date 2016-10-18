@@ -27,8 +27,8 @@ import com.facebook.login.widget.LoginButton;
 
 /**
  * Provide authentication using users Facebook account.
+ * https://developers.facebook.com/docs/facebook-login/android
  */
-
 public abstract class FacebookAuth {
     private final LoginButton loginButton;
     private final CallbackManager callbackManager;

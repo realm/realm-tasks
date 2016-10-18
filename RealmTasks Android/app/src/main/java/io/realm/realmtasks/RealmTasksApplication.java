@@ -36,7 +36,7 @@ public class RealmTasksApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        FacebookSdk.sdkInitialize(this);
         RealmLog.add(new AndroidLogger(Log.VERBOSE));
     }
 }
