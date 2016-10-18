@@ -60,7 +60,7 @@ dependencies {
         exclude group: "io.realm"
     }
     // Dependency for Facebook Sign-in
-    compile('com.facebook.android:facebook-android-sdk:4.15.0')
+    compile 'com.facebook.android:facebook-android-sdk:4.15.0'
 
     // Dependency for Google Sign-In
     compile 'com.google.android.gms:play-services-auth:9.6.1'
