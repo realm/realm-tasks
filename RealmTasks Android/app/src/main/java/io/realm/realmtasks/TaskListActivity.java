@@ -24,10 +24,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import io.realm.Realm;
@@ -39,8 +37,6 @@ import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.model.TaskListList;
 import io.realm.realmtasks.view.RecyclerViewWithEmptyViewSupport;
-
-import static android.R.attr.id;
 
 public class TaskListActivity extends AppCompatActivity {
 
@@ -157,8 +153,10 @@ public class TaskListActivity extends AppCompatActivity {
         public void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
+            if (fromPosition == -1) {
+                return;
+            }
             adapter.onItemMoved(fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override

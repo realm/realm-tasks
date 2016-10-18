@@ -146,8 +146,10 @@ public class TaskActivity extends AppCompatActivity {
         public void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
+            if (fromPosition == -1) {
+                return;
+            }
             adapter.onItemMoved(fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override
