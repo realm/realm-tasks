@@ -39,22 +39,4 @@ final class CellTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: Actions
-
-    func strike(fraction: Double = 1) {
-        let mutableAttributedString = attributedText!.mutableCopy() as! NSMutableAttributedString
-        let range = NSRange(location: 0, length: Int(fraction * Double(mutableAttributedString.length)))
-        mutableAttributedString.addAttribute(NSStrikethroughStyleAttributeName, value: 2, range: range)
-        attributedText = mutableAttributedString.copy() as? NSAttributedString
-    }
-
-    func unstrike() {
-        var mutableTypingAttributes = typingAttributes
-        mutableTypingAttributes.removeValueForKey(NSStrikethroughStyleAttributeName)
-        typingAttributes = mutableTypingAttributes
-        let mutableAttributedString = attributedText!.mutableCopy() as! NSMutableAttributedString
-        let range = NSRange(location: 0, length: mutableAttributedString.length)
-        mutableAttributedString.removeAttribute(NSStrikethroughStyleAttributeName, range: range)
-        attributedText = mutableAttributedString.copy() as? NSAttributedString
-    }
 }

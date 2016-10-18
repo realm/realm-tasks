@@ -49,9 +49,10 @@ extension AppDelegate: NSApplicationDelegate {
         mainWindowController = mainStoryboard.instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
         mainWindowController.window?.titleVisibility = .Hidden
         mainWindowController.showWindow(nil)
+
         if configureDefaultRealm() {
-            let taskListVC = mainWindowController.contentViewController as! TaskListViewController
-            taskListVC.items = try! Realm().objects(TaskList.self).first!.items
+            let containerViewController = mainWindowController.contentViewController as! ContainerViewController
+            containerViewController.showRecentList(nil)
         } else {
             logIn()
         }
@@ -74,8 +75,9 @@ extension AppDelegate {
                     NSApp.presentError(error)
                 } else {
                     viewController.dismissController(nil)
-                    let taskListVC = (self.mainWindowController.contentViewController as! TaskListViewController)
-                    taskListVC.items = try! Realm().objects(TaskList.self).first!.items
+
+                    let containerViewController = self.mainWindowController.contentViewController as! ContainerViewController
+                    containerViewController.showRecentList(nil)
                 }
             }
         }

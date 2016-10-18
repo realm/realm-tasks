@@ -16,11 +16,24 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-// FIXME: This file should be split up.
-// swiftlint:disable file_length
-
 import Cocoa
 
-class TaskCellView: ItemCellView {
+final class ColorView: NSView {
+
+    @IBInspectable var backgroundColor: NSColor = .clearColor() {
+        didSet {
+            needsDisplay = true
+        }
+    }
+
+    convenience init(backgroundColor: NSColor) {
+        self.init(frame: .zero)
+        self.backgroundColor = backgroundColor
+    }
+
+    override func drawRect(dirtyRect: NSRect) {
+        backgroundColor.setFill()
+        NSRectFillUsingOperation(dirtyRect, .SourceOver)
+    }
 
 }

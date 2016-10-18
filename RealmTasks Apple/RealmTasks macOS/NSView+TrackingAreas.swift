@@ -16,11 +16,22 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-// FIXME: This file should be split up.
-// swiftlint:disable file_length
-
 import Cocoa
 
-class TaskCellView: ItemCellView {
+public extension NSView {
+
+    public func setTrackingAreaWithRect(rect: NSRect, options: NSTrackingAreaOptions) -> NSTrackingArea {
+        resetTrackingAreas()
+
+        let trackingArea = NSTrackingArea(rect: rect, options: options, owner: self, userInfo: nil)
+
+        addTrackingArea(trackingArea)
+
+        return trackingArea
+    }
+
+    public func resetTrackingAreas() {
+        trackingAreas.forEach { removeTrackingArea($0) }
+    }
 
 }
