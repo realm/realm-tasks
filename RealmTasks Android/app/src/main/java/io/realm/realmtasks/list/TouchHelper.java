@@ -171,7 +171,7 @@ public class TouchHelper {
 
         void onAdded();
 
-        void onReverted(boolean shouldUpdateUI);
+        void onReverted();
 
         void onExit();
     }
@@ -208,7 +208,7 @@ public class TouchHelper {
                     }
                 } else if (actionState == ACTION_STATE_DRAG) {
                     final float translationY = selectedInitialY + dy - selected.itemView.getTop();
-                    ViewCompat.setTranslationY(selectedItemView, translationY);
+                    ViewCompat.setTranslationY(overdrawChild, translationY);
                 } else if (actionState == ACTION_STATE_PULL) {
                     final int height = selected.itemView.getHeight();
                     boolean hintPanelVisible = false;
@@ -310,31 +310,32 @@ public class TouchHelper {
                     dx = motionEvent.getX(pointerIndex) - initialX;
                     dy = motionEvent.getY(pointerIndex) - initialY;
                     TouchHelper.this.recyclerView.invalidate();
-                    moveIfNecessary(viewHolder);
+                    moveIfNecessary();
                 }
             }
         }
 
-        private void moveIfNecessary(ViewHolder fromViewHolder) {
+        private void moveIfNecessary() {
             if (actionState != ACTION_STATE_DRAG) {
                 return;
             }
+            ViewHolder fromViewHolder = recyclerView.getChildViewHolder(overdrawChild);
             if (fromViewHolder == null || fromViewHolder.getAdapterPosition() == -1) {
                 return;
             }
             final int selectedTop = (int) (selectedInitialY + dy);
-            if (Math.abs(selectedTop - fromViewHolder.itemView.getTop()) < fromViewHolder.itemView.getHeight() * 0.5) {
+            if (Math.abs(selectedTop - overdrawChild.getTop()) < overdrawChild.getHeight() * 0.5) {
                 return;
             }
             swapTargets.clear();
             distances.clear();
-            final int selectedBottom = selectedTop + fromViewHolder.itemView.getHeight();
+            final int selectedBottom = selectedTop + overdrawChild.getHeight();
             final int selectedCenterY = (selectedTop + selectedBottom) / 2;
             final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             final int childCount = layoutManager.getChildCount();
             for (int i = 0; i < childCount; i++) {
                 final View otherView = layoutManager.getChildAt(i);
-                if (otherView == fromViewHolder.itemView || otherView.getBottom() < selectedTop || otherView.getTop() > selectedBottom) {
+                if (otherView == overdrawChild || otherView.getBottom() < selectedTop || otherView.getTop() > selectedBottom) {
                     continue;
                 }
                 final int distance = Math.abs(selectedCenterY - (otherView.getTop() - otherView.getBottom()) / 2);
@@ -387,7 +388,7 @@ public class TouchHelper {
             callback.onMoved(recyclerView, (ItemViewHolder) fromViewHolder, (ItemViewHolder) toViewHolder);
             if (layoutManager instanceof ItemTouchHelper.ViewDropHandler) {
                 final ItemTouchHelper.ViewDropHandler viewDropHandler = (ItemTouchHelper.ViewDropHandler) layoutManager;
-                viewDropHandler.prepareForDrop(fromViewHolder.itemView, toViewHolder.itemView, 0, selectedTop);
+                viewDropHandler.prepareForDrop(overdrawChild, toViewHolder.itemView, 0, selectedTop);
             }
         }
 
@@ -499,8 +500,9 @@ public class TouchHelper {
                     }
                 }
             } else if (previousActionState == ACTION_STATE_DRAG) {
-                TouchHelper.this.selected.itemView.setTranslationY(0);
+                overdrawChild.setTranslationY(0);
                 removeChildDrawingOrder();
+                adapter.notifyDataSetChanged();
             } else if (previousActionState == ACTION_STATE_PULL) {
                 ViewCompat.setPaddingRelative(recyclerView, 0, 0, 0, 0);
                 if (TouchHelper.this.selected != null) {
@@ -509,7 +511,7 @@ public class TouchHelper {
                     if (pullState == PULL_STATE_CANCEL_ADD) {
                         TouchHelper.this.selected.itemView.setAlpha(0);
                         if (!isAddingCanceled) {
-                            callback.onReverted(false);
+                            callback.onReverted();
                             isAddingCanceled = true;
                         }
                         recyclerView.setVisibility(View.INVISIBLE);
@@ -520,7 +522,7 @@ public class TouchHelper {
                             }
                         });
                     } else if (dy < logicalDensity * 46) {
-                        callback.onReverted(false);
+                        callback.onReverted();
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
                         TouchHelper.this.selected.getText().setText("");
@@ -535,9 +537,6 @@ public class TouchHelper {
             if (selected != null) {
                 selectedInitialX = selected.itemView.getLeft();
                 selectedInitialY = selected.itemView.getTop();
-                if (actionState == ACTION_STATE_DRAG) {
-                    setChildDrawingOrder();
-                }
             }
             final ViewParent viewParent = recyclerView.getParent();
             viewParent.requestDisallowInterceptTouchEvent(TouchHelper.this.selected != null);
@@ -560,11 +559,8 @@ public class TouchHelper {
             selectedItemView.startAnimation(translateAnimation);
         }
 
-        private void setChildDrawingOrder() {
-            if (selected.itemView == null || selected.getAdapterPosition() == -1) {
-                return;
-            }
-            overdrawChild = selected.itemView;
+        private void setChildDrawingOrder(View itemView) {
+            overdrawChild = itemView;
             if (childDrawingOrderCallback == null) {
                 childDrawingOrderCallback = new TasksChildDrawingOrderCallback();
                 recyclerView.setChildDrawingOrderCallback(childDrawingOrderCallback);
@@ -632,6 +628,9 @@ public class TouchHelper {
 
             @Override
             public void onLongPress(MotionEvent motionEvent) {
+                if (actionState != ACTION_STATE_IDLE) {
+                    return;
+                }
                 final int pointerId = motionEvent.getPointerId(0);
                 final int pointerIndex = motionEvent.findPointerIndex(pointerId);
                 final View childView = findChildView(motionEvent, pointerIndex);
@@ -645,6 +644,7 @@ public class TouchHelper {
                 initialX = motionEvent.getX(pointerIndex);
                 initialY = motionEvent.getY(pointerIndex);
                 dx = dy = 0;
+                setChildDrawingOrder(childView);
                 selectView((ItemViewHolder) viewHolder, ACTION_STATE_DRAG);
             }
         }

@@ -157,6 +157,7 @@ public class TaskListActivity extends AppCompatActivity {
                 return;
             }
             adapter.onItemMoved(fromPosition, toPosition);
+            adapter.notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override
@@ -169,7 +170,7 @@ public class TaskListActivity extends AppCompatActivity {
         public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
-            adapter.notifyItemRemoved(position);
+            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -201,11 +202,9 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onReverted(boolean shouldUpdateUI) {
+        public void onReverted() {
             adapter.onItemReverted();
-            if (shouldUpdateUI) {
-                adapter.notifyDataSetChanged();
-            }
+            adapter.notifyDataSetChanged();
         }
 
         @Override
