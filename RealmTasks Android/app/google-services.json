@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "299391824375",
+    "project_id": "firebase-realmtasks"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299391824375:android:d438bbcf1f2b335e",
+        "android_client_info": {
+          "package_name": "io.realm.realmtasks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "299391824375-g4uqk1em1uu2fnvev9gouu3fpn4f9no2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.realm.realmtasks",
+            "certificate_hash": "DA57E5CD19E5D1E3271C9CAB7BB59E3237E0C2AB"
+          }
+        },
+        {
+          "client_id": "299391824375-k3hdrdtq8g4rkh1i0pvomn397ehk92nl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTVLTzKITPYtL46PH5L69U8KsAQMBPdec"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
