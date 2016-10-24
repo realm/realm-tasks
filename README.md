@@ -31,8 +31,8 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 **Cocoa**
 
-1. Run `pod install` from the root of this repo.
-2. Open `RealmTasks.xcworkspace` with Xcode 8.
+1. Run `pod install` from the `RealmTasks Apple` directory in this repo.
+2. Open `RealmTasks Apple/RealmTasks.xcworkspace` with Xcode 8.
 3. Select either the "RealmTasks macOS" or "RealmTasks iOS" depending on which platform you'd like to try the app on.
 4. Click the "Build and Run" icon in the upper left of Xcode (play icon).
 5. When the app launches, tap/click "Register" if this is the first time you're trying the app, or "Log In" if you've
@@ -42,7 +42,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 **Android**
 
-1. Goto the `RealmTasks Android` folder.
+1. Go to the `RealmTasks Android` folder.
 2. Run `./gradlew installDebug`
 3. The RealmTask app should now be installed on all attached Android devices and emulators. You need to launch the app manually.
 
