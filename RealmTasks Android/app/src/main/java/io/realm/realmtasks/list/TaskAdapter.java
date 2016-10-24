@@ -107,7 +107,8 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                getData().remove(position);
+                final Task task = getData().get(position);
+                task.deleteFromRealm();
             }
         });
         realm.close();
@@ -122,7 +123,8 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                getData().remove(0);
+                final Task task = getData().get(0);
+                task.deleteFromRealm();
             }
         });
         realm.close();
