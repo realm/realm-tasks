@@ -40,7 +40,7 @@ extension NSAttributedString {
 
         return mutableAttributedString
     }
-    
+
 }
 
 #if os(iOS)
@@ -65,6 +65,6 @@ extension NSAttributedString {
         func unstrike() {
             attributedStringValue = attributedStringValue.unstrikedAttributedString
         }
-        
+
     }
 #endif
