@@ -37,7 +37,10 @@ import android.widget.Toast;
 
 import io.realm.Credentials;
 import io.realm.ObjectServerError;
+import io.realm.Realm;
 import io.realm.User;
+import io.realm.realmtasks.model.TaskList;
+import io.realm.realmtasks.model.TaskListList;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -89,6 +92,9 @@ public class SignInActivity extends AppCompatActivity {
 
     private void loginComplete(User user) {
         UserManager.setActiveUser(user);
+
+        createInitialDataIfNeeded();
+
         Intent listActivity = new Intent(this, TaskListActivity.class);
         Intent tasksActivity = new Intent(this, TaskActivity.class);
         tasksActivity.putExtra(TaskActivity.EXTRA_LIST_ID, RealmTasksApplication.DEFAULT_LIST_ID);
@@ -185,6 +191,30 @@ public class SignInActivity extends AppCompatActivity {
                 progressView.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
+    }
+
+    private static void createInitialDataIfNeeded() {
+        final Realm realm = Realm.getDefaultInstance();
+        //noinspection TryFinallyCanBeTryWithResources
+        try {
+            if (realm.where(TaskListList.class).count() != 0) {
+                return;
+            }
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    if (realm.where(TaskListList.class).count() == 0) {
+                        final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
+                        final TaskList taskList = new TaskList();
+                        taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
+                        taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
+                        taskListList.getItems().add(taskList);
+                    }
+                }
+            });
+        } finally {
+            realm.close();
+        }
     }
 }
 
