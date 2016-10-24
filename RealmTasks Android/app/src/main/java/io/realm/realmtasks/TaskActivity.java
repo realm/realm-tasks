@@ -34,8 +34,6 @@ import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.view.RecyclerViewWithEmptyViewSupport;
 
-import static android.R.id.list;
-
 public class TaskActivity extends AppCompatActivity {
 
     public static final String EXTRA_LIST_ID = "extra.list_id";
@@ -112,7 +110,7 @@ public class TaskActivity extends AppCompatActivity {
              * We need call logout() here since onCreate() of the next Activity is already
              * executed before reaching here.
              */
-            User.currentUser().logout();
+            UserManager.logoutActiveUser();
             logoutAfterClose = false;
         }
 
