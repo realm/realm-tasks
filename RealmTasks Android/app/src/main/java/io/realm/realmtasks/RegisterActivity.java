@@ -30,23 +30,30 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
+
 import io.realm.Credentials;
 import io.realm.ObjectServerError;
-import io.realm.Realm;
 import io.realm.User;
-import io.realm.realmtasks.model.TaskList;
-import io.realm.realmtasks.model.TaskListList;
+import io.realm.realmtasks.auth.facebook.FacebookAuth;
+import io.realm.realmtasks.auth.google.GoogleAuth;
 
 import static android.text.TextUtils.isEmpty;
 import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements User.Callback {
 
     private AutoCompleteTextView usernameView;
     private EditText passwordView;
     private EditText passwordConfirmationView;
     private View progressView;
     private View registerFormView;
+    private FacebookAuth facebookAuth;
+    private GoogleAuth googleAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +84,33 @@ public class RegisterActivity extends AppCompatActivity {
 
         registerFormView = findViewById(R.id.register_form);
         progressView = findViewById(R.id.register_progress);
+
+        // Setup Facebook Authentication
+        facebookAuth = new FacebookAuth((LoginButton) findViewById(R.id.login_button)) {
+            @Override
+            public void onRegistrationComplete(final LoginResult loginResult) {
+                UserManager.setAuthMode(UserManager.AUTH_MODE.FACEBOOK);
+                Credentials credentials = Credentials.facebook(loginResult.getAccessToken().getToken());
+                User.loginAsync(credentials, AUTH_URL, RegisterActivity.this);
+            }
+        };
+
+        // Setup Google Authentication
+        googleAuth = new GoogleAuth((SignInButton) findViewById(R.id.sign_in_button), this) {
+            @Override
+            public void onRegistrationComplete(GoogleSignInResult result) {
+                UserManager.setAuthMode(UserManager.AUTH_MODE.GOOGLE);
+                GoogleSignInAccount acct = result.getSignInAccount();
+                Credentials credentials = Credentials.google(acct.getIdToken());
+                User.loginAsync(credentials, AUTH_URL, RegisterActivity.this);
+            }
+        };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        googleAuth.onActivityResult(requestCode, resultCode, data);
+        facebookAuth.onActivityResult(requestCode, resultCode, data);
     }
 
     private void attemptRegister() {
@@ -142,21 +176,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registrationComplete(User user) {
         UserManager.setActiveUser(user);
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                if (realm.isEmpty()) {
-                    final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
-                    final TaskList taskList = new TaskList();
-                    taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
-                    taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
-                    taskListList.getItems().add(taskList);
-                }
-            }
-        });
-        realm.close();
-
         Intent intent = new Intent(this, SignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -182,5 +201,21 @@ public class RegisterActivity extends AppCompatActivity {
                 progressView.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
+    }
+
+    @Override
+    public void onSuccess(User user) {
+        registrationComplete(user);
+    }
+
+    @Override
+    public void onError(ObjectServerError error) {
+        String errorMsg;
+        switch (error.getErrorCode()) {
+            case EXISTING_ACCOUNT: errorMsg = "Account already exists"; break;
+            default:
+                errorMsg = error.toString();
+        }
+        Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
     }
 }

@@ -24,7 +24,6 @@ import java.util.UUID;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.realmtasks.R;
 import io.realm.realmtasks.model.TaskList;
 
@@ -103,7 +102,9 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                getData().remove(position);
+                final TaskList taskList = getData().get(position);
+                taskList.getItems().deleteAllFromRealm();
+                taskList.deleteFromRealm();
             }
         });
         realm.close();
@@ -118,7 +119,9 @@ public class TaskListAdapter extends CommonAdapter<TaskList> implements TouchHel
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                getData().remove(0);
+                final TaskList taskList = getData().get(0);
+                taskList.getItems().deleteAllFromRealm();
+                taskList.deleteFromRealm();
             }
         });
         realm.close();
