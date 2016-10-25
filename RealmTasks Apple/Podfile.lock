@@ -1,0 +1,20 @@
+PODS:
+  - Cartography (0.7.0)
+  - Realm (2.0.2):
+    - Realm/Headers (= 2.0.2)
+  - Realm/Headers (2.0.2)
+  - RealmSwift (2.0.2):
+    - Realm (= 2.0.2)
+
+DEPENDENCIES:
+  - Cartography (~> 0.7)
+  - RealmSwift (~> 2.0.0)
+
+SPEC CHECKSUMS:
+  Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
+  Realm: 0f5a194af0b7e6158b83db41b4ee1a00be7ddf1a
+  RealmSwift: 0eb5070d851cba7c66e841ca756d83609dc78bc8
+
+PODFILE CHECKSUM: 007502a7f55269351f27a640f5e79dd23b82a196
+
+COCOAPODS: 1.1.0.rc.2
