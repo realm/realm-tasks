@@ -440,6 +440,7 @@ public class TouchHelper {
                     new TranslateAnimation(translationX, 0 - selectedItemView.getWidth(), 0, 0);
             translateAnimation.setDuration(150);
             translateAnimation.setAnimationListener(new DismissAnimationListener(TouchHelper.this.selected));
+            ViewCompat.setHasTransientState(selectedItemView, true);
             selectedItemView.startAnimation(translateAnimation);
         }
 
@@ -448,6 +449,7 @@ public class TouchHelper {
                     new TranslateAnimation(translationX, 0, 0, 0);
             translateAnimation.setDuration(150);
             translateAnimation.setAnimationListener(new CompleteAnimationListener(TouchHelper.this.selected));
+            ViewCompat.setHasTransientState(selectedItemView, true);
             selectedItemView.startAnimation(translateAnimation);
         }
 
@@ -517,6 +519,7 @@ public class TouchHelper {
             @Override
             public void onAnimationEnd(Animation animation) {
                 callback.onDismissed(itemViewHolder);
+                ViewCompat.setHasTransientState(itemViewHolder.itemView, false);
             }
 
             @Override
@@ -538,6 +541,7 @@ public class TouchHelper {
             @Override
             public void onAnimationEnd(Animation animation) {
                 callback.onCompleted(itemViewHolder);
+                ViewCompat.setHasTransientState(itemViewHolder.itemView, false);
             }
 
             @Override
