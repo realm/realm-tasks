@@ -31,6 +31,7 @@ import java.util.Set;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+import io.realm.User;
 import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskListAdapter;
 import io.realm.realmtasks.list.TouchHelper;
@@ -45,6 +46,7 @@ public class TaskListActivity extends AppCompatActivity {
     private TaskListAdapter adapter;
     private TouchHelper touchHelper;
     private RealmResults<TaskListList> list;
+    private boolean logoutAfterClose;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,20 +105,22 @@ public class TaskListActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         list.removeChangeListeners();
-        closeRealmAndRecyclerView();
-        super.onStop();
-    }
-
-    private void closeRealmAndRecyclerView() {
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
             adapter = null;
         }
-        if (realm != null) {
-            realm.removeAllChangeListeners();
-            realm.close();
-            realm = null;
+        realm.removeAllChangeListeners();
+        realm.close();
+        realm = null;
+        if (logoutAfterClose) {
+            /*
+             * We need call logout() here since onCreate() of the next Activity is already
+             * executed before reaching here.
+             */
+            UserManager.logoutActiveUser();
+            logoutAfterClose = false;
         }
+        super.onStop();
     }
 
     @Override
@@ -136,10 +140,10 @@ public class TaskListActivity extends AppCompatActivity {
 
             case R.id.action_logout:
                 Intent intent = new Intent(TaskListActivity.this, SignInActivity.class);
-                intent.setAction(SignInActivity.ACTION_LOGOUT_EXISTING_USER);
+                intent.setAction(SignInActivity.ACTION_IGNORE_CURRENT_USER);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                closeRealmAndRecyclerView();
+                logoutAfterClose = true;
                 return true;
 
             default:

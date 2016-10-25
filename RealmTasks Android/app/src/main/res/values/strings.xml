@@ -21,4 +21,7 @@
     <string name="release_to_create_item">Release to Create Item</string>
     <string name="pull_to_create_item">Pull to Create Item</string>
     <string name="no_item">There is no item in this list to complete.</string>
+    <string name="facebook_app_id">1789199757960919</string>
+    <string name="server_client_id">299391824375-k3hdrdtq8g4rkh1i0pvomn397ehk92nl.apps.googleusercontent.com</string>
+
 </resources>
