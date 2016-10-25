@@ -38,12 +38,9 @@ import com.google.android.gms.common.SignInButton;
 
 import io.realm.Credentials;
 import io.realm.ObjectServerError;
-import io.realm.Realm;
 import io.realm.User;
 import io.realm.realmtasks.auth.facebook.FacebookAuth;
 import io.realm.realmtasks.auth.google.GoogleAuth;
-import io.realm.realmtasks.model.TaskList;
-import io.realm.realmtasks.model.TaskListList;
 
 import static android.text.TextUtils.isEmpty;
 import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
@@ -179,21 +176,6 @@ public class RegisterActivity extends AppCompatActivity implements User.Callback
 
     private void registrationComplete(User user) {
         UserManager.setActiveUser(user);
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                if (realm.isEmpty()) {
-                    final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
-                    final TaskList taskList = new TaskList();
-                    taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
-                    taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
-                    taskListList.getItems().add(taskList);
-                }
-            }
-        });
-        realm.close();
-
         Intent intent = new Intent(this, SignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -235,6 +217,5 @@ public class RegisterActivity extends AppCompatActivity implements User.Callback
                 errorMsg = error.toString();
         }
         Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-
     }
 }

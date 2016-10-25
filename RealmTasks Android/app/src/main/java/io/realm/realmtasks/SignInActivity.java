@@ -137,20 +137,8 @@ public class SignInActivity extends AppCompatActivity implements User.Callback {
 
     private void loginComplete(User user) {
         UserManager.setActiveUser(user);
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                if (realm.isEmpty()) {
-                    final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
-                    final TaskList taskList = new TaskList();
-                    taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
-                    taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
-                    taskListList.getItems().add(taskList);
-                }
-            }
-        });
-        realm.close();
+
+        createInitialDataIfNeeded();
 
         Intent listActivity = new Intent(this, TaskListActivity.class);
         Intent tasksActivity = new Intent(this, TaskActivity.class);
@@ -248,6 +236,30 @@ public class SignInActivity extends AppCompatActivity implements User.Callback {
                 errorMsg = error.toString();
         }
         Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+    }
+
+    private static void createInitialDataIfNeeded() {
+        final Realm realm = Realm.getDefaultInstance();
+        //noinspection TryFinallyCanBeTryWithResources
+        try {
+            if (realm.where(TaskListList.class).count() != 0) {
+                return;
+            }
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    if (realm.where(TaskListList.class).count() == 0) {
+                        final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
+                        final TaskList taskList = new TaskList();
+                        taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
+                        taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
+                        taskListList.getItems().add(taskList);
+                    }
+                }
+            });
+        } finally {
+            realm.close();
+        }
     }
 }
 
