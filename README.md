@@ -17,7 +17,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 **Android**
 
-* Android Studio 2.2 with Android API 24 
+* Android Studio 2.2 with Android API 25
 * An emulator, Genymotion or or a real device attached and running.
 
 
