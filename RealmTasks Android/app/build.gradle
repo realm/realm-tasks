@@ -10,7 +10,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName "0.2.2"
     }
     buildTypes {
         def host = InetAddress.getLocalHost().getCanonicalHostName()
