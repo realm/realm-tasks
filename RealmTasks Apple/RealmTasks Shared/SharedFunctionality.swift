@@ -24,7 +24,19 @@ import RealmSwift
 private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here. https://github.com/realm/realm-sync/issues/694
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
 
+private var authenticationFailureCallback: (() -> ())?
+
 private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
+    SyncManager.sharedManager().errorHandler = { error, session in
+        // FIXME: remove after SyncManager starts output log for errors
+        Swift.print("SyncManager error: \(error)")
+
+        // FIXME: handle errors properly after bindings provide better error reporting
+        if session == nil {
+            authenticationFailureCallback?()
+        }
+    }
+
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
         syncConfiguration: (user, Constants.syncServerURL!),
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
@@ -68,6 +80,10 @@ private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
 
 // Internal Functions
 
+func isDefaultRealmConfigured() -> Bool {
+    return !realm.isEmpty
+}
+
 // returns true on success
 func configureDefaultRealm() -> Bool {
     if let user = SyncUser.all().first {
@@ -75,6 +91,21 @@ func configureDefaultRealm() -> Bool {
         return true
     }
     return false
+}
+
+func resetDefaultRealm() {
+    guard let user = SyncUser.all().first else {
+        return
+    }
+
+    deduplicationNotificationToken.stop()
+    realm = nil
+
+    user.logOut()
+}
+
+func setAuthenticationFailureCallback(callback: (() -> Void)?) {
+    authenticationFailureCallback = callback
 }
 
 func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
