@@ -36,16 +36,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
 
-import io.realm.Credentials;
+import io.realm.SyncCredentials;
 import io.realm.ObjectServerError;
-import io.realm.User;
+import io.realm.SyncUser;
 import io.realm.realmtasks.auth.facebook.FacebookAuth;
 import io.realm.realmtasks.auth.google.GoogleAuth;
 
 import static android.text.TextUtils.isEmpty;
 import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
 
-public class RegisterActivity extends AppCompatActivity implements User.Callback {
+public class RegisterActivity extends AppCompatActivity implements SyncUser.Callback {
 
     private AutoCompleteTextView usernameView;
     private EditText passwordView;
@@ -90,8 +90,8 @@ public class RegisterActivity extends AppCompatActivity implements User.Callback
             @Override
             public void onRegistrationComplete(final LoginResult loginResult) {
                 UserManager.setAuthMode(UserManager.AUTH_MODE.FACEBOOK);
-                Credentials credentials = Credentials.facebook(loginResult.getAccessToken().getToken());
-                User.loginAsync(credentials, AUTH_URL, RegisterActivity.this);
+                SyncCredentials credentials = SyncCredentials.facebook(loginResult.getAccessToken().getToken());
+                SyncUser.loginAsync(credentials, AUTH_URL, RegisterActivity.this);
             }
         };
 
@@ -101,8 +101,8 @@ public class RegisterActivity extends AppCompatActivity implements User.Callback
             public void onRegistrationComplete(GoogleSignInResult result) {
                 UserManager.setAuthMode(UserManager.AUTH_MODE.GOOGLE);
                 GoogleSignInAccount acct = result.getSignInAccount();
-                Credentials credentials = Credentials.google(acct.getIdToken());
-                User.loginAsync(credentials, AUTH_URL, RegisterActivity.this);
+                SyncCredentials credentials = SyncCredentials.google(acct.getIdToken());
+                SyncUser.loginAsync(credentials, AUTH_URL, RegisterActivity.this);
             }
         };
     }
@@ -153,9 +153,9 @@ public class RegisterActivity extends AppCompatActivity implements User.Callback
             focusView.requestFocus();
         } else {
             showProgress(true);
-            User.loginAsync(Credentials.usernamePassword(username, password, true), AUTH_URL, new User.Callback() {
+            SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), AUTH_URL, new SyncUser.Callback() {
                 @Override
-                public void onSuccess(User user) {
+                public void onSuccess(SyncUser user) {
                     registrationComplete(user);
                 }
 
@@ -174,7 +174,7 @@ public class RegisterActivity extends AppCompatActivity implements User.Callback
         }
     }
 
-    private void registrationComplete(User user) {
+    private void registrationComplete(SyncUser user) {
         UserManager.setActiveUser(user);
         Intent intent = new Intent(this, SignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -204,7 +204,7 @@ public class RegisterActivity extends AppCompatActivity implements User.Callback
     }
 
     @Override
-    public void onSuccess(User user) {
+    public void onSuccess(SyncUser user) {
         registrationComplete(user);
     }
 

@@ -31,7 +31,6 @@ import java.util.Set;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-import io.realm.User;
 import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskListAdapter;
 import io.realm.realmtasks.list.TouchHelper;
