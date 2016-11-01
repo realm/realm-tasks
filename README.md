@@ -47,7 +47,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 ### Using RealmTasks
 
 At this point, you can login, start creating items, managing lists, and you'll see your actions reflected in real time in other
-running instances of the app wether it is the Android, iOS or Mac OS app.
+running instances of the app wether it is the Android, iOS or macOS app.
 
 We recommend that you run at least two instances of the app together to really show off sync in action.
 
