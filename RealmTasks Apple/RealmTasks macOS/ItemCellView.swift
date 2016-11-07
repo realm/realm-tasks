@@ -422,6 +422,10 @@ protocol ItemTextFieldDelegate: NSTextFieldDelegate {
 
 private class ItemTextField: NSTextField {
 
+    override class func cellClass() -> AnyClass? {
+        return ItemTextFieldCell.self
+    }
+
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
 
@@ -463,6 +467,23 @@ private class ItemTextField: NSTextField {
 
         // Update height on text change
         invalidateIntrinsicContentSize()
+    }
+
+}
+
+private class ItemTextFieldCell: NSTextFieldCell {
+
+    private var cachedStringValue = ""
+
+    override var stringValue: String {
+        set {
+            cachedStringValue = newValue
+            super.stringValue = newValue
+        }
+
+        get {
+            return cachedStringValue
+        }
     }
 
 }
