@@ -8,17 +8,15 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 ## Prerequisites
 
-**Cocoa**
+### Cocoa
 
 * Xcode 8.
 * CocoaPods 1.0.1.
-* Access to <https://labs.realm.io>.
-* Git configured with SSH and access to the <https://github.com/realm/cocoapods-specs-private> repo.
 
-**Android**
+### Android
 
 * Android Studio 2.2 with Android API 25
-* An emulator, Genymotion or or a real device attached and running.
+* An emulator, Genymotion or a real device attached and running.
 
 
 ## 1. Get the Realm Mobile Platform Package and start the Object Server
@@ -29,7 +27,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 ## 2. Build and Run RealmTasks
 
-**Cocoa**
+### Cocoa
 
 1. Run `pod install` from the `RealmTasks Apple` directory in this repo.
 2. Open `RealmTasks Apple/RealmTasks.xcworkspace` with Xcode 8.
@@ -40,16 +38,16 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 6. Optional: If you'd like to run the app on a physical iPhone, you'll need to have code signing set up with Xcode, and
    the iPhone should be connected on the same local network as your Mac running the object server.
 
-**Android**
+### Android
 
 1. Go to the `RealmTasks Android` folder.
 2. Run `./gradlew installDebug`
 3. The RealmTask app should now be installed on all attached Android devices and emulators. You need to launch the app manually.
 
-**Using RealmTasks**
+### Using RealmTasks
 
 At this point, you can login, start creating items, managing lists, and you'll see your actions reflected in real time in other
-running instances of the app wether it is the Android, iOS or Mac OS app.
+running instances of the app wether it is the Android, iOS or macOS app.
 
 We recommend that you run at least two instances of the app together to really show off sync in action.
 
