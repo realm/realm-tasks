@@ -482,6 +482,11 @@ private class ItemTextFieldCell: NSTextFieldCell {
         }
 
         get {
+            // By default `NSTextCell` in some reason calls setter from `stringValue` getter that
+            // in some cases fires some Accessibility API notification that couses
+            // `[NSTableView viewAtColumn:row:makeIfNecessary:]` be called. This leads to a crash
+            // if `stringValue` was requested from table view `heightOfRow` delegate method,
+            // see more at https://github.com/realm/RealmTasks/issues/344
             return cachedStringValue
         }
     }
