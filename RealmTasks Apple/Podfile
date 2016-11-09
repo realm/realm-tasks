@@ -4,11 +4,13 @@ abstract_target 'RealmTasks' do
     use_frameworks!
     
     pod 'RealmSwift', '~> 2.0.0'
-    
     pod 'Cartography', '~> 0.7'
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
+
+        pod 'FacebookCore'
+		pod 'FacebookLogin'
     end
     
     target 'RealmTasks macOS' do
