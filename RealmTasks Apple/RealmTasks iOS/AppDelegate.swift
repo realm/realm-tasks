@@ -22,8 +22,8 @@ import UIKit
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+        window = UIWindow(frame: UIScreen.main.bounds)
         if configureDefaultRealm() {
             window?.rootViewController = ContainerViewController()
             window?.makeKeyAndVisible()
@@ -35,35 +35,35 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func logIn(animated animated: Bool = true) {
-        let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .mainBundle())
+    func logIn(animated: Bool = true) {
+        let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .main)
         let logInViewController = loginStoryboard.instantiateInitialViewController() as! LogInViewController
         logInViewController.completionHandler = { username, password, returnCode in
             guard returnCode != .Cancel, let username = username, let password = password else {
                 // FIXME: handle cancellation properly or just restrict it
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     self.logIn()
                 }
                 return
             }
             authenticate(username: username, password: password, register: returnCode == .Register) { error in
                 if let error = error {
-                    self.presentError(error)
+                    self.presentError(error: error)
                 } else {
                     self.window?.rootViewController = ContainerViewController()
                 }
             }
         }
-        window?.rootViewController?.presentViewController(logInViewController, animated: false, completion: nil)
+        window?.rootViewController?.present(logInViewController, animated: false, completion: nil)
     }
 
     func presentError(error: NSError) {
         let alertController = UIAlertController(title: error.localizedDescription,
                                               message: error.localizedFailureReason ?? "",
-                                       preferredStyle: .Alert)
-        alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
+                                       preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Try Again", style: .default) { _ in
             self.logIn()
         })
-        window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+        window?.rootViewController?.present(alertController, animated: true, completion: nil)
     }
 }

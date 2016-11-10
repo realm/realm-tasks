@@ -46,7 +46,7 @@ private let iconWidth: CGFloat = 60
 
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
-final class TableViewCell<Item: Object where Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
+final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate where Item: CellPresentable {
 
     // MARK: Properties
 
@@ -56,7 +56,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     var item: Item! {
         didSet {
             textView.text = item.text
-            setCompleted(item.completed)
+            setCompleted(completed: item.completed)
             if let item = item as? TaskList {
                 let count = item.items.filter("completed == false").count
                 countLabel.text = String(count)
@@ -90,7 +90,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .None
+        selectionStyle = .none
 
         setupUI()
         setupPanGestureRecognizer()
@@ -119,7 +119,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     private func setupBackgroundView() {
-        backgroundColor = .clearColor()
+        backgroundColor = .clear
 
         backgroundView = UIView()
         constrain(backgroundView!) { backgroundView in
@@ -131,19 +131,19 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         doneIconView.center = center
         doneIconView.frame.origin.x = 20
         doneIconView.alpha = 0
-        doneIconView.autoresizingMask = [.FlexibleRightMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
+        doneIconView.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
         insertSubview(doneIconView, belowSubview: contentView)
 
         deleteIconView.center = center
         deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - 20
         deleteIconView.alpha = 0
-        deleteIconView.autoresizingMask = [.FlexibleLeftMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
+        deleteIconView.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin, .flexibleBottomMargin]
         insertSubview(deleteIconView, belowSubview: contentView)
     }
 
     private func setupOverlayView() {
         overlayView.backgroundColor = .completeDimBackgroundColor()
-        overlayView.hidden = true
+        overlayView.isHidden = true
         contentView.addSubview(overlayView)
         constrain(overlayView) { backgroundOverlayView in
             backgroundOverlayView.edges == backgroundOverlayView.superview!.edges
@@ -166,7 +166,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     private func setupBorders() {
-        let singlePixelInPoints = 1 / UIScreen.mainScreen().scale
+        let singlePixelInPoints = 1 / UIScreen.main.scale
 
         let highlightLine = UIView()
         highlightLine.backgroundColor = UIColor(white: 1, alpha: 0.05)
@@ -201,9 +201,9 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         }
 
         badgeBackground.addSubview(countLabel)
-        countLabel.backgroundColor = .clearColor()
-        countLabel.textColor = .whiteColor()
-        countLabel.font = .systemFontOfSize(18)
+        countLabel.backgroundColor = .clear
+        countLabel.textColor = .white
+        countLabel.font = .systemFont(ofSize: 18)
         constrain(countLabel) { countLabel in
             countLabel.center == countLabel.superview!.center
         }
@@ -220,7 +220,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     // MARK: Pan Gesture Recognizer
 
     private func setupPanGestureRecognizer() {
-        let recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        let recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(recognizer:)))
         recognizer.delegate = self
         addGestureRecognizer(recognizer)
     }
@@ -229,13 +229,13 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     // swiftlint:disable:next cyclomatic_complexity
     func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
-        case .Began:
+        case .began:
             originalDeleteIconCenter = deleteIconView.center
             originalDoneIconCenter = doneIconView.center
 
             releaseAction = nil
-        case .Changed:
-            let translation = recognizer.translationInView(self)
+        case .changed:
+            let translation = recognizer.translation(in: self)
 
             if !item.isCompletable && translation.x > 0 {
                 releaseAction = nil
@@ -268,26 +268,26 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                 deleteIconView.alpha = CGFloat(fractionOfThreshold)
             }
 
-            if !(item as Object).invalidated && !item.completed {
+            if !(item as Object).isInvalidated && !item.completed {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
-                overlayView.hidden = releaseAction != .Complete
+                overlayView.isHidden = releaseAction != .Complete
                 if contentView.frame.origin.x > 0 {
                     textView.unstrike()
-                    textView.strike(fractionOfThreshold)
+                    textView.strike(fraction: fractionOfThreshold)
                 } else {
                     releaseAction == .Complete ? textView.strike() : textView.unstrike()
                 }
             } else {
-                overlayView.hidden = releaseAction == .Complete
+                overlayView.isHidden = releaseAction == .Complete
                 textView.alpha = releaseAction == .Complete ? 1 : 0.3
                 if contentView.frame.origin.x > 0 {
                     textView.unstrike()
-                    textView.strike(1 - fractionOfThreshold)
+                    textView.strike(fraction: 1 - fractionOfThreshold)
                 } else {
                     releaseAction == .Complete ? textView.unstrike() : textView.strike()
                 }
             }
-        case .Ended:
+        case .ended:
             let animationBlock: () -> ()
             let completionBlock: () -> ()
 
@@ -299,8 +299,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                     self.contentView.frame.origin.x = 0
                 }
                 completionBlock = {
-                    if !(self.item as Object).invalidated {
-                        self.setCompleted(!self.item.completed, animated: true)
+                    if !(self.item as Object).isInvalidated {
+                        self.setCompleted(completed: !self.item.completed, animated: true)
                     }
                 }
             case .Delete?:
@@ -312,7 +312,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                     self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
                 }
                 completionBlock = {
-                    self.presenter.deleteItem(self.item)
+                    self.presenter.deleteItem(item: self.item)
                 }
             case nil:
                 item.completed ? textView.strike() : textView.unstrike()
@@ -322,7 +322,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                 completionBlock = {}
             }
 
-            UIView.animateWithDuration(0.2, animations: animationBlock) { _ in
+            UIView.animate(withDuration: 0.2, animations: animationBlock) { _ in
                 completionBlock()
 
                 self.doneIconView.frame.origin.x = 20
@@ -336,11 +336,11 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         }
     }
 
-    override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
             return false
         }
-        let translation = panGestureRecognizer.translationInView(superview!)
+        let translation = panGestureRecognizer.translation(in: superview!)
         return fabs(translation.x) > fabs(translation.y)
     }
 
@@ -361,7 +361,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     private func setCompleted(completed: Bool, animated: Bool = false) {
         completed ? textView.strike() : textView.unstrike()
-        overlayView.hidden = !completed
+        overlayView.isHidden = !completed
         let updateColor = { [unowned self] in
             self.overlayView.backgroundColor = completed ?
                 .completeDimBackgroundColor() : .completeGreenBackgroundColor()
@@ -372,8 +372,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                 item.completed = completed
             }
             vibrate()
-            UIView.animateWithDuration(0.2, animations: updateColor)
-            presenter.completeItem(item)
+            UIView.animate(withDuration: 0.2, animations: updateColor)
+            presenter.completeItem(item: item)
         } else {
             updateColor()
         }
@@ -381,7 +381,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     // MARK: UITextViewDelegate methods
 
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
             return false
@@ -389,27 +389,27 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         return true
     }
 
-    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         // disable editing of completed to-do items
         return !item.completed
     }
 
-    func textViewDidBeginEditing(textView: UITextView) {
-        presenter.cellDidBeginEditing(self)
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        presenter.cellDidBeginEditing(editingCell: self)
     }
 
-    func textViewDidEndEditing(textView: UITextView) {
-        if !temporarilyIgnoreSaveChanges && !(item as Object).invalidated {
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if !temporarilyIgnoreSaveChanges && !(item as Object).isInvalidated {
             try! item.realm!.write {
                 item.text = textView.text.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
             }
         }
-        textView.userInteractionEnabled = false
-        presenter.cellDidEndEditing(self)
+        textView.isUserInteractionEnabled = false
+        presenter.cellDidEndEditing(editingCell: self)
     }
 
-    func textViewDidChange(textView: UITextView) {
-        presenter.cellDidChangeText(self)
+    func textViewDidChange(_ textView: UITextView) {
+        presenter.cellDidChangeText(editingCell: self)
     }
 }
 
@@ -417,7 +417,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
 extension UIGestureRecognizer {
     func reset() {
-        enabled = false
-        enabled = true
+        isEnabled = false
+        isEnabled = true
     }
 }

@@ -22,7 +22,7 @@ import UIKit
 
 private var titleKVOContext = 0
 
-class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>: NSObject {
+class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
 
     var cellPresenter: CellPresenter<Item>!
     var tablePresenter: TablePresenter<Parent>!
@@ -61,15 +61,15 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
 
     func observeListTitle() {
         if let parent = parent as? CellPresentable {
-            (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
-            viewController.setListTitle(parent.text)
+            (parent as! Object).addObserver(self, forKeyPath: "text", options: .new, context: &titleKVOContext)
+            viewController.setListTitle(title: parent.text)
             observingText = true
         }
     }
 
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if context == &titleKVOContext {
-            viewController.setListTitle((parent as! CellPresentable).text)
+            viewController.setListTitle(title: (parent as! CellPresentable).text)
         }
     }
 

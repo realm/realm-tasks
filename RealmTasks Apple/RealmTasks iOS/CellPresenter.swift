@@ -22,7 +22,7 @@ import UIKit
 
 internal let editingCellAlpha: CGFloat = 0.3
 
-class CellPresenter<Item: Object where Item: CellPresentable> {
+class CellPresenter<Item: Object> where Item: CellPresentable {
 
     var viewController: ViewControllerProtocol!
 
@@ -33,35 +33,35 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
 
     func deleteItem(item: Item) {
         try! items.realm?.write {
-            guard !(item as Object).invalidated, let index = items.indexOf(item) else {
+            guard !(item as Object).isInvalidated, let index = items.index(of: item) else {
                 return
             }
 
             items.realm?.delete(item)
-            viewController.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
+            viewController.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .left)
             viewController.didUpdateList()
         }
     }
 
     func completeItem(item: Item) {
         try! items.realm?.write {
-            guard !(item as Object).invalidated, let index = items.indexOf(item) else {
+            guard !(item as Object).isInvalidated, let index = items.index(of: item) else {
                 return
             }
 
-            let sourceIndexPath = NSIndexPath(forRow: index, inSection: 0)
-            let destinationIndexPath: NSIndexPath
+            let sourceIndexPath = IndexPath(row: index, section: 0)
+            let destinationIndexPath: IndexPath
             if item.completed {
                 // move cell to bottom
-                destinationIndexPath = NSIndexPath(forRow: items.count - 1, inSection: 0)
+                destinationIndexPath = IndexPath(row: items.count - 1, section: 0)
             } else {
                 // move cell just above the first completed item
                 let completedCount = items.filter("completed = true").count
-                destinationIndexPath = NSIndexPath(forRow: items.count - completedCount - 1, inSection: 0)
+                destinationIndexPath = IndexPath(row: items.count - completedCount - 1, section: 0)
             }
 
             items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
-            viewController.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
+            viewController.tableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
             viewController.didUpdateList()
         }
     }
@@ -72,25 +72,25 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
 
     private(set) var currentlyEditingCell: TableViewCell<Item>? {
         didSet {
-            viewController.tableView.scrollEnabled = !currentlyEditing
+            viewController.tableView.isScrollEnabled = !currentlyEditing
         }
     }
-    private(set) var currentlyEditingIndexPath: NSIndexPath?
+    private(set) var currentlyEditingIndexPath: IndexPath?
 
     func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
         currentlyEditingCell = editingCell
         let tableView = viewController.tableView
 
-        currentlyEditingIndexPath = tableView.indexPathForCell(editingCell)
+        currentlyEditingIndexPath = tableView.indexPath(for: editingCell)
 
-        let editingOffset = editingCell.convertRect(editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
+        let editingOffset = editingCell.convert(rect: editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
         viewController.setTopConstraintTo(constant: -editingOffset)
         tableView.contentInset.bottom += editingOffset
 
-        viewController.setPlaceholderAlpha(0)
+        viewController.setPlaceholderAlpha(alpha: 0)
         tableView.bounces = false
 
-        UIView.animateWithDuration(0.3, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             tableView.superview?.layoutSubviews()
             for cell in tableView.visibleCells where cell !== editingCell {
                 cell.alpha = editingCellAlpha
@@ -107,7 +107,7 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
 
         tableView.contentInset.bottom = 54
         viewController.setTopConstraintTo(constant: 0)
-        UIView.animateWithDuration(0.3) {
+        UIView.animate(withDuration: 0.3) {
             for cell in tableView.visibleCells where cell !== editingCell {
                 cell.alpha = 1
             }
@@ -115,13 +115,13 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
         }
 
         let item = editingCell.item
-        guard !(item as Object).invalidated else {
+        guard !(item as! Object).isInvalidated else {
             tableView.reloadData()
             return
         }
-        if item.text.isEmpty {
-            try! item.realm?.write {
-                item.realm!.delete(item)
+        if (item?.text.isEmpty)! {
+            try! item?.realm?.write {
+                item?.realm!.delete(item!)
             }
         }
 
@@ -131,7 +131,7 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
     func cellDidChangeText(editingCell: TableViewCell<Item>) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
-        let height = cellHeightForText(editingCell.textView.text)
+        let height = cellHeightForText(text: editingCell.textView.text)
         let tableView = viewController.tableView
 
         if Int(height) != Int(editingCell.frame.size.height) {
@@ -151,9 +151,9 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
             return 0
         }
 
-        return text.boundingRectWithSize(CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
-                                         options: [.UsesLineFragmentOrigin],
-                                         attributes: [NSFontAttributeName: UIFont.systemFontOfSize(18)],
+        return text.boundingRect(with: CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
+                                         options: [.usesLineFragmentOrigin],
+                                         attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18)],
                                          context: nil).height + 33
     }
 }

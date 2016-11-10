@@ -25,20 +25,20 @@ enum RegisterViewControllerReturnCode: Int {
 
 class RegisterViewController: UIViewController {
 
-    @IBOutlet private weak var userNameTextField: UITextField!
-    @IBOutlet private weak var passwordTextField: UITextField!
-    @IBOutlet private weak var confirmationTextField: UITextField!
-    @IBOutlet private weak var registerButton: UIButton!
+    @IBOutlet weak var userNameTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var confirmationTextField: UITextField!
+    @IBOutlet weak var registerButton: UIButton!
 
     var initialUserName: String?
-    var completionHandler: ((userName: String?, password: String?, returnCode: RegisterViewControllerReturnCode) -> ())?
+    var completionHandler: ((_ userName: String?, _ password: String?, _ returnCode: RegisterViewControllerReturnCode) -> ())?
 
     override func viewDidLoad() {
-        userNameTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
-        passwordTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
-        confirmationTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
+        userNameTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)
+        confirmationTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)
 
-        if let userName = initialUserName where !userName.isEmpty {
+        if let userName = initialUserName, !userName.isEmpty {
             userNameTextField.text = userName
             passwordTextField.becomeFirstResponder()
         } else {
@@ -53,26 +53,26 @@ class RegisterViewController: UIViewController {
             return
         }
 
-        dismissViewControllerAnimated(true) {
-            self.completionHandler?(userName: self.userNameTextField.text, password: self.passwordTextField.text, returnCode: .Register)
+        dismiss(animated: true) {
+            self.completionHandler?(self.userNameTextField.text, self.passwordTextField.text, .Register)
         }
     }
 
     @IBAction func cancel(sender: AnyObject?) {
-        dismissViewControllerAnimated(true) {
-            self.completionHandler?(userName: nil, password: nil, returnCode: .Cancel)
+        dismiss(animated: true) {
+            self.completionHandler?(nil, nil, .Cancel)
         }
     }
 
     private dynamic func updateUI() {
-        registerButton.enabled = userInputValid()
+        registerButton.isEnabled = userInputValid()
     }
 
     private func userInputValid() -> Bool {
         guard
-            let userName = userNameTextField.text where userName.characters.count > 0,
-            let password = passwordTextField.text where password.characters.count > 0,
-            let confirmation = confirmationTextField.text where confirmation == password
+            let userName = userNameTextField.text, userName.characters.count > 0,
+            let password = passwordTextField.text, password.characters.count > 0,
+            let confirmation = confirmationTextField.text, confirmation == password
         else {
             return false
         }
@@ -84,13 +84,13 @@ class RegisterViewController: UIViewController {
 
 extension RegisterViewController: UITextFieldDelegate {
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == userNameTextField {
             passwordTextField.becomeFirstResponder()
         } else if textField == passwordTextField {
             confirmationTextField.becomeFirstResponder()
         } else if textField == confirmationTextField {
-            register(nil)
+            register(sender: nil)
         }
 
         return false
@@ -101,7 +101,7 @@ extension RegisterViewController: UITextFieldDelegate {
 extension RegisterViewController: UINavigationBarDelegate {
 
     func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
-        return .TopAttached
+        return .topAttached
     }
 
 }

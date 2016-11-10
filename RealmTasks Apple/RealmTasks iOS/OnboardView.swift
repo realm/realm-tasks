@@ -24,7 +24,7 @@ class OnboardView: UIView {
     private let contentColor = UIColor(white: 0.13, alpha: 1)
     private let contentPadding: CGFloat = 15
 
-    private let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.imageWithRenderingMode(.AlwaysTemplate))
+    private let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.withRenderingMode(.alwaysTemplate))
     private let labelView = UILabel()
 
     static func add(inView tableView: UITableView) -> OnboardView {
@@ -36,9 +36,9 @@ class OnboardView: UIView {
 
     init() {
         labelView.text = "Pull Down to Start"
-        labelView.font = .systemFontOfSize(20, weight: UIFontWeightMedium)
+        labelView.font = .systemFont(ofSize: 20, weight: UIFontWeightMedium)
         labelView.textColor = contentColor
-        labelView.textAlignment = .Center
+        labelView.textAlignment = .center
         labelView.sizeToFit()
 
         imageView.tintColor = contentColor
@@ -52,7 +52,7 @@ class OnboardView: UIView {
         addSubview(imageView)
         addSubview(labelView)
 
-        autoresizingMask = [.FlexibleBottomMargin, .FlexibleTopMargin, .FlexibleLeftMargin, .FlexibleRightMargin]
+        autoresizingMask = [.flexibleBottomMargin, .flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
 
         setupConstraints()
     }
@@ -71,13 +71,13 @@ class OnboardView: UIView {
         }
     }
 
-    func toggle(animated animated: Bool = false, isVisible: Bool) {
+    func toggle(animated: Bool = false, isVisible: Bool) {
         func updateAlpha() {
             alpha = isVisible ? 1 : 0
         }
 
         if animated {
-            UIView.animateWithDuration(0.3, animations: updateAlpha)
+            UIView.animate(withDuration: 0.3, animations: updateAlpha)
         } else {
             updateAlpha()
         }

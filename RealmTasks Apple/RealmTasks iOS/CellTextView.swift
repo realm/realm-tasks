@@ -24,15 +24,15 @@ final class CellTextView: UITextView {
 
     init() {
         super.init(frame: .null, textContainer: nil)
-        editable = true
-        textColor = .whiteColor()
-        font = .systemFontOfSize(18)
-        backgroundColor = .clearColor()
-        userInteractionEnabled = false
-        keyboardAppearance = .Dark
-        autocapitalizationType = .Words
-        returnKeyType = .Done
-        scrollEnabled = false
+        isEditable = true
+        textColor = .white
+        font = .systemFont(ofSize: 18)
+        backgroundColor = .clear
+        isUserInteractionEnabled = false
+        keyboardAppearance = .dark
+        autocapitalizationType = .words
+        returnKeyType = .done
+        isScrollEnabled = false
     }
 
     required init?(coder aDecoder: NSCoder) {

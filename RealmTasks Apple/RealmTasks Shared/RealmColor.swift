@@ -54,7 +54,7 @@ extension Color {
     }
 }
 
-extension CollectionType where Generator.Element == Color, Index == Int {
+extension Collection where Generator.Element == Color, Index == Int {
     func gradientColorAtFraction(fraction: Double) -> Color {
         // Ensure offset is normalized to 1
         let normalizedOffset = max(min(fraction, 1), 0)
