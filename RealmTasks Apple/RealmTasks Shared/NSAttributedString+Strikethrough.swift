@@ -26,11 +26,11 @@ extension NSAttributedString {
 
     func strikedAttributedString(fraction: Double = 1) -> NSAttributedString {
         let range = NSRange(0..<Int(fraction * Double(length)))
-        return attributedStringBySetingAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: range)
+        return attributedStringBySetingAttribute(name: NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.styleThick.rawValue as AnyObject, range: range)
     }
 
     var unstrikedAttributedString: NSAttributedString {
-        return attributedStringBySetingAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleNone.rawValue)
+        return attributedStringBySetingAttribute(name: NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.styleNone.rawValue as AnyObject)
     }
 
     func attributedStringBySetingAttribute(name: String, value: AnyObject, range: NSRange? = nil) -> NSAttributedString {
@@ -47,7 +47,7 @@ extension NSAttributedString {
     extension UITextView {
 
         func strike(fraction: Double = 1) {
-            attributedText = attributedText?.strikedAttributedString(fraction)
+            attributedText = attributedText?.strikedAttributedString(fraction: fraction)
         }
 
         func unstrike() {

@@ -59,7 +59,7 @@ private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
                     let indexesToRemove = items.enumerated().flatMap { index, element in
                         return element.id == id ? index : nil
                     }
-                    indexesToRemove.dropFirst().reversed().forEach(items.removeAtIndex)
+                    indexesToRemove.dropFirst().reversed().forEach { index in items.remove(at: index) }
                 }
             }
         }
@@ -78,20 +78,20 @@ func configureDefaultRealm() -> Bool {
 }
 
 func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> ()) {
-    SyncUser.authenticateWithCredential(.usernamePassword(username, password: password, actions: register ? [.CreateAccount] : []),
-                                    authServerURL: Constants.syncAuthURL) { user, error in
+    let credential = Credential.usernamePassword(username: username, password: password, actions: register ? [.createAccount] : [])
+    SyncUser.authenticate(with: credential, server: Constants.syncAuthURL) { user, error in
         if let user = user {
-            setDefaultRealmConfigurationWithUser(user)
+            setDefaultRealmConfigurationWithUser(user: user)
         }
 
-        if let error = error, error.code == SyncError.HTTPStatusCodeError.rawValue && (error.userInfo["statusCode"] as? Int) == 400 {
+        if let error = (error as? NSError), error.code == SyncError.httpStatusCodeError.rawValue && (error.userInfo["statusCode"] as? Int) == 400 {
             // FIXME: workararound for https://github.com/realm/realm-cocoa-private/issues/204
-            let improvedError = NSError(error: error,
+            let improvedError = NSError(error: (error as NSError),
                                         description: "Incorrect username or password.",
                                         recoverySuggestion: "Please check username and password or register a new account.")
             callback(improvedError)
         } else {
-            callback(error)
+            callback(error as NSError?)
         }
     }
 }

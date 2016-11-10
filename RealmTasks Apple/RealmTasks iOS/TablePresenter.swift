@@ -259,7 +259,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
             let cell = tableView.cellForRow(at: indexPath) as? TableViewCell<Parent.Item> {
             return !cell.item.completed
         }
-        return gestureRecognizer.isKindOfClass(UITapGestureRecognizer.self)
+        return (gestureRecognizer is UITapGestureRecognizer)
     }
 
     // MARK: Colors
@@ -268,7 +268,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     func colorForRow(row: Int) -> UIColor {
         let fraction = Double(row) / Double(max(13, items.count))
-        return colors.gradientColorAtFraction(fraction)
+        return colors.gradientColorAtFraction(fraction: fraction)
     }
 
     func updateColors(completion: (() -> Void)? = nil) {
@@ -321,7 +321,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
 
                 var transform = CATransform3DIdentity
-                transform.m34 = 1 / -(1000 * 0.2)
+                transform.m34 = CGFloat(1.0 / -(1000 * 0.2))
                 transform = CATransform3DRotate(transform, angle, 1, 0, 0)
 
                 placeHolderCell.layer.transform = transform

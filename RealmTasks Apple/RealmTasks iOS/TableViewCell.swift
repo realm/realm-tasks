@@ -401,7 +401,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     func textViewDidEndEditing(_ textView: UITextView) {
         if !temporarilyIgnoreSaveChanges && !(item as Object).isInvalidated {
             try! item.realm!.write {
-                item.text = textView.text.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
+                item.text = textView.text.trimmingCharacters(in: .whitespaces)
             }
         }
         textView.isUserInteractionEnabled = false

@@ -83,7 +83,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
         currentlyEditingIndexPath = tableView.indexPath(for: editingCell)
 
-        let editingOffset = editingCell.convert(rect: editingCell.bounds, toView: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
+        let editingOffset = editingCell.convert(editingCell.bounds, to: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
         viewController.setTopConstraintTo(constant: -editingOffset)
         tableView.contentInset.bottom += editingOffset
 
