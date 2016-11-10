@@ -20,7 +20,7 @@ import com.facebook.login.LoginManager;
 
 import io.realm.Realm;
 import io.realm.SyncConfiguration;
-import io.realm.User;
+import io.realm.SyncUser;
 
 public class UserManager {
     // Supported authentication mode
@@ -50,11 +50,11 @@ public class UserManager {
                 break;
             }
         }
-        User.currentUser().logout();
+        SyncUser.currentUser().logout();
     }
 
     // Configure Realm for the current active user
-    public static void setActiveUser(User user) {
+    public static void setActiveUser(SyncUser user) {
         SyncConfiguration defaultConfig = new SyncConfiguration.Builder(user, RealmTasksApplication.REALM_URL).build();
         Realm.setDefaultConfiguration(defaultConfig);
     }

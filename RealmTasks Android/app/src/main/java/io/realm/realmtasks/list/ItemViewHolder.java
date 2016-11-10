@@ -58,6 +58,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final RecyclerView.Adapter adapter;
     private boolean completed;
     private boolean shouldChangeBackgroundColor;
+    private boolean shouldChangeTextColor;
     private double previousFirstLength;
 
     public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
@@ -74,6 +75,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         cellCompletedBackgroundColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_background_color);
         cellDefaultColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_default_color);
         shouldChangeBackgroundColor = true;
+        shouldChangeTextColor = true;
         previousFirstLength = -1;
         this.adapter = adapter;
     }
@@ -87,7 +89,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setCompleted(boolean completed) {
-        if (completed == this.completed) {
+        if (completed == this.completed && !shouldChangeTextColor) {
             return;
         }
         this.completed = completed;
@@ -98,7 +100,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             row.setBackgroundColor(
                     cellCompletedBackgroundColor);
         } else {
-            if (getBadge().getVisibility() == View.VISIBLE && getBadge().getText().equals("0")) {
+            if (badge.getVisibility() == View.VISIBLE && badge.getText().equals("0")) {
                 text.setTextColor(cellCompletedColor);
             } else {
                 text.setTextColor(cellDefaultColor);
@@ -106,6 +108,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(generateBackgroundColor());
         }
+        shouldChangeTextColor = false;
     }
 
     public boolean getCompleted() {
@@ -144,6 +147,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         } else {
             badge.setVisibility(View.GONE);
         }
+        shouldChangeTextColor = true;
     }
 
     public void setBadgeCount(int count) {
@@ -155,6 +159,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             text.setTextColor(cellDefaultColor);
             badge.setTextColor(cellDefaultColor);
         }
+        shouldChangeTextColor = true;
     }
 
     public void setHintPanelVisible(boolean visible) {
@@ -178,6 +183,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void reset() {
+        text.setVisibility(View.VISIBLE);
+        editText.setVisibility(View.GONE);
         itemView.setTranslationX(0);
         itemView.setTranslationY(0);
         itemView.setRotationX(0);
@@ -187,6 +194,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         setCompleted(false);
         setHintPanelVisible(false);
         shouldChangeBackgroundColor = true;
+        shouldChangeTextColor = true;
         previousFirstLength = -1;
     }
 
