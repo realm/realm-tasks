@@ -59,7 +59,7 @@ extension NSAttributedString {
     extension NSTextField {
 
         func strike(fraction: Double = 1) {
-            attributedStringValue = attributedStringValue.strikedAttributedString(fraction)
+            attributedStringValue = attributedStringValue.strikedAttributedString(fraction: fraction)
         }
 
         func unstrike() {

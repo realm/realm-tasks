@@ -37,11 +37,11 @@ class LogInViewController: NSViewController {
             return
         }
 
-        delelegate?.logInViewController(self, didLogInWithUserName: userName, password: password)
+        delelegate?.logInViewController(viewController: self, didLogInWithUserName: userName, password: password)
     }
 
     @IBAction func register(sender: AnyObject?) {
-        delelegate?.logInViewControllerDidRegister(self)
+        delelegate?.logInViewControllerDidRegister(viewController: self)
     }
 
 }

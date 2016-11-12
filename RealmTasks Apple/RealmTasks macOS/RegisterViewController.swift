@@ -56,15 +56,15 @@ class RegisterViewController: NSViewController {
     }
 
     @IBAction func register(sender: AnyObject?) {
-        guard let userName = userName, let password = password where confirmationMatchesPassword else {
+        guard let userName = userName, let password = password, confirmationMatchesPassword else {
             return
         }
 
-        delegate?.registerViewController(self, didRegisterWithUserName: userName, password: password)
+        delegate?.registerViewController(viewController: self, didRegisterWithUserName: userName, password: password)
     }
 
     @IBAction func cancel(sender: AnyObject?) {
-        delegate?.registerViewControllerDidCancel(self)
+        delegate?.registerViewControllerDidCancel(viewController: self)
     }
 
 }

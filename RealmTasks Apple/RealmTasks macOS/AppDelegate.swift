@@ -27,18 +27,18 @@ class AppDelegate: NSObject {
     private(set) var mainWindowController: NSWindowController!
 
     func logIn() {
-        let logInViewController = mainStoryboard.instantiateControllerWithIdentifier("LogInViewController") as! LogInViewController
+        let logInViewController = mainStoryboard.instantiateController(withIdentifier: "LogInViewController") as! LogInViewController
         logInViewController.delelegate = self
 
-        mainWindowController.contentViewController?.presentViewControllerAsSheet(logInViewController, preventApplicationTermination: false)
+        mainWindowController.contentViewController?.presentViewControllerAsSheet(viewController: logInViewController, preventApplicationTermination: false)
     }
 
-    func register(userName userName: String?) {
-        let registerViewController = mainStoryboard.instantiateControllerWithIdentifier("RegisterViewController") as! RegisterViewController
+    func register(userName: String?) {
+        let registerViewController = mainStoryboard.instantiateController(withIdentifier: "RegisterViewController") as! RegisterViewController
         registerViewController.delegate = self
         registerViewController.userName = userName
 
-        mainWindowController.contentViewController?.presentViewControllerAsSheet(registerViewController, preventApplicationTermination: false)
+        mainWindowController.contentViewController?.presentViewControllerAsSheet(viewController: registerViewController, preventApplicationTermination: false)
     }
 
 }
@@ -47,18 +47,18 @@ extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         mainWindowController = mainStoryboard.instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
-        mainWindowController.window?.titleVisibility = .Hidden
+        mainWindowController.window?.titleVisibility = .hidden
         mainWindowController.showWindow(nil)
 
         if configureDefaultRealm() {
             let containerViewController = mainWindowController.contentViewController as! ContainerViewController
-            containerViewController.showRecentList(nil)
+            containerViewController.showRecentList(sender: nil)
         } else {
             logIn()
         }
     }
 
-    func applicationShouldHandleReopen(sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         mainWindowController.showWindow(nil)
 
         return true
@@ -70,11 +70,11 @@ extension AppDelegate {
     func performAuthentication(viewController: NSViewController, username: String, password: String, register: Bool) {
         authenticate(username: username, password: password, register: register) { error in
             // FIXME: Sync API methods callbacks should be executed on main thread
-            dispatch_async(dispatch_get_main_queue()) {
+            dispatch_get_main_queue().asynchronously() {
                 if let error = error {
                     NSApp.presentError(error)
                 } else {
-                    viewController.dismissController(nil)
+                    viewController.dismiss(nil)
 
                     let containerViewController = self.mainWindowController.contentViewController as! ContainerViewController
                     containerViewController.showRecentList(nil)
@@ -87,11 +87,11 @@ extension AppDelegate {
 extension AppDelegate: LogInViewControllerDelegate {
 
     func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
-        performAuthentication(viewController, username: userName, password: password, register: false)
+        performAuthentication(viewController: viewController, username: userName, password: password, register: false)
     }
 
     func logInViewControllerDidRegister(viewController: LogInViewController) {
-        viewController.dismissController(nil)
+        viewController.dismiss(nil)
         register(userName: viewController.userName)
     }
 
@@ -100,11 +100,11 @@ extension AppDelegate: LogInViewControllerDelegate {
 extension AppDelegate: RegisterViewControllerDelegate {
 
     func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
-        performAuthentication(viewController, username: userName, password: password, register: true)
+        performAuthentication(viewController: viewController, username: userName, password: password, register: true)
     }
 
     func registerViewControllerDidCancel(viewController: RegisterViewController) {
-        viewController.dismissController(nil)
+        viewController.dismiss(nil)
         logIn()
     }
 

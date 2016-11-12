@@ -20,7 +20,7 @@ import Cocoa
 
 final class ColorView: NSView {
 
-    @IBInspectable var backgroundColor: NSColor = .clearColor() {
+    @IBInspectable var backgroundColor: NSColor = .clear {
         didSet {
             needsDisplay = true
         }
@@ -31,9 +31,9 @@ final class ColorView: NSView {
         self.backgroundColor = backgroundColor
     }
 
-    override func drawRect(dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: NSRect) {
         backgroundColor.setFill()
-        NSRectFillUsingOperation(dirtyRect, .SourceOver)
+        NSRectFillUsingOperation(dirtyRect, .sourceOver)
     }
 
 }

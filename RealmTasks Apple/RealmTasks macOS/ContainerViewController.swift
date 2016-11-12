@@ -34,12 +34,12 @@ class ContainerViewController: NSViewController {
 
         if let visualEffectView = view as? NSVisualEffectView {
             if #available(OSX 10.11, *) {
-                visualEffectView.material = .UltraDark
+                visualEffectView.material = .ultraDark
             } else {
-                visualEffectView.material = .Dark
+                visualEffectView.material = .dark
             }
 
-            visualEffectView.state = .Active
+            visualEffectView.state = .active
         }
     }
 
@@ -56,7 +56,7 @@ class ContainerViewController: NSViewController {
         presentViewControllerForList(list)
     }
 
-    func presentViewControllerForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
+    func presentViewControllerForList<ListType: ListPresentable>(list: ListType) where ListType: Object {
         let listViewController = ListViewController(list: list)
 
         addChildViewController(listViewController)
@@ -115,27 +115,27 @@ class ContainerViewController: NSViewController {
         notificationToken?.stop()
         notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in
             // Show all lists if list is deleted on other device
-            if (list as Object).invalidated {
-                self.showAllLists(nil)
+            if (list as Object).isInvalidated {
+                self.showAllLists(sender: nil)
             }
         }
     }
 
-    private func updateToolbarForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
+    private func updateToolbarForList<ListType: ListPresentable>(list: ListType) where ListType: Object {
         guard let toolbar = view.window?.toolbar else {
             return
         }
 
-        if let titleView = toolbar.itemWithIdentifier(toolbarTitleViewIdentifier)?.view as? TitleView {
+        if let titleView = toolbar.itemWithIdentifier(identifier: toolbarTitleViewIdentifier)?.view as? TitleView {
             titleView.text = (list as? CellPresentable)?.text ?? "Lists"
         }
 
         if list is CellPresentable {
-            if !toolbar.hasItemWithIdentifier(toolbarShowAllListsButtonIdentifier) {
-                toolbar.insertItemWithItemIdentifier(toolbarShowAllListsButtonIdentifier, atIndex: toolbar.items.count - 1)
+            if !toolbar.hasItemWithIdentifier(identifier: toolbarShowAllListsButtonIdentifier) {
+                toolbar.insertItem(withItemIdentifier: toolbarShowAllListsButtonIdentifier, at: toolbar.items.count - 1)
             }
-        } else if let index = toolbar.indexOfItemWithIdentifier(toolbarShowAllListsButtonIdentifier) {
-            view.window?.toolbar?.removeItemAtIndex(index)
+        } else if let index = toolbar.indexOfItemWithIdentifier(identifier: toolbarShowAllListsButtonIdentifier) {
+            view.window?.toolbar?.removeItem(at: index)
         }
 
         // Let the new controller takes care about toolbar validation
@@ -147,11 +147,11 @@ class ContainerViewController: NSViewController {
 private extension NSToolbar {
 
     func hasItemWithIdentifier(identifier: String) -> Bool {
-        return itemWithIdentifier(identifier) != nil
+        return itemWithIdentifier(identifier: identifier) != nil
     }
 
     func itemWithIdentifier(identifier: String) -> NSToolbarItem? {
-        guard let index = indexOfItemWithIdentifier(identifier) else {
+        guard let index = indexOfItemWithIdentifier(identifier: identifier) else {
             return nil
         }
 
@@ -159,7 +159,7 @@ private extension NSToolbar {
     }
 
     func indexOfItemWithIdentifier(identifier: String) -> Int? {
-        for (index, item) in items.enumerate() {
+        for (index, item) in items.enumerated() {
             if item.itemIdentifier == identifier {
                 return index
             }

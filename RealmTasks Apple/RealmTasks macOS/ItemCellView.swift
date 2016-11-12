@@ -53,7 +53,7 @@ class ItemCellView: NSTableCellView {
     var completed = false {
         didSet {
             completed ? textView.strike() : textView.unstrike()
-            overlayView.hidden = !completed
+            overlayView.isHidden = !completed
             overlayView.backgroundColor = completed ? .completeDimBackgroundColor() : .completeGreenBackgroundColor()
             textView.alphaValue = completed ? 0.3 : 1
         }
@@ -61,17 +61,17 @@ class ItemCellView: NSTableCellView {
 
     var editable: Bool {
         set {
-            textView.editable = newValue
+            textView.isEditable = newValue
         }
 
         get {
-            return textView.editable
+            return textView.isEditable
         }
     }
 
     var isUserInteractionEnabled = true {
         didSet {
-            highlightView.hidden = true
+            highlightView.isHidden = true
             updateTrackingAreas()
         }
     }
@@ -115,7 +115,7 @@ class ItemCellView: NSTableCellView {
         setupUI()
         setupGestures()
 
-        setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
+        setTrackingAreaWithRect(rect: bounds, options: [.mouseEnteredAndExited, .activeInKeyWindow])
     }
 
     required init?(coder: NSCoder) {
@@ -132,13 +132,13 @@ class ItemCellView: NSTableCellView {
         alphaValue = 1
         contentView.frame.origin.x = 0
         editable = false
-        highlightView.hidden = true
+        highlightView.isHidden = true
         isUserInteractionEnabled = true
     }
 
     override func updateTrackingAreas() {
         if isUserInteractionEnabled {
-            setTrackingAreaWithRect(bounds, options: [.MouseEnteredAndExited, .ActiveInKeyWindow])
+            setTrackingAreaWithRect(rect: bounds, options: [.mouseEnteredAndExited, .activeInKeyWindow])
         } else {
             resetTrackingAreas()
         }
@@ -156,20 +156,20 @@ class ItemCellView: NSTableCellView {
     private func setupIconViews() {
         doneIconView.frame.size.width = iconWidth
         doneIconView.frame.origin.x = iconOffset
-        doneIconView.autoresizingMask = [.ViewMaxXMargin, .ViewHeightSizable]
-        addSubview(doneIconView, positioned: .Below, relativeTo: contentView)
+        doneIconView.autoresizingMask = [.viewMaxXMargin, .viewHeightSizable]
+        addSubview(doneIconView, positioned: .below, relativeTo: contentView)
 
         deleteIconView.frame.size.width = iconWidth
         deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - iconOffset
-        deleteIconView.autoresizingMask = [.ViewMinXMargin, .ViewHeightSizable]
-        addSubview(deleteIconView, positioned: .Below, relativeTo: contentView)
+        deleteIconView.autoresizingMask = [.viewMinXMargin, .viewHeightSizable]
+        addSubview(deleteIconView, positioned: .below, relativeTo: contentView)
     }
 
     private func setupContentView() {
         addSubview(contentView)
 
         contentView.frame = bounds
-        contentView.autoresizingMask = [.ViewWidthSizable, .ViewHeightSizable]
+        contentView.autoresizingMask = [.viewWidthSizable, .viewHeightSizable]
     }
 
     private func setupHighlightView() {
@@ -179,7 +179,7 @@ class ItemCellView: NSTableCellView {
             highlightView.edges == highlightView.superview!.edges
         }
 
-        highlightView.hidden = true
+        highlightView.isHidden = true
     }
 
     private func setupBorders() {
@@ -226,27 +226,27 @@ class ItemCellView: NSTableCellView {
         addGestureRecognizer(recognizer)
     }
 
-    override func mouseEntered(theEvent: NSEvent) {
-        super.mouseEntered(theEvent)
+    override func mouseEntered(with theEvent: NSEvent) {
+        super.mouseEntered(with: theEvent)
 
         guard !completed && !editable else {
             return
         }
 
         NSView.animate(duration: 0.1) {
-            highlightView.hidden = false
+            highlightView.isHidden = false
         }
     }
 
-    override func mouseExited(theEvent: NSEvent) {
-        super.mouseExited(theEvent)
+    override func mouseExited(with theEvent: NSEvent) {
+        super.mouseExited(with: theEvent)
 
         guard !completed && !editable else {
             return
         }
 
         NSView.animate(duration: 0.1) {
-            highlightView.hidden = true
+            highlightView.isHidden = true
         }
     }
 
@@ -260,14 +260,14 @@ extension ItemCellView: ItemTextFieldDelegate {
         highlightView.hidden = true
     }
 
-    override func controlTextDidChange(obj: NSNotification) {
-        delegate?.cellViewDidChangeText(self)
+    override func controlTextDidChange(_ obj: Notification) {
+        delegate?.cellViewDidChangeText(view: self)
     }
 
-    override func controlTextDidEndEditing(obj: NSNotification) {
+    override func controlTextDidEndEditing(_ obj: Notification) {
         if editable {
             editable = false
-            delegate?.cellViewDidEndEditing(self)
+            delegate?.cellViewDidEndEditing(view: self)
         }
     }
 
@@ -275,7 +275,7 @@ extension ItemCellView: ItemTextFieldDelegate {
     override func cancelOperation(sender: AnyObject?) {
         if editable {
             editable = false
-            delegate?.cellViewDidEndEditing(self)
+            delegate?.cellViewDidEndEditing(view: self)
         }
     }
 
@@ -285,7 +285,7 @@ extension ItemCellView: ItemTextFieldDelegate {
 
 extension ItemCellView: NSGestureRecognizerDelegate {
 
-    func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: NSGestureRecognizer) -> Bool {
         let currentlyEditingTextField = (window?.firstResponder as? NSText)?.delegate as? NSTextField
 
         guard currentlyEditingTextField != textView else {
@@ -297,17 +297,17 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 
     // FIXME: This could easily be refactored to avoid such a high CC.
     // swiftlint:disable:next cyclomatic_complexity
-    private dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
+    fileprivate dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
         let originalDoneIconOffset = iconOffset
         let originalDeleteIconOffset = bounds.width - deleteIconView.bounds.width - iconOffset
 
         switch recognizer.state {
-        case .Began:
+        case .began:
             isUserInteractionEnabled = false
             releaseAction = nil
-        case .Changed:
-            let translation = recognizer.translationInView(self)
-            recognizer.setTranslation(translation, inView: self)
+        case .changed:
+            let translation = recognizer.translation(in: self)
+            recognizer.setTranslation(translation, in: self)
 
             contentView.frame.origin.x = translation.x
 
@@ -331,17 +331,17 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 textView.alphaValue = releaseAction == .Complete ? 1 : 0.3
 
                 if contentView.frame.origin.x > 0 {
-                    textView.strike(1 - fractionOfThreshold)
+                    textView.strike(fraction: 1 - fractionOfThreshold)
                 }
             } else {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
                 overlayView.hidden = releaseAction != .Complete
 
                 if contentView.frame.origin.x > 0 {
-                    textView.strike(fractionOfThreshold)
+                    textView.strike(fraction: fractionOfThreshold)
                 }
             }
-        case .Ended:
+        case .ended:
             let animationBlock: () -> ()
             let completionBlock: () -> ()
 
@@ -354,7 +354,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 }
 
                 completionBlock = {
-                    NSView.animate(animations: {
+                    NSView.animate(duration: {
                         self.completed = !self.completed
                     }) {
                         self.delegate?.cellView(self, didComplete: self.completed)
@@ -369,7 +369,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 }
 
                 completionBlock = {
-                    self.delegate?.cellViewDidDelete(self)
+                    self.delegate?.cellViewDidDelete(view: self)
                 }
             case nil:
                 completed ? textView.strike() : textView.unstrike()
@@ -404,12 +404,12 @@ private enum ReleaseAction {
 
 private class HighlightView: NSView {
 
-    private override func drawRect(dirtyRect: NSRect) {
+    fileprivate override func draw(_ dirtyRect: NSRect) {
         let shadowColor = NSColor(white: 0, alpha: 0.2)
         let backgroundColor = NSColor(white: 0, alpha: 0.05)
 
         let gradient = NSGradient(colorsAndLocations: (shadowColor, 0), (backgroundColor, 0.08), (backgroundColor, 0.92), (shadowColor, 1))
-        gradient?.drawInRect(bounds, angle: 90)
+        gradient?.draw(in: bounds, angle: 90)
     }
 
 }
@@ -425,22 +425,22 @@ private class ItemTextField: NSTextField {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
 
-        bordered = false
-        focusRingType = .None
-        font = .systemFontOfSize(18)
-        textColor = .whiteColor()
-        backgroundColor = .clearColor()
-        lineBreakMode = .ByWordWrapping
-        selectable = false
-        editable = false
+        isBordered = false
+        focusRingType = .none
+        font = .systemFont(ofSize: 18)
+        textColor = .white
+        backgroundColor = .clear
+        lineBreakMode = .byWordWrapping
+        isSelectable = false
+        isEditable = false
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private override func becomeFirstResponder() -> Bool {
-        (delegate as? ItemTextFieldDelegate)?.textFieldDidBecomeFirstResponder(self)
+    fileprivate override func becomeFirstResponder() -> Bool {
+        (delegate as? ItemTextFieldDelegate)?.textFieldDidBecomeFirstResponder(textField: self)
 
         let result = super.becomeFirstResponder()
 
@@ -452,13 +452,13 @@ private class ItemTextField: NSTextField {
     override var intrinsicContentSize: NSSize {
         // By default editable NSTextField doesn't respect wrapping while calculating intrinsic content size,
         // let's calculate the correct one by ourselves
-        let placeholderFrame = NSRect(origin: .zero, size: NSSize(width: frame.width, height: .max))
-        let calculatedHeight = cell!.cellSizeForBounds(placeholderFrame).height
+        let placeholderFrame = NSRect(origin: .zero, size: NSSize(width: frame.width, height: .greatestFiniteMagnitude))
+        let calculatedHeight = cell!.cellSize(forBounds: placeholderFrame).height
 
         return NSSize(width: frame.width, height: calculatedHeight)
     }
 
-    override func textDidChange(notification: NSNotification) {
+    override func textDidChange(_ notification: Notification) {
         super.textDidChange(notification)
 
         // Update height on text change

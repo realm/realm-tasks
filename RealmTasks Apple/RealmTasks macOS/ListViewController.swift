@@ -29,8 +29,8 @@ private let prototypeCellIdentifier = "PrototypeCell"
 
 // FIXME: This type should be split up.
 // swiftlint:disable:next type_body_length
-final class ListViewController<ListType: ListPresentable where ListType: Object>: NSViewController,
-    NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecognizerDelegate {
+final class ListViewController<ListType: ListPresentable>: NSViewController,
+NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecognizerDelegate where ListType: Object {
 
     typealias ItemType = ListType.Item
 
@@ -50,17 +50,21 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private var animating = false
     private var needsReloadTableView = true
 
-    private var autoscrollTimer: NSTimer?
+    private var autoscrollTimer: Timer?
 
     init(list: ListType) {
         self.list = list
 
         super.init(nibName: nil, bundle: nil)!
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     deinit {
         notificationToken?.stop()
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     override func loadView() {
@@ -68,9 +72,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         view.wantsLayer = true
 
         tableView.addTableColumn(NSTableColumn())
-        tableView.backgroundColor = .clearColor()
+        tableView.backgroundColor = .clear
         tableView.headerView = nil
-        tableView.selectionHighlightStyle = .None
+        tableView.selectionHighlightStyle = .none
         tableView.intercellSpacing = .zero
 
         let scrollView = NSScrollView()
@@ -87,12 +91,12 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let notificationCenter = NSNotificationCenter.defaultCenter()
+        let notificationCenter = NotificationCenter.default
 
         // Handle window resizing to update table view rows height
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidResizeNotification, object: view.window)
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidEnterFullScreenNotification, object: view.window)
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindowDidExitFullScreenNotification, object: view.window)
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidResize, object: view.window)
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidEnterFullScreen, object: view.window)
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidExitFullScreen, object: view.window)
 
         setupNotifications()
         setupGestureRecognizers()
@@ -134,10 +138,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         updateTableViewHeightOfRows()
     }
 
-    private func updateTableViewHeightOfRows(indexes: NSIndexSet? = nil) {
+    private func updateTableViewHeightOfRows(indexes: IndexSet? = nil) {
         // noteHeightOfRows animates by default, disable this
         NSView.animate(duration: 0) {
-            tableView.noteHeightOfRowsWithIndexesChanged(indexes ?? NSIndexSet(indexesInRange: NSRange(0...tableView.numberOfRows)))
+            tableView.noteHeightOfRows(withIndexesChanged: indexes ?? IndexSet(integersIn: Range(0...tableView.numberOfRows)))
         }
     }
 
@@ -147,29 +151,29 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         endEditingCells()
 
         try! list.realm?.write {
-            list.items.insert(ItemType(), atIndex: 0)
+            list.items.insert(ItemType(), at: 0)
         }
 
         animating = true
         NSView.animate(animations: {
-            NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
-            tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
+            NSAnimationContext.current().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
+            tableView.insertRows(at: NSIndexSet(index: 0) as IndexSet, withAnimation: .effectGap)
         }) {
-            if let newItemCellView = self.tableView.viewAtColumn(0, row: 0, makeIfNecessary: false) as? ItemCellView {
-                self.beginEditingCell(newItemCellView)
-                self.tableView.selectRowIndexes(NSIndexSet(index: 0), byExtendingSelection: false)
+            if let newItemCellView = self.tableView.view(atColumn: 0, row: 0, makeIfNecessary: false) as? ItemCellView {
+                self.beginEditingCell(cellView: newItemCellView)
+                self.tableView.selectRowIndexes(IndexSet(index: 0), byExtendingSelection: false)
             }
 
             self.animating = false
         }
     }
 
-    override func validateToolbarItem(toolbarItem: NSToolbarItem) -> Bool {
-        return validateSelector(toolbarItem.action)
+    override func validateToolbarItem(_ toolbarItem: NSToolbarItem) -> Bool {
+        return validateSelector(selector: toolbarItem.action!)
     }
 
-    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        return validateSelector(menuItem.action)
+    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        return validateSelector(selector: menuItem.action!)
     }
 
     private func validateSelector(selector: Selector) -> Bool {
@@ -188,14 +192,14 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func beginReorderingRow(row: Int, screenPoint point: NSPoint) {
-        currentlyMovingRowView = tableView.rowViewAtRow(row, makeIfNecessary: false)
+        currentlyMovingRowView = tableView.rowView(atRow: row, makeIfNecessary: false)
 
         if currentlyMovingRowView == nil {
             return
         }
 
-        tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-            if let view = tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+        tableView.enumerateAvailableRowViews { _, row in
+            if let view = tableView.view(atColumn: 0, row: row, makeIfNecessary: false) as? ItemCellView {
                 view.isUserInteractionEnabled = false
             }
         }
@@ -203,7 +207,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         currentlyMovingRowSnapshotView = SnapshotView(sourceView: currentlyMovingRowView!)
         currentlyMovingRowView!.alphaValue = 0
 
-        currentlyMovingRowSnapshotView?.frame.origin.y = view.convertPoint(point, fromView: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
+        currentlyMovingRowSnapshotView?.frame.origin.y = view.convert(point, from: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
         view.addSubview(currentlyMovingRowSnapshotView!)
 
         NSView.animate() {
@@ -218,31 +222,31 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         if let snapshotView = currentlyMovingRowSnapshotView {
-            snapshotView.frame.origin.y = snapshotView.superview!.convertPoint(point, fromView: nil).y - snapshotView.frame.height / 2
+            snapshotView.frame.origin.y = snapshotView.superview!.convert(point, from: nil).y - snapshotView.frame.height / 2
         }
 
-        let sourceRow = tableView.rowForView(currentlyMovingRowView!)
+        let sourceRow = tableView.row(for: currentlyMovingRowView!)
         let destinationRow: Int
 
-        let pointInTableView = tableView.convertPoint(point, fromView: nil)
+        let pointInTableView = tableView.convert(point, from: nil)
 
         if pointInTableView.y < tableView.bounds.minY {
             destinationRow = 0
         } else if pointInTableView.y > tableView.bounds.maxY {
             destinationRow = tableView.numberOfRows - 1
         } else {
-            destinationRow = tableView.rowAtPoint(pointInTableView)
+            destinationRow = tableView.row(at: pointInTableView)
         }
 
-        if canMoveRow(sourceRow, toRow: destinationRow) {
+        if canMoveRow(sourceRow: sourceRow, toRow: destinationRow) {
             try! list.realm?.write {
                 list.items.move(from: sourceRow, to: destinationRow)
             }
 
             NSView.animate() {
                 // Disable implicit animations because tableView animates reordering via animator proxy
-                NSAnimationContext.currentContext().allowsImplicitAnimation = false
-                tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
+                NSAnimationContext.current().allowsImplicitAnimation = false
+                tableView.moveRow(at: sourceRow, to: destinationRow)
             }
         }
     }
@@ -261,7 +265,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         NSView.animate(animations: {
-            currentlyMovingRowSnapshotView?.frame = view.convertRect(currentlyMovingRowView!.frame, fromView: tableView)
+            currentlyMovingRowSnapshotView?.frame = view.convert(currentlyMovingRowView!.frame, from: tableView)
         }) {
             self.currentlyMovingRowView?.alphaValue = 1
             self.currentlyMovingRowView = nil
@@ -269,8 +273,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             self.currentlyMovingRowSnapshotView?.removeFromSuperview()
             self.currentlyMovingRowSnapshotView = nil
 
-            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+            self.tableView.enumerateAvailableRowViews { _, row in
+                if let view = self.tableView.view(atColumn: 0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.isUserInteractionEnabled = true
                 }
             }
@@ -282,9 +286,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private dynamic func handlePressGestureRecognizer(recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
-        case .Began:
-            beginReorderingRow(tableView.rowAtPoint(recognizer.locationInView(tableView)), screenPoint: recognizer.locationInView(nil))
-        case .Ended, .Cancelled:
+        case .began:
+            beginReorderingRow(row: tableView.row(at: recognizer.location(in: tableView)), screenPoint: recognizer.location(in: nil))
+        case .ended, .cancelled:
             endReordering()
         default:
             break
@@ -293,11 +297,11 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private dynamic func handlePanGestureRecognizer(recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
-        case .Began:
+        case .began:
             startAutoscrolling()
-        case .Changed:
-            handleReorderingForScreenPoint(recognizer.locationInView(nil))
-        case .Ended:
+        case .changed:
+            handleReorderingForScreenPoint(point: recognizer.location(in: nil))
+        case .ended:
             stopAutoscrolling()
         default:
             break
@@ -309,13 +313,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
-        autoscrollTimer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: #selector(handleAutoscrolling), userInfo: nil, repeats: true)
+        autoscrollTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(handleAutoscrolling), userInfo: nil, repeats: true)
     }
 
     private dynamic func handleAutoscrolling() {
         if let event = NSApp.currentEvent {
-            if tableView.autoscroll(event) {
-                handleReorderingForScreenPoint(event.locationInWindow)
+            if tableView.autoscroll(with: event) {
+                handleReorderingForScreenPoint(point: event.locationInWindow)
             }
         }
     }
@@ -333,10 +337,10 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func beginEditingCell(cellView: ItemCellView) {
         NSView.animate(animations: {
-            tableView.scrollRowToVisible(tableView.rowForView(cellView))
+            tableView.scrollRowToVisible(tableView.row(for: cellView))
 
-            tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView where view != cellView {
+            tableView.enumerateAvailableRowViews { _, row in
+                if let view = tableView.view(atColumn: 0, row: row, makeIfNecessary: false) as? ItemCellView, view != cellView {
                     view.alphaValue = 0.3
                     view.isUserInteractionEnabled = false
                 }
@@ -359,8 +363,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         view.window?.makeFirstResponder(self)
 
         NSView.animate(animations: {
-            tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+            tableView.enumerateAvailableRowViews { _, row in
+                if let view = tableView.view(atColumn: 0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
                     view.isUserInteractionEnabled = true
                 }
@@ -374,19 +378,19 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     // MARK: NSGestureRecognizerDelegate
 
-    func gestureRecognizer(gestureRecognizer: NSGestureRecognizer,
-                           shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: NSGestureRecognizer) -> Bool {
         return gestureRecognizer is NSPanGestureRecognizer
     }
 
-    func gestureRecognizerShouldBegin(gestureRecognizer: NSGestureRecognizer) -> Bool {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: NSGestureRecognizer) -> Bool {
         guard !editing else {
             return false
         }
 
         switch gestureRecognizer {
         case is NSPressGestureRecognizer:
-            let targetRow = tableView.rowAtPoint(gestureRecognizer.locationInView(tableView))
+            let targetRow = tableView.row(at: gestureRecognizer.location(in: tableView))
 
             guard targetRow >= 0 else {
                 return false
@@ -402,13 +406,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     // MARK: NSTableViewDataSource
 
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+    private func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return list.items.count
     }
 
     // MARK: NSTableViewDelegate
 
-    func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let item = list.items[row]
 
         let cellViewIdentifier: String
@@ -426,30 +430,30 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             fatalError("Unknown item type")
         }
 
-        if let view = tableView.makeViewWithIdentifier(cellViewIdentifier, owner: self) as? ItemCellView {
+        if let view = tableView.make(withIdentifier: cellViewIdentifier, owner: self) as? ItemCellView {
             cellView = view
         } else {
             cellView = cellViewType.init(identifier: listCellIdentifier)
         }
 
-        cellView.configure(item)
-        cellView.backgroundColor = colorForRow(row)
+        cellView.configure(item: item)
+        cellView.backgroundColor = colorForRow(row: row)
         cellView.delegate = self
 
         return cellView
     }
 
-    func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         if let cellView = currentlyEditingCellView {
             prototypeCell.configure(cellView)
         } else {
             prototypeCell.configure(list.items[row])
         }
 
-        return prototypeCell.fittingHeightForConstrainedWidth(tableView.bounds.width)
+        return prototypeCell.fittingHeightForConstrainedWidth(width: tableView.bounds.width)
     }
 
-    func tableViewSelectionDidChange(notification: NSNotification) {
+    func tableViewSelectionDidChange(_ notification: Notification) {
         let index = tableView.selectedRow
 
         guard 0 <= index && index < list.items.count else {
@@ -462,7 +466,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
-        guard let cellView = tableView.viewAtColumn(0, row: index, makeIfNecessary: false) as? ItemCellView where cellView != currentlyEditingCellView else {
+        guard let cellView = tableView.view(atColumn: 0, row: index, makeIfNecessary: false) as? ItemCellView, cellView != currentlyEditingCellView else {
             return
         }
 
@@ -471,27 +475,27 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
-        if let listCellView = cellView as? ListCellView where !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
+        if let listCellView = cellView as? ListCellView, !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
             (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
         } else {
-            beginEditingCell(cellView)
+            beginEditingCell(cellView: cellView)
         }
     }
 
-    func tableView(tableView: NSTableView, didAddRowView rowView: NSTableRowView, forRow row: Int) {
+    func tableView(_ tableView: NSTableView, didAdd rowView: NSTableRowView, forRow row: Int) {
         updateColors()
     }
 
-    func tableView(tableView: NSTableView, didRemoveRowView rowView: NSTableRowView, forRow row: Int) {
+    func tableView(_ tableView: NSTableView, didRemove rowView: NSTableRowView, forRow row: Int) {
         updateColors()
     }
 
     private func updateColors() {
-        tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
+        tableView.enumerateAvailableRowViews { rowView, row in
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ItemCellView {
                 NSView.animate() {
-                    cellView.backgroundColor = colorForRow(row)
+                    cellView.backgroundColor = colorForRow(row: row)
                 }
             }
         }
@@ -501,13 +505,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         let colors = ItemType.self is Task.Type ? NSColor.taskColors() : NSColor.listColors()
         let fraction = Double(row) / Double(max(13, list.items.count))
 
-        return colors.gradientColorAtFraction(fraction)
+        return colors.gradientColorAtFraction(fraction: fraction)
     }
 
     // MARK: ItemCellViewDelegate
 
     func cellView(view: ItemCellView, didComplete complete: Bool) {
-        guard let itemAndIndex = findItemForCellView(view) else {
+        guard let itemAndIndex = findItemForCellView(view: view) else {
             return
         }
 
@@ -524,7 +528,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             destinationIndex = list.items.count - completedCount
         }
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        dispatch_after(DispatchTime.now(dispatch_time_t(DISPATCH_TIME_NOW), Int64(0.1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
             try! item.realm?.write {
                 item.completed = complete
 
@@ -546,7 +550,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     func cellViewDidDelete(view: ItemCellView) {
-        guard let (item, index) = findItemForCellView(view) else {
+        guard let (item, index) = findItemForCellView(view: view) else {
             return
         }
 
@@ -556,8 +560,8 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         animating = true
         NSView.animate(animations: {
-            NSAnimationContext.currentContext().allowsImplicitAnimation = false
-            tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
+            NSAnimationContext.current().allowsImplicitAnimation = false
+            tableView.removeRowsAtIndexes(IndexSet(index: index), withAnimation: .SlideLeft)
         }) {
             self.animating = false
             self.reloadTableViewIfNeeded()
@@ -566,13 +570,13 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     func cellViewDidChangeText(view: ItemCellView) {
         if view == currentlyEditingCellView {
-            updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
+            updateTableViewHeightOfRows(indexes: IndexSet(index: tableView.rowForView(view)))
             view.window?.toolbar?.validateVisibleItems()
         }
     }
 
     func cellViewDidEndEditing(view: ItemCellView) {
-        guard let (tmpItem, index) = findItemForCellView(view) else {
+        guard let (tmpItem, index) = findItemForCellView(view: view) else {
             return
         }
 
@@ -594,11 +598,11 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         // In case if Return key was pressed we need to reset table view selection
-        tableView.selectRowIndexes(NSIndexSet(), byExtendingSelection: false)
+        tableView.selectRowIndexes(IndexSet(), byExtendingSelection: false)
     }
 
     private func findItemForCellView(view: NSView) -> (item: ItemType, index: Int)? {
-        let index = tableView.rowForView(view)
+        let index = tableView.row(for: view)
 
         if index < 0 {
             return nil
@@ -623,8 +627,8 @@ private final class PrototypeCellView: ItemCellView {
         if let widthConstraint = widthConstraint {
             widthConstraint.constant = width
         } else {
-            widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil,
-                                                 attribute: .NotAnAttribute, multiplier: 1, constant: width)
+            widthConstraint = NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal, toItem: nil,
+                                                 attribute: .notAnAttribute, multiplier: 1, constant: width)
             addConstraint(widthConstraint!)
         }
 
@@ -644,8 +648,8 @@ private final class SnapshotView: NSView {
     init(sourceView: NSView) {
         super.init(frame: sourceView.frame)
 
-        let imageRepresentation = sourceView.bitmapImageRepForCachingDisplayInRect(sourceView.bounds)!
-        sourceView.cacheDisplayInRect(sourceView.bounds, toBitmapImageRep: imageRepresentation)
+        let imageRepresentation = sourceView.bitmapImageRepForCachingDisplay(in: sourceView.bounds)!
+        sourceView.cacheDisplay(in: sourceView.bounds, to: imageRepresentation)
 
         let snapshotImage = NSImage(size: sourceView.bounds.size)
         snapshotImage.addRepresentation(imageRepresentation)
@@ -654,7 +658,7 @@ private final class SnapshotView: NSView {
         shadow = NSShadow() // Workaround to activate layer-backed shadow
 
         layer?.contents = snapshotImage
-        layer?.shadowColor = NSColor.blackColor().CGColor
+        layer?.shadowColor = NSColor.black.cgColor
         layer?.shadowOpacity = 1
         layer?.shadowRadius = 5
         layer?.shadowOffset = CGSize(width: -5, height: 0)
