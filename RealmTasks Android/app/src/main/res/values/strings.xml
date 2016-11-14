@@ -23,5 +23,8 @@
     <string name="no_item">There is no item in this list to complete.</string>
     <string name="facebook_app_id">1789199757960919</string>
     <string name="server_client_id">299391824375-k3hdrdtq8g4rkh1i0pvomn397ehk92nl.apps.googleusercontent.com</string>
+    <string name="badge_placeholder">3</string>
+    <string name="switch_to_lists">Switch to Lists</string>
+    <string name="row_text_placeholder">Text</string>
 
 </resources>

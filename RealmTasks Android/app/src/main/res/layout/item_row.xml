@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/black"
-    android:minHeight="55dp">
+    android:minHeight="@dimen/row_min_height">
 
     <RelativeLayout
         android:id="@+id/icon_bar"
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="@dimen/row_icon_margin"
             android:src="@drawable/ic_done"/>
 
         <ImageView
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="@dimen/row_icon_margin"
             android:src="@drawable/ic_delete"/>
 
     </RelativeLayout>
@@ -41,34 +41,34 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="75dp"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"
-            android:text="Text"
+            android:layout_marginLeft="@dimen/row_text_margin_left"
+            android:layout_marginRight="@dimen/row_text_margin_right"
+            android:paddingBottom="@dimen/row_text_padding"
+            android:paddingTop="@dimen/row_text_padding"
+            android:text="@string/row_text_placeholder"
             android:textColor="@android:color/white"
-            android:textSize="18dp"/>
+            android:textSize="@dimen/row_text_size"/>
 
         <EditText
             android:id="@+id/edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="75dp"
+            android:layout_marginLeft="@dimen/row_text_margin_left"
+            android:layout_marginRight="@dimen/row_text_margin_right"
             android:textColor="@android:color/white"
             android:visibility="gone"/>
 
         <TextView
             android:id="@+id/badge"
-            android:layout_width="60dp"
+            android:layout_width="@dimen/row_badge_width"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:background="#26FFFFFF"
             android:gravity="center"
-            android:text="3"
+            android:text="@string/badge_placeholder"
             android:textColor="@android:color/white"
-            android:textSize="18dp"
+            android:textSize="@dimen/row_text_size"
             android:visibility="gone"/>
 
     </RelativeLayout>
@@ -85,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Switch to Lists"
+            android:text="@string/switch_to_lists"
             android:textColor="@android:color/white"/>
 
         <ImageView
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="@dimen/row_arrow_margin"
             android:layout_toLeftOf="@id/switch_hint"
             android:src="@drawable/ic_arrow"/>
 
