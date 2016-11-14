@@ -51,6 +51,7 @@ import static android.support.v7.widget.RecyclerView.State;
 public class TouchHelper {
 
     private static final int POINTER_ID_NONE = -1;
+    private static final int ICON_WIDTH = 66;
 
     private final Callback callback;
     private final CommonAdapter adapter;
@@ -165,7 +166,7 @@ public class TouchHelper {
                 if (actionState == ACTION_STATE_SWIPE) {
                     final float translationX = selectedInitialX + dx - selectedItemView.getLeft();
                     final float absDx = Math.abs(translationX);
-                    final float maxNiche = logicalDensity * 66;
+                    final float maxNiche = logicalDensity * ICON_WIDTH;
                     if (absDx < maxNiche) {
                         selectedViewHolder.setIconBarAlpha(absDx / maxNiche);
                         ViewCompat.setTranslationX(selectedViewHolder.getRow(), translationX);
@@ -370,7 +371,7 @@ public class TouchHelper {
             final @ActionState int previousActionState = TouchHelper.this.actionState;
             if (previousActionState == ACTION_STATE_SWIPE) {
                 if (TouchHelper.this.selected != null) {
-                    final float maxNiche = logicalDensity * 66 / 2;
+                    final float maxNiche = logicalDensity * ICON_WIDTH;
                     final View selectedItemView = TouchHelper.this.selected.itemView;
                     final float itemViewTranslationX = selectedItemView.getTranslationX();
                     final float rowTranslationX = TouchHelper.this.selected.getRow().getTranslationX();
