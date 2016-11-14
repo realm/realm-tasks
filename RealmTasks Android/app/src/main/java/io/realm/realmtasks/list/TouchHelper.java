@@ -181,6 +181,7 @@ public class TouchHelper {
                         if (translationX > 0) {
                             ViewCompat.setTranslationX(selectedViewHolder.getRow(), maxNiche);
                             ViewCompat.setTranslationX(selectedItemView, translationX - maxNiche);
+                            selectedViewHolder.setStrikeThroughRatio(1f);
                             selectedViewHolder.changeBackgroundColorIfNeeded();
                         } else {
                             ViewCompat.setTranslationX(selectedViewHolder.getRow(), maxNiche * -1);
