@@ -75,16 +75,16 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     var presenter: CellPresenter<Item>!
 
     // Private Properties
-    private var originalDoneIconCenter = CGPoint()
-    private var originalDeleteIconCenter = CGPoint()
+    fileprivate var originalDoneIconCenter = CGPoint()
+    fileprivate var originalDeleteIconCenter = CGPoint()
 
-    private var releaseAction: ReleaseAction?
-    private let overlayView = UIView()
-    private let countLabel = UILabel()
+    fileprivate var releaseAction: ReleaseAction?
+    fileprivate let overlayView = UIView()
+    fileprivate let countLabel = UILabel()
 
     // Assets
-    private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
-    private let deleteIconView = UIImageView(image: UIImage(named: "DeleteIcon"))
+    fileprivate let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
+    fileprivate let deleteIconView = UIImageView(image: UIImage(named: "DeleteIcon"))
 
     // MARK: Initializers
 

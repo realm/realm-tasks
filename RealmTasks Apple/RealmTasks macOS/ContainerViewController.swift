@@ -20,8 +20,8 @@ import Cartography
 import Cocoa
 import RealmSwift
 
-private let toolbarTitleViewIdentifier = "TitleView"
-private let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"
+fileprivate let toolbarTitleViewIdentifier = "TitleView"
+fileprivate let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"
 
 class ContainerViewController: NSViewController {
 

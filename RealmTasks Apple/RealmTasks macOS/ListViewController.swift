@@ -23,9 +23,9 @@ import Cartography
 import Cocoa
 import RealmSwift
 
-private let taskCellIdentifier = "TaskCell"
-private let listCellIdentifier = "ListCell"
-private let prototypeCellIdentifier = "PrototypeCell"
+fileprivate let taskCellIdentifier = "TaskCell"
+fileprivate let listCellIdentifier = "ListCell"
+fileprivate let prototypeCellIdentifier = "PrototypeCell"
 
 // FIXME: This type should be split up.
 // swiftlint:disable:next type_body_length
@@ -36,21 +36,21 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
     let list: ListType
 
-    private let tableView = NSTableView()
+    fileprivate let tableView = NSTableView()
 
-    private var notificationToken: NotificationToken?
+    fileprivate var notificationToken: NotificationToken?
 
-    private let prototypeCell = PrototypeCellView(identifier: prototypeCellIdentifier)
+    fileprivate let prototypeCell = PrototypeCellView(identifier: prototypeCellIdentifier)
 
-    private var currentlyEditingCellView: ItemCellView?
+    fileprivate var currentlyEditingCellView: ItemCellView?
 
-    private var currentlyMovingRowView: NSTableRowView?
-    private var currentlyMovingRowSnapshotView: SnapshotView?
+    fileprivate var currentlyMovingRowView: NSTableRowView?
+    fileprivate var currentlyMovingRowSnapshotView: SnapshotView?
 
-    private var animating = false
-    private var needsReloadTableView = true
+    fileprivate var animating = false
+    fileprivate var needsReloadTableView = true
 
-    private var autoscrollTimer: Timer?
+    fileprivate var autoscrollTimer: Timer?
 
     init(list: ListType) {
         self.list = list
@@ -161,7 +161,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }) {
             if let newItemCellView = self.tableView.view(atColumn: 0, row: 0, makeIfNecessary: false) as? ItemCellView {
                 self.beginEditingCell(cellView: newItemCellView)
-                self.tableView.selectRowIndexes(IndexSet(index: 0), byExtendingSelection: false)
+                self.tableView.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
             }
 
             self.animating = false
@@ -445,9 +445,9 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         if let cellView = currentlyEditingCellView {
-            prototypeCell.configure(cellView)
+            prototypeCell.configure(cellView: cellView)
         } else {
-            prototypeCell.configure(list.items[row])
+            prototypeCell.configure(item: list.items[row])
         }
 
         return prototypeCell.fittingHeightForConstrainedWidth(width: tableView.bounds.width)
@@ -561,7 +561,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         animating = true
         NSView.animate(animations: {
             NSAnimationContext.current().allowsImplicitAnimation = false
-            tableView.removeRowsAtIndexes(IndexSet(index: index), withAnimation: .SlideLeft)
+            tableView.removeRows(at: IndexSet(integer: index), withAnimation: .slideLeft)
         }) {
             self.animating = false
             self.reloadTableViewIfNeeded()
@@ -570,7 +570,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
     func cellViewDidChangeText(view: ItemCellView) {
         if view == currentlyEditingCellView {
-            updateTableViewHeightOfRows(indexes: IndexSet(index: tableView.rowForView(view)))
+            updateTableViewHeightOfRows(indexes: IndexSet(integer: tableView.row(for: view)))
             view.window?.toolbar?.validateVisibleItems()
         }
     }
@@ -590,8 +590,8 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
                 } else {
                     item.realm!.delete(item)
 
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+                    DispatchQueue.main.async {
+                        self.tableView.removeRows(at: IndexSet(integer: index), withAnimation: .slideUp)
                     }
                 }
             }

@@ -32,9 +32,9 @@ protocol ItemCellViewDelegate: class {
 
 }
 
-private let iconWidth: CGFloat = 40
-private let iconOffset = iconWidth / 2
-private let swipeThreshold = iconWidth * 2
+fileprivate let iconWidth: CGFloat = 40
+fileprivate let iconOffset = iconWidth / 2
+fileprivate let swipeThreshold = iconWidth * 2
 
 class ItemCellView: NSTableCellView {
 
@@ -91,22 +91,22 @@ class ItemCellView: NSTableCellView {
     let textView: NSTextField = ItemTextField()
     let textViewConstraintGroup = ConstraintGroup()
 
-    private let highlightView = HighlightView()
-    private let overlayView = ColorView()
+    fileprivate let highlightView = HighlightView()
+    fileprivate let overlayView = ColorView()
 
-    private let doneIconView: NSImageView = {
+    fileprivate let doneIconView: NSImageView = {
         let imageView = NSImageView()
         imageView.image = NSImage(named: "DoneIcon")
         return imageView
     }()
 
-    private let deleteIconView: NSImageView = {
+    fileprivate let deleteIconView: NSImageView = {
         let imageView = NSImageView()
         imageView.image = NSImage(named: "DeleteIcon")
         return imageView
     }()
 
-    private var releaseAction: ReleaseAction?
+    fileprivate var releaseAction: ReleaseAction?
 
     required init(identifier: String) {
         super.init(frame: .zero)
@@ -257,7 +257,7 @@ class ItemCellView: NSTableCellView {
 extension ItemCellView: ItemTextFieldDelegate {
 
     func textFieldDidBecomeFirstResponder(textField: NSTextField) {
-        highlightView.hidden = true
+        highlightView.isHidden = true
     }
 
     override func controlTextDidChange(_ obj: Notification) {
@@ -272,7 +272,7 @@ extension ItemCellView: ItemTextFieldDelegate {
     }
 
     // Called when esc key was pressesed
-    override func cancelOperation(sender: AnyObject?) {
+    override func cancelOperation(_ sender: Any?) {
         if editable {
             editable = false
             delegate?.cellViewDidEndEditing(view: self)
@@ -327,7 +327,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
             releaseAction = fractionOfThreshold == 1 ? (translation.x > 0 ? .Complete : .Delete) : nil
 
             if completed {
-                overlayView.hidden = releaseAction == .Complete
+                overlayView.isHidden = releaseAction == .Complete
                 textView.alphaValue = releaseAction == .Complete ? 1 : 0.3
 
                 if contentView.frame.origin.x > 0 {
@@ -335,7 +335,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 }
             } else {
                 overlayView.backgroundColor = .completeGreenBackgroundColor()
-                overlayView.hidden = releaseAction != .Complete
+                overlayView.isHidden = releaseAction != .Complete
 
                 if contentView.frame.origin.x > 0 {
                     textView.strike(fraction: fractionOfThreshold)
@@ -354,11 +354,13 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 }
 
                 completionBlock = {
-                    NSView.animate(duration: {
+                    NSView.animate(duration: 0.2,
+                    timingFunction: CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut),
+                    animations: { 
                         self.completed = !self.completed
-                    }) {
+                    }, completion: { 
                         self.delegate?.cellView(self, didComplete: self.completed)
-                    }
+                    })
                 }
             case .Delete?:
                 animationBlock = {

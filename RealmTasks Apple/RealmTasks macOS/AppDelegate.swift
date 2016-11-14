@@ -24,7 +24,7 @@ let mainStoryboard = NSStoryboard(name: "Main", bundle: nil)
 @NSApplicationMain
 class AppDelegate: NSObject {
 
-    private(set) var mainWindowController: NSWindowController!
+    fileprivate var mainWindowController: NSWindowController!
 
     func logIn() {
         let logInViewController = mainStoryboard.instantiateController(withIdentifier: "LogInViewController") as! LogInViewController
@@ -46,7 +46,7 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        mainWindowController = mainStoryboard.instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
+        mainWindowController = mainStoryboard.instantiateController(withIdentifier: "MainWindowController") as! NSWindowController
         mainWindowController.window?.titleVisibility = .hidden
         mainWindowController.showWindow(nil)
 
@@ -70,14 +70,14 @@ extension AppDelegate {
     func performAuthentication(viewController: NSViewController, username: String, password: String, register: Bool) {
         authenticate(username: username, password: password, register: register) { error in
             // FIXME: Sync API methods callbacks should be executed on main thread
-            dispatch_get_main_queue().asynchronously() {
+            DispatchQueue.main.async {
                 if let error = error {
                     NSApp.presentError(error)
                 } else {
                     viewController.dismiss(nil)
 
                     let containerViewController = self.mainWindowController.contentViewController as! ContainerViewController
-                    containerViewController.showRecentList(nil)
+                    containerViewController.showRecentList(sender: nil)
                 }
             }
         }

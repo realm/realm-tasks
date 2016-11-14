@@ -21,8 +21,8 @@ import Cocoa
 
 class ListCellView: ItemCellView {
 
-    private let countLabel = NSTextField()
-    private let badgeView = ColorView(backgroundColor: NSColor(white: 1, alpha: 0.15))
+    fileprivate let countLabel = NSTextField()
+    fileprivate let badgeView = ColorView(backgroundColor: NSColor(white: 1, alpha: 0.15))
 
     private(set) var acceptsEditing = false {
         didSet {
