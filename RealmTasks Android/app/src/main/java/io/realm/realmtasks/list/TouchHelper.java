@@ -50,7 +50,9 @@ import static android.support.v7.widget.RecyclerView.State;
 
 public class TouchHelper {
 
+    private static final int ANIMATION_DURATION = 150;
     private static final int POINTER_ID_NONE = -1;
+    private static final int ADD_THRESHOLD = 46;
     private static final int ICON_WIDTH = 66;
 
     private final Callback callback;
@@ -410,7 +412,7 @@ public class TouchHelper {
                                 callback.onExit();
                             }
                         });
-                    } else if (dy < logicalDensity * 46) {
+                    } else if (dy < logicalDensity * ADD_THRESHOLD) {
                         callback.onReverted(false);
                     } else {
                         TouchHelper.this.selected.itemView.setAlpha(1f);
@@ -435,7 +437,7 @@ public class TouchHelper {
         private void animateDismissItem(View selectedItemView, float translationX) {
             final TranslateAnimation translateAnimation =
                     new TranslateAnimation(translationX, 0 - selectedItemView.getWidth(), 0, 0);
-            translateAnimation.setDuration(150);
+            translateAnimation.setDuration(ANIMATION_DURATION);
             translateAnimation.setAnimationListener(new DismissAnimationListener(TouchHelper.this.selected));
             ViewCompat.setHasTransientState(selectedItemView, true);
             selectedItemView.startAnimation(translateAnimation);
@@ -444,7 +446,7 @@ public class TouchHelper {
         private void animateCompleteItem(View selectedItemView, float translationX) {
             final TranslateAnimation translateAnimation =
                     new TranslateAnimation(translationX, 0, 0, 0);
-            translateAnimation.setDuration(150);
+            translateAnimation.setDuration(ANIMATION_DURATION);
             translateAnimation.setAnimationListener(new CompleteAnimationListener(TouchHelper.this.selected));
             ViewCompat.setHasTransientState(selectedItemView, true);
             selectedItemView.startAnimation(translateAnimation);
