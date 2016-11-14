@@ -59,7 +59,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private boolean completed;
     private boolean shouldChangeBackgroundColor;
     private boolean shouldChangeTextColor;
-    private double previousFirstLength;
+    private int previousFirstLength;
 
     public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
