@@ -27,7 +27,7 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     var cellPresenter: CellPresenter<Item>!
     var tablePresenter: TablePresenter<Parent>!
 
-    private var notificationToken: NotificationToken?
+    internal var notificationToken: NotificationToken?
 
     var viewController: ViewControllerProtocol! {
         didSet {
@@ -76,19 +76,28 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     // MARK: Notifications
     private func setupNotifications() -> NotificationToken {
         return parent.items.addNotificationBlock { [unowned self] changes in
-            // Do not perform an update if the user is editing a cell at this moment
-            // (The table will be reloaded by the 'end editing' call of the active cell)
-            guard self.cellPresenter.currentlyEditingCell == nil else {
-                return
+            switch changes {
+            case .Initial:
+                // Results are now populated and can be accessed without blocking the UI
+                self.viewController.didUpdateList(reload: true)
+            case .Update(_, let deletions, let insertions, let modifications):
+                // Query results have changed, so apply them to the UITableView
+                self.viewController.tableView.beginUpdates()
+                self.viewController.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
+                self.viewController.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
+                self.viewController.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                self.viewController.tableView.endUpdates()
+                self.viewController.didUpdateList(reload: false)
+            case .Error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError(String(error))
             }
-
-            self.viewController.tableView.reloadData()
         }
     }
 
     // MARK: Onboarding
     lazy var onboardView: OnboardView = {
-        return OnboardView.add(inView: self.viewController.tableView)
+        return .add(inView: self.viewController.tableView)
     }()
 
     func updateOnboardView(animated: Bool = false) {

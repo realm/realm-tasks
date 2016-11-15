@@ -52,7 +52,6 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     // Stored Properties
     let textView = CellTextView()
-    var temporarilyIgnoreSaveChanges = false
     var item: Item! {
         didSet {
             textView.text = item.text
@@ -288,6 +287,9 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                 }
             }
         case .Ended:
+            guard item != nil && !(item as Object).invalidated else {
+                return
+            }
             let animationBlock: () -> ()
             let completionBlock: () -> ()
 
@@ -299,9 +301,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                     self.contentView.frame.origin.x = 0
                 }
                 completionBlock = {
-                    if !(self.item as Object).invalidated {
-                        self.setCompleted(!self.item.completed, animated: true)
-                    }
+                    self.setCompleted(!self.item.completed, animated: true)
                 }
             case .Delete?:
                 animationBlock = {
@@ -323,7 +323,9 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             }
 
             UIView.animateWithDuration(0.2, animations: animationBlock) { _ in
-                completionBlock()
+                if self.item != nil && !(self.item as Object).invalidated {
+                    completionBlock()
+                }
 
                 self.doneIconView.frame.origin.x = 20
                 self.doneIconView.alpha = 0
@@ -348,7 +350,6 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         super.prepareForReuse()
         alpha = 1
         contentView.alpha = 1
-        temporarilyIgnoreSaveChanges = false
         textView.unstrike()
 
         // Force any active gesture recognizers to reset
@@ -399,11 +400,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     func textViewDidEndEditing(textView: UITextView) {
-        if !temporarilyIgnoreSaveChanges && !(item as Object).invalidated {
-            try! item.realm!.write {
-                item.text = textView.text.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
-            }
-        }
+        item.text = textView.text.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
         textView.userInteractionEnabled = false
         presenter.cellDidEndEditing(self)
     }
