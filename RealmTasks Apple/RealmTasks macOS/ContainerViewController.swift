@@ -44,16 +44,14 @@ class ContainerViewController: NSViewController {
     }
 
     @IBAction func showAllLists(sender: AnyObject?) {
-        let rootList = try! Realm().objects(TaskListList.self).first!
-
-        presentViewControllerForList(rootList)
+        let rootList: TaskListList = try! Realm().objects(TaskListList.self).first!
+        presentViewControllerForList(list: rootList)
     }
 
     @IBAction func showRecentList(sender: AnyObject?) {
         // TODO: restore from user defaults
         let list = try! Realm().objects(TaskList.self).first!
-
-        presentViewControllerForList(list)
+        presentViewControllerForList(list: list)
     }
 
     func presentViewControllerForList<ListType: ListPresentable>(list: ListType) where ListType: Object {
@@ -110,7 +108,7 @@ class ContainerViewController: NSViewController {
 
         currentListViewController = listViewController
 
-        updateToolbarForList(list)
+        updateToolbarForList(list: list)
 
         notificationToken?.stop()
         notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in

@@ -354,12 +354,10 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 }
 
                 completionBlock = {
-                    NSView.animate(duration: 0.2,
-                    timingFunction: CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut),
-                    animations: { 
+                    NSView.animate(animations: {
                         self.completed = !self.completed
-                    }, completion: { 
-                        self.delegate?.cellView(self, didComplete: self.completed)
+                    }, completion: {
+                        self.delegate?.cellView(view: self, didComplete: self.completed)
                     })
                 }
             case .Delete?:

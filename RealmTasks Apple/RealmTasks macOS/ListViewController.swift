@@ -447,6 +447,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         if let cellView = currentlyEditingCellView {
             prototypeCell.configure(cellView: cellView)
         } else {
+        
             prototypeCell.configure(item: list.items[row])
         }
 
@@ -476,7 +477,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
 
         if let listCellView = cellView as? ListCellView, !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
-            (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
+            (parent as? ContainerViewController)?.presentViewControllerForList(list: list)
         } else {
             beginEditingCell(cellView: cellView)
         }
@@ -528,20 +529,20 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             destinationIndex = list.items.count - completedCount
         }
 
-        dispatch_after(DispatchTime.now(dispatch_time_t(DISPATCH_TIME_NOW), Int64(0.1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             try! item.realm?.write {
                 item.completed = complete
 
                 if index != destinationIndex {
-                    self.list.items.removeAtIndex(index)
-                    self.list.items.insert(item, atIndex: destinationIndex)
+                    self.list.items.remove(objectAtIndex: index)
+                    self.list.items.insert(item, at: destinationIndex)
                 }
             }
 
             self.animating = true
             NSView.animate(duration: 0.3, animations: {
-                NSAnimationContext.currentContext().allowsImplicitAnimation = false
-                self.tableView.moveRowAtIndex(index, toIndex: destinationIndex)
+                NSAnimationContext.current().allowsImplicitAnimation = false
+                self.tableView.moveRow(at: index, to: destinationIndex)
             }) {
                 self.animating = false
                 self.reloadTableViewIfNeeded()
