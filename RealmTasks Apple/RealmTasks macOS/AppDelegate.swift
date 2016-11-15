@@ -45,7 +45,7 @@ class AppDelegate: NSObject {
 
 extension AppDelegate: NSApplicationDelegate {
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ notification: Notification) {
         mainWindowController = mainStoryboard.instantiateController(withIdentifier: "MainWindowController") as! NSWindowController
         mainWindowController.window?.titleVisibility = .hidden
         mainWindowController.showWindow(nil)
