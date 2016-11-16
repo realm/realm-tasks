@@ -100,6 +100,46 @@ func authenticate(username: String, password: String, register: Bool, callback: 
     }
 }
 
+func openShareURL(_ url: URL) {
+    let token = url.absoluteString
+        .replacingOccurrences(of: "realmtasks://", with: "")
+        .replacingOccurrences(of: "/", with: ":")
+    try! SyncUser.current?.acceptShareToken(token)
+}
+
+private var acceptShareNotificationToken: NotificationToken?
+
+extension SyncUser {
+    fileprivate func acceptShareToken(_ token: String) throws {
+        let realm = try managementRealm()
+        let response = SyncPermissionOfferResponse(token: token)
+        try realm.write {
+            realm.add(response)
+        }
+        acceptShareNotificationToken = realm.objects(SyncPermissionOfferResponse.self).filter("id = %@", response.id).addNotificationBlock { changes in
+            print(changes)
+            let response: SyncPermissionOfferResponse
+            if case let .update(change, _, _, _) = changes, let theResponse = change.first {
+                response = theResponse
+            } else if case let .initial(change) = changes, let theResponse = change.first {
+                response = theResponse
+            } else {
+                return
+            }
+            print(response)
+            guard response.status == .success, let realmURL = response.realmUrl else { return }
+            print(realmURL)
+            let defaultRealm = try! Realm()
+            let lists = defaultRealm.objects(TaskListList.self).first!.items
+            try! defaultRealm.write {
+                let listRef = TaskListReference()
+                listRef.fullServerPath = realmURL.replacingOccurrences(of: "realm://172.20.20.65:9080", with: "")
+                lists.append(listRef)
+            }
+        }
+    }
+}
+
 private extension NSError {
 
     convenience init(error: NSError, description: String?, recoverySuggestion: String?) {

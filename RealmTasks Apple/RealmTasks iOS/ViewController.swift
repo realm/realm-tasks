@@ -16,6 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+// swiftlint:disable file_length
+
 import Cartography
 import RealmSwift
 import UIKit
@@ -66,6 +68,8 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
     private var bottomViewController: UIViewController?
 
     private var listPresenter: ListPresenter<Item, Parent>!
+
+    private var shareOfferNotificationToken: NotificationToken?
 
     // MARK: UI Writes
     func uiWrite(block: () -> Void) {
@@ -378,6 +382,27 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
                 parent: list,
                 colors: UIColor.taskColors()
             )
+        }
+    }
+
+    // MARK: Shake To Share
+
+    override var canBecomeFirstResponder: Bool { return true }
+
+    override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+        guard motion == .motionShake, let taskList = listPresenter.parent as? TaskList else { return }
+        let listID = taskList.realm?.configuration.syncConfiguration?.realmURL.lastPathComponent
+        let syncConfig = Realm.Configuration.defaultConfiguration.syncConfiguration!
+        let rootRealmURL = syncConfig.realmURL.deletingLastPathComponent().deletingLastPathComponent()
+        let listRealmURL = rootRealmURL.appendingPathComponent("\(syncConfig.user.identity!)/\(listID!)")
+        let shareOffer = SyncPermissionOffer(realmURL: listRealmURL.absoluteString, expiresAt: nil, mayRead: true, mayWrite: true, mayManage: true)
+        let managementRealm = try! syncConfig.user.managementRealm()
+        try! managementRealm.write { managementRealm.add(shareOffer) }
+        shareOfferNotificationToken = managementRealm.objects(SyncPermissionOffer.self).filter("id = %@", shareOffer.id).addNotificationBlock { changes in
+            guard case let .update(change, _, _, _) = changes, let offer = change.first, offer.status == .success, let token = offer.token else { return }
+            let url = "realmtasks://" + token.replacingOccurrences(of: ":", with: "/")
+            let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            self.present(activityViewController, animated: true, completion: nil)
         }
     }
 }

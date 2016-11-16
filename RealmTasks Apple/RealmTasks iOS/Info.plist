@@ -42,5 +42,16 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>io.realm.realmtasks</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>realmtasks</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
