@@ -418,7 +418,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 // Mark: Gesture Recognizer Reset
 
 extension UIGestureRecognizer {
-    func reset() {
+    private func reset() {
         enabled = false
         enabled = true
     }
