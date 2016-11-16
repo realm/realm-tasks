@@ -229,15 +229,13 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         case .Began: handlePanBegan()
         case .Changed: handlePanChanged(translation: recognizer.translationInView(self).x)
         case .Ended: handlePanEnded()
-        default:
-            break
+        default: break
         }
     }
 
     private func handlePanBegan() {
         originalDeleteIconCenter = deleteIconView.center
         originalDoneIconCenter = doneIconView.center
-
         releaseAction = nil
     }
 
@@ -291,8 +289,32 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             } else {
                 releaseAction == .Complete ? textView.unstrike() : textView.strike()
             }
+<<<<<<< 9e4ae7ddb562d3737111c661ea3d21c99cabae28
+        case .Ended:
+            guard item != nil && !(item as Object).invalidated else {
+                return
+            }
+            let animationBlock: () -> ()
+            let completionBlock: () -> ()
+
+            // If not deleting, slide it back into the middle
+            // If we are deleting, slide it all the way out of the view
+            switch releaseAction {
+            case .Complete?:
+                animationBlock = {
+                    self.contentView.frame.origin.x = 0
+                }
+                completionBlock = {
+                    self.setCompleted(!self.item.completed, animated: true)
+                }
+            case .Delete?:
+                animationBlock = {
+                    self.alpha = 0
+                    self.contentView.alpha = 0
+=======
         }
     }
+>>>>>>> split handlePan(_:) into distinct functions for each state
 
     private func handlePanEnded() {
         guard item != nil && !(item as Object).invalidated else {
@@ -330,10 +352,17 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             completionBlock = {}
         }
 
+<<<<<<< 9e4ae7ddb562d3737111c661ea3d21c99cabae28
+            UIView.animateWithDuration(0.2, animations: animationBlock) { _ in
+                if self.item != nil && !(self.item as Object).invalidated {
+                    completionBlock()
+                }
+=======
         UIView.animateWithDuration(0.2, animations: animationBlock) { _ in
             if self.item != nil && !(self.item as Object).invalidated {
                 completionBlock()
             }
+>>>>>>> split handlePan(_:) into distinct functions for each state
 
             self.doneIconView.frame.origin.x = 20
             self.doneIconView.alpha = 0
