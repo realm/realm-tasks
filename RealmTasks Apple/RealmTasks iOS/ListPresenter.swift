@@ -60,16 +60,16 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     private var observingText = false
 
     func observeListTitle() {
-        if let parent = parent as? CellPresentable {
-            (parent as! Object).addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
+        if let parent = parent as? TaskList {
+            parent.addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
             viewController.setListTitle(parent.text)
             observingText = true
         }
     }
 
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        if context == &titleKVOContext {
-            viewController.setListTitle((parent as! CellPresentable).text)
+        if context == &titleKVOContext, let parent = parent as? TaskList {
+            viewController.setListTitle(parent.text)
         }
     }
 

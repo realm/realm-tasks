@@ -158,7 +158,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             }
         } else {
             items.realm?.beginWrite()
-            let row = items.filter("completed = false").count
+            let row = listPresenter.parent.uncompletedCount
             items.insert(Item(), atIndex: row)
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
@@ -172,9 +172,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     }
 
     private func navigateToBottomViewController(item: Item) {
-        guard let list = item as? TaskList else { return }
+        guard let list = item as? TaskListReference else { return }
 
-        auxViewController = .Down(.Tasks(list))
+        auxViewController = .Down(.Tasks(list.list))
         bottomViewController = createAuxController()
 
         startMovingToNextViewController(.Down)
@@ -360,13 +360,14 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
         switch listType {
         case .Lists:
-            return ViewController<TaskList, TaskListList>(
+            return ViewController<TaskListReference, TaskListList>(
                 parent: try! Realm().objects(TaskListList.self).first!,
                 colors: UIColor.listColors()
             )
         case .DefaultListTasks:
+            let firstList = try! Realm().objects(TaskListReference.self).first!.list
             return ViewController<Task, TaskList>(
-                parent: try! Realm().objects(TaskList.self).first!,
+                parent: firstList,
                 colors: UIColor.taskColors()
             )
         case .Tasks(let list):
