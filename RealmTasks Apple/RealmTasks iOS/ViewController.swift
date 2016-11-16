@@ -160,10 +160,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             items.realm?.beginWrite()
             let row = items.filter("completed = false").count
             items.insert(Item(), atIndex: row)
-            try! items.realm?.commitWrite(withoutNotifying: [listPresenter.notificationToken!])
             let indexPath = NSIndexPath(forRow: row, inSection: 0)
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
             cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
+            finishUIWrite()
             listPresenter.updateOnboardView(true)
         }
         let textView = cell.textView
@@ -298,7 +298,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
                     return NSIndexPath(forRow: index, inSection: 0)
                 }
                 tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .Automatic)
-                try! items.realm?.commitWrite(withoutNotifying: [listPresenter.notificationToken!])
+                finishUIWrite()
                 vibrate()
             }
             return
@@ -312,10 +312,10 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             return
         }
         // Create new item
-        uiWriteNoUpdateList {
+        uiWrite {
             items.insert(Item(), atIndex: 0)
         }
-        didUpdateList(reload: true)
+        tableView.reloadData()
         if let firstCell = tableView.visibleCells.first as? TableViewCell<Item> {
             firstCell.textView.becomeFirstResponder()
         }
