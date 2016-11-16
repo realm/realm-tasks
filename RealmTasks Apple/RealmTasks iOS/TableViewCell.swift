@@ -27,6 +27,7 @@ import UIKit
 // MARK: Shared Functions
 
 func vibrate() {
+    let isDevice = { return TARGET_OS_SIMULATOR == 0 }()
     if isDevice {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
     }
@@ -37,8 +38,6 @@ func vibrate() {
 private enum ReleaseAction {
     case Complete, Delete
 }
-
-private let isDevice = TARGET_OS_SIMULATOR == 0
 
 private let iconWidth: CGFloat = 60
 
