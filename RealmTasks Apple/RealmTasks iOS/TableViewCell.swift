@@ -350,6 +350,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         return fabs(translation.x) > fabs(translation.y)
     }
 
+    // MARK: Reuse
+
     override func prepareForReuse() {
         super.prepareForReuse()
         alpha = 1
