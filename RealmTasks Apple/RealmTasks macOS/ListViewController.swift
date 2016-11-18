@@ -365,22 +365,46 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     }
 
     private func endEditingCells() {
-        guard editing else {
+        guard
+            let cellView = currentlyEditingCellView,
+            let (_, index) = findItemForCellView(cellView)
+        else {
             return
         }
 
+        var item = list.items[index]
+
+        if cellView.text != item.text || cellView.text.isEmpty {
+            if !cellView.text.isEmpty {
+                item.text = cellView.text
+            } else {
+                item.realm!.delete(item)
+
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+                }
+            }
+        }
+
+        currentlyEditingCellView = nil
+
         view.window?.makeFirstResponder(self)
+        view.window?.update()
+
+        commitUIWrite()
 
         NSView.animate(animations: {
             tableView.enumerateAvailableRowViewsUsingBlock { _, row in
                 if let view = tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
-                    view.isUserInteractionEnabled = true
                 }
             }
         }) {
-            self.currentlyEditingCellView = nil
-            self.view.window?.update()
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+                    view.isUserInteractionEnabled = true
+                }
+            }
         }
     }
 
@@ -485,7 +509,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         if let listCellView = cellView as? ListCellView where !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
             (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
-        } else {
+        } else if cellView.isUserInteractionEnabled {
             beginEditingCell(cellView)
         }
     }
@@ -573,34 +597,15 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     func cellViewDidChangeText(view: ItemCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
-            view.window?.toolbar?.validateVisibleItems()
+            view.window?.update()
         }
     }
 
     func cellViewDidEndEditing(view: ItemCellView) {
-        guard let (tmpItem, index) = findItemForCellView(view) else {
-            return
-        }
-
-        if view.text != tmpItem.text || view.text.isEmpty {
-            // Workaround for tuple mutability
-            var item = tmpItem
-
-            if !view.text.isEmpty {
-                item.text = view.text
-            } else {
-                item.realm!.delete(item)
-
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
-                }
-            }
-        }
-
-        commitUIWrite()
+        endEditingCells()
 
         // In case if Return key was pressed we need to reset table view selection
-        tableView.selectRowIndexes(NSIndexSet(), byExtendingSelection: false)
+        tableView.deselectAll(nil)
     }
 
     private func findItemForCellView(view: NSView) -> (item: ItemType, index: Int)? {
