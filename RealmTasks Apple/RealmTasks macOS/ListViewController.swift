@@ -374,16 +374,11 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         var item = list.items[index]
 
-        if cellView.text != item.text || cellView.text.isEmpty {
-            if !cellView.text.isEmpty {
-                item.text = cellView.text
-            } else {
-                item.realm!.delete(item)
-
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
-                }
-            }
+        if cellView.text.isEmpty {
+            item.realm!.delete(item)
+            tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+        } else if cellView.text != item.text {
+            item.text = cellView.text
         }
 
         currentlyEditingCellView = nil
