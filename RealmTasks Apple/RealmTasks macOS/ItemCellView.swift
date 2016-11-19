@@ -273,6 +273,8 @@ extension ItemCellView: ItemTextFieldDelegate {
 
     // Called when esc key was pressesed
     override func cancelOperation(sender: AnyObject?) {
+        textView.abortEditing()
+
         if editable {
             editable = false
             delegate?.cellViewDidEndEditing(self)

@@ -47,9 +47,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     private var currentlyMovingRowView: NSTableRowView?
     private var currentlyMovingRowSnapshotView: SnapshotView?
 
-    private var animating = false
-    private var needsReloadTableView = true
-
     private var autoscrollTimer: NSTimer?
 
     init(list: ListType) {
@@ -103,18 +100,18 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
     private func setupNotifications() {
         notificationToken = list.items.addNotificationBlock { [unowned self] changes in
-            self.needsReloadTableView = true
-
-            if !self.reordering && !self.editing && !self.animating {
-                self.reloadTableViewIfNeeded()
+            switch changes {
+                case .Initial:
+                    self.tableView.reloadData()
+                case .Update(_, let deletions, let insertions, let modifications):
+                    self.tableView.beginUpdates()
+                    self.tableView.removeRowsAtIndexes(deletions.toIndexSet(), withAnimation: .EffectGap)
+                    self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectGap)
+                    self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
+                    self.tableView.endUpdates()
+                case .Error(let error):
+                    fatalError(String(error))
             }
-        }
-    }
-
-    private func reloadTableViewIfNeeded() {
-        if needsReloadTableView {
-            tableView.reloadData()
-            needsReloadTableView = false
         }
     }
 
@@ -141,16 +138,31 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
     }
 
+    // MARK: UI Writes
+
+    private func beginUIWrite() {
+        list.realm?.beginWrite()
+    }
+
+    private func commitUIWrite() {
+        try! list.realm?.commitWrite(withoutNotifying: [notificationToken!])
+    }
+
+    func uiWrite(@noescape block: () -> ()) {
+        beginUIWrite()
+        block()
+        commitUIWrite()
+    }
+
     // MARK: Actions
 
     @IBAction func newItem(sender: AnyObject?) {
         endEditingCells()
 
-        try! list.realm?.write {
+        uiWrite {
             list.items.insert(ItemType(), atIndex: 0)
         }
 
-        animating = true
         NSView.animate(animations: {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             tableView.insertRowsAtIndexes(NSIndexSet(index: 0), withAnimation: .EffectGap)
@@ -159,8 +171,6 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                 self.beginEditingCell(newItemCellView)
                 self.tableView.selectRowIndexes(NSIndexSet(index: 0), byExtendingSelection: false)
             }
-
-            self.animating = false
         }
     }
 
@@ -206,10 +216,12 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         currentlyMovingRowSnapshotView?.frame.origin.y = view.convertPoint(point, fromView: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
         view.addSubview(currentlyMovingRowSnapshotView!)
 
-        NSView.animate() {
+        NSView.animate {
             let frame = currentlyMovingRowSnapshotView!.frame
             currentlyMovingRowSnapshotView!.frame = frame.insetBy(dx: -frame.width * 0.02, dy: -frame.height * 0.02)
         }
+
+        beginUIWrite()
     }
 
     private func handleReorderingForScreenPoint(point: NSPoint) {
@@ -235,11 +247,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         if canMoveRow(sourceRow, toRow: destinationRow) {
-            try! list.realm?.write {
-                list.items.move(from: sourceRow, to: destinationRow)
-            }
+            list.items.move(from: sourceRow, to: destinationRow)
 
-            NSView.animate() {
+            NSView.animate {
                 // Disable implicit animations because tableView animates reordering via animator proxy
                 NSAnimationContext.currentContext().allowsImplicitAnimation = false
                 tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
@@ -276,8 +286,9 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             }
 
             self.updateColors()
-            self.reloadTableViewIfNeeded()
         }
+
+        commitUIWrite()
     }
 
     private dynamic func handlePressGestureRecognizer(recognizer: NSPressGestureRecognizer) {
@@ -349,26 +360,46 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         view.window?.makeFirstResponder(cellView.textView)
 
         currentlyEditingCellView = cellView
+
+        beginUIWrite()
     }
 
     private func endEditingCells() {
-        guard editing else {
+        guard
+            let cellView = currentlyEditingCellView,
+            let (_, index) = findItemForCellView(cellView)
+        else {
             return
         }
 
+        var item = list.items[index]
+
+        if cellView.text.isEmpty {
+            item.realm!.delete(item)
+            tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+        } else if cellView.text != item.text {
+            item.text = cellView.text
+        }
+
+        currentlyEditingCellView = nil
+
         view.window?.makeFirstResponder(self)
+        view.window?.update()
+
+        commitUIWrite()
 
         NSView.animate(animations: {
             tableView.enumerateAvailableRowViewsUsingBlock { _, row in
                 if let view = tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
-                    view.isUserInteractionEnabled = true
                 }
             }
         }) {
-            self.currentlyEditingCellView = nil
-            self.view.window?.update()
-            self.reloadTableViewIfNeeded()
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+                    view.isUserInteractionEnabled = true
+                }
+            }
         }
     }
 
@@ -473,7 +504,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
 
         if let listCellView = cellView as? ListCellView where !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
             (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
-        } else {
+        } else if cellView.isUserInteractionEnabled {
             beginEditingCell(cellView)
         }
     }
@@ -490,7 +521,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ItemCellView {
-                NSView.animate() {
+                NSView.animate {
                     cellView.backgroundColor = colorForRow(row)
                 }
             }
@@ -525,7 +556,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-            try! item.realm?.write {
+            self.uiWrite {
                 item.completed = complete
 
                 if index != destinationIndex {
@@ -534,13 +565,11 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
                 }
             }
 
-            self.animating = true
-            NSView.animate(duration: 0.3, animations: {
+            NSView.animate(animations: {
                 NSAnimationContext.currentContext().allowsImplicitAnimation = false
                 self.tableView.moveRowAtIndex(index, toIndex: destinationIndex)
             }) {
-                self.animating = false
-                self.reloadTableViewIfNeeded()
+                self.updateColors()
             }
         }
     }
@@ -550,51 +579,28 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
-        try! list.realm?.write {
+        uiWrite {
             list.realm?.delete(item)
         }
 
-        animating = true
-        NSView.animate(animations: {
+        NSView.animate {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false
             tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
-        }) {
-            self.animating = false
-            self.reloadTableViewIfNeeded()
         }
     }
 
     func cellViewDidChangeText(view: ItemCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
-            view.window?.toolbar?.validateVisibleItems()
+            view.window?.update()
         }
     }
 
     func cellViewDidEndEditing(view: ItemCellView) {
-        guard let (tmpItem, index) = findItemForCellView(view) else {
-            return
-        }
-
-        if view.text != tmpItem.text || view.text.isEmpty {
-            // Workaround for tuple mutability
-            var item = tmpItem
-
-            try! item.realm?.write {
-                if !view.text.isEmpty {
-                    item.text = view.text
-                } else {
-                    item.realm!.delete(item)
-
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
-                    }
-                }
-            }
-        }
+        endEditingCells()
 
         // In case if Return key was pressed we need to reset table view selection
-        tableView.selectRowIndexes(NSIndexSet(), byExtendingSelection: false)
+        tableView.deselectAll(nil)
     }
 
     private func findItemForCellView(view: NSView) -> (item: ItemType, index: Int)? {
@@ -662,6 +668,16 @@ private final class SnapshotView: NSView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+}
+
+// MARK: Private Extensions
+
+private extension CollectionType where Generator.Element == Int {
+
+    func toIndexSet() -> NSIndexSet {
+        return reduce(NSMutableIndexSet()) { $0.addIndex($1); return $0 }
     }
 
 }
