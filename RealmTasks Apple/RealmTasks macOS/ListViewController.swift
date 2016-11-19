@@ -159,7 +159,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
     @IBAction func newItem(sender: AnyObject?) {
         endEditingCells()
 
-        uiWrite() {
+        uiWrite {
             list.items.insert(ItemType(), atIndex: 0)
         }
 
@@ -216,7 +216,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         currentlyMovingRowSnapshotView?.frame.origin.y = view.convertPoint(point, fromView: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
         view.addSubview(currentlyMovingRowSnapshotView!)
 
-        NSView.animate() {
+        NSView.animate {
             let frame = currentlyMovingRowSnapshotView!.frame
             currentlyMovingRowSnapshotView!.frame = frame.insetBy(dx: -frame.width * 0.02, dy: -frame.height * 0.02)
         }
@@ -249,7 +249,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         if canMoveRow(sourceRow, toRow: destinationRow) {
             list.items.move(from: sourceRow, to: destinationRow)
 
-            NSView.animate() {
+            NSView.animate {
                 // Disable implicit animations because tableView animates reordering via animator proxy
                 NSAnimationContext.currentContext().allowsImplicitAnimation = false
                 tableView.moveRowAtIndex(sourceRow, toIndex: destinationRow)
@@ -526,7 +526,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         tableView.enumerateAvailableRowViewsUsingBlock { rowView, row in
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ItemCellView {
-                NSView.animate() {
+                NSView.animate {
                     cellView.backgroundColor = colorForRow(row)
                 }
             }
@@ -561,7 +561,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         }
 
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-            self.uiWrite() {
+            self.uiWrite {
                 item.completed = complete
 
                 if index != destinationIndex {
@@ -584,11 +584,11 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
             return
         }
 
-        uiWrite() {
+        uiWrite {
             list.realm?.delete(item)
         }
 
-        NSView.animate() {
+        NSView.animate {
             NSAnimationContext.currentContext().allowsImplicitAnimation = false
             tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
         }
