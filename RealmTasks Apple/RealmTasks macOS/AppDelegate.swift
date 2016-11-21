@@ -41,6 +41,32 @@ class AppDelegate: NSObject {
         mainWindowController.contentViewController?.presentViewControllerAsSheet(registerViewController, preventApplicationTermination: false)
     }
 
+    @IBAction func logOut(sender: AnyObject? = nil) {
+        guard isDefaultRealmConfigured() else {
+            return
+        }
+
+        let containerViewController = mainWindowController.contentViewController as! ContainerViewController
+        containerViewController.dismissAllViewControllers()
+
+        resetDefaultRealm()
+
+        logIn()
+    }
+
+    private func performAuthentication(viewController: NSViewController, username: String, password: String, register: Bool) {
+        authenticate(username: username, password: password, register: register) { error in
+            if let error = error {
+                NSApp.presentError(error)
+            } else {
+                viewController.dismissController(nil)
+
+                let containerViewController = self.mainWindowController.contentViewController as! ContainerViewController
+                containerViewController.showRecentList(nil)
+            }
+        }
+    }
+
 }
 
 extension AppDelegate: NSApplicationDelegate {
@@ -49,6 +75,10 @@ extension AppDelegate: NSApplicationDelegate {
         mainWindowController = mainStoryboard.instantiateControllerWithIdentifier("MainWindowController") as! NSWindowController
         mainWindowController.window?.titleVisibility = .Hidden
         mainWindowController.showWindow(nil)
+
+        setAuthenticationFailureCallback {
+            self.logOut()
+        }
 
         if configureDefaultRealm() {
             let containerViewController = mainWindowController.contentViewController as! ContainerViewController
@@ -64,24 +94,6 @@ extension AppDelegate: NSApplicationDelegate {
         return true
     }
 
-}
-
-extension AppDelegate {
-    func performAuthentication(viewController: NSViewController, username: String, password: String, register: Bool) {
-        authenticate(username: username, password: password, register: register) { error in
-            // FIXME: Sync API methods callbacks should be executed on main thread
-            dispatch_async(dispatch_get_main_queue()) {
-                if let error = error {
-                    NSApp.presentError(error)
-                } else {
-                    viewController.dismissController(nil)
-
-                    let containerViewController = self.mainWindowController.contentViewController as! ContainerViewController
-                    containerViewController.showRecentList(nil)
-                }
-            }
-        }
-    }
 }
 
 extension AppDelegate: LogInViewControllerDelegate {
