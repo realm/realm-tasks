@@ -437,7 +437,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
     // MARK: NSTableViewDataSource
 
-    private func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+    internal func numberOfRows(in tableView: NSTableView) -> Int {
         return list.items.count
     }
 
