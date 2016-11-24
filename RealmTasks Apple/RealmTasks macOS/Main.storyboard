@@ -403,14 +403,14 @@
                                     <size key="minSize" width="18" height="18"/>
                                     <size key="maxSize" width="18" height="18"/>
                                     <connections>
-                                        <action selector="showAllLists:" target="tRP-hs-BBi" id="aev-UH-Jnm"/>
+                                        <action selector="showAllListsWithSender:" target="tRP-hs-BBi" id="wHv-iS-fNx"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New" paletteLabel="New" toolTip="New" tag="-1" image="new" id="4CH-Dy-gYb">
                                     <size key="minSize" width="18" height="18"/>
                                     <size key="maxSize" width="18" height="18"/>
                                     <connections>
-                                        <action selector="newItem:" target="tRP-hs-BBi" id="Xf6-Bv-6Kr"/>
+                                        <action selector="newItemWithSender:" target="tRP-hs-BBi" id="oOt-N6-IJb"/>
                                     </connections>
                                 </toolbarItem>
                             </allowedToolbarItems>
