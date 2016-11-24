@@ -47,10 +47,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
     fileprivate var currentlyMovingRowView: NSTableRowView?
     fileprivate var currentlyMovingRowSnapshotView: SnapshotView?
 
-    fileprivate var animating = false
-    fileprivate var needsReloadTableView = true
-
-    fileprivate var autoscrollTimer: Timer?
+    private var autoscrollTimer: NSTimer?
 
     init(list: ListType) {
         self.list = list
@@ -107,18 +104,18 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
     private func setupNotifications() {
         notificationToken = list.items.addNotificationBlock { [unowned self] changes in
-            self.needsReloadTableView = true
-
-            if !self.reordering && !self.editing && !self.animating {
-                self.reloadTableViewIfNeeded()
+            switch changes {
+                case .Initial:
+                    self.tableView.reloadData()
+                case .Update(_, let deletions, let insertions, let modifications):
+                    self.tableView.beginUpdates()
+                    self.tableView.removeRowsAtIndexes(deletions.toIndexSet(), withAnimation: .EffectGap)
+                    self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectGap)
+                    self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
+                    self.tableView.endUpdates()
+                case .Error(let error):
+                    fatalError(String(error))
             }
-        }
-    }
-
-    private func reloadTableViewIfNeeded() {
-        if needsReloadTableView {
-            tableView.reloadData()
-            needsReloadTableView = false
         }
     }
 
@@ -145,16 +142,31 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
     }
 
+    // MARK: UI Writes
+
+    private func beginUIWrite() {
+        list.realm?.beginWrite()
+    }
+
+    private func commitUIWrite() {
+        try! list.realm?.commitWrite(withoutNotifying: [notificationToken!])
+    }
+
+    func uiWrite(@noescape block: () -> ()) {
+        beginUIWrite()
+        block()
+        commitUIWrite()
+    }
+
     // MARK: Actions
 
     @IBAction func newItem(sender: AnyObject?) {
         endEditingCells()
 
-        try! list.realm?.write {
+        uiWrite {
             list.items.insert(ItemType(), at: 0)
         }
 
-        animating = true
         NSView.animate(animations: {
             NSAnimationContext.current().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             tableView.insertRows(at: NSIndexSet(index: 0) as IndexSet, withAnimation: .effectGap)
@@ -163,8 +175,6 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
                 self.beginEditingCell(cellView: newItemCellView)
                 self.tableView.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
             }
-
-            self.animating = false
         }
     }
 
@@ -210,10 +220,12 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         currentlyMovingRowSnapshotView?.frame.origin.y = view.convert(point, from: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
         view.addSubview(currentlyMovingRowSnapshotView!)
 
-        NSView.animate() {
+        NSView.animate {
             let frame = currentlyMovingRowSnapshotView!.frame
             currentlyMovingRowSnapshotView!.frame = frame.insetBy(dx: -frame.width * 0.02, dy: -frame.height * 0.02)
         }
+
+        beginUIWrite()
     }
 
     private func handleReorderingForScreenPoint(point: NSPoint) {
@@ -238,12 +250,10 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             destinationRow = tableView.row(at: pointInTableView)
         }
 
-        if canMoveRow(sourceRow: sourceRow, toRow: destinationRow) {
-            try! list.realm?.write {
-                list.items.move(from: sourceRow, to: destinationRow)
-            }
+        if canMoveRow(sourceRow, toRow: destinationRow) {
+            list.items.move(from: sourceRow, to: destinationRow)
 
-            NSView.animate() {
+            NSView.animate {
                 // Disable implicit animations because tableView animates reordering via animator proxy
                 NSAnimationContext.current().allowsImplicitAnimation = false
                 tableView.moveRow(at: sourceRow, to: destinationRow)
@@ -280,8 +290,9 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             }
 
             self.updateColors()
-            self.reloadTableViewIfNeeded()
         }
+
+        commitUIWrite()
     }
 
     private dynamic func handlePressGestureRecognizer(recognizer: NSPressGestureRecognizer) {
@@ -353,26 +364,46 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         view.window?.makeFirstResponder(cellView.textView)
 
         currentlyEditingCellView = cellView
+
+        beginUIWrite()
     }
 
     private func endEditingCells() {
-        guard editing else {
+        guard
+            let cellView = currentlyEditingCellView,
+            let (_, index) = findItemForCellView(cellView)
+        else {
             return
         }
 
+        var item = list.items[index]
+
+        if cellView.text.isEmpty {
+            item.realm!.delete(item)
+            tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+        } else if cellView.text != item.text {
+            item.text = cellView.text
+        }
+
+        currentlyEditingCellView = nil
+
         view.window?.makeFirstResponder(self)
+        view.window?.update()
+
+        commitUIWrite()
 
         NSView.animate(animations: {
             tableView.enumerateAvailableRowViews { _, row in
                 if let view = tableView.view(atColumn: 0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.alphaValue = 1
-                    view.isUserInteractionEnabled = true
                 }
             }
         }) {
-            self.currentlyEditingCellView = nil
-            self.view.window?.update()
-            self.reloadTableViewIfNeeded()
+            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
+                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+                    view.isUserInteractionEnabled = true
+                }
+            }
         }
     }
 
@@ -476,10 +507,10 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             return
         }
 
-        if let listCellView = cellView as? ListCellView, !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
-            (parent as? ContainerViewController)?.presentViewControllerForList(list: list)
-        } else {
-            beginEditingCell(cellView: cellView)
+        if let listCellView = cellView as? ListCellView where !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
+            (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
+        } else if cellView.isUserInteractionEnabled {
+            beginEditingCell(cellView)
         }
     }
 
@@ -495,7 +526,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         tableView.enumerateAvailableRowViews { rowView, row in
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ItemCellView {
-                NSView.animate() {
+                NSView.animate {
                     cellView.backgroundColor = colorForRow(row: row)
                 }
             }
@@ -530,7 +561,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            try! item.realm?.write {
+            self.uiWrite {
                 item.completed = complete
 
                 if index != destinationIndex {
@@ -539,13 +570,11 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
                 }
             }
 
-            self.animating = true
             NSView.animate(duration: 0.3, animations: {
                 NSAnimationContext.current().allowsImplicitAnimation = false
                 self.tableView.moveRow(at: index, to: destinationIndex)
             }) {
-                self.animating = false
-                self.reloadTableViewIfNeeded()
+                self.updateColors()
             }
         }
     }
@@ -555,51 +584,28 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             return
         }
 
-        try! list.realm?.write {
+        uiWrite {
             list.realm?.delete(item)
         }
 
-        animating = true
-        NSView.animate(animations: {
-            NSAnimationContext.current().allowsImplicitAnimation = false
-            tableView.removeRows(at: IndexSet(integer: index), withAnimation: .slideLeft)
-        }) {
-            self.animating = false
-            self.reloadTableViewIfNeeded()
+        NSView.animate {
+            NSAnimationContext.currentContext().allowsImplicitAnimation = false
+            tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
         }
     }
 
     func cellViewDidChangeText(view: ItemCellView) {
         if view == currentlyEditingCellView {
-            updateTableViewHeightOfRows(indexes: IndexSet(integer: tableView.row(for: view)))
-            view.window?.toolbar?.validateVisibleItems()
+            updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
+            view.window?.update()
         }
     }
 
     func cellViewDidEndEditing(view: ItemCellView) {
-        guard let (tmpItem, index) = findItemForCellView(view: view) else {
-            return
-        }
-
-        if view.text != tmpItem.text || view.text.isEmpty {
-            // Workaround for tuple mutability
-            var item = tmpItem
-
-            try! item.realm?.write {
-                if !view.text.isEmpty {
-                    item.text = view.text
-                } else {
-                    item.realm!.delete(item)
-
-                    DispatchQueue.main.async {
-                        self.tableView.removeRows(at: IndexSet(integer: index), withAnimation: .slideUp)
-                    }
-                }
-            }
-        }
+        endEditingCells()
 
         // In case if Return key was pressed we need to reset table view selection
-        tableView.selectRowIndexes(IndexSet(), byExtendingSelection: false)
+        tableView.deselectAll(nil)
     }
 
     private func findItemForCellView(view: NSView) -> (item: ItemType, index: Int)? {
@@ -667,6 +673,16 @@ private final class SnapshotView: NSView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+}
+
+// MARK: Private Extensions
+
+private extension CollectionType where Generator.Element == Int {
+
+    func toIndexSet() -> NSIndexSet {
+        return reduce(NSMutableIndexSet()) { $0.addIndex($1); return $0 }
     }
 
 }

@@ -48,7 +48,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             authenticate(username: username, password: password, register: returnCode == .Register) { error in
                 if let error = error {
-                    self.presentError(error: error)
+                    self.presentError(error: error as NSError)
                 } else {
                     self.window?.rootViewController = ContainerViewController()
                 }

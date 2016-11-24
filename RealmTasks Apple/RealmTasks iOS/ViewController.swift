@@ -67,6 +67,28 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
 
     private var listPresenter: ListPresenter<Item, Parent>!
 
+    // MARK: UI Writes
+
+    func uiWrite( block: () -> ()) {
+        uiWriteNoUpdateList(block: block)
+        didUpdateList(reload: false)
+    }
+
+    func uiWriteNoUpdateList( block: () -> ()) {
+        items.realm?.beginWrite()
+        block()
+        commitUIWrite()
+    }
+
+    func finishUIWrite() {
+        commitUIWrite()
+        didUpdateList(reload: false)
+    }
+
+    private func commitUIWrite() {
+        _ = try? items.realm?.commitWrite(withoutNotifying: [listPresenter.notificationToken!])
+    }
+
     // MARK: View Lifecycle
 
     init(parent: Parent, colors: [UIColor]) {
@@ -139,15 +161,14 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
                 return
             }
         } else {
-            var row: Int = 0
-            try! items.realm?.write {
-                row = items.filter("completed = false").count
-                items.insert(Item(), at: row)
-            }
+            items.realm?.beginWrite()
+            let row = items.filter("completed = false").count
+            items.insert(Item(), at: row)
             let indexPath = IndexPath(row: row, section: 0)
-            tableView.reloadData()
-            listPresenter.updateOnboardView(animated: true)
+            tableView.insertRows(at: [indexPath], with: .automatic)
             cell = tableView.cellForRow(at: indexPath) as! TableViewCell<Item>
+            finishUIWrite()
+            listPresenter.updateOnboardView(animated: true)
         }
         let textView = cell.textView
         textView.isUserInteractionEnabled = !textView.isUserInteractionEnabled
@@ -238,16 +259,11 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         let cellHeight = tableView.rowHeight
 
         if distancePulledDown <= tableView.rowHeight {
-
             listPresenter.tablePresenter
                 .adjustPlaceholder(state: .pullToCreate(distance: distancePulledDown))
-
             listPresenter.setOnboardAlpha(alpha: max(0, 1 - (distancePulledDown / cellHeight)))
-
         } else if distancePulledDown <= tableView.rowHeight * 2 {
-
             listPresenter.tablePresenter.adjustPlaceholder(state: .releaseToCreate)
-
         } else if case .Up(_) = auxViewController! {
             if topViewController === parent?.childViewControllers.last { return }
             if topViewController == nil {
@@ -271,15 +287,23 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
             if bottomViewController === parent?.childViewControllers.last {
                 finishMovingToNextViewController(direction: .Down)
             } else {
-                try! items.realm?.write {
-                    let itemsToDelete = items.filter("completed = true")
-                    let numberOfItemsToDelete = itemsToDelete.count
-                    guard numberOfItemsToDelete != 0 else { return }
-
-                    items.realm?.delete(itemsToDelete)
-
-                    vibrate()
+                items.realm?.beginWrite()
+                let itemsToDelete = items.filter("completed = true")
+                let numberOfItemsToDelete = itemsToDelete.count
+                guard numberOfItemsToDelete != 0 else {
+                    items.realm?.cancelWrite()
+                    return
                 }
+
+                items.realm?.delete(itemsToDelete)
+
+                let startingIndex = items.count
+                let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
+                    return IndexPath(row: index, section: 0)
+                }
+                tableView.deleteRows(at: indexPathsToDelete, with: .automatic)
+                finishUIWrite()
+                vibrate()
             }
             return
         }
@@ -292,21 +316,21 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
             return
         }
         // Create new item
-        try! items.realm?.write {
+        uiWrite {
             items.insert(Item(), at: 0)
         }
         tableView.reloadData()
-
         if let firstCell = tableView.visibleCells.first as? TableViewCell<Item> {
             firstCell.textView.becomeFirstResponder()
         }
     }
 
     // MARK: ViewControllerProtocol
-    func didUpdateList() {
+
+    func didUpdateList(reload: Bool) {
         listPresenter.tablePresenter.updateColors()
         listPresenter.updateOnboardView()
-        tableView.reloadData()
+        if reload { tableView.reloadData() }
     }
 
     func setTopConstraintTo(constant: CGFloat) {

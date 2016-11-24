@@ -39,7 +39,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
             items.realm?.delete(item)
             viewController.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .left)
-            viewController.didUpdateList()
+            viewController.didUpdateList(reload: true)
         }
     }
 
@@ -62,7 +62,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
             items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
             viewController.tableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
-            viewController.didUpdateList()
+            viewController.didUpdateList(reload: false)
         }
     }
 
@@ -78,6 +78,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
     private(set) var currentlyEditingIndexPath: IndexPath?
 
     func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
+        items.realm?.beginWrite()
         currentlyEditingCell = editingCell
         let tableView = viewController.tableView
 
@@ -115,17 +116,12 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         }
 
         let item = editingCell.item
-        guard !(item as! Object).isInvalidated else {
-            tableView.reloadData()
-            return
-        }
         if (item?.text.isEmpty)! {
-            try! item?.realm?.write {
-                item?.realm!.delete(item!)
-            }
+            let indexPath = IndexPath(row: items.index(of: item!)!, section: 0)
+            item?.realm!.delete(item!)
+            viewController.tableView.deleteRows(at: [indexPath], with: .top)
         }
-
-        viewController.didUpdateList()
+        viewController.finishUIWrite()
     }
 
     func cellDidChangeText(editingCell: TableViewCell<Item>) {

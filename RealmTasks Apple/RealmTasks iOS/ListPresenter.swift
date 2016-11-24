@@ -27,7 +27,7 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
     var cellPresenter: CellPresenter<Item>!
     var tablePresenter: TablePresenter<Parent>!
 
-    private var notificationToken: NotificationToken?
+    internal var notificationToken: NotificationToken?
 
     var viewController: ViewControllerProtocol! {
         didSet {
@@ -76,19 +76,28 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
     // MARK: Notifications
     private func setupNotifications() -> NotificationToken {
         return parent.items.addNotificationBlock { [unowned self] changes in
-            // Do not perform an update if the user is editing a cell at this moment
-            // (The table will be reloaded by the 'end editing' call of the active cell)
-            guard self.cellPresenter.currentlyEditingCell == nil else {
-                return
+            switch changes {
+            case .initial:
+                // Results are now populated and can be accessed without blocking the UI
+                self.viewController.didUpdateList(reload: true)
+            case .update(_, let deletions, let insertions, let modifications):
+                // Query results have changed, so apply them to the UITableView
+                self.viewController.tableView.beginUpdates()
+                self.viewController.tableView.insertRows(at: insertions.map { IndexPath(row: $0, section: 0) }, with: .automatic)
+                self.viewController.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0) }, with: .automatic)
+                self.viewController.tableView.reloadRows(at: modifications.map { IndexPath(row: $0, section: 0) }, with: .none)
+                self.viewController.tableView.endUpdates()
+                self.viewController.didUpdateList(reload: false)
+            case .error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError(String(describing: error))
             }
-
-            self.viewController.tableView.reloadData()
         }
     }
 
     // MARK: Onboarding
     lazy var onboardView: OnboardView = {
-        return OnboardView.add(inView: self.viewController.tableView)
+        return .add(inView: self.viewController.tableView)
     }()
 
     func updateOnboardView(animated: Bool = false) {

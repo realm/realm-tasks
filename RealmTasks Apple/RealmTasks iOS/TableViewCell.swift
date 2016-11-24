@@ -27,6 +27,7 @@ import UIKit
 // MARK: Shared Functions
 
 func vibrate() {
+    let isDevice = { return TARGET_OS_SIMULATOR == 0 }()
     if isDevice {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
     }
@@ -37,8 +38,6 @@ func vibrate() {
 private enum ReleaseAction {
     case Complete, Delete
 }
-
-private let isDevice = TARGET_OS_SIMULATOR == 0
 
 private let iconWidth: CGFloat = 60
 
@@ -52,7 +51,6 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
 
     // Stored Properties
     let textView = CellTextView()
-    var temporarilyIgnoreSaveChanges = false
     var item: Item! {
         didSet {
             textView.text = item.text
@@ -225,114 +223,122 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         addGestureRecognizer(recognizer)
     }
 
-    // FIXME: This could easily be refactored to avoid such a high CC.
-    // swiftlint:disable:next cyclomatic_complexity
     func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
-        case .began:
-            originalDeleteIconCenter = deleteIconView.center
-            originalDoneIconCenter = doneIconView.center
-
-            releaseAction = nil
-        case .changed:
-            let translation = recognizer.translation(in: self)
-
-            if !item.isCompletable && translation.x > 0 {
-                releaseAction = nil
-                return
-            }
-
-            let x: CGFloat
-            // Slow down translation
-            if translation.x < 0 {
-                x = translation.x / 2
-                if x < -iconWidth {
-                    deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x + iconWidth + x, y: originalDeleteIconCenter.y)
-                }
-            } else if translation.x > iconWidth {
-                let offset = (translation.x - iconWidth) / 3
-                doneIconView.center = CGPoint(x: originalDoneIconCenter.x + offset, y: originalDoneIconCenter.y)
-                x = iconWidth + offset
-            } else {
-                x = translation.x
-            }
-
-            contentView.frame.origin.x = x
-
-            let fractionOfThreshold = min(1, Double(abs(x) / iconWidth))
-            releaseAction = fractionOfThreshold >= 1 ? (x > 0 ? .Complete : .Delete) : nil
-
-            if x > 0 {
-                doneIconView.alpha = CGFloat(fractionOfThreshold)
-            } else {
-                deleteIconView.alpha = CGFloat(fractionOfThreshold)
-            }
-
-            if !(item as Object).isInvalidated && !item.completed {
-                overlayView.backgroundColor = .completeGreenBackgroundColor()
-                overlayView.isHidden = releaseAction != .Complete
-                if contentView.frame.origin.x > 0 {
-                    textView.unstrike()
-                    textView.strike(fraction: fractionOfThreshold)
-                } else {
-                    releaseAction == .Complete ? textView.strike() : textView.unstrike()
-                }
-            } else {
-                overlayView.isHidden = releaseAction == .Complete
-                textView.alpha = releaseAction == .Complete ? 1 : 0.3
-                if contentView.frame.origin.x > 0 {
-                    textView.unstrike()
-                    textView.strike(fraction: 1 - fractionOfThreshold)
-                } else {
-                    releaseAction == .Complete ? textView.unstrike() : textView.strike()
-                }
-            }
-        case .ended:
-            let animationBlock: () -> ()
-            let completionBlock: () -> ()
-
-            // If not deleting, slide it back into the middle
-            // If we are deleting, slide it all the way out of the view
-            switch releaseAction {
-            case .Complete?:
-                animationBlock = {
-                    self.contentView.frame.origin.x = 0
-                }
-                completionBlock = {
-                    if !(self.item as Object).isInvalidated {
-                        self.setCompleted(completed: !self.item.completed, animated: true)
-                    }
-                }
-            case .Delete?:
-                animationBlock = {
-                    self.alpha = 0
-                    self.contentView.alpha = 0
-
-                    self.contentView.frame.origin.x = -self.contentView.bounds.width - iconWidth
-                    self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
-                }
-                completionBlock = {
-                    self.presenter.deleteItem(item: self.item)
-                }
-            case nil:
-                item.completed ? textView.strike() : textView.unstrike()
-                animationBlock = {
-                    self.contentView.frame.origin.x = 0
-                }
-                completionBlock = {}
-            }
-
-            UIView.animate(withDuration: 0.2, animations: animationBlock) { _ in
-                completionBlock()
-
-                self.doneIconView.frame.origin.x = 20
-                self.doneIconView.alpha = 0
-
-                self.deleteIconView.frame.origin.x = self.bounds.width - self.deleteIconView.bounds.width - 20
-                self.deleteIconView.alpha = 0
-            }
+        case .began: handlePanBegan()
+        case .changed: handlePanChanged(translation: recognizer.translation(in: self).x)
+        case .ended: handlePanEnded()
         default:
             break
+        }
+    }
+
+    private func handlePanBegan() {
+        originalDeleteIconCenter = deleteIconView.center
+        originalDoneIconCenter = doneIconView.center
+
+        releaseAction = nil
+    }
+
+    private func handlePanChanged(translation: CGFloat) {
+        if !item.isCompletable && translation > 0 {
+            releaseAction = nil
+            return
+        }
+
+        let x: CGFloat
+        // Slow down translation
+        if translation < 0 {
+            x = translation / 2
+            if x < -iconWidth {
+                deleteIconView.center = CGPoint(x: originalDeleteIconCenter.x + iconWidth + x, y: originalDeleteIconCenter.y)
+            }
+        } else if translation > iconWidth {
+            let offset = (translation - iconWidth) / 3
+            doneIconView.center = CGPoint(x: originalDoneIconCenter.x + offset, y: originalDoneIconCenter.y)
+            x = iconWidth + offset
+        } else {
+            x = translation
+        }
+
+        contentView.frame.origin.x = x
+
+        let fractionOfThreshold = min(1, Double(abs(x) / iconWidth))
+        releaseAction = fractionOfThreshold >= 1 ? (x > 0 ? .Complete : .Delete) : nil
+
+        if x > 0 {
+            doneIconView.alpha = CGFloat(fractionOfThreshold)
+        } else {
+            deleteIconView.alpha = CGFloat(fractionOfThreshold)
+        }
+
+        if !(item as Object).isInvalidated && !item.completed {
+            overlayView.backgroundColor = .completeGreenBackgroundColor()
+            overlayView.isHidden = releaseAction != .Complete
+            if contentView.frame.origin.x > 0 {
+                textView.unstrike()
+                textView.strike(fraction: fractionOfThreshold)
+            } else {
+                releaseAction == .Complete ? textView.strike() : textView.unstrike()
+            }
+        } else {
+            overlayView.isHidden = releaseAction == .Complete
+            textView.alpha = releaseAction == .Complete ? 1 : 0.3
+            if contentView.frame.origin.x > 0 {
+                textView.unstrike()
+                textView.strike(fraction: 1 - fractionOfThreshold)
+            } else {
+                releaseAction == .Complete ? textView.unstrike() : textView.strike()
+            }
+        }
+    }
+
+    private func handlePanEnded() {
+        guard item != nil && !(item as Object).isInvalidated else {
+            return
+        }
+        let animationBlock: () -> ()
+        let completionBlock: () -> ()
+
+        // If not deleting, slide it back into the middle
+        // If we are deleting, slide it all the way out of the view
+        switch releaseAction {
+        case .Complete?:
+            animationBlock = {
+                self.contentView.frame.origin.x = 0
+            }
+            completionBlock = {
+                self.setCompleted(completed: !self.item.completed, animated: true)
+            }
+        case .Delete?:
+            animationBlock = {
+                self.alpha = 0
+                self.contentView.alpha = 0
+
+                self.contentView.frame.origin.x = -self.contentView.bounds.width - iconWidth
+                self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
+            }
+            completionBlock = {
+                self.presenter.deleteItem(item: self.item)
+            }
+        case nil:
+            item.completed ? textView.strike() : textView.unstrike()
+            animationBlock = {
+                self.contentView.frame.origin.x = 0
+            }
+            completionBlock = {}
+        }
+
+        UIView.animate(withDuration: 0.2, animations: animationBlock) { _ in
+            if self.item != nil && !(self.item as Object).isInvalidated {
+                completionBlock()
+            }
+
+            self.doneIconView.frame.origin.x = 20
+            self.doneIconView.alpha = 0
+
+            self.deleteIconView.frame.origin.x = self.bounds.width - self.deleteIconView.bounds.width - 20
+            self.deleteIconView.alpha = 0
         }
     }
 
@@ -344,11 +350,12 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         return fabs(translation.x) > fabs(translation.y)
     }
 
+    // MARK: Reuse
+
     override func prepareForReuse() {
         super.prepareForReuse()
         alpha = 1
         contentView.alpha = 1
-        temporarilyIgnoreSaveChanges = false
         textView.unstrike()
 
         // Force any active gesture recognizers to reset
@@ -399,11 +406,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if !temporarilyIgnoreSaveChanges && !(item as Object).isInvalidated {
-            try! item.realm!.write {
-                item.text = textView.text.trimmingCharacters(in: .whitespaces)
-            }
-        }
+        item.text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
         textView.isUserInteractionEnabled = false
         presenter.cellDidEndEditing(editingCell: self)
     }

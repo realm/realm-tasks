@@ -205,11 +205,10 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         case .changed:
             snapshot.center.y = location.y
 
-            if let destinationIndexPath = destinationIndexPath, indexPath != destinationIndexPath && !items[indexPath.row].completed {
+            if let destinationPath = destinationIndexPath, indexPath != destinationPath && !items[indexPath.row].completed {
                 // move rows
-                tableView.moveRow(at: destinationIndexPath, to: indexPath)
-
-                self.destinationIndexPath = indexPath
+                tableView.moveRow(at: destinationPath, to: indexPath)
+                destinationIndexPath = indexPath
             }
         case .ended, .cancelled, .failed:
             guard
@@ -219,7 +218,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 else { break }
 
             if destinationIndexPath.row != startIndexPath.row && !items[destinationIndexPath.row].completed {
-                try! items.realm?.write {
+                viewController.uiWriteNoUpdateList {
                     items.move(from: startIndexPath.row, to: destinationIndexPath.row)
                 }
             }
@@ -239,9 +238,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 self.snapshot.removeFromSuperview()
                 self.snapshot = nil
 
-                self.updateColors {
-                    UIView.performWithoutAnimation(tableView.reloadData)
-                }
+                self.viewController.didUpdateList(reload: false)
             })
 
             self.startIndexPath = nil

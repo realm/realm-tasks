@@ -26,7 +26,7 @@ private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove 
 
 private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
-        syncConfiguration: (user, Constants.syncServerURL! as URL),
+        syncConfiguration: SyncConfiguration(user: user, realmURL: Constants.syncServerURL!),
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
     )
     realm = try! Realm()
@@ -70,28 +70,30 @@ private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
 
 // returns true on success
 func configureDefaultRealm() -> Bool {
-    if let user = SyncUser.all().first {
+    if let user = SyncUser.current {
         setDefaultRealmConfigurationWithUser(user: user)
         return true
     }
     return false
 }
 
-func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> ()) {
-    let credential = Credential.usernamePassword(username: username, password: password, actions: register ? [.createAccount] : [])
-    SyncUser.authenticate(with: credential, server: Constants.syncAuthURL) { user, error in
-        if let user = user {
-            setDefaultRealmConfigurationWithUser(user: user)
-        }
 
-        if let error = (error as? NSError), error.code == SyncError.httpStatusCodeError.rawValue && (error.userInfo["statusCode"] as? Int) == 400 {
-            // FIXME: workararound for https://github.com/realm/realm-cocoa-private/issues/204
-            let improvedError = NSError(error: (error as NSError),
-                                        description: "Incorrect username or password.",
-                                        recoverySuggestion: "Please check username and password or register a new account.")
-            callback(improvedError)
-        } else {
-            callback(error as NSError?)
+func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> ()) {
+    SyncUser.logIn(with: SyncCredentials.usernamePassword(username: username, password: password, register: register), server: Constants.syncAuthURL) { user, error in
+        DispatchQueue.main.async {
+            if let user = user {
+                setDefaultRealmConfigurationWithUser(user: user)
+            }
+
+            if let error = error, error._code == SyncError.httpStatusCodeError.rawValue && ((error as NSError).userInfo["statusCode"] as? Int) == 400 {
+                // FIXME: workararound for https://github.com/realm/realm-cocoa-private/issues/204
+                let improvedError = NSError(error: error as NSError,
+                                            description: "Incorrect username or password.",
+                                            recoverySuggestion: "Please check username and password or register a new account.")
+                callback(improvedError)
+            } else {
+                callback(error as NSError?)
+            }
         }
     }
 }
