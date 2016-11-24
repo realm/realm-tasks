@@ -47,7 +47,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
     fileprivate var currentlyMovingRowView: NSTableRowView?
     fileprivate var currentlyMovingRowSnapshotView: SnapshotView?
 
-    private var autoscrollTimer: NSTimer?
+    private var autoscrollTimer: Timer?
 
     init(list: ListType) {
         self.list = list
@@ -105,16 +105,16 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
     private func setupNotifications() {
         notificationToken = list.items.addNotificationBlock { [unowned self] changes in
             switch changes {
-                case .Initial:
+                case .initial:
                     self.tableView.reloadData()
-                case .Update(_, let deletions, let insertions, let modifications):
+                case .update(_, let deletions, let insertions, let modifications):
                     self.tableView.beginUpdates()
-                    self.tableView.removeRowsAtIndexes(deletions.toIndexSet(), withAnimation: .EffectGap)
-                    self.tableView.insertRowsAtIndexes(insertions.toIndexSet(), withAnimation: .EffectGap)
-                    self.tableView.reloadDataForRowIndexes(modifications.toIndexSet(), columnIndexes: NSIndexSet(index: 0))
+                    self.tableView.removeRows(at: deletions.toIndexSet() as IndexSet, withAnimation: .effectGap)
+                    self.tableView.insertRows(at: insertions.toIndexSet() as IndexSet, withAnimation: .effectGap)
+                    self.tableView.reloadData(forRowIndexes: modifications.toIndexSet() as IndexSet, columnIndexes: IndexSet(integer: 0))
                     self.tableView.endUpdates()
-                case .Error(let error):
-                    fatalError(String(error))
+                case .error(let error):
+                    fatalError(String(describing: error))
             }
         }
     }
@@ -152,7 +152,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         try! list.realm?.commitWrite(withoutNotifying: [notificationToken!])
     }
 
-    func uiWrite(@noescape block: () -> ()) {
+    func uiWrite( block: () -> ()) {
         beginUIWrite()
         block()
         commitUIWrite()
@@ -250,7 +250,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             destinationRow = tableView.row(at: pointInTableView)
         }
 
-        if canMoveRow(sourceRow, toRow: destinationRow) {
+        if canMoveRow(sourceRow: sourceRow, toRow: destinationRow) {
             list.items.move(from: sourceRow, to: destinationRow)
 
             NSView.animate {
@@ -371,7 +371,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
     private func endEditingCells() {
         guard
             let cellView = currentlyEditingCellView,
-            let (_, index) = findItemForCellView(cellView)
+            let (_, index) = findItemForCellView(view: cellView)
         else {
             return
         }
@@ -380,7 +380,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
         if cellView.text.isEmpty {
             item.realm!.delete(item)
-            tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideUp)
+            tableView.removeRows(at: IndexSet(integer: index) as IndexSet, withAnimation: .slideUp)
         } else if cellView.text != item.text {
             item.text = cellView.text
         }
@@ -399,8 +399,8 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
                 }
             }
         }) {
-            self.tableView.enumerateAvailableRowViewsUsingBlock { _, row in
-                if let view = self.tableView.viewAtColumn(0, row: row, makeIfNecessary: false) as? ItemCellView {
+            self.tableView.enumerateAvailableRowViews { _, row in
+                if let view = self.tableView.view(atColumn: 0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.isUserInteractionEnabled = true
                 }
             }
@@ -507,10 +507,10 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             return
         }
 
-        if let listCellView = cellView as? ListCellView where !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
-            (parentViewController as? ContainerViewController)?.presentViewControllerForList(list)
+        if let listCellView = cellView as? ListCellView, !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
+            (parent as? ContainerViewController)?.presentViewControllerForList(list: list)
         } else if cellView.isUserInteractionEnabled {
-            beginEditingCell(cellView)
+            beginEditingCell(cellView: cellView)
         }
     }
 
@@ -589,14 +589,14 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
 
         NSView.animate {
-            NSAnimationContext.currentContext().allowsImplicitAnimation = false
-            tableView.removeRowsAtIndexes(NSIndexSet(index: index), withAnimation: .SlideLeft)
+            NSAnimationContext.current().allowsImplicitAnimation = false
+            tableView.removeRows(at: IndexSet(integer: index), withAnimation: .slideLeft)
         }
     }
 
     func cellViewDidChangeText(view: ItemCellView) {
         if view == currentlyEditingCellView {
-            updateTableViewHeightOfRows(NSIndexSet(index: tableView.rowForView(view)))
+            updateTableViewHeightOfRows(indexes: IndexSet(integer: tableView.row(for: view)))
             view.window?.update()
         }
     }
@@ -679,10 +679,10 @@ private final class SnapshotView: NSView {
 
 // MARK: Private Extensions
 
-private extension CollectionType where Generator.Element == Int {
+private extension Collection where Iterator.Element == Int {
 
     func toIndexSet() -> NSIndexSet {
-        return reduce(NSMutableIndexSet()) { $0.addIndex($1); return $0 }
+        return reduce(NSMutableIndexSet()) { $0.add($1); return $0 }
     }
 
 }
