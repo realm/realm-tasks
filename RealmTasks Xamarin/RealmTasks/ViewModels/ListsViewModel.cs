@@ -101,7 +101,6 @@ namespace RealmTasks
                     {
                         parent.Items.Add(new TaskList
                         {
-                            Id = Guid.NewGuid().ToString(),
                             Title = Constants.Names.DefaultListName
                         });
                     });
@@ -138,10 +137,7 @@ namespace RealmTasks
         {
             _realm.Write(() =>
             {
-                TaskLists.Insert(0, new TaskList
-                {
-                    Id = Guid.NewGuid().ToString()
-                });
+                TaskLists.Insert(0, new TaskList());
             });
         }
 

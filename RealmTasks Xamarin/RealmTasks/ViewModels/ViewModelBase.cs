@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace RealmTasks
@@ -87,7 +86,7 @@ namespace RealmTasks
             Console.WriteLine(ex.Message);
         }
 
-        protected async void PerformTask(Func<Task> func, Action<Exception> onError = null)
+        protected async void PerformTask(Func<System.Threading.Tasks.Task> func, Action<Exception> onError = null)
         {
             IsBusy = true;
             try

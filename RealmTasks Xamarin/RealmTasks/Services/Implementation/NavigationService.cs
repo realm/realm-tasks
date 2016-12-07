@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using RealmTasks.Implementation;
 using Xamarin.Forms;
 
+using ThreadingTask = System.Threading.Tasks.Task;
+
 [assembly: Dependency(typeof(NavigationService))]
 namespace RealmTasks.Implementation
 {
@@ -16,7 +18,7 @@ namespace RealmTasks.Implementation
             }
         }
 
-        public Task GoBack()
+        public ThreadingTask GoBack()
         {
             if (Navigation == null)
             {
@@ -26,7 +28,7 @@ namespace RealmTasks.Implementation
             return Navigation.PopAsync(true);
         }
 
-        public Task Navigate<T>(Action<T> setup = null) where T : ViewModelBase
+        public ThreadingTask Navigate<T>(Action<T> setup = null) where T : ViewModelBase
         {
             if (Navigation == null)
             {
@@ -49,7 +51,7 @@ namespace RealmTasks.Implementation
             Application.Current.MainPage = page;
         }
 
-        public async Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>
+        public async System.Threading.Tasks.Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>
         {
             if (Navigation == null)
             {

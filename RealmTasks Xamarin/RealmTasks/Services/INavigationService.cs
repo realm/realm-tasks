@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using ThreadingTask = System.Threading.Tasks.Task;
+
 namespace RealmTasks
 {
     public interface INavigationService
     {
-        Task Navigate<T>(Action<T> setup = null) where T : ViewModelBase;
+        ThreadingTask Navigate<T>(Action<T> setup = null) where T : ViewModelBase;
 
-        Task GoBack();
+        ThreadingTask GoBack();
 
         void SetMainPage<T>(bool navigatable) where T : ViewModelBase;
 
-        Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>;
+        System.Threading.Tasks.Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>;
     }
 }

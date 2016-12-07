@@ -24,14 +24,14 @@ namespace RealmTasks
             }
         }
 
-        public Command<TaskItem> DeleteTaskCommand { get; }
-        public Command<TaskItem> EditTaskCommand { get; }
+        public Command<Task> DeleteTaskCommand { get; }
+        public Command<Task> EditTaskCommand { get; }
         public Command AddTaskCommand { get; }
 
         public TasksViewModel()
         {
-            DeleteTaskCommand = new Command<TaskItem>(DeleteTask);
-            EditTaskCommand = new Command<TaskItem>(EditTask);
+            DeleteTaskCommand = new Command<Task>(DeleteTask);
+            EditTaskCommand = new Command<Task>(EditTask);
             AddTaskCommand = new Command(AddTask);
         }
 
@@ -41,7 +41,7 @@ namespace RealmTasks
             TaskList = realm.Find<TaskList>(taskListId);
         }
 
-        private void DeleteTask(TaskItem task)
+        private void DeleteTask(Task task)
         {
             if (task != null)
             {
@@ -52,7 +52,7 @@ namespace RealmTasks
             }
         }
 
-        private void EditTask(TaskItem task)
+        private void EditTask(Task task)
         {
             if (task != null)
             {
@@ -66,11 +66,11 @@ namespace RealmTasks
             {
                 if (TaskList.Items.Count == 0)
                 {
-                    TaskList.Items.Add(new TaskItem());
+                    TaskList.Items.Add(new Task());
                 }
                 else
                 {
-                    TaskList.Items.Insert(0, new TaskItem());
+                    TaskList.Items.Insert(0, new Task());
                 }
             });
         }

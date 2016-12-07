@@ -20,7 +20,7 @@ namespace RealmTasks
 
         private void TitleEntryCompleted(object sender, EventArgs e)
         {
-            var task = ((Entry)sender).BindingContext as TaskItem;
+            var task = ((Entry)sender).BindingContext as Task;
             if (task != null)
             {
                 task.IsEditing = false;

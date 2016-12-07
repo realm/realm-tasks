@@ -2,11 +2,11 @@
 
 namespace RealmTasks
 {
-    [MapTo("Task")]
-    public class TaskItem : RealmObject
+    public class Task : RealmObject
     {
         [MapTo("text")]
-        public string Title { get; set; }
+        [Required]
+        public string Title { get; set; } = string.Empty;
 
         [MapTo("completed")]
         public bool IsCompleted { get; set; }
