@@ -94,6 +94,7 @@ autom4te.cache/
 tarballs/
 test-results/
 Thumbs.db
+Resource.designer.cs
 
 # Mac bundle stuff
 *.dmg
