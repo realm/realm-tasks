@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\TaskListList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TaskList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TaskItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValueConverters\InverseBooleanConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Views\" />
@@ -45,5 +46,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Services\" />
     <Folder Include="$(MSBuildThisFileDirectory)Services\Implementation\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
+    <Folder Include="$(MSBuildThisFileDirectory)ValueConverters\" />
   </ItemGroup>
 </Project>

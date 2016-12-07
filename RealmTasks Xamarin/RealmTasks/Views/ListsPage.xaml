@@ -3,7 +3,46 @@
 		     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:RealmTasks;assembly=RealmTasks"
 		     x:Class="RealmTasks.ListsPage">
+	<ContentPage.Resources>
+        <ResourceDictionary>
+            <local:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Command="{Binding AddTaskListCommand}" Text="+" />
+	</ContentPage.ToolbarItems>
     <ContentPage.Content>
-		
+		<ListView ItemsSource="{Binding TaskLists}" x:Name="TaskListsListView" ItemSelected="OnItemSelected">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell x:Name="TaskListCell"> 
+						<ViewCell.ContextActions>
+							<MenuItem Text="Delete"
+									  IsDestructive="true"
+									  BindingContext="{Binding Source={x:Reference TaskListsListView}, Path=BindingContext}" 
+									  Command="{Binding DeleteTaskListCommand}"
+									  CommandParameter="{Binding Source={x:Reference TaskListCell}, Path=BindingContext}" />
+                            <MenuItem Text="Edit"
+                                      BindingContext="{Binding Source={x:Reference TaskListsListView}, Path=BindingContext}" 
+                                      Command="{Binding EditTaskListCommand}"
+                                      CommandParameter="{Binding Source={x:Reference TaskListCell}, Path=BindingContext}" />
+						</ViewCell.ContextActions>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width = "*" />
+								<ColumnDefinition Width = "Auto" />
+							</Grid.ColumnDefinitions>
+
+                            <Entry Text = "{Binding Title}"
+								   Margin = "5" 
+								   VerticalOptions="Center" 
+								   Completed="TitleEntryCompleted" 
+								   IsEnabled="{Binding IsEditing}" />
+							<Label Text = "3" Margin = "5" Grid.Column = "1" VerticalOptions="Center"/>
+						</Grid>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
     </ContentPage.Content>
 </local:PageBase>

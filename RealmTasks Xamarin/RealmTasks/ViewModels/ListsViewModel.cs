@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Realms;
 using Realms.Sync;
+using Xamarin.Forms;
 
 namespace RealmTasks
 {
     public class ListsViewModel : ViewModelBase
     {
         private Realm _realm;
-        private IEnumerable<TaskList> _taskLists;
+        private IList<TaskList> _taskLists;
 
-        public IEnumerable<TaskList> TaskLists
+        public IList<TaskList> TaskLists
         {
             get
             {
@@ -24,13 +24,50 @@ namespace RealmTasks
             }
         }
 
+        public Command<TaskList> DeleteTaskListCommand { get; }
+        public Command<TaskList> EditTaskListCommand { get; }
+        public Command AddTaskListCommand { get; }
+
+        public ListsViewModel()
+        {
+            DeleteTaskListCommand = new Command<TaskList>(DeleteList);
+            EditTaskListCommand = new Command<TaskList>(EditList);
+            AddTaskListCommand = new Command(AddList);
+        }
+
         protected override async void InitializeCore()
         {
-            // TODO: once we implement User.Current, use that to check if user has already logged in.
+            User user = null;
 
             try
             {
-                var user = await NavigationService.Prompt<LoginViewModel, User>();
+                user = User.Current;
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+
+            if (user == null)
+            {
+                try
+                {
+                    user = await NavigationService.Prompt<LoginViewModel, User>();
+                }
+                catch (Exception ex)
+                {
+                    HandleException(ex);
+                }
+            }
+
+            if (user == null)
+            {
+                // TODO: handle it gracefully
+                return;
+            }
+
+            try
+            {
                 var config = new SyncConfiguration(user, Constants.Server.SyncServerUri);
                 _realm = Realm.GetInstance(config);
                 var parent = _realm.Find<TaskListList>(0);
@@ -58,9 +95,38 @@ namespace RealmTasks
             }
             catch (Exception ex)
             {
-                // TODO: handle
-                Console.WriteLine(ex.Message);
+                HandleException(ex);
             }
+        }
+
+        private void DeleteList(TaskList list)
+        {
+            if (list != null)
+            {
+                _realm.Write(() =>
+                {
+                    _realm.Remove(list);
+                });
+            }
+        }
+
+        private void EditList(TaskList list)
+        {
+            if (list != null)
+            {
+                list.IsEditing = true;
+            }
+        }
+
+        private void AddList()
+        {
+            _realm.Write(() =>
+            {
+                TaskLists.Insert(0, new TaskList
+                {
+                    Id = Guid.NewGuid().ToString()
+                });
+            });
         }
     }
 }

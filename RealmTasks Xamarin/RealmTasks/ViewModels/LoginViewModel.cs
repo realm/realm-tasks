@@ -51,7 +51,7 @@ namespace RealmTasks
 
         public LoginViewModel()
         {
-            LoginCommand = new Command(this.Login);
+            LoginCommand = new Command(Login);
         }
 
         private void Login()

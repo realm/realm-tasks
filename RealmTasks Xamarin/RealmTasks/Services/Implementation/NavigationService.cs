@@ -65,9 +65,14 @@ namespace RealmTasks.Implementation
 
             await Navigation.PushModalAsync(page, true);
 
-            var result = await tcs.Task;
-            await Navigation.PopModalAsync();
-            return result;
+            try
+            {
+                return await tcs.Task;
+            }
+            finally
+            {
+                await Navigation.PopModalAsync();
+            }
         }
 
         private static PageBase GetPage<T>()

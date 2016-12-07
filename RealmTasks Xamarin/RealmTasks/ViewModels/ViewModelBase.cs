@@ -41,5 +41,10 @@ namespace RealmTasks
         {
             
         }
+
+        protected void HandleException(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }
