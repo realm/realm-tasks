@@ -10,5 +10,19 @@ namespace RealmTasks
 
         [MapTo("completed")]
         public bool IsCompleted { get; set; }
+
+        private bool _isEditing;
+        public bool IsEditing
+        {
+            get
+            {
+                return _isEditing;
+            }
+            set
+            {
+                _isEditing = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }

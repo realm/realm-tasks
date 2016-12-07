@@ -11,10 +11,10 @@ namespace RealmTasks
 
         public static class Server
         {
-            private const string SyncHost = "127.0.0.1";
+            public static string SyncHost { get; set; } = "127.0.0.1:9080";
 
-            public static readonly Uri SyncServerUri = new Uri($"realm://{SyncHost}:9080/~/realmtasks");
-            public static readonly Uri AuthServerUri = new Uri($"http://{SyncHost}:9080");
+            public static Uri SyncServerUri => new Uri($"realm://{SyncHost}/~/realmtasks");
+            public static Uri AuthServerUri => new Uri($"http://{SyncHost}");
         }
     }
 }

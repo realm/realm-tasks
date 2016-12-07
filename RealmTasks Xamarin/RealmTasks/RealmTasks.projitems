@@ -16,6 +16,9 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\LoginPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\TasksPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Views\App.xaml.cs">
@@ -39,6 +42,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\TaskList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TaskItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValueConverters\InverseBooleanConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TasksViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\TasksPage.xaml.cs">
+      <DependentUpon>TasksPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Views\" />

@@ -20,6 +20,7 @@ namespace RealmTasks
 
         private string _username;
         private string _password;
+        private string _serverUrl;
 
         public string Username
         {
@@ -47,29 +48,46 @@ namespace RealmTasks
             }
         }
 
-        public ICommand LoginCommand { get; }
+        public string ServerUrl
+        {
+            get
+            {
+                return _serverUrl;
+            }
+
+            set
+            {
+                Set(ref _serverUrl, value);
+            }
+        }
+
+        public Command LoginCommand { get; }
 
         public LoginViewModel()
         {
-            LoginCommand = new Command(Login);
+            LoginCommand = new Command(Login, () => !IsBusy);
         }
 
         private void Login()
         {
-            try
+            PerformTask(async () =>
             {
-                var user = Task.Run(async () =>
-                {
-                    var credentials = Credentials.UsernamePassword(Username, Password, false);
-                    return await User.LoginAsync(credentials, Constants.Server.AuthServerUri);
-                }).Result;
+                ServerUrl = ServerUrl.Replace("http://", string.Empty)
+                                     .Replace("https://", string.Empty)
+                                     .Replace("realm://", string.Empty)
+                                     .Replace("realms://", string.Empty);
+
+                Constants.Server.SyncHost = ServerUrl;
+
+                var credentials = Credentials.UsernamePassword(Username, Password, false);
+                var user = await User.LoginAsync(credentials, Constants.Server.AuthServerUri);
 
                 Success(user);
-            }
-            catch (Exception ex)
+            }, onError: ex =>
             {
-                Error(ex);
-            }
+                // TODO: show alert.
+                HandleException(ex);
+            });
         }
     }
 }

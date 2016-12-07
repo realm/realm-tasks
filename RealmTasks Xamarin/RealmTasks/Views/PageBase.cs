@@ -6,6 +6,11 @@ namespace RealmTasks
     {
         public abstract ViewModelBase ViewModel { get; }
 
+        protected PageBase()
+        {
+            SetBinding(TitleProperty, new Binding("Title"));
+        }
+
         protected override void OnAppearing()
         {
             base.OnAppearing();

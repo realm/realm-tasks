@@ -24,6 +24,21 @@ namespace RealmTasks
             }
         }
 
+        public TaskList SelectedTaskList
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    NavigateToList(value);
+                }
+            }
+        }
+
         public Command<TaskList> DeleteTaskListCommand { get; }
         public Command<TaskList> EditTaskListCommand { get; }
         public Command AddTaskListCommand { get; }
@@ -33,6 +48,8 @@ namespace RealmTasks
             DeleteTaskListCommand = new Command<TaskList>(DeleteList);
             EditTaskListCommand = new Command<TaskList>(EditList);
             AddTaskListCommand = new Command(AddList);
+
+            Title = "Tasks";
         }
 
         protected override async void InitializeCore()
@@ -59,11 +76,10 @@ namespace RealmTasks
                     HandleException(ex);
                 }
             }
-
-            if (user == null)
+            else
             {
-                // TODO: handle it gracefully
-                return;
+                var uri = user.ServerUri;
+                Constants.Server.SyncHost = $"{uri.Host}:{uri.Port}";
             }
 
             try
@@ -126,6 +142,14 @@ namespace RealmTasks
                 {
                     Id = Guid.NewGuid().ToString()
                 });
+            });
+        }
+
+        private void NavigateToList(TaskList list)
+        {
+            PerformTask(async () =>
+            {
+                await NavigationService.Navigate<TasksViewModel>(vm => vm.Setup(_realm, list.Id));
             });
         }
     }
