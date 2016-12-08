@@ -13,10 +13,12 @@
     <ContentPage.Content>
         <ListView ItemsSource="{Binding TaskList.Items}" 
 				x:Name="TasksListView" 
-				ItemSelected="OnItemSelected"
 				RowHeight="60"
                 SeparatorVisibility="None"
                 BackgroundColor="Black">
+			<ListView.Behaviors>
+                <local:CellDeselectingBehavior />
+            </ListView.Behaviors>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell x:Name="TaskCell">

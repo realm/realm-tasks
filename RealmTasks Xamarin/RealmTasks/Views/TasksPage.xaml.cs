@@ -1,8 +1,4 @@
 ﻿using System;
-using Xamarin.Forms;
-using Realms;
-using System.Linq;
-using Xamarin.Forms.Xaml;
 
 namespace RealmTasks
 {
@@ -17,12 +13,6 @@ namespace RealmTasks
             InitializeComponent();
 
             BindingContext = ViewModel;
-        }
-
-        private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            var listView = (ListView)sender;
-            listView.SelectedItem = null;
         }
     }
 }
