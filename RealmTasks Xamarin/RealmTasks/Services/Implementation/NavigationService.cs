@@ -43,11 +43,7 @@ namespace RealmTasks.Implementation
         public void SetMainPage<T>() where T : ViewModelBase
         {
             var page = (Page)GetPage<T>();
-            Application.Current.MainPage = new NavigationPage(page)
-            {
-                BarBackgroundColor = Color.FromHex("#3F51B5"),
-                BarTextColor = Color.White
-            };
+            Application.Current.MainPage = WrapInNavigation(page);
         }
 
         public async Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>
@@ -64,7 +60,7 @@ namespace RealmTasks.Implementation
             promptable.Cancel = tcs.SetCanceled;
             promptable.Error = tcs.SetException;
 
-            await Navigation.PushModalAsync(page, true);
+            await Navigation.PushModalAsync(WrapInNavigation(page), true);
 
             try
             {
@@ -80,6 +76,15 @@ namespace RealmTasks.Implementation
         {
             var pageType = typeof(T).Name.Replace("ViewModel", "Page");
             return (PageBase)Activator.CreateInstance(Type.GetType($"RealmTasks.{pageType}"));
+        }
+
+        private static Page WrapInNavigation(Page page)
+        {
+            return new NavigationPage(page)
+            {
+                BarBackgroundColor = Color.FromHex("#3F51B5"),
+                BarTextColor = Color.White
+            };
         }
     }
 }

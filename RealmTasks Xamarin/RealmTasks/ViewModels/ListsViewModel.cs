@@ -42,12 +42,14 @@ namespace RealmTasks
         public Command<TaskList> DeleteTaskListCommand { get; }
         public Command<TaskList> CompleteTaskListCommand { get; }
         public Command AddTaskListCommand { get; }
+        public Command LogoutCommand { get; }
 
         public ListsViewModel()
         {
             DeleteTaskListCommand = new Command<TaskList>(DeleteList);
             CompleteTaskListCommand = new Command<TaskList>(CompleteList);
             AddTaskListCommand = new Command(AddList);
+            LogoutCommand = new Command(Logout);
 
             Title = "Tasks";
         }
@@ -84,7 +86,10 @@ namespace RealmTasks
 
             try
             {
-                var config = new SyncConfiguration(user, Constants.Server.SyncServerUri);
+                var config = new SyncConfiguration(user, Constants.Server.SyncServerUri)
+                {
+                    ObjectClasses = new[] { typeof(Task), typeof(TaskList), typeof(TaskListList) }
+                };
                 _realm = Realm.GetInstance(config);
                 var parent = _realm.Find<TaskListList>(0);
                 if (parent == null)
@@ -150,6 +155,12 @@ namespace RealmTasks
             {
                 await NavigationService.Navigate<TasksViewModel>(vm => vm.Setup(_realm, list.Id));
             });
+        }
+
+        private void Logout()
+        {
+            User.Current.LogOut();
+            NavigationService.SetMainPage<ListsViewModel>();
         }
     }
 }
