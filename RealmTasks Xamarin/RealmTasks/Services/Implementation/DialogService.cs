@@ -21,7 +21,7 @@ namespace RealmTasks
 
         public void Alert(string title, string message)
         {
-            UserDialogs.Instance.Alert(title, message);
+            UserDialogs.Instance.Alert(message, title);
         }
     }
 }

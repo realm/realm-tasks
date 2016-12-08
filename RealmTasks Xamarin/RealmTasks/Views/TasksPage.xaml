@@ -35,9 +35,10 @@
                                     RealmCollection="{Binding ItemsSource, Source={x:Reference TasksListView}}"
 									Colors="{StaticResource TaskColors}"/>
                             </Grid.Behaviors>
-                            <Entry Text = "{Binding Title}"
-                                   Margin = "5" 
-                                   VerticalOptions="Center" />
+                            <local:TransparentEntry
+									Text = "{Binding Title}"
+									TextColor="White"
+                                    VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
                         </Grid>
                     </ViewCell>
                 </DataTemplate>

@@ -50,6 +50,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Implementation\DialogService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\ItemColoringBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\CellDeselectingBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\TransparentEntry.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Views\" />

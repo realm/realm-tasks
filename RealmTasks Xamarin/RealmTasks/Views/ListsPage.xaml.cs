@@ -10,7 +10,6 @@ namespace RealmTasks
         public ListsPage()
         {
             InitializeComponent();
-
             BindingContext = ViewModel;
         }
     }

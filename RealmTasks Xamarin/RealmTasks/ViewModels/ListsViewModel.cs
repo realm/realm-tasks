@@ -24,23 +24,9 @@ namespace RealmTasks
             }
         }
 
-        public TaskList SelectedTaskList
-        {
-            get
-            {
-                return null;
-            }
-            set
-            {
-                if (value != null)
-                {
-                    NavigateToList(value);
-                }
-            }
-        }
-
         public Command<TaskList> DeleteTaskListCommand { get; }
         public Command<TaskList> CompleteTaskListCommand { get; }
+        public Command<TaskList> OpenTaskListCommand { get; }
         public Command AddTaskListCommand { get; }
         public Command LogoutCommand { get; }
 
@@ -48,6 +34,7 @@ namespace RealmTasks
         {
             DeleteTaskListCommand = new Command<TaskList>(DeleteList);
             CompleteTaskListCommand = new Command<TaskList>(CompleteList);
+            OpenTaskListCommand = new Command<TaskList>(OpenList);
             AddTaskListCommand = new Command(AddList);
             LogoutCommand = new Command(Logout);
 
@@ -141,19 +128,22 @@ namespace RealmTasks
             }
         }
 
+        private void OpenList(TaskList list)
+        {
+            if (list != null)
+            {
+                PerformTask(async () =>
+                {
+                    await NavigationService.Navigate<TasksViewModel>(vm => vm.Setup(_realm, list.Id));
+                });
+            }
+        }
+
         private void AddList()
         {
             _realm.Write(() =>
             {
                 TaskLists.Insert(0, new TaskList());
-            });
-        }
-
-        private void NavigateToList(TaskList list)
-        {
-            PerformTask(async () =>
-            {
-                await NavigationService.Navigate<TasksViewModel>(vm => vm.Setup(_realm, list.Id));
             });
         }
 

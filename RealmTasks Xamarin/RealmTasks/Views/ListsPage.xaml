@@ -18,7 +18,6 @@
     <ContentPage.Content>
 		<ListView ItemsSource="{Binding TaskLists}" 
 				x:Name="TaskListsListView" 
-				SelectedItem="{Binding SelectedTaskList}"
 				RowHeight="60"
                 SeparatorVisibility="None"
 				BackgroundColor="Black">
@@ -27,7 +26,7 @@
 			</ListView.Behaviors>
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<ViewCell x:Name="TaskListCell"> 
+					<ViewCell x:Name="TaskListCell">
 						<ViewCell.ContextActions>
 							<MenuItem Text="Delete"
 									  IsDestructive="true"
@@ -51,22 +50,27 @@
 								<RowDefinition Height="1"/>
 							</Grid.RowDefinitions>
 
-                            <Entry Text = "{Binding Title}"
-								   Margin = "5" 
-								   VerticalOptions="Center"
-								   Grid.RowSpan="2"/>
+							<local:TransparentEntry 
+									Text = "{Binding Title}"
+									TextColor="White"
+									HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+								    Grid.RowSpan="2"/>
+
 							<BoxView Color="White" 
 									Opacity="0.15"
 								    Grid.Column="1"
 									Grid.RowSpan="2"/>
-							<Label Text = "{Binding Items.Count}" 
+							<Button Text="{Binding Items.Count}"
+                                    Command="{Binding Path=BindingContext.OpenTaskListCommand, Source={x:Reference Name=TaskListsListView}}"
+                                    CommandParameter="{Binding Source={x:Reference TaskListCell}, Path=BindingContext}"
 									TextColor="White"
-									HorizontalOptions="Center"
-								    Grid.Column = "1" 
-								    VerticalOptions="Center"
-									Grid.RowSpan="2"/>
+									BackgroundColor="Transparent"
+									BorderColor="Transparent"
+									HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+									Grid.Column="1" Grid.RowSpan="2" />
+							
 							<BoxView Color="Black"
-									Opacity="0.1"
+									Opacity="0.01"
 									Grid.Row="1"
 									Grid.ColumnSpan="2"/>
 						</Grid>

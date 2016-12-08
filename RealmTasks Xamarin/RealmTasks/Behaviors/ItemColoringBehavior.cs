@@ -22,6 +22,7 @@ namespace RealmTasks
             set
             {
                 SetValue(RealmCollectionProperty, value);
+                CalculateColor();
             }
         }
 
