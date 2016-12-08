@@ -20,19 +20,5 @@ namespace RealmTasks
 
         [MapTo("items")]
         public IList<Task> Items { get; }
-
-        private bool _isEditing;
-        public bool IsEditing
-        {
-            get
-            {
-                return _isEditing;
-            }
-            set
-            {
-                _isEditing = value;
-                RaisePropertyChanged();
-            }
-        }
     }
 }

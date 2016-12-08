@@ -18,15 +18,6 @@ namespace RealmTasks
             BindingContext = ViewModel;
         }
 
-        private void TitleEntryCompleted(object sender, EventArgs e)
-        {
-            var task = ((Entry)sender).BindingContext as Task;
-            if (task != null)
-            {
-                task.IsEditing = false;
-            }
-        }
-
         private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var listView = (ListView)sender;

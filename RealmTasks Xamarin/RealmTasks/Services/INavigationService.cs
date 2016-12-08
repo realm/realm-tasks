@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-
 using ThreadingTask = System.Threading.Tasks.Task;
 
 namespace RealmTasks
@@ -11,8 +10,8 @@ namespace RealmTasks
 
         ThreadingTask GoBack();
 
-        void SetMainPage<T>(bool navigatable) where T : ViewModelBase;
+        void SetMainPage<T>() where T : ViewModelBase;
 
-        System.Threading.Tasks.Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>;
+        Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>;
     }
 }

@@ -4,7 +4,16 @@
              xmlns:local="clr-namespace:RealmTasks;assembly=RealmTasks"
 		     x:Class="RealmTasks.ListsPage">
 	<ContentPage.ToolbarItems>
-		<ToolbarItem Command="{Binding AddTaskListCommand}" Text="+" />
+        <ToolbarItem Command="{Binding AddTaskListCommand}">
+            <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource" iOS="add.png" Android="add.png" />
+            </ToolbarItem.Icon>
+		</ToolbarItem>
+        <ToolbarItem Command="{Binding LogoutCommand}">
+            <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource" iOS="exit.png" Android="exit.png" />
+            </ToolbarItem.Icon>
+        </ToolbarItem>
 	</ContentPage.ToolbarItems>
     <ContentPage.Content>
 		<ListView ItemsSource="{Binding TaskLists}" x:Name="TaskListsListView" ItemSelected="OnItemSelected" SelectedItem="{Binding SelectedTaskList}">
@@ -17,10 +26,6 @@
 									  BindingContext="{Binding Source={x:Reference TaskListsListView}, Path=BindingContext}" 
 									  Command="{Binding DeleteTaskListCommand}"
 									  CommandParameter="{Binding Source={x:Reference TaskListCell}, Path=BindingContext}" />
-                            <MenuItem Text="Edit"
-                                      BindingContext="{Binding Source={x:Reference TaskListsListView}, Path=BindingContext}" 
-                                      Command="{Binding EditTaskListCommand}"
-                                      CommandParameter="{Binding Source={x:Reference TaskListCell}, Path=BindingContext}" />
 						</ViewCell.ContextActions>
 						<Grid>
 							<Grid.ColumnDefinitions>
@@ -30,9 +35,7 @@
 
                             <Entry Text = "{Binding Title}"
 								   Margin = "5" 
-								   VerticalOptions="Center" 
-								   Completed="TitleEntryCompleted" 
-								   IsEnabled="{Binding IsEditing}" />
+								   VerticalOptions="Center" />
 							<Label Text = "{Binding Items.Count}" Margin = "5" Grid.Column = "1" VerticalOptions="Center"/>
 						</Grid>
 					</ViewCell>

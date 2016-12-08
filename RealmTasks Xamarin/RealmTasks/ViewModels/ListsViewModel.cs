@@ -40,13 +40,13 @@ namespace RealmTasks
         }
 
         public Command<TaskList> DeleteTaskListCommand { get; }
-        public Command<TaskList> EditTaskListCommand { get; }
+        public Command<TaskList> CompleteTaskListCommand { get; }
         public Command AddTaskListCommand { get; }
 
         public ListsViewModel()
         {
             DeleteTaskListCommand = new Command<TaskList>(DeleteList);
-            EditTaskListCommand = new Command<TaskList>(EditList);
+            CompleteTaskListCommand = new Command<TaskList>(CompleteList);
             AddTaskListCommand = new Command(AddList);
 
             Title = "Tasks";
@@ -125,11 +125,14 @@ namespace RealmTasks
             }
         }
 
-        private void EditList(TaskList list)
+        private void CompleteList(TaskList list)
         {
             if (list != null)
             {
-                list.IsEditing = true;
+                _realm.Write(() =>
+                {
+                    list.IsCompleted = !list.IsCompleted;
+                });
             }
         }
 

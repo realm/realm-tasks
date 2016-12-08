@@ -17,17 +17,11 @@
                                       BindingContext="{Binding Source={x:Reference TasksListView}, Path=BindingContext}" 
                                       Command="{Binding DeleteTaskCommand}"
                                       CommandParameter="{Binding Source={x:Reference TaskCell}, Path=BindingContext}" />
-                            <MenuItem Text="Edit"
-                                      BindingContext="{Binding Source={x:Reference TasksListView}, Path=BindingContext}" 
-                                      Command="{Binding EditTaskCommand}"
-                                      CommandParameter="{Binding Source={x:Reference TaskCell}, Path=BindingContext}" />
                         </ViewCell.ContextActions>
                         <Grid>
                             <Entry Text = "{Binding Title}"
                                    Margin = "5" 
-                                   VerticalOptions="Center" 
-                                   Completed="TitleEntryCompleted" 
-                                   IsEnabled="{Binding IsEditing}" />
+                                   VerticalOptions="Center" />
                         </Grid>
                     </ViewCell>
                 </DataTemplate>

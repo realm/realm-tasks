@@ -46,6 +46,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\TasksPage.xaml.cs">
       <DependentUpon>TasksPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IDialogService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Implementation\DialogService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Views\" />

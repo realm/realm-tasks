@@ -25,13 +25,13 @@ namespace RealmTasks
         }
 
         public Command<Task> DeleteTaskCommand { get; }
-        public Command<Task> EditTaskCommand { get; }
+        public Command<Task> CompleteTaskCommand { get; }
         public Command AddTaskCommand { get; }
 
         public TasksViewModel()
         {
             DeleteTaskCommand = new Command<Task>(DeleteTask);
-            EditTaskCommand = new Command<Task>(EditTask);
+            CompleteTaskCommand = new Command<Task>(CompleteTask);
             AddTaskCommand = new Command(AddTask);
         }
 
@@ -52,11 +52,14 @@ namespace RealmTasks
             }
         }
 
-        private void EditTask(Task task)
+        private void CompleteTask(Task task)
         {
             if (task != null)
             {
-                task.IsEditing = true;
+                _realm.Write(() =>
+                {
+                    task.IsCompleted = !task.IsCompleted;
+                });
             }
         }
 

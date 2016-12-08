@@ -40,18 +40,17 @@ namespace RealmTasks.Implementation
             return Navigation.PushAsync(page, true);
         }
 
-        public void SetMainPage<T>(bool navigatable) where T : ViewModelBase
+        public void SetMainPage<T>() where T : ViewModelBase
         {
             var page = (Page)GetPage<T>();
-            if (navigatable)
+            Application.Current.MainPage = new NavigationPage(page)
             {
-                page = new NavigationPage(page);
-            }
-
-            Application.Current.MainPage = page;
+                BarBackgroundColor = Color.FromHex("#3F51B5"),
+                BarTextColor = Color.White
+            };
         }
 
-        public async System.Threading.Tasks.Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>
+        public async Task<TResult> Prompt<TViewModel, TResult>() where TViewModel : ViewModelBase, IPromptable<TResult>
         {
             if (Navigation == null)
             {

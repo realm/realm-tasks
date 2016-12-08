@@ -30,6 +30,7 @@ namespace RealmTasks
         }
 
         protected INavigationService NavigationService => DependencyService.Get<INavigationService>(DependencyFetchTarget.GlobalInstance);
+        protected IDialogService DialogService => DependencyService.Get<IDialogService>(DependencyFetchTarget.GlobalInstance);
 
         protected bool IsBusy
         {
@@ -86,9 +87,14 @@ namespace RealmTasks
             Console.WriteLine(ex.Message);
         }
 
-        protected async void PerformTask(Func<System.Threading.Tasks.Task> func, Action<Exception> onError = null)
+        protected async void PerformTask(Func<System.Threading.Tasks.Task> func, Action<Exception> onError = null, string progressMessage = null)
         {
             IsBusy = true;
+            if (progressMessage != null)
+            {
+                DialogService.ShowProgress(progressMessage);
+            }
+
             try
             {
                 await func();
@@ -107,6 +113,10 @@ namespace RealmTasks
             finally
             {
                 IsBusy = false;
+                if (progressMessage != null)
+                {
+                    DialogService.HideProgress();
+                }
             }
         }
     }

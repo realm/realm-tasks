@@ -10,7 +10,7 @@ namespace RealmTasks
             InitializeComponent();
 
             var navigationService = DependencyService.Get<INavigationService>(DependencyFetchTarget.GlobalInstance);
-            navigationService.SetMainPage<ListsViewModel>(true);
+            navigationService.SetMainPage<ListsViewModel>();
         }
     }
 }
