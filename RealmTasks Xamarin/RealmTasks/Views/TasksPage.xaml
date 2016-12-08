@@ -4,7 +4,11 @@
              xmlns:local="clr-namespace:RealmTasks;assembly=RealmTasks"
              x:Class="RealmTasks.TasksPage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding AddTaskCommand}" Text="+" />
+        <ToolbarItem Command="{Binding AddTaskCommand}">
+		    <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource" iOS="add.png" Android="add.png" />
+            </ToolbarItem.Icon>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <ListView ItemsSource="{Binding TaskList.Items}" x:Name="TasksListView" ItemSelected="OnItemSelected">
