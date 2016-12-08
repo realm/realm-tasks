@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
-using Android.App;
 using Xamarin.Forms.Xaml;
 
-[assembly: AssemblyTitle("RealmTasks.Droid")]
+[assembly: AssemblyTitle("RealmTasks.iOS")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("Realm")]
 [assembly: AssemblyProduct("RealmTasks")]

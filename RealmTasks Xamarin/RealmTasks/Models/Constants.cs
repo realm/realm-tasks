@@ -1,4 +1,5 @@
 ﻿using System;
+using Xamarin.Forms;
 
 namespace RealmTasks
 {
@@ -15,6 +16,31 @@ namespace RealmTasks
 
             public static Uri SyncServerUri => new Uri($"realm://{SyncHost}/~/realmtasks");
             public static Uri AuthServerUri => new Uri($"http://{SyncHost}");
+        }
+
+        public static class Colors
+        {
+            public static readonly Color[] ListColors =
+            {
+                new Color(06 / 255.0, 147 / 255.0, 251 / 255.0),
+                new Color(16 / 255.0, 158 / 255.0, 251 / 255.0),
+                new Color(26 / 255.0, 169 / 255.0, 251 / 255.0),
+                new Color(33 / 255.0, 180 / 255.0, 251 / 255.0),
+                new Color(40 / 255.0, 190 / 255.0, 251 / 255.0),
+                new Color(46 / 255.0, 198 / 255.0, 251 / 255.0),
+                new Color(54 / 255.0, 207 / 255.0, 251 / 255.0)
+            };
+
+            public static readonly Color[] TaskColors =
+            {
+                new Color(231/255.0, 167/255.0, 118/255.0),
+                new Color(228/255.0, 125/255.0, 114/255.0),
+                new Color(233/255.0, 099/255.0, 111/255.0),
+                new Color(242/255.0, 081/255.0, 145/255.0),
+                new Color(154/255.0, 080/255.0, 164/255.0),
+                new Color(088/255.0, 086/255.0, 157/255.0),
+                new Color(056/255.0, 071/255.0, 126/255.0)
+            };
         }
     }
 }

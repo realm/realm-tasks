@@ -16,7 +16,13 @@
         </ToolbarItem>
 	</ContentPage.ToolbarItems>
     <ContentPage.Content>
-		<ListView ItemsSource="{Binding TaskLists}" x:Name="TaskListsListView" ItemSelected="OnItemSelected" SelectedItem="{Binding SelectedTaskList}">
+		<ListView ItemsSource="{Binding TaskLists}" 
+				x:Name="TaskListsListView" 
+				ItemSelected="OnItemSelected" 
+				SelectedItem="{Binding SelectedTaskList}"
+				RowHeight="60"
+                SeparatorVisibility="None"
+				BackgroundColor="Black">
 			<ListView.ItemTemplate>
 				<DataTemplate>
 					<ViewCell x:Name="TaskListCell"> 
@@ -28,15 +34,39 @@
 									  CommandParameter="{Binding Source={x:Reference TaskListCell}, Path=BindingContext}" />
 						</ViewCell.ContextActions>
 						<Grid>
+							<Grid.Behaviors>
+                                <local:ItemColoringBehavior x:TypeArguments="local:TaskList"
+                                    RealmCollection="{Binding ItemsSource, Source={x:Reference TaskListsListView}}"
+                                    Colors="{StaticResource ListColors}"/>
+                            </Grid.Behaviors>
+
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width = "*" />
-								<ColumnDefinition Width = "Auto" />
+								<ColumnDefinition Width = "60" />
 							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="1"/>
+							</Grid.RowDefinitions>
 
                             <Entry Text = "{Binding Title}"
 								   Margin = "5" 
-								   VerticalOptions="Center" />
-							<Label Text = "{Binding Items.Count}" Margin = "5" Grid.Column = "1" VerticalOptions="Center"/>
+								   VerticalOptions="Center"
+								   Grid.RowSpan="2"/>
+							<BoxView Color="White" 
+									Opacity="0.15"
+								    Grid.Column="1"
+									Grid.RowSpan="2"/>
+							<Label Text = "{Binding Items.Count}" 
+									TextColor="White"
+									HorizontalOptions="Center"
+								    Grid.Column = "1" 
+								    VerticalOptions="Center"
+									Grid.RowSpan="2"/>
+							<BoxView Color="Black"
+									Opacity="0.1"
+									Grid.Row="1"
+									Grid.ColumnSpan="2"/>
 						</Grid>
 					</ViewCell>
 				</DataTemplate>

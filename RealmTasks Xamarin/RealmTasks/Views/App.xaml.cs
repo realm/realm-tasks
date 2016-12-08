@@ -11,6 +11,12 @@ namespace RealmTasks
 
             var navigationService = DependencyService.Get<INavigationService>(DependencyFetchTarget.GlobalInstance);
             navigationService.SetMainPage<ListsViewModel>();
+
+            Resources = new ResourceDictionary
+            {
+                ["ListColors"] = Constants.Colors.ListColors,
+                ["TaskColors"] = Constants.Colors.TaskColors,
+            };
         }
     }
 }

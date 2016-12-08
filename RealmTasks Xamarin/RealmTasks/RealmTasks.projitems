@@ -40,7 +40,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\IPromptable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TaskListList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TaskList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\TaskItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Task.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValueConverters\InverseBooleanConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TasksViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\TasksPage.xaml.cs">
@@ -48,6 +48,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Services\IDialogService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Implementation\DialogService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Behaviors\ItemColoringBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Views\" />
@@ -56,5 +57,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Services\Implementation\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
     <Folder Include="$(MSBuildThisFileDirectory)ValueConverters\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Behaviors\" />
   </ItemGroup>
 </Project>

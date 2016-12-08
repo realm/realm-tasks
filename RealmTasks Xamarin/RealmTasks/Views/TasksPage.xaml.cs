@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using Xamarin.Forms;
+using Realms;
+using System.Linq;
+using Xamarin.Forms.Xaml;
 
 namespace RealmTasks
 {

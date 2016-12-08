@@ -7,22 +7,8 @@ namespace RealmTasks
     public class TasksViewModel : ViewModelBase
     {
         private Realm _realm;
-        private TaskList _taskList;
 
-        public TaskList TaskList
-        {
-            get
-            {
-                return _taskList;
-            }
-            private set
-            {
-                if (Set(ref _taskList, value))
-                {
-                    Title = _taskList?.Title;
-                }
-            }
-        }
+        public TaskList TaskList { get; private set; }
 
         public Command<Task> DeleteTaskCommand { get; }
         public Command<Task> CompleteTaskCommand { get; }
@@ -39,6 +25,8 @@ namespace RealmTasks
         {
             _realm = realm;
             TaskList = realm.Find<TaskList>(taskListId);
+            Title = TaskList?.Title;
+            RaisePropertyChanged(nameof(TaskList));
         }
 
         private void DeleteTask(Task task)
@@ -67,14 +55,7 @@ namespace RealmTasks
         {
             _realm.Write(() =>
             {
-                if (TaskList.Items.Count == 0)
-                {
-                    TaskList.Items.Add(new Task());
-                }
-                else
-                {
-                    TaskList.Items.Insert(0, new Task());
-                }
+                TaskList.Items.Insert(0, new Task());
             });
         }
     }

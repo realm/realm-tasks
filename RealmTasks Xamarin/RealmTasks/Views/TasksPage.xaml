@@ -11,10 +11,15 @@
         </ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <ListView ItemsSource="{Binding TaskList.Items}" x:Name="TasksListView" ItemSelected="OnItemSelected">
+        <ListView ItemsSource="{Binding TaskList.Items}" 
+				x:Name="TasksListView" 
+				ItemSelected="OnItemSelected"
+				RowHeight="60"
+                SeparatorVisibility="None"
+                BackgroundColor="Black">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <ViewCell x:Name="TaskCell"> 
+                    <ViewCell x:Name="TaskCell">
                         <ViewCell.ContextActions>
                             <MenuItem Text="Delete"
                                       IsDestructive="true"
@@ -23,6 +28,11 @@
                                       CommandParameter="{Binding Source={x:Reference TaskCell}, Path=BindingContext}" />
                         </ViewCell.ContextActions>
                         <Grid>
+							<Grid.Behaviors>
+                                <local:ItemColoringBehavior x:TypeArguments="local:Task"
+                                    RealmCollection="{Binding ItemsSource, Source={x:Reference TasksListView}}"
+									Colors="{StaticResource TaskColors}"/>
+                            </Grid.Behaviors>
                             <Entry Text = "{Binding Title}"
                                    Margin = "5" 
                                    VerticalOptions="Center" />
