@@ -1,4 +1,5 @@
-﻿using Android.Graphics;
+﻿using System.ComponentModel;
+using Android.Graphics;
 using Android.Text;
 using Android.Views;
 using RealmTasks;
@@ -23,6 +24,16 @@ namespace RealmTasks.Droid
                 Control.SetPadding(25, Control.PaddingTop, Control.PaddingRight, Control.PaddingBottom);
 
                 UpdateStrikeThrough(e.NewElement as TransparentEntry);
+            }
+        }
+
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(sender, e);
+
+            if (e.PropertyName == nameof(TransparentEntry.IsStrikeThrough))
+            {
+                UpdateStrikeThrough(sender as TransparentEntry);
             }
         }
 
