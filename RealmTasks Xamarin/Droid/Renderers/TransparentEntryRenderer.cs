@@ -1,4 +1,5 @@
-﻿using Android.Text;
+﻿using Android.Graphics;
+using Android.Text;
 using Android.Views;
 using RealmTasks;
 using RealmTasks.Droid;
@@ -20,6 +21,20 @@ namespace RealmTasks.Droid
                 Control.SetBackgroundColor(Android.Graphics.Color.Transparent);
                 Control.InputType |= InputTypes.TextFlagNoSuggestions;
                 Control.SetPadding(25, Control.PaddingTop, Control.PaddingRight, Control.PaddingBottom);
+
+                UpdateStrikeThrough(e.NewElement as TransparentEntry);
+            }
+        }
+
+        private void UpdateStrikeThrough(TransparentEntry entry)
+        {
+            if (entry?.IsStrikeThrough == true)
+            {
+                Control.PaintFlags |= PaintFlags.StrikeThruText;
+            }
+            else
+            {
+                Control.PaintFlags &= ~PaintFlags.StrikeThruText;
             }
         }
     }

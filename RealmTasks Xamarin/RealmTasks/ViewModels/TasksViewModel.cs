@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Realms;
 using Xamarin.Forms;
 
@@ -46,7 +47,17 @@ namespace RealmTasks
             {
                 _realm.Write(() =>
                 {
+                    TaskList.Items.Remove(task);
                     task.IsCompleted = !task.IsCompleted;
+                    if (task.IsCompleted)
+                    {
+                        TaskList.Items.Add(task);
+                    }
+                    else
+                    {
+                        var nonCompletedCount = TaskList.Items.Count(t => !t.IsCompleted);
+                        TaskList.Items.Insert(nonCompletedCount, task);
+                    }
                 });
             }
         }
