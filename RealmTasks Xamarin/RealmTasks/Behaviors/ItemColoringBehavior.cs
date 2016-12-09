@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using Realms;
 using Xamarin.Forms;
 
+using ThreadingTask = System.Threading.Tasks.Task;
+
 namespace RealmTasks
 {
-    public class ItemColoringBehavior<T> : Behavior<View> where T : RealmObject
+    public class ItemColoringBehavior<T> : Behavior<View> where T : RealmObject, ICompletable
     {
         private IDisposable _notificationToken;
         private WeakReference<View> _view;
@@ -27,6 +29,8 @@ namespace RealmTasks
         }
 
         public Color[] Colors { get; set; }
+
+        public Color CompletedColor { get; set; }
 
         static void OnRealmCollectionChanged(BindableObject bindable, object oldValue, object newValue)
         {
@@ -53,17 +57,35 @@ namespace RealmTasks
             _notificationToken?.Dispose();
         }
 
-        private void CalculateColor()
+        private async void CalculateColor()
         {
+            // HACK: yield control to avoid a race condition where things might not be initialized yet, resulting in no color being applied
+            await ThreadingTask.Delay(1);
             View view = null;
-            if (RealmCollection != null && _view?.TryGetTarget(out view) == true)
+            T item;
+            if (RealmCollection != null && 
+                _view?.TryGetTarget(out view) == true &&
+                (item = view.BindingContext as T) != null)
             {
-                var item = view.BindingContext as T;
-                if (item != null)
+                try
                 {
-                    var index = RealmCollection.IndexOf(item);
-                    var fraction = index / (double)Math.Max(13, RealmCollection.Count);
-                    view.BackgroundColor = GradientColorAtFraction(fraction);
+                    Color backgroundColor;
+                    if (item.IsCompleted)
+                    {
+                        backgroundColor = CompletedColor;
+                    }
+                    else
+                    {
+                        var index = RealmCollection.IndexOf(item);
+                        var fraction = index / (double)Math.Max(13, RealmCollection.Count);
+                        backgroundColor = GradientColorAtFraction(fraction);
+                    }
+
+                    view.BackgroundColor = backgroundColor;
+                }
+                catch
+                {
+                    // Let's not crash because of a coloring fail :)
                 }
             }
         }

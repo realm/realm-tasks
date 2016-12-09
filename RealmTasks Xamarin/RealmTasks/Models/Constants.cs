@@ -41,6 +41,8 @@ namespace RealmTasks
                 new Color(088/255.0, 086/255.0, 157/255.0),
                 new Color(056/255.0, 071/255.0, 126/255.0)
             };
+
+            public static readonly Color CompletedColor = new Color(51/255.0, 51 / 255.0, 51 / 255.0);
         }
     }
 }

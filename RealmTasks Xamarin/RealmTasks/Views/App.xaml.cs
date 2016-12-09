@@ -16,6 +16,9 @@ namespace RealmTasks
             {
                 ["ListColors"] = Constants.Colors.ListColors,
                 ["TaskColors"] = Constants.Colors.TaskColors,
+                ["CompletedColor"] = Constants.Colors.CompletedColor,
+                ["InverseBooleanConverter"] = new InverseBooleanConverter(),
+                ["TaskListToAlphaConverter"] = new TaskListToAlphaConverter()
             };
         }
     }

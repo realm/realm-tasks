@@ -2,7 +2,7 @@
 
 namespace RealmTasks
 {
-    public class Task : RealmObject
+    public class Task : RealmObject, ICompletable
     {
         [MapTo("text")]
         [Required]

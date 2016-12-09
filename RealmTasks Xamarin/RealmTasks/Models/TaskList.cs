@@ -4,7 +4,7 @@ using Realms;
 
 namespace RealmTasks
 {
-    public class TaskList : RealmObject
+    public class TaskList : RealmObject, ICompletable
     {
         [PrimaryKey]
         [Required]

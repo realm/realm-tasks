@@ -51,6 +51,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\ItemColoringBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Behaviors\CellDeselectingBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\TransparentEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ICompletable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValueConverters\TaskListToAlphaConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Views\" />
