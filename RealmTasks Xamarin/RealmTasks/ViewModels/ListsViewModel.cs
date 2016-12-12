@@ -124,17 +124,18 @@ namespace RealmTasks
             {
                 _realm.Write(() =>
                 {
-                    TaskLists.Remove(list);
                     list.IsCompleted = !list.IsCompleted;
+                    int index;
                     if (list.IsCompleted)
                     {
-                        TaskLists.Add(list);
+                        index = TaskLists.Count;
                     }
                     else
                     {
-                        var nonCompletedCount = TaskLists.Count(t => !t.IsCompleted);
-                        TaskLists.Insert(nonCompletedCount, list);
+                        index = TaskLists.Count(t => !t.IsCompleted);
                     }
+
+                    TaskLists.Move(list, index - 1);
                 });
             }
         }
