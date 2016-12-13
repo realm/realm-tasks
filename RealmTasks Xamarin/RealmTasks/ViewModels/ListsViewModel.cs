@@ -38,8 +38,6 @@ namespace RealmTasks
             OpenTaskListCommand = new Command<TaskList>(OpenList);
             AddTaskListCommand = new Command(AddList);
             LogoutCommand = new Command(Logout);
-
-            Title = "Tasks";
         }
 
         protected override async void InitializeCore()

@@ -2,7 +2,8 @@
 <local:PageBase xmlns="http://xamarin.com/schemas/2014/forms"
 		     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:local="clr-namespace:RealmTasks;assembly=RealmTasks"
-		     x:Class="RealmTasks.LoginPage">
+		     x:Class="RealmTasks.LoginPage"
+		     Title="Login">
     <ContentPage.Content>
 		<Grid>
             <Grid.RowDefinitions>

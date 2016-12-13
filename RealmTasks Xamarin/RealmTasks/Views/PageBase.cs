@@ -8,7 +8,6 @@ namespace RealmTasks
 
         protected PageBase()
         {
-            SetBinding(TitleProperty, new Binding("Title"));
         }
 
         protected override void OnAppearing()

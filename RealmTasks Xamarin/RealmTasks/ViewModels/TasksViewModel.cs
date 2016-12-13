@@ -26,7 +26,6 @@ namespace RealmTasks
         {
             _realm = realm;
             TaskList = realm.Find<TaskList>(taskListId);
-            Title = TaskList?.Title;
             RaisePropertyChanged(nameof(TaskList));
         }
 

@@ -4,7 +4,7 @@
 <dict>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)io.realm.realmtasks</string>
+		<string>$(AppIdentifierPrefix)io.realm.realmtasks.xamarin</string>
 	</array>
 </dict>
 </plist>

@@ -41,7 +41,6 @@ namespace RealmTasks
         public LoginViewModel()
         {
             LoginCommand = new Command(Login, () => !IsBusy);
-            Title = "Login";
 
             var cacheConfig = new RealmConfiguration("logincache.realm")
             {

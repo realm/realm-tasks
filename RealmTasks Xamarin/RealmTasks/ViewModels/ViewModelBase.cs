@@ -9,25 +9,8 @@ namespace RealmTasks
     {
         private bool _initialized;
         private bool _isBusy;
-        private string _title;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Title
-        {
-            get
-            {
-                return _title;
-            }
-            set
-            {
-                if (_title != value)
-                {
-                    _title = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
 
         protected INavigationService NavigationService => DependencyService.Get<INavigationService>(DependencyFetchTarget.GlobalInstance);
         protected IDialogService DialogService => DependencyService.Get<IDialogService>(DependencyFetchTarget.GlobalInstance);
