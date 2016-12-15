@@ -33,7 +33,7 @@ protocol ViewControllerProtocol: UIScrollViewDelegate {
 
     func removeFromParentViewController()
 
-    func uiWrite(@noescape block: () -> ())
-    func uiWriteNoUpdateList(@noescape block: () -> ())
+    func uiWrite(@noescape block: () -> Void)
+    func uiWriteNoUpdateList(@noescape block: () -> Void)
     func finishUIWrite()
 }

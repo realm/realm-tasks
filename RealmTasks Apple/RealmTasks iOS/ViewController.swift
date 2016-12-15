@@ -37,6 +37,7 @@ enum ViewControllerPosition {
 
 // MARK: View Controller
 
+// swiftlint:disable:next type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
     UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
 
@@ -69,12 +70,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: UI Writes
 
-    func uiWrite(@noescape block: () -> ()) {
+    func uiWrite(@noescape block: () -> Void) {
         uiWriteNoUpdateList(block)
         didUpdateList(reload: false)
     }
 
-    func uiWriteNoUpdateList(@noescape block: () -> ()) {
+    func uiWriteNoUpdateList(@noescape block: () -> Void) {
         items.realm?.beginWrite()
         block()
         commitUIWrite()

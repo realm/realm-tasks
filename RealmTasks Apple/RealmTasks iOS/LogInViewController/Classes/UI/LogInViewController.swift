@@ -30,7 +30,7 @@ class LogInViewController: UIViewController {
     @IBOutlet private weak var passwordTextField: UITextField!
     @IBOutlet private weak var logInButton: UIButton!
 
-    var completionHandler: ((userName: String?, password: String?, returnCode: LogInViewControllerReturnCode) -> ())?
+    var completionHandler: ((userName: String?, password: String?, returnCode: LogInViewControllerReturnCode) -> Void)?
 
     override func viewDidLoad() {
         userNameTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)

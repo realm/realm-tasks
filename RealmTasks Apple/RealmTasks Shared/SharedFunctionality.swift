@@ -77,7 +77,7 @@ func configureDefaultRealm() -> Bool {
     return false
 }
 
-func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> ()) {
+func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> Void) {
     SyncUser.logInWithCredentials(.usernamePassword(username, password: password, register: register),
                                   authServerURL: Constants.syncAuthURL) { user, error in
         dispatch_async(dispatch_get_main_queue()) {

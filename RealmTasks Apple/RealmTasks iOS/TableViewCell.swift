@@ -297,8 +297,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         guard item != nil && !(item as Object).invalidated else {
             return
         }
-        let animationBlock: () -> ()
-        let completionBlock: () -> ()
+        let animationBlock: () -> Void
+        let completionBlock: () -> Void
 
         // If not deleting, slide it back into the middle
         // If we are deleting, slide it all the way out of the view
