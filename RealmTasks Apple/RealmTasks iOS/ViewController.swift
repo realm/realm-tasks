@@ -37,6 +37,7 @@ enum ViewControllerPosition {
 
 // MARK: View Controller
 
+// swiftlint:disable:next type_body_length
 final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
     UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
 
