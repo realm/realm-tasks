@@ -44,15 +44,16 @@ private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
 
     // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
     deduplicationNotificationToken = realm.addNotificationBlock { _, realm in
-        guard realm.objects(TaskListList.self).first!.items.count > 1 else {
-            return
-        }
+        let items = realm.objects(TaskListList.self).first!.items
+        guard items.count > 1 else { return }
+        let handover = realm.exportThreadHandover(containing: [items])
         // Deduplicate
         dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-            let items = try! Realm().objects(TaskListList.self).first!.items
+            let (realm, handoverItems) = try! handover.importOnCurrentThread()
+            let items = handoverItems[0]
             guard items.count > 1 else { return }
 
-            try! items.realm!.write {
+            try! realm.write {
                 let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
                 for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
                     let id = id as! String
