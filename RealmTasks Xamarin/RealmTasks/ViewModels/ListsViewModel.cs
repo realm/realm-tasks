@@ -5,6 +5,8 @@ using Realms;
 using Realms.Sync;
 using Xamarin.Forms;
 
+using ThreadingTask = System.Threading.Tasks.Task;
+
 namespace RealmTasks
 {
     public class ListsViewModel : ViewModelBase
@@ -77,7 +79,22 @@ namespace RealmTasks
                     ObjectClasses = new[] { typeof(Task), typeof(TaskList), typeof(TaskListList) }
                 };
                 _realm = Realm.GetInstance(config);
+
                 var parent = _realm.Find<TaskListList>(0);
+                if (parent == null)
+                {
+                    // Work around #1002
+                    for (var i = 0; i < 5; i++)
+                    {
+                        await ThreadingTask.Delay(200);
+                        parent = _realm.Find<TaskListList>(0);
+                        if (parent != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+
                 if (parent == null)
                 {
                     _realm.Write(() =>
