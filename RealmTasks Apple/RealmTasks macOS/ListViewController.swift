@@ -148,7 +148,7 @@ final class ListViewController<ListType: ListPresentable where ListType: Object>
         try! list.realm?.commitWrite(withoutNotifying: [notificationToken!])
     }
 
-    func uiWrite(@noescape block: () -> ()) {
+    func uiWrite(@noescape block: () -> Void) {
         beginUIWrite()
         block()
         commitUIWrite()
