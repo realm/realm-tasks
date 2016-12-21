@@ -3,8 +3,8 @@ source 'https://github.com/CocoaPods/Specs.git'
 abstract_target 'RealmTasks' do
     use_frameworks!
     
-    pod 'Realm', git: 'https://github.com/realm/realm-cocoa.git', branch: 'jg-handover', submodules: true
-    pod 'RealmSwift', git: 'https://github.com/realm/realm-cocoa.git', branch: 'jg-handover', submodules: true
+    pod 'Realm', git: 'https://github.com/realm/realm-cocoa.git', branch: 'jg-thread-safe-reference', submodules: true
+    pod 'RealmSwift', git: 'https://github.com/realm/realm-cocoa.git', branch: 'jg-thread-safe-reference', submodules: true
     
     pod 'Cartography', '~> 0.7'
     
