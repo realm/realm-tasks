@@ -156,6 +156,9 @@ public class TaskListActivity extends AppCompatActivity {
         public void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
+            if (fromPosition == -1) {
+                return;
+            }
             adapter.onItemMoved(fromPosition, toPosition);
             adapter.notifyItemMoved(fromPosition, toPosition);
         }
@@ -170,7 +173,7 @@ public class TaskListActivity extends AppCompatActivity {
         public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
-            adapter.notifyItemRemoved(position);
+            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -202,11 +205,9 @@ public class TaskListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onReverted(boolean shouldUpdateUI) {
+        public void onReverted() {
             adapter.onItemReverted();
-            if (shouldUpdateUI) {
-                adapter.notifyDataSetChanged();
-            }
+            adapter.notifyDataSetChanged();
         }
 
         @Override

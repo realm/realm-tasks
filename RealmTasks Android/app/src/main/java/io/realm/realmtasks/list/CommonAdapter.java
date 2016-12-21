@@ -34,7 +34,7 @@ public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapte
     protected OnFirstItemUpdateListener onFirstItemUpdateListener;
 
     public CommonAdapter(Context context, OrderedRealmCollection<T> items) {
-        super(context, items, true);
+        super(context, items, false);
     }
 
     @Override
