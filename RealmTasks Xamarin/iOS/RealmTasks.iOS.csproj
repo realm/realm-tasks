@@ -121,10 +121,10 @@
       <HintPath>..\packages\Acr.UserDialogs.6.3.2\lib\Xamarin.iOS10\Acr.UserDialogs.Interface.dll</HintPath>
     </Reference>
     <Reference Include="Realm">
-      <HintPath>..\packages\Realm.Database.0.81.0\lib\Xamarin.iOS10\Realm.dll</HintPath>
+      <HintPath>..\packages\Realm.Database.0.82.0\lib\Xamarin.iOS10\Realm.dll</HintPath>
     </Reference>
     <Reference Include="Realm.Sync">
-      <HintPath>..\packages\Realm.0.81.0\lib\Xamarin.iOS10\Realm.Sync.dll</HintPath>
+      <HintPath>..\packages\Realm.0.82.0\lib\Xamarin.iOS10\Realm.Sync.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +159,6 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
   <Import Project="..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
-  <Import Project="..\packages\Realm.Database.0.81.0\build\Realm.Database.targets" Condition="Exists('..\packages\Realm.Database.0.81.0\build\Realm.Database.targets')" />
-  <Import Project="..\packages\Realm.0.81.0\build\Realm.targets" Condition="Exists('..\packages\Realm.0.81.0\build\Realm.targets')" />
+  <Import Project="..\packages\Realm.Database.0.82.0\build\Realm.Database.targets" Condition="Exists('..\packages\Realm.Database.0.82.0\build\Realm.Database.targets')" />
+  <Import Project="..\packages\Realm.0.82.0\build\Realm.targets" Condition="Exists('..\packages\Realm.0.82.0\build\Realm.targets')" />
 </Project>

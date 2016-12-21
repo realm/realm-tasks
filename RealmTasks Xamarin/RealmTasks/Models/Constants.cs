@@ -5,10 +5,8 @@ namespace RealmTasks
 {
     public static class Constants
     {
-        public static class Names
-        {
-            public const string DefaultListName = "My Tasks";
-        }
+        public const string DefaultListName = "My Tasks";
+        public const string DefaultListId = "80EB1620-165B-4600-A1B1-D97032FDD9A0";
 
         public static class Server
         {

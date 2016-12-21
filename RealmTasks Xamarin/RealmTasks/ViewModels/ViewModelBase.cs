@@ -38,7 +38,7 @@ namespace RealmTasks
 
         protected bool Set<T>(ref T field, T value, [CallerMemberName] string property = null)
         {
-            if (!(field?.Equals(value) ?? false))
+            if (field?.Equals(value) != true)
             {
                 field = value;
                 RaisePropertyChanged(property);

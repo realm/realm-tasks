@@ -78,40 +78,32 @@ namespace RealmTasks
                 {
                     ObjectClasses = new[] { typeof(Task), typeof(TaskList), typeof(TaskListList) }
                 };
+
                 _realm = Realm.GetInstance(config);
 
                 var parent = _realm.Find<TaskListList>(0);
                 if (parent == null)
                 {
-                    // Work around #1002
-                    for (var i = 0; i < 5; i++)
+                    try
                     {
-                        await ThreadingTask.Delay(200);
-                        parent = _realm.Find<TaskListList>(0);
-                        if (parent != null)
+                        _realm.Write(() =>
                         {
-                            break;
-                        }
-                    }
-                }
+                            parent = new TaskListList();
+                            parent.Items.Add(new TaskList
+                            {
+                                Id = Constants.DefaultListId,
+                                Title = Constants.DefaultListName
+                            });
 
-                if (parent == null)
-                {
-                    _realm.Write(() =>
-                    {
-                        parent = _realm.Add(new TaskListList());
-                    });
-                }
-
-                if (parent.Items.Count == 0)
-                {
-                    _realm.Write(() =>
-                    {
-                        parent.Items.Add(new TaskList
-                        {
-                            Title = Constants.Names.DefaultListName
+                            _realm.Add(parent);
                         });
-                    });
+                    }
+                    catch (RealmDuplicatePrimaryKeyValueException)
+                    {
+                        // If sync went through too fast, we might already have that one.
+                        // We don't care though, since we only use it as container.
+                        parent = _realm.Find<TaskListList>(0);
+                    }
                 }
 
                 TaskLists = parent.Items;
