@@ -78,7 +78,7 @@ func configureDefaultRealm() -> Bool {
 }
 
 
-func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> ()) {
+func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> Void) {
     SyncUser.logIn(with: SyncCredentials.usernamePassword(username: username, password: password, register: register), server: Constants.syncAuthURL) { user, error in
         DispatchQueue.main.async {
             if let user = user {

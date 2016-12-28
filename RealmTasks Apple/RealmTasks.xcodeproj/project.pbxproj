@@ -394,7 +394,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = Realm;
 				TargetAttributes = {
 					143C81DE1D65D1AA00E872E6 = {
@@ -730,6 +730,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EE45F26564356ACD28724653 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "RealmTasks iOS Tests/Info.plist";
@@ -745,6 +746,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7D2927CA4A12217D6E1964 /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "RealmTasks iOS Tests/Info.plist";

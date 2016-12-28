@@ -344,8 +344,8 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 }
             }
         case .ended:
-            let animationBlock: () -> ()
-            let completionBlock: () -> ()
+            let animationBlock: () -> Void
+            let completionBlock: () -> Void
 
             // If not deleting, slide it back into the middle
             // If we are deleting, slide it all the way out of the view

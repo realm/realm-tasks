@@ -31,7 +31,7 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var registerButton: UIButton!
 
     var initialUserName: String?
-    var completionHandler: ((_ userName: String?, _ password: String?, _ returnCode: RegisterViewControllerReturnCode) -> ())?
+    var completionHandler: ((_ userName: String?, _ password: String?, _ returnCode: RegisterViewControllerReturnCode) -> Void)?
 
     override func viewDidLoad() {
         userNameTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)

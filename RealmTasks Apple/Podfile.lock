@@ -1,20 +1,20 @@
 PODS:
   - Cartography (1.0.1)
-  - Realm (2.1.0):
-    - Realm/Headers (= 2.1.0)
-  - Realm/Headers (2.1.0)
-  - RealmSwift (2.1.0):
-    - Realm (= 2.1.0)
+  - Realm (2.1.2):
+    - Realm/Headers (= 2.1.2)
+  - Realm/Headers (2.1.2)
+  - RealmSwift (2.1.2):
+    - Realm (= 2.1.2)
 
 DEPENDENCIES:
-  - Cartography
-  - RealmSwift (~> 2.1.0)
+  - Cartography (~> 1.0)
+  - RealmSwift (~> 2.1.1)
 
 SPEC CHECKSUMS:
   Cartography: c1460e99395b824d9d75360b0382faeb0b33dcd7
-  Realm: bc829ad0ef3d4eea70c34cfcc3b1704d18d50df1
-  RealmSwift: a4d4abbf0088c337cab5b738054395842e4b3052
+  Realm: efe855f4d977c8ce5a82d3116d9f1ff155a6550c
+  RealmSwift: 17d6ee30b6f9df86364408c2197492e33bfea567
 
-PODFILE CHECKSUM: 00bb50f47b7c7fd23842322295b701a31509fd7e
+PODFILE CHECKSUM: d0a49f831160a58f716d60b28239199e4f4ed0f9
 
 COCOAPODS: 1.1.1

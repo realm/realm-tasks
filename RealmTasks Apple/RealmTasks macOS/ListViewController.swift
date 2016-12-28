@@ -152,7 +152,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         try! list.realm?.commitWrite(withoutNotifying: [notificationToken!])
     }
 
-    func uiWrite( block: () -> ()) {
+    func uiWrite( block: () -> Void) {
         beginUIWrite()
         block()
         commitUIWrite()
