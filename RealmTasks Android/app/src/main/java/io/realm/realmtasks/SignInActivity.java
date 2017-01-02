@@ -67,6 +67,10 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        //noinspection ConstantConditions
+        getSupportActionBar().setTitle(R.string.activity_sign_in_label);
+
         usernameView = (AutoCompleteTextView) findViewById(R.id.username);
         passwordView = (EditText) findViewById(R.id.password);
         passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {

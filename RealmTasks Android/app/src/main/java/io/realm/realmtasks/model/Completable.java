@@ -16,7 +16,7 @@
 
 package io.realm.realmtasks.model;
 
-public interface Competable {
+public interface Completable {
 
     boolean isCompletable();
 }

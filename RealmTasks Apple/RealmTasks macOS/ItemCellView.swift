@@ -273,6 +273,8 @@ extension ItemCellView: ItemTextFieldDelegate {
 
     // Called when esc key was pressesed
     override func cancelOperation(sender: AnyObject?) {
+        textView.abortEditing()
+
         if editable {
             editable = false
             delegate?.cellViewDidEndEditing(self)
@@ -342,8 +344,8 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 }
             }
         case .Ended:
-            let animationBlock: () -> ()
-            let completionBlock: () -> ()
+            let animationBlock: () -> Void
+            let completionBlock: () -> Void
 
             // If not deleting, slide it back into the middle
             // If we are deleting, slide it all the way out of the view
@@ -422,6 +424,10 @@ protocol ItemTextFieldDelegate: NSTextFieldDelegate {
 
 private class ItemTextField: NSTextField {
 
+    override class func cellClass() -> AnyClass? {
+        return ItemTextFieldCell.self
+    }
+
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
 
@@ -463,6 +469,28 @@ private class ItemTextField: NSTextField {
 
         // Update height on text change
         invalidateIntrinsicContentSize()
+    }
+
+}
+
+private class ItemTextFieldCell: NSTextFieldCell {
+
+    private var cachedStringValue = ""
+
+    override var stringValue: String {
+        set {
+            cachedStringValue = newValue
+            super.stringValue = newValue
+        }
+
+        get {
+            // By default `NSTextCell` in some reason calls setter from `stringValue` getter that
+            // in some cases fires some Accessibility API notification that couses
+            // `[NSTableView viewAtColumn:row:makeIfNecessary:]` be called. This leads to a crash
+            // if `stringValue` was requested from table view `heightOfRow` delegate method,
+            // see more at https://github.com/realm/RealmTasks/issues/344
+            return cachedStringValue
+        }
     }
 
 }

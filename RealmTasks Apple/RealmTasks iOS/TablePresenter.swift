@@ -205,11 +205,10 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
         case .Changed:
             snapshot.center.y = location.y
 
-            if let destinationIndexPath = destinationIndexPath where indexPath != destinationIndexPath && !items[indexPath.row].completed {
+            if let destinationPath = destinationIndexPath where indexPath != destinationPath && !items[indexPath.row].completed {
                 // move rows
-                tableView.moveRowAtIndexPath(destinationIndexPath, toIndexPath: indexPath)
-
-                self.destinationIndexPath = indexPath
+                tableView.moveRowAtIndexPath(destinationPath, toIndexPath: indexPath)
+                destinationIndexPath = indexPath
             }
         case .Ended, .Cancelled, .Failed:
             guard
@@ -219,7 +218,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
                 else { break }
 
             if destinationIndexPath.row != startIndexPath.row && !items[destinationIndexPath.row].completed {
-                try! items.realm?.write {
+                viewController.uiWriteNoUpdateList {
                     items.move(from: startIndexPath.row, to: destinationIndexPath.row)
                 }
             }
@@ -239,9 +238,7 @@ class TablePresenter<Parent: Object where Parent: ListPresentable>: NSObject,
                 self.snapshot.removeFromSuperview()
                 self.snapshot = nil
 
-                self.updateColors {
-                    UIView.performWithoutAnimation(tableView.reloadData)
-                }
+                self.viewController.didUpdateList(reload: false)
             })
 
             self.startIndexPath = nil

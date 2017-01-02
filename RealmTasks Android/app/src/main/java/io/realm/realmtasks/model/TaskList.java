@@ -21,7 +21,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class TaskList extends RealmObject implements Competable {
+public class TaskList extends RealmObject implements Completable {
 
     public static final String FIELD_ID = "id";
     public static final String FIELD_TEXT = "text";

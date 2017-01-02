@@ -32,19 +32,18 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
     }
 
     func deleteItem(item: Item) {
-        try! items.realm?.write {
+        viewController.uiWrite {
             guard !(item as Object).invalidated, let index = items.indexOf(item) else {
                 return
             }
 
             items.realm?.delete(item)
             viewController.tableView.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: 0)], withRowAnimation: .Left)
-            viewController.didUpdateList()
         }
     }
 
     func completeItem(item: Item) {
-        try! items.realm?.write {
+        viewController.uiWrite {
             guard !(item as Object).invalidated, let index = items.indexOf(item) else {
                 return
             }
@@ -62,7 +61,6 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
 
             items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
             viewController.tableView.moveRowAtIndexPath(sourceIndexPath, toIndexPath: destinationIndexPath)
-            viewController.didUpdateList()
         }
     }
 
@@ -78,6 +76,7 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
     private(set) var currentlyEditingIndexPath: NSIndexPath?
 
     func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
+        items.realm?.beginWrite()
         currentlyEditingCell = editingCell
         let tableView = viewController.tableView
 
@@ -115,17 +114,12 @@ class CellPresenter<Item: Object where Item: CellPresentable> {
         }
 
         let item = editingCell.item
-        guard !(item as Object).invalidated else {
-            tableView.reloadData()
-            return
-        }
         if item.text.isEmpty {
-            try! item.realm?.write {
-                item.realm!.delete(item)
-            }
+            let indexPath = NSIndexPath(forRow: items.indexOf(item)!, inSection: 0)
+            item.realm!.delete(item)
+            viewController.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Top)
         }
-
-        viewController.didUpdateList()
+        viewController.finishUIWrite()
     }
 
     func cellDidChangeText(editingCell: TableViewCell<Item>) {

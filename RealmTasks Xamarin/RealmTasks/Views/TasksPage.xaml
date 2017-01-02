@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<local:PageBase xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:local="clr-namespace:RealmTasks;assembly=RealmTasks"
+             x:Class="RealmTasks.TasksPage"
+		     Title="{Binding TaskList.Title}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding AddTaskCommand}" Icon="add.png"/>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <ListView ItemsSource="{Binding TaskList.Items}" 
+				x:Name="TasksListView" 
+				RowHeight="60"
+                SeparatorVisibility="None"
+                BackgroundColor="Black">
+			<ListView.Behaviors>
+                <local:CellDeselectingBehavior />
+            </ListView.Behaviors>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell x:Name="TaskCell">
+                        <ViewCell.ContextActions>
+                            <MenuItem Text="Delete"
+                                      IsDestructive="true"
+                                      Command="{Binding Path=BindingContext.DeleteTaskCommand, Source={x:Reference Name=TasksListView}}"
+                                      CommandParameter="{Binding .}" />
+                            <MenuItem Text="Complete"
+                                      Command="{Binding Path=BindingContext.CompleteTaskCommand, Source={x:Reference Name=TasksListView}}"
+                                      CommandParameter="{Binding .}" />
+                        </ViewCell.ContextActions>
+                        <Grid>
+							<Grid.Behaviors>
+                                <local:ItemColoringBehavior x:TypeArguments="local:Task"
+                                    RealmCollection="{Binding ItemsSource, Source={x:Reference TasksListView}}"
+									Colors="{StaticResource TaskColors}"
+									CompletedColor="{StaticResource CompletedColor}"/>
+                            </Grid.Behaviors>
+                            <local:TransparentEntry
+									Text = "{Binding Title}"
+									TextColor="White"
+                                    VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
+									IsStrikeThrough="{Binding IsCompleted}"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</local:PageBase>

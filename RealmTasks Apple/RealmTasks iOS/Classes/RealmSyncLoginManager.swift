@@ -66,7 +66,7 @@ public class RealmSyncLoginManager: NSObject {
             "path": realmPath
         ]
 
-        try! HTTPClient.post(authURL, json: json) { data, response, error in
+        try! HTTPClient.post(authURL, json: json) { data, _, error in
             if let data = data {
                 do {
                     let token = try self.parseResponseData(data)
@@ -91,7 +91,7 @@ public class RealmSyncLoginManager: NSObject {
             "path": realmPath
         ]
 
-        try! HTTPClient.post(authURL, json: json) { data, response, error in
+        try! HTTPClient.post(authURL, json: json) { data, _, error in
             if let data = data {
                 do {
                     let token = try self.parseResponseData(data)

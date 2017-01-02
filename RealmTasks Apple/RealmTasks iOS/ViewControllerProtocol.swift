@@ -24,7 +24,7 @@ protocol ViewControllerProtocol: UIScrollViewDelegate {
     var tableViewContentView: UIView {get}
     var view: UIView! {get}
 
-    func didUpdateList()
+    func didUpdateList(reload reload: Bool)
 
     func setTopConstraintTo(constant constant: CGFloat)
     func setPlaceholderAlpha(alpha: CGFloat)
@@ -32,4 +32,8 @@ protocol ViewControllerProtocol: UIScrollViewDelegate {
     func setListTitle(title: String)
 
     func removeFromParentViewController()
+
+    func uiWrite(@noescape block: () -> Void)
+    func uiWriteNoUpdateList(@noescape block: () -> Void)
+    func finishUIWrite()
 }

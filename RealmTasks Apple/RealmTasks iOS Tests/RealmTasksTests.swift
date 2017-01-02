@@ -160,7 +160,6 @@ class RealmTasksTests: XCTestCase {
         wait()
         XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
 
-
         deleteItemFromSync()
         wait()
 
