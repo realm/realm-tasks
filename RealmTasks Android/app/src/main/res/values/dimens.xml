@@ -5,5 +5,13 @@
 
     <dimen name="signin_horizontal_margin">64dp</dimen>
     <dimen name="padding_bottom_pull_down">16dp</dimen>
+    <dimen name="row_min_height">55dp</dimen>
+    <dimen name="row_icon_margin">20dp</dimen>
+    <dimen name="row_text_margin_left">15dp</dimen>
+    <dimen name="row_text_margin_right">75dp</dimen>
+    <dimen name="row_badge_width">60dp</dimen>
+    <dimen name="row_arrow_margin">10dp</dimen>
+    <dimen name="row_text_padding">16dp</dimen>
+    <dimen name="row_text_size">18dp</dimen>
 
 </resources>
