@@ -1,20 +1,41 @@
 PODS:
   - Cartography (0.7.0)
-  - Realm (2.1.1):
-    - Realm/Headers (= 2.1.1)
-  - Realm/Headers (2.1.1)
-  - RealmSwift (2.1.1):
-    - Realm (= 2.1.1)
+  - Realm (2.1.2):
+    - Realm/Headers (= 2.1.2)
+  - Realm/Headers (2.1.2)
+  - RealmSwift (2.1.2):
+    - Realm (= 2.1.2)
 
 DEPENDENCIES:
   - Cartography (~> 0.7)
-  - RealmSwift (~> 2.1.1)
+  - Realm (from `https://github.com/realm/realm-cocoa.git`, branch `jg-thread-safe-reference`)
+  - RealmSwift (from `https://github.com/realm/realm-cocoa.git`, branch `jg-thread-safe-reference`)
+
+EXTERNAL SOURCES:
+  Realm:
+    :branch: jg-thread-safe-reference
+    :git: https://github.com/realm/realm-cocoa.git
+    :submodules: true
+  RealmSwift:
+    :branch: jg-thread-safe-reference
+    :git: https://github.com/realm/realm-cocoa.git
+    :submodules: true
+
+CHECKOUT OPTIONS:
+  Realm:
+    :commit: 61fd56473e713bd512f6ebc6d2135653cc9136ec
+    :git: https://github.com/realm/realm-cocoa.git
+    :submodules: true
+  RealmSwift:
+    :commit: 61fd56473e713bd512f6ebc6d2135653cc9136ec
+    :git: https://github.com/realm/realm-cocoa.git
+    :submodules: true
 
 SPEC CHECKSUMS:
   Cartography: dd6044b6fe352252f68b648df5bff47841e591cc
-  Realm: a55959c0b171a5fe5267406d17f314fec3cefaae
-  RealmSwift: 749fd955bf8d6471c21d218b9389a47aaeccfe3f
+  Realm: ef522c4c8a51d919165ad33f972f0fd18401cc11
+  RealmSwift: 1ecd6f956dada3d1f9a0e577dd52518099b935bc
 
-PODFILE CHECKSUM: 063ec3322bf73b611baed301e21c47b5b4be14d8
+PODFILE CHECKSUM: e00588a5e57e86201adc25380b346f33e622a1be
 
 COCOAPODS: 1.1.1

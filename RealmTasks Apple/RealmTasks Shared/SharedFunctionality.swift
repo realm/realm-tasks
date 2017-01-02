@@ -44,24 +44,25 @@ private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
 
     // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
     deduplicationNotificationToken = realm.addNotificationBlock { _, realm in
-        guard realm.objects(TaskListList.self).first!.items.count > 1 else {
-            return
-        }
+        let items = realm.objects(TaskListList.self).first!.items
+        guard items.count > 1 && !realm.inWriteTransaction else { return }
+        let itemsReference = ThreadSafeReference(to: items)
         // Deduplicate
         dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-            let items = try! Realm().objects(TaskListList.self).first!.items
-            guard items.count > 1 else { return }
-
-            try! items.realm!.write {
-                let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
-                for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
-                    let id = id as! String
-                    let indexesToRemove = items.enumerate().flatMap { index, element in
-                        return element.id == id ? index : nil
-                    }
-                    indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
-                }
+            let realm = try! Realm()
+            guard let items = realm.resolve(itemsReference) where items.count > 1 else {
+                return
             }
+            realm.beginWrite()
+            let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
+            for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
+                let id = id as! String
+                let indexesToRemove = items.enumerate().flatMap { index, element in
+                    return element.id == id ? index : nil
+                }
+                indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
+            }
+            try! realm.commitWrite()
         }
     }
 }
