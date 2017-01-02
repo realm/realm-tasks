@@ -379,20 +379,20 @@ public class TouchHelper {
                     final float itemViewTranslationX = selectedItemView.getTranslationX();
                     final float rowTranslationX = TouchHelper.this.selected.getRow().getTranslationX();
                     final float previousTranslationX = itemViewTranslationX + rowTranslationX;
-                    boolean completed = TouchHelper.this.selected.getCompleted();
-                    TouchHelper.this.selected.reset();
-                    TouchHelper.this.selected.setCompleted(completed);
                     if (Math.abs(previousTranslationX) > maxNiche) {
                         if (previousTranslationX < 0) {
-                            animateDismissItem(selectedItemView, previousTranslationX);
+                            animateDismissItem(selectedItemView);
                         } else {
-                            animateCompleteItem(selectedItemView, previousTranslationX);
+                            animateCompleteItem(selectedItemView);
                         }
                     } else {
                         final CharSequence text = TouchHelper.this.selected.getText().getText();
                         final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text, 0, text.length());
                         stringBuilder.clearSpans();
                         TouchHelper.this.selected.getText().setText(stringBuilder);
+                        boolean completed = TouchHelper.this.selected.getCompleted();
+                        TouchHelper.this.selected.reset();
+                        TouchHelper.this.selected.setCompleted(completed);
                     }
                 }
             } else if (previousActionState == ACTION_STATE_PULL) {
@@ -435,18 +435,18 @@ public class TouchHelper {
             recyclerView.invalidate();
         }
 
-        private void animateDismissItem(View selectedItemView, float translationX) {
+        private void animateDismissItem(View selectedItemView) {
             final TranslateAnimation translateAnimation =
-                    new TranslateAnimation(translationX, 0 - selectedItemView.getWidth(), 0, 0);
+                    new TranslateAnimation(0, 0 - selectedItemView.getWidth(), 0, 0);
             translateAnimation.setDuration(ANIMATION_DURATION);
             translateAnimation.setAnimationListener(new DismissAnimationListener(TouchHelper.this.selected));
             ViewCompat.setHasTransientState(selectedItemView, true);
             selectedItemView.startAnimation(translateAnimation);
         }
 
-        private void animateCompleteItem(View selectedItemView, float translationX) {
+        private void animateCompleteItem(View selectedItemView) {
             final TranslateAnimation translateAnimation =
-                    new TranslateAnimation(translationX, 0, 0, 0);
+                    new TranslateAnimation(0, 0, 0, 0);
             translateAnimation.setDuration(ANIMATION_DURATION);
             translateAnimation.setAnimationListener(new CompleteAnimationListener(TouchHelper.this.selected));
             ViewCompat.setHasTransientState(selectedItemView, true);
