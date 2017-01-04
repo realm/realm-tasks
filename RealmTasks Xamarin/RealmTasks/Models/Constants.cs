@@ -1,5 +1,9 @@
 ﻿using System;
+#if WPF
+using System.Windows.Media;
+# else
 using Xamarin.Forms;
+# endif
 
 namespace RealmTasks
 {
@@ -20,27 +24,27 @@ namespace RealmTasks
         {
             public static readonly Color[] ListColors =
             {
-                new Color(06 / 255.0, 147 / 255.0, 251 / 255.0),
-                new Color(16 / 255.0, 158 / 255.0, 251 / 255.0),
-                new Color(26 / 255.0, 169 / 255.0, 251 / 255.0),
-                new Color(33 / 255.0, 180 / 255.0, 251 / 255.0),
-                new Color(40 / 255.0, 190 / 255.0, 251 / 255.0),
-                new Color(46 / 255.0, 198 / 255.0, 251 / 255.0),
-                new Color(54 / 255.0, 207 / 255.0, 251 / 255.0)
+                Color.FromRgb(06, 147, 251),
+                Color.FromRgb(16, 158, 251),
+                Color.FromRgb(26, 169, 251),
+                Color.FromRgb(33, 180, 251),
+                Color.FromRgb(40, 190, 251),
+                Color.FromRgb(46, 198, 251),
+                Color.FromRgb(54, 207, 251)
             };
 
             public static readonly Color[] TaskColors =
             {
-                new Color(231/255.0, 167/255.0, 118/255.0),
-                new Color(228/255.0, 125/255.0, 114/255.0),
-                new Color(233/255.0, 099/255.0, 111/255.0),
-                new Color(242/255.0, 081/255.0, 145/255.0),
-                new Color(154/255.0, 080/255.0, 164/255.0),
-                new Color(088/255.0, 086/255.0, 157/255.0),
-                new Color(056/255.0, 071/255.0, 126/255.0)
+                Color.FromRgb(231, 167, 118),
+                Color.FromRgb(228, 125, 114),
+                Color.FromRgb(233, 099, 111),
+                Color.FromRgb(242, 081, 145),
+                Color.FromRgb(154, 080, 164),
+                Color.FromRgb(088, 086, 157),
+                Color.FromRgb(056, 071, 126)
             };
 
-            public static readonly Color CompletedColor = new Color(51/255.0, 51 / 255.0, 51 / 255.0);
+            public static readonly Color CompletedColor = Color.FromRgb(51, 51, 51);
         }
     }
 }

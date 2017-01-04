@@ -82,8 +82,6 @@ namespace RealmTasks
                 Success(user);
             }, onError: ex =>
             {
-                // TODO: show alert.
-
                 DialogService.Alert("Unable to login", ex.Message);
                 HandleException(ex);
             }, progressMessage: "Logging in...");

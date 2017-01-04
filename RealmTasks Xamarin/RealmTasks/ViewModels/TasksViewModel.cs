@@ -1,7 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Realms;
+#if !WPF
 using Xamarin.Forms;
+#endif
 
 namespace RealmTasks
 {

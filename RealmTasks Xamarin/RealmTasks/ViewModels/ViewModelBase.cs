@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+#if !WPF
 using Xamarin.Forms;
+#endif
 
 namespace RealmTasks
 {

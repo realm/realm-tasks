@@ -1,0 +1,57 @@
+﻿<local:PageBase x:Class="RealmTasks.ListsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:RealmTasks"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="Tasks">
+
+    <Grid>
+        <ListView ItemsSource="{Binding TaskLists}"
+                  Background="Black"
+                  x:Name="TaskListsListView">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Height" Value="60" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="60" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text = "{Binding Title}"
+                                 Background="Transparent"
+                                 Foreground="White"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 Grid.ColumnSpan="2"/>
+                        <Rectangle Fill="White"
+                                   Opacity="0.15" 
+                                   Grid.Column="2" Grid.RowSpan="2" />
+
+                        <Button Content="{Binding Items.Count}"
+                                Command="{Binding Path=BindingContext.OpenTaskListCommand, Source={x:Reference Name=TaskListsListView}}"
+                                CommandParameter="{Binding .}"
+                                Foreground="White"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                Grid.Column="2" Grid.RowSpan="2" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</local:PageBase>

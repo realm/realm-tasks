@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Realms;
+#if !WPF
 using Realms.Sync;
 using Xamarin.Forms;
-
-using ThreadingTask = System.Threading.Tasks.Task;
+#endif
 
 namespace RealmTasks
 {
@@ -44,6 +44,7 @@ namespace RealmTasks
 
         protected override async void InitializeCore()
         {
+#if !WPF
             User user = null;
 
             try
@@ -72,12 +73,21 @@ namespace RealmTasks
                 Constants.Server.SyncHost = $"{uri.Host}:{uri.Port}";
             }
 
+#endif
             try
             {
+#if WPF
+                var config = new RealmConfiguration
+                {
+                    ObjectClasses = new[] { typeof(Task), typeof(TaskList), typeof(TaskListList) }
+                };
+
+#else
                 var config = new SyncConfiguration(user, Constants.Server.SyncServerUri)
                 {
                     ObjectClasses = new[] { typeof(Task), typeof(TaskList), typeof(TaskListList) }
                 };
+#endif
 
                 _realm = Realm.GetInstance(config);
 
@@ -107,6 +117,12 @@ namespace RealmTasks
                 }
 
                 TaskLists = parent.Items;
+                await System.Threading.Tasks.Task.Delay(1000);
+
+                var trans = _realm.BeginWrite();
+                await System.Threading.Tasks.Task.Delay(10000);
+                trans.Commit();
+                DialogService.Alert("saved", "saved");
             }
             catch (Exception ex)
             {
@@ -168,8 +184,12 @@ namespace RealmTasks
 
         private void Logout()
         {
+#if WPF
+            throw new NotSupportedException("Sync is not yet supported.");
+#else
             User.Current.LogOut();
             NavigationService.SetMainPage<ListsViewModel>();
+#endif
         }
     }
 }
