@@ -4,7 +4,7 @@ abstract_target 'RealmTasks' do
     use_frameworks!
     
     pod 'RealmSwift', '~> 2.1.2'
-    pod 'Cartography', '~> 0.7'
+    pod 'Cartography', '~> 1.0.1'
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
