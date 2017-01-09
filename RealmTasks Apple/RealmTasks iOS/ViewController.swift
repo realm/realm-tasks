@@ -36,7 +36,7 @@ enum ViewControllerPosition {
 }
 
 // MARK: View Controller
-
+// swiftlint:disable:next type_body_length
 final class ViewController<Item: Object, Parent: Object>:
 UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
 
@@ -68,7 +68,6 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
     private var listPresenter: ListPresenter<Item, Parent>!
 
     // MARK: UI Writes
-
     func uiWrite( block: () -> ()) {
         uiWriteNoUpdateList(block: block)
         didUpdateList(reload: false)

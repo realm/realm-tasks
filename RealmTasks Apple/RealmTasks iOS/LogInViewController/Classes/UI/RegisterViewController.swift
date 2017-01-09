@@ -32,7 +32,7 @@ class RegisterViewController: UIViewController {
 
     var initialUserName: String?
     var completionHandler: ((_ userName: String?, _ password: String?, _ returnCode: RegisterViewControllerReturnCode) -> ())?
-
+    
     override func viewDidLoad() {
         userNameTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)

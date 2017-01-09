@@ -343,6 +343,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                     textView.strike(fraction: fractionOfThreshold)
                 }
             }
+
         case .ended:
             let animationBlock: () -> ()
             let completionBlock: () -> ()
