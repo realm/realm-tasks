@@ -10,7 +10,7 @@ PODS:
 DEPENDENCIES:
   - Cartography (~> 1.0.1)
   - RealmSwift (~> 2.1.2)
-  - SwiftLint
+  - SwiftLint (= 0.16.0)
 
 SPEC CHECKSUMS:
   Cartography: c1460e99395b824d9d75360b0382faeb0b33dcd7
@@ -18,6 +18,6 @@ SPEC CHECKSUMS:
   RealmSwift: 17d6ee30b6f9df86364408c2197492e33bfea567
   SwiftLint: 90665265ae50b58167c674a11c680bbabe9d6513
 
-PODFILE CHECKSUM: e669cd743b49159c8e61034c047afeaecc9a02f0
+PODFILE CHECKSUM: 7ea189fdff396420158804fd730ca45e4b2116bf
 
 COCOAPODS: 1.1.1
