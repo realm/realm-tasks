@@ -30,7 +30,13 @@ class LogInViewController: UIViewController {
     @IBOutlet fileprivate weak var passwordTextField: UITextField!
     @IBOutlet fileprivate weak var logInButton: UIButton!
 
-    var completionHandler: ((_ userName: String?, _ password: String?, _ returnCode: LogInViewControllerReturnCode) -> Void)?
+    struct LogInResponse {
+        let username: String?
+        let password: String?
+        let returnCode: LogInViewControllerReturnCode
+    }
+
+    var completionHandler: ((LogInResponse) -> Void)?
 
     override func viewDidLoad() {
         userNameTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)
@@ -45,7 +51,9 @@ class LogInViewController: UIViewController {
         }
 
         dismiss(animated: true) {
-            self.completionHandler?(self.userNameTextField.text, self.passwordTextField.text, .LogIn)
+            self.completionHandler?(LogInResponse(username: self.userNameTextField.text,
+                                                  password: self.passwordTextField.text,
+                                                  returnCode: .LogIn))
         }
     }
 
@@ -71,10 +79,12 @@ extension LogInViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let viewController = segue.destination as? RegisterViewController {
             viewController.initialUserName = userNameTextField.text
-            viewController.completionHandler = { userName, password, returnCode in
-                if returnCode == .Register {
+            viewController.completionHandler = { response in
+                if response.returnCode == .Register {
                     self.dismiss(animated: true) {
-                        self.completionHandler?(userName, password, .Register)
+                        self.completionHandler?(LogInResponse(username: response.username,
+                                                              password: response.password,
+                                                              returnCode: .Register))
                     }
                 }
             }

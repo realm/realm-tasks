@@ -38,15 +38,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func logIn(animated: Bool = true) {
         let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .main)
         let logInViewController = loginStoryboard.instantiateInitialViewController() as! LogInViewController
-        logInViewController.completionHandler = { username, password, returnCode in
-            guard returnCode != .Cancel, let username = username, let password = password else {
+        logInViewController.completionHandler = { response in
+            guard response.returnCode != .Cancel, let username = response.username, let password = response.password else {
                 // FIXME: handle cancellation properly or just restrict it
                 DispatchQueue.main.async {
                     self.logIn()
                 }
                 return
             }
-            authenticate(username: username, password: password, register: returnCode == .Register) { error in
+            authenticate(username: username, password: password, register: response.returnCode == .Register) { error in
                 if let error = error {
                     self.presentError(error: error as NSError)
                 } else {
