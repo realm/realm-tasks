@@ -55,7 +55,7 @@ extension Color {
 }
 
 extension Collection where Iterator.Element == Color, Index == Int {
-    func gradientColorAtFraction(fraction: Double) -> Color {
+    func gradientColor(atFraction fraction: Double) -> Color {
         // Ensure offset is normalized to 1
         let normalizedOffset = Swift.max(Swift.min(fraction, 1.0), 0.0)
 
@@ -87,13 +87,11 @@ extension Collection where Iterator.Element == Color, Index == Int {
 }
 
 extension Color {
-
-    static func completeDimBackgroundColor() -> Color {
+    class var completeDimBackground: Color {
         return Color(white: 0.2, alpha: 1)
     }
-
-    static func completeGreenBackgroundColor() -> Color {
+    
+    class var completeGreenBackground: Color {
         return Color(red: 0, green: 0.6, blue: 0, alpha: 1)
     }
-
 }
