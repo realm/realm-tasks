@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11760" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11760"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -460,7 +460,7 @@ DQ
 </string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="logInSender:" target="Rd6-Qu-x6P" id="nLI-Fh-PKy"/>
+                                    <action selector="logInWithSender:" target="Rd6-Qu-x6P" id="OMJ-Za-7TE"/>
                                     <binding destination="Rd6-Qu-x6P" name="enabled2" keyPath="password" previousBinding="SIu-Z8-YV7" id="iTN-j6-YEc">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="0"/>
@@ -512,7 +512,7 @@ DQ
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="registerWithSender:" target="Rd6-Qu-x6P" id="4o2-HT-w8m"/>
+                                    <action selector="registerWithSender:" target="Rd6-Qu-x6P" id="8ha-9x-ulw"/>
                                 </connections>
                             </button>
                             <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3WT-Fq-edH">
@@ -587,7 +587,7 @@ DQ
 </string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="register:" target="kGQ-bF-ae4" id="TaP-i7-q9D"/>
+                                    <action selector="registerWithSender:" target="kGQ-bF-ae4" id="96y-gI-eBk"/>
                                     <binding destination="kGQ-bF-ae4" name="enabled3" keyPath="confirmationMatchesPassword" previousBinding="by9-wl-s8K" id="oiK-Me-QUU">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="-1"/>
@@ -703,7 +703,7 @@ Gw
 </string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="cancel:" target="kGQ-bF-ae4" id="YDT-cM-xYu"/>
+                                    <action selector="cancelWithSender:" target="kGQ-bF-ae4" id="2zO-er-YdI"/>
                                 </connections>
                             </button>
                         </subviews>
