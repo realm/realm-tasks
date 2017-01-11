@@ -167,13 +167,13 @@
 		225201931D3DD648009E45FA /* RealmTasks iOS */ = {
 			isa = PBXGroup;
 			children = (
-				9CDF4F201D9E780100EC051B /* Views */,
 				22FEFEBB1D91789B00523E21 /* RealmTasks-iOS.entitlements */,
 				225201941D3DD648009E45FA /* AppDelegate.swift */,
 				225201981D3DD648009E45FA /* Info.plist */,
 				225201951D3DD648009E45FA /* iOS.xcassets */,
 				225201961D3DD648009E45FA /* LaunchScreen.storyboard */,
 				E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */,
+				9CDF4F201D9E780100EC051B /* Views */,
 				E89CE6821D409D0400BB4521 /* LogInViewController */,
 				9C24AA031D8FED0800192CE3 /* ViewController */,
 			);
@@ -356,6 +356,7 @@
 				C23EB01B1D46329400D3E0AC /* Resources */,
 				454E041C0514A606B56F6A8A /* [CP] Embed Pods Frameworks */,
 				3D8EF5BEF14E8D50617287BA /* [CP] Copy Pods Resources */,
+				22AD84871E26320B002D5C48 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -377,6 +378,7 @@
 				E84CF2AF1CBC408000082C1A /* Resources */,
 				B28F2455243335365C52C858 /* [CP] Embed Pods Frameworks */,
 				F80B0F82C316A8061F9A1600 /* [CP] Copy Pods Resources */,
+				22AD84861E262772002D5C48 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -477,6 +479,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		22AD84861E262772002D5C48 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+		22AD84871E26320B002D5C48 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
 		3D8EF5BEF14E8D50617287BA /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
