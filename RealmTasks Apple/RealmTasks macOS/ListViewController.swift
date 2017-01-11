@@ -179,14 +179,14 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
     }
 
     override func validateToolbarItem(_ toolbarItem: NSToolbarItem) -> Bool {
-        return validateSelector(selector: toolbarItem.action!)
+        return validateSelector(toolbarItem.action!)
     }
 
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        return validateSelector(selector: menuItem.action!)
+        return validateSelector(menuItem.action!)
     }
 
-    private func validateSelector(selector: Selector) -> Bool {
+    private func validateSelector(_ selector: Selector) -> Bool {
         switch selector {
         case #selector(newItem):
             return !editing || currentlyEditingCellView?.text.isEmpty == false
