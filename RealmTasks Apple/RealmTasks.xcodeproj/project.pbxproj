@@ -491,7 +491,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			shellScript = Pods/SwiftLint/swiftlint;
 		};
 		22AD84871E26320B002D5C48 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -505,7 +505,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			shellScript = Pods/SwiftLint/swiftlint;
 		};
 		3D8EF5BEF14E8D50617287BA /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
