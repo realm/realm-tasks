@@ -232,7 +232,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
             UIView.animate(withDuration: 0.3, animations: { [unowned self] in
                 self.snapshot.center = cell.center
-                self.snapshot.transform = CGAffineTransform.identity
+                self.snapshot.transform = .identity
             }, completion: { [unowned self] _ in
                 cell.isHidden = false
                 self.snapshot.removeFromSuperview()
