@@ -69,12 +69,12 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
     private var listPresenter: ListPresenter<Item, Parent>!
 
     // MARK: UI Writes
-    func uiWrite( block: () -> Void) {
+    func uiWrite(block: () -> Void) {
         uiWriteNoUpdateList(block: block)
         didUpdateList(reload: false)
     }
 
-    func uiWriteNoUpdateList( block: () -> Void) {
+    func uiWriteNoUpdateList(block: () -> Void) {
         items.realm?.beginWrite()
         block()
         commitUIWrite()
