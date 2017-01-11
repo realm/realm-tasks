@@ -31,8 +31,8 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         self.items = items
     }
 
-    func deleteItem(item: Item) {
-        try! items.realm?.write {
+    func delete(item: Item) {
+        viewController.uiWrite {
             guard !(item as Object).isInvalidated, let index = items.index(of: item) else {
                 return
             }
@@ -44,7 +44,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
     }
 
     func completeItem(item: Item) {
-        try! items.realm?.write {
+        viewController.uiWrite {
             guard !(item as Object).isInvalidated, let index = items.index(of: item) else {
                 return
             }
@@ -85,10 +85,10 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         currentlyEditingIndexPath = tableView.indexPath(for: editingCell)
 
         let editingOffset = editingCell.convert(editingCell.bounds, to: tableView).origin.y - tableView.contentOffset.y - tableView.contentInset.top
-        viewController.setTopConstraintTo(constant: -editingOffset)
+        viewController.setTopConstraint(to: -editingOffset)
         tableView.contentInset.bottom += editingOffset
 
-        viewController.setPlaceholderAlpha(alpha: 0)
+        viewController.setPlaceholderAlpha(0)
         tableView.bounces = false
 
         UIView.animate(withDuration: 0.3, animations: {
@@ -107,7 +107,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         let tableView = viewController.tableView
 
         tableView.contentInset.bottom = 54
-        viewController.setTopConstraintTo(constant: 0)
+        viewController.setTopConstraint(to: 0)
         UIView.animate(withDuration: 0.3) {
             for cell in tableView.visibleCells where cell !== editingCell {
                 cell.alpha = 1

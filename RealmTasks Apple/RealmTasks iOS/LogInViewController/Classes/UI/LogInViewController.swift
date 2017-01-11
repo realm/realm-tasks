@@ -26,9 +26,9 @@ enum LogInViewControllerReturnCode: Int {
 
 class LogInViewController: UIViewController {
 
-    @IBOutlet weak var userNameTextField: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var logInButton: UIButton!
+    @IBOutlet fileprivate weak var userNameTextField: UITextField!
+    @IBOutlet fileprivate weak var passwordTextField: UITextField!
+    @IBOutlet fileprivate weak var logInButton: UIButton!
 
     var completionHandler: ((_ userName: String?, _ password: String?, _ returnCode: LogInViewControllerReturnCode) -> Void)?
 

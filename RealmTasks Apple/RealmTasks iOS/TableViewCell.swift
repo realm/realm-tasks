@@ -54,7 +54,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     var item: Item! {
         didSet {
             textView.text = item.text
-            setCompleted(completed: item.completed)
+            setCompleted(item.completed)
             if let item = item as? TaskList {
                 let count = item.items.filter("completed == false").count
                 countLabel.text = String(count)
@@ -308,7 +308,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
                 self.contentView.frame.origin.x = 0
             }
             completionBlock = {
-                self.setCompleted(completed: !self.item.completed, animated: true)
+                self.setCompleted(!self.item.completed, animated: true)
             }
         case .Delete?:
             animationBlock = {
@@ -319,7 +319,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
                 self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
             }
             completionBlock = {
-                self.presenter.deleteItem(item: self.item)
+                self.presenter.delete(item: self.item)
             }
         case nil:
             item.completed ? textView.strike() : textView.unstrike()
@@ -366,7 +366,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
 
     // MARK: Actions
 
-    private func setCompleted(completed: Bool, animated: Bool = false) {
+    private func setCompleted(_ completed: Bool, animated: Bool = false) {
         completed ? textView.strike() : textView.unstrike()
         overlayView.isHidden = !completed
         let updateColor = { [unowned self] in

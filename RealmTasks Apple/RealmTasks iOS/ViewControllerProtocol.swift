@@ -26,10 +26,10 @@ protocol ViewControllerProtocol: UIScrollViewDelegate {
 
     func didUpdateList(reload: Bool)
 
-    func setTopConstraintTo(constant: CGFloat)
-    func setPlaceholderAlpha(alpha: CGFloat)
+    func setTopConstraint(to constant: CGFloat)
+    func setPlaceholderAlpha(_ alpha: CGFloat)
 
-    func setListTitle(title: String)
+    func setListTitle(_ title: String)
 
     func removeFromParentViewController()
 

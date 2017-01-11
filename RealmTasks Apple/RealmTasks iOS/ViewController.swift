@@ -233,7 +233,7 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
     // FIXME: This could easily be refactored to avoid such a high CC.
     // swiftlint:disable:next cyclomatic_complexity
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        func removeVC(viewController: UIViewController?) {
+        func removeVC(_ viewController: UIViewController?) {
             if scrollView.isDragging {
                 viewController?.view.removeFromSuperview()
                 viewController?.removeFromParentViewController()
@@ -248,11 +248,11 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
             startMovingToNextViewController(direction: .Down)
             return
         } else {
-            removeVC(viewController: bottomViewController)
+            removeVC(bottomViewController)
         }
 
         guard distancePulledDown > 0 else {
-            removeVC(viewController: topViewController)
+            removeVC(topViewController)
             return
         }
 
@@ -277,8 +277,8 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         }
 
         if scrollView.isDragging {
-            removeVC(viewController: topViewController)
-            setPlaceholderAlpha(alpha: min(1, distancePulledDown / tableView.rowHeight))
+            removeVC(topViewController)
+            setPlaceholderAlpha(min(1, distancePulledDown / tableView.rowHeight))
         }
     }
 
@@ -333,15 +333,15 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         if reload { tableView.reloadData() }
     }
 
-    func setTopConstraintTo(constant: CGFloat) {
+    func setTopConstraint(to constant: CGFloat) {
         topConstraint?.constant = constant
     }
 
-    func setPlaceholderAlpha(alpha: CGFloat) {
+    func setPlaceholderAlpha(_ alpha: CGFloat) {
         listPresenter.tablePresenter.adjustPlaceholder(state: .alpha(alpha))
     }
 
-    func setListTitle(title: String) {
+    func setListTitle(_ title: String) {
         self.title = title
         parent?.title = title
     }

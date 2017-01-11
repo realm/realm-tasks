@@ -134,7 +134,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.contentView.backgroundColor = colorForRow(row: indexPath.row)
+        cell.contentView.backgroundColor = color(forRow: indexPath.row)
         cell.alpha = cellPresenter.currentlyEditing ? editingCellAlpha : 1
     }
 
@@ -256,14 +256,14 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
             let cell = tableView.cellForRow(at: indexPath) as? TableViewCell<Parent.Item> {
             return !cell.item.completed
         }
-        return (gestureRecognizer is UITapGestureRecognizer)
+        return gestureRecognizer is UITapGestureRecognizer
     }
 
     // MARK: Colors
 
     private let colors: [UIColor]
 
-    func colorForRow(row: Int) -> UIColor {
+    func color(forRow row: Int) -> UIColor {
         let fraction = Double(row) / Double(max(13, items.count))
         return colors.gradientColor(atFraction: fraction)
     }
@@ -272,7 +272,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         let tableView = viewController.tableView
 
         let visibleCellsAndColors = tableView.visibleCells.map { cell in
-            return (cell, colorForRow(row: tableView.indexPath(for: cell)!.row))
+            return (cell, color(forRow: tableView.indexPath(for: cell)!.row))
         }
 
         UIView.animate(withDuration: 0.5, animations: {
@@ -291,7 +291,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     func setupPlaceholderCell(inTableView tableView: UITableView) {
         placeHolderCell.alpha = 0
-        placeHolderCell.backgroundView!.backgroundColor = colorForRow(row: 0)
+        placeHolderCell.backgroundView!.backgroundColor = color(forRow: 0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
@@ -336,7 +336,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                     options: [], animations: { [unowned self] in
 
                     self.placeHolderCell.navHintView.alpha = 1
-                    self.placeHolderCell.navHintView.hintArrowTransfom  = CGAffineTransform.identity
+                    self.placeHolderCell.navHintView.hintArrowTransfom  = .identity
                 }, completion: nil)
 
             case .alpha(let alpha):

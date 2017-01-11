@@ -468,7 +468,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
 
         cellView.configure(item: item)
-        cellView.backgroundColor = colorForRow(row: row)
+        cellView.backgroundColor = color(forRow: row)
         cellView.delegate = self
 
         return cellView
@@ -526,13 +526,13 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             // For some reason tableView.viewAtColumn:row: returns nil while animating, will use view hierarchy instead
             if let cellView = rowView.subviews.first as? ItemCellView {
                 NSView.animate {
-                    cellView.backgroundColor = colorForRow(row: row)
+                    cellView.backgroundColor = color(forRow: row)
                 }
             }
         }
     }
 
-    private func colorForRow(row: Int) -> NSColor {
+    private func color(forRow row: Int) -> NSColor {
         let colors = ItemType.self is Task.Type ? NSColor.taskColors() : NSColor.listColors()
         let fraction = Double(row) / Double(max(13, list.items.count))
 

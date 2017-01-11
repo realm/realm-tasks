@@ -59,7 +59,7 @@ private func setDefaultRealmConfiguration(withUser user: SyncUser) {
                     let indexesToRemove = items.enumerated().flatMap { index, element in
                         return element.id == id ? index : nil
                     }
-                    indexesToRemove.dropFirst().reversed().forEach { index in items.remove(at: index) }
+                    indexesToRemove.dropFirst().reversed().forEach { items.remove(at: $0) }
                 }
             }
         }

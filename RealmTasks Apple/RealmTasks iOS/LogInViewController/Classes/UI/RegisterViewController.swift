@@ -25,10 +25,10 @@ enum RegisterViewControllerReturnCode: Int {
 
 class RegisterViewController: UIViewController {
 
-    @IBOutlet weak var userNameTextField: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var confirmationTextField: UITextField!
-    @IBOutlet weak var registerButton: UIButton!
+    @IBOutlet fileprivate weak var userNameTextField: UITextField!
+    @IBOutlet fileprivate weak var passwordTextField: UITextField!
+    @IBOutlet fileprivate weak var confirmationTextField: UITextField!
+    @IBOutlet fileprivate weak var registerButton: UIButton!
 
     var initialUserName: String?
     var completionHandler: ((_ userName: String?, _ password: String?, _ returnCode: RegisterViewControllerReturnCode) -> Void)?
