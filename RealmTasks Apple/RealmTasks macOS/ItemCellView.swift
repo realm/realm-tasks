@@ -115,7 +115,7 @@ class ItemCellView: NSTableCellView {
         setupUI()
         setupGestures()
 
-        setTrackingAreaWithRect(rect: bounds, options: [.mouseEnteredAndExited, .activeInKeyWindow])
+        setTrackingArea(with: bounds, options: [.mouseEnteredAndExited, .activeInKeyWindow])
     }
 
     required init?(coder: NSCoder) {
@@ -138,7 +138,7 @@ class ItemCellView: NSTableCellView {
 
     override func updateTrackingAreas() {
         if isUserInteractionEnabled {
-            setTrackingAreaWithRect(rect: bounds, options: [.mouseEnteredAndExited, .activeInKeyWindow])
+            setTrackingArea(with: bounds, options: [.mouseEnteredAndExited, .activeInKeyWindow])
         } else {
             resetTrackingAreas()
         }

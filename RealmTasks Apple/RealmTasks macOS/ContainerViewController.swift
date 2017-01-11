@@ -44,7 +44,7 @@ class ContainerViewController: NSViewController {
     }
 
     @IBAction func showAllLists(_ sender: AnyObject?) {
-        let rootList: TaskListList = try! Realm().objects(TaskListList.self).first!
+        let rootList = try! Realm().objects(TaskListList.self).first!
         presentViewControllerForList(list: rootList)
     }
 

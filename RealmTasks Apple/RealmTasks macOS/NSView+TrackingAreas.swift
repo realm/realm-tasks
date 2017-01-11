@@ -20,7 +20,7 @@ import Cocoa
 
 public extension NSView {
 
-    public func setTrackingAreaWithRect(rect: NSRect, options: NSTrackingAreaOptions) -> NSTrackingArea {
+    @discardableResult public func setTrackingArea(with rect: NSRect, options: NSTrackingAreaOptions) -> NSTrackingArea {
         resetTrackingAreas()
 
         let trackingArea = NSTrackingArea(rect: rect, options: options, owner: self, userInfo: nil)
