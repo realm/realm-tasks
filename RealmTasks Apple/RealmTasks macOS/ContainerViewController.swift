@@ -149,21 +149,11 @@ private extension NSToolbar {
     }
 
     func item(withIdentifier identifier: String) -> NSToolbarItem? {
-        guard let index = indexOfItem(withIdentifier: identifier) else {
-            return nil
-        }
-
-        return items[index]
+        return items.first { $0.itemIdentifier == identifier }
     }
 
     func indexOfItem(withIdentifier identifier: String) -> Int? {
-        for (index, item) in items.enumerated() {
-            if item.itemIdentifier == identifier {
-                return index
-            }
-        }
-
-        return nil
+        return items.index { $0.itemIdentifier == identifier }
     }
 
 }
