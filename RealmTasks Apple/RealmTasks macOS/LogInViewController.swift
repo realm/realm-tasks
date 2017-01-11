@@ -32,7 +32,7 @@ class LogInViewController: NSViewController {
     var userName: String?
     var password: String?
 
-    @IBAction func logIn(sender: AnyObject?) {
+    @IBAction func logIn(withSender sender: AnyObject?) {
         guard let userName = userName, let password = password else {
             return
         }
@@ -40,7 +40,7 @@ class LogInViewController: NSViewController {
         delelegate?.logInViewController(viewController: self, didLogInWithUserName: userName, password: password)
     }
 
-    @IBAction func register(sender: AnyObject?) {
+    @IBAction func register(withSender sender: AnyObject?) {
         delelegate?.logInViewControllerDidRegister(viewController: self)
     }
 

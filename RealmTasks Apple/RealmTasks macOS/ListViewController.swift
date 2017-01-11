@@ -536,7 +536,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         let colors = ItemType.self is Task.Type ? NSColor.taskColors() : NSColor.listColors()
         let fraction = Double(row) / Double(max(13, list.items.count))
 
-        return colors.gradientColorAtFraction(fraction: fraction)
+        return colors.gradientColor(atFraction: fraction)
     }
 
     // MARK: ItemCellViewDelegate

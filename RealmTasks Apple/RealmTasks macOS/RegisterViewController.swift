@@ -55,7 +55,7 @@ class RegisterViewController: NSViewController {
         }
     }
 
-    @IBAction func register(sender: AnyObject?) {
+    @IBAction func register(withSender sender: AnyObject?) {
         guard let userName = userName, let password = password, confirmationMatchesPassword else {
             return
         }
@@ -63,7 +63,7 @@ class RegisterViewController: NSViewController {
         delegate?.registerViewController(viewController: self, didRegisterWithUserName: userName, password: password)
     }
 
-    @IBAction func cancel(sender: AnyObject?) {
+    @IBAction func cancel(withSender sender: AnyObject?) {
         delegate?.registerViewControllerDidCancel(viewController: self)
     }
 

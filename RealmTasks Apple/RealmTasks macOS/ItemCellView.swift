@@ -54,7 +54,7 @@ class ItemCellView: NSTableCellView {
         didSet {
             completed ? textView.strike() : textView.unstrike()
             overlayView.isHidden = !completed
-            overlayView.backgroundColor = completed ? .completeDimBackgroundColor() : .completeGreenBackgroundColor()
+            overlayView.backgroundColor = completed ? .completeDimBackground : .completeGreenBackground
             textView.alphaValue = completed ? 0.3 : 1
         }
     }
@@ -336,7 +336,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                     textView.strike(fraction: 1 - fractionOfThreshold)
                 }
             } else {
-                overlayView.backgroundColor = .completeGreenBackgroundColor()
+                overlayView.backgroundColor = .completeGreenBackground
                 overlayView.isHidden = releaseAction != .Complete
 
                 if contentView.frame.origin.x > 0 {
