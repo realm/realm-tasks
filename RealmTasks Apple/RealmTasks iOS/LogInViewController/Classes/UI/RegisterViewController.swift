@@ -48,7 +48,7 @@ class RegisterViewController: UIViewController {
         updateUI()
     }
 
-    @IBAction func register(sender: AnyObject?) {
+    @IBAction func register(_ sender: AnyObject?) {
         guard userInputValid() else {
             return
         }
@@ -58,7 +58,7 @@ class RegisterViewController: UIViewController {
         }
     }
 
-    @IBAction func cancel(sender: AnyObject?) {
+    @IBAction func cancel(_ sender: AnyObject?) {
         dismiss(animated: true) {
             self.completionHandler?(nil, nil, .Cancel)
         }

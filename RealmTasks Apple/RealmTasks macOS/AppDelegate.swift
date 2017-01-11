@@ -52,7 +52,7 @@ extension AppDelegate: NSApplicationDelegate {
 
         if configureDefaultRealm() {
             let containerViewController = mainWindowController.contentViewController as! ContainerViewController
-            containerViewController.showRecentList(sender: nil)
+            containerViewController.showRecentList(nil)
         } else {
             logIn()
         }
@@ -77,7 +77,7 @@ extension AppDelegate {
                     viewController.dismiss(nil)
 
                     let containerViewController = self.mainWindowController.contentViewController as! ContainerViewController
-                    containerViewController.showRecentList(sender: nil)
+                    containerViewController.showRecentList(nil)
                 }
             }
         }

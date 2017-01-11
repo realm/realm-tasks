@@ -43,12 +43,12 @@ class ContainerViewController: NSViewController {
         }
     }
 
-    @IBAction func showAllLists(sender: AnyObject?) {
+    @IBAction func showAllLists(_ sender: AnyObject?) {
         let rootList: TaskListList = try! Realm().objects(TaskListList.self).first!
         presentViewControllerForList(list: rootList)
     }
 
-    @IBAction func showRecentList(sender: AnyObject?) {
+    @IBAction func showRecentList(_ sender: AnyObject?) {
         // TODO: restore from user defaults
         let list = try! Realm().objects(TaskList.self).first!
         presentViewControllerForList(list: list)
@@ -114,7 +114,7 @@ class ContainerViewController: NSViewController {
         notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in
             // Show all lists if list is deleted on other device
             if (list as Object).isInvalidated {
-                self.showAllLists(sender: nil)
+                self.showAllLists(nil)
             }
         }
     }

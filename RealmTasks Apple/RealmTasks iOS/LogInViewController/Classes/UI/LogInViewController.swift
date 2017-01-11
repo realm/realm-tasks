@@ -39,7 +39,7 @@ class LogInViewController: UIViewController {
         updateUI()
     }
 
-    @IBAction func logIn(sender: AnyObject?) {
+    @IBAction func logIn(_ sender: AnyObject?) {
         guard userInputValid() else {
             return
         }
