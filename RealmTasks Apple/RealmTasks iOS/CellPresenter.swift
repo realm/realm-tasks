@@ -116,7 +116,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         }
 
         let item = editingCell.item
-        if (item?.text.isEmpty)! {
+        if item!.text.isEmpty {
             let indexPath = IndexPath(row: items.index(of: item!)!, section: 0)
             item?.realm!.delete(item!)
             viewController.tableView.deleteRows(at: [indexPath], with: .top)
