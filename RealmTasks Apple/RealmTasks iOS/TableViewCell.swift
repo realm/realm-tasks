@@ -140,7 +140,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     }
 
     private func setupOverlayView() {
-        overlayView.backgroundColor = .completeDimBackgroundColor()
+        overlayView.backgroundColor = .completeDimBackground
         overlayView.isHidden = true
         contentView.addSubview(overlayView)
         constrain(overlayView) { backgroundOverlayView in
@@ -273,7 +273,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         }
 
         if !(item as Object).isInvalidated && !item.completed {
-            overlayView.backgroundColor = .completeGreenBackgroundColor()
+            overlayView.backgroundColor = .completeGreenBackground
             overlayView.isHidden = releaseAction != .Complete
             if contentView.frame.origin.x > 0 {
                 textView.unstrike()
@@ -371,7 +371,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         overlayView.isHidden = !completed
         let updateColor = { [unowned self] in
             self.overlayView.backgroundColor = completed ?
-                .completeDimBackgroundColor() : .completeGreenBackgroundColor()
+                .completeDimBackground : .completeGreenBackground
             self.textView.alpha = completed ? 0.3 : 1
         }
         if animated {

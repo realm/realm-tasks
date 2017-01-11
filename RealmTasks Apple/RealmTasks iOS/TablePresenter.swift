@@ -265,7 +265,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     func colorForRow(row: Int) -> UIColor {
         let fraction = Double(row) / Double(max(13, items.count))
-        return colors.gradientColorAtFraction(fraction: fraction)
+        return colors.gradientColor(atFraction: fraction)
     }
 
     func updateColors(completion: (() -> Void)? = nil) {
