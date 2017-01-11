@@ -24,7 +24,7 @@ import RealmSwift
 private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here. https://github.com/realm/realm-sync/issues/694
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
 
-private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
+private func setDefaultRealmConfiguration(withUser user: SyncUser) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
         syncConfiguration: SyncConfiguration(user: user, realmURL: Constants.syncServerURL!),
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
@@ -71,7 +71,7 @@ private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
 // returns true on success
 func configureDefaultRealm() -> Bool {
     if let user = SyncUser.current {
-        setDefaultRealmConfigurationWithUser(user: user)
+        setDefaultRealmConfiguration(withUser: user)
         return true
     }
     return false
@@ -81,7 +81,7 @@ func authenticate(username: String, password: String, register: Bool, callback: 
     SyncUser.logIn(with: SyncCredentials.usernamePassword(username: username, password: password, register: register), server: Constants.syncAuthURL) { user, error in
         DispatchQueue.main.async {
             if let user = user {
-                setDefaultRealmConfigurationWithUser(user: user)
+                setDefaultRealmConfiguration(withUser: user)
             }
 
             if let error = error, error._code == SyncError.httpStatusCodeError.rawValue && ((error as NSError).userInfo["statusCode"] as? Int) == 400 {
