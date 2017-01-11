@@ -60,7 +60,7 @@
                                 <rect key="frame" x="166.5" y="298" width="42" height="30"/>
                                 <state key="normal" title="Log In"/>
                                 <connections>
-                                    <action selector="logInSender:" destination="rJr-HE-H8k" eventType="touchUpInside" id="AtB-NQ-kzy"/>
+                                    <action selector="logIn:" destination="rJr-HE-H8k" eventType="touchUpInside" id="iel-OB-kwC"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -115,7 +115,7 @@
                                 <rect key="frame" x="129" y="312" width="117" height="30"/>
                                 <state key="normal" title="Register &amp; Log In"/>
                                 <connections>
-                                    <action selector="registerWithSender:" destination="exZ-BH-3tP" eventType="touchUpInside" id="Y73-oB-cFJ"/>
+                                    <action selector="register:" destination="exZ-BH-3tP" eventType="touchUpInside" id="6YD-4a-Lcx"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lpn-FI-L4m">
@@ -140,7 +140,7 @@
                                     <navigationItem title="Register" id="U0X-mK-a8N">
                                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="7Ac-0B-jKL">
                                             <connections>
-                                                <action selector="cancelWithSender:" destination="exZ-BH-3tP" id="jo5-Gr-qHh"/>
+                                                <action selector="cancel:" destination="exZ-BH-3tP" id="lev-hf-Unu"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>

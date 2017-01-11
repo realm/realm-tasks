@@ -89,7 +89,7 @@ extension LogInViewController: UITextFieldDelegate {
         if textField == userNameTextField {
             passwordTextField.becomeFirstResponder()
         } else if textField == passwordTextField {
-            logIn(sender: nil)
+            logIn(nil)
         }
 
         return false

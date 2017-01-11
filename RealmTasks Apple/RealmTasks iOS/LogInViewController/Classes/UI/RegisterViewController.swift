@@ -90,7 +90,7 @@ extension RegisterViewController: UITextFieldDelegate {
         } else if textField == passwordTextField {
             confirmationTextField.becomeFirstResponder()
         } else if textField == confirmationTextField {
-            register(sender: nil)
+            register(nil)
         }
 
         return false
