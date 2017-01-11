@@ -33,7 +33,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
     func delete(item: Item) {
         viewController.uiWrite {
-            guard !(item as Object).isInvalidated, let index = items.index(of: item) else {
+            guard !item.isInvalidated, let index = items.index(of: item) else {
                 return
             }
 
@@ -45,7 +45,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
     func completeItem(item: Item) {
         viewController.uiWrite {
-            guard !(item as Object).isInvalidated, let index = items.index(of: item) else {
+            guard !item.isInvalidated, let index = items.index(of: item) else {
                 return
             }
 

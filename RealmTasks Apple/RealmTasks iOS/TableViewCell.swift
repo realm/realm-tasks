@@ -272,7 +272,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             deleteIconView.alpha = CGFloat(fractionOfThreshold)
         }
 
-        if !(item as Object).isInvalidated && !item.completed {
+        if !item.isInvalidated && !item.completed {
             overlayView.backgroundColor = .completeGreenBackground
             overlayView.isHidden = releaseAction != .Complete
             if contentView.frame.origin.x > 0 {
@@ -294,7 +294,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     }
 
     private func handlePanEnded() {
-        guard item != nil && !(item as Object).isInvalidated else {
+        guard item != nil && !item.isInvalidated else {
             return
         }
         let animationBlock: () -> Void
@@ -330,7 +330,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         }
 
         UIView.animate(withDuration: 0.2, animations: animationBlock) { _ in
-            if self.item != nil && !(self.item as Object).isInvalidated {
+            if self.item != nil && !self.item.isInvalidated {
                 completionBlock()
             }
 
