@@ -54,7 +54,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
         super.init(nibName: nil, bundle: nil)!
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -152,7 +152,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         try! list.realm?.commitWrite(withoutNotifying: [notificationToken!])
     }
 
-    func uiWrite( block: () -> ()) {
+    func uiWrite( block: () -> Void) {
         beginUIWrite()
         block()
         commitUIWrite()
@@ -478,7 +478,6 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         if let cellView = currentlyEditingCellView {
             prototypeCell.configure(cellView: cellView)
         } else {
-        
             prototypeCell.configure(item: list.items[row])
         }
 

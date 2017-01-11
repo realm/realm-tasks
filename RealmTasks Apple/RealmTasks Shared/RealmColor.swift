@@ -90,7 +90,7 @@ extension Color {
     class var completeDimBackground: Color {
         return Color(white: 0.2, alpha: 1)
     }
-    
+
     class var completeGreenBackground: Color {
         return Color(red: 0, green: 0.6, blue: 0, alpha: 1)
     }

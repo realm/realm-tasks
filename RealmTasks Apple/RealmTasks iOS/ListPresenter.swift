@@ -97,11 +97,11 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
 
     // MARK: Onboarding
     lazy var onboardView: OnboardView = {
-        return .add(inView: self.viewController.tableView)
+        return .add(toTableView: self.viewController.tableView)
     }()
 
     func updateOnboardView(animated: Bool = false) {
-        onboardView.toggle(animated: animated, isVisible: parent.items.isEmpty)
+        onboardView.toggle(isVisible: parent.items.isEmpty, animated: animated)
     }
 
     func setOnboardAlpha(alpha: CGFloat) {

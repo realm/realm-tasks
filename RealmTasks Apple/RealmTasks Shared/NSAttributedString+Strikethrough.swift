@@ -26,7 +26,8 @@ extension NSAttributedString {
 
     func strikedAttributedString(fraction: Double = 1) -> NSAttributedString {
         let range = NSRange(0..<Int(fraction * Double(length)))
-        return attributedStringBySetingAttribute(name: NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.styleThick.rawValue as AnyObject, range: range)
+        return attributedStringBySetingAttribute(name: NSStrikethroughStyleAttributeName,
+                                                 value: NSUnderlineStyle.styleThick.rawValue as AnyObject, range: range)
     }
 
     var unstrikedAttributedString: NSAttributedString {

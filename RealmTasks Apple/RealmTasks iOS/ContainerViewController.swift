@@ -35,7 +35,7 @@ class ContainerViewController: UIViewController {
             }
         }
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }

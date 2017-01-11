@@ -27,7 +27,7 @@ class OnboardView: UIView {
     private let imageView = UIImageView(image: UIImage(named: "PullToRefresh")?.withRenderingMode(.alwaysTemplate))
     private let labelView = UILabel()
 
-    static func add(inView tableView: UITableView) -> OnboardView {
+    static func add(toTableView tableView: UITableView) -> OnboardView {
         let onBoard = OnboardView()
         tableView.addSubview(onBoard)
         onBoard.center = tableView.center
@@ -71,7 +71,7 @@ class OnboardView: UIView {
         }
     }
 
-    func toggle(animated: Bool = false, isVisible: Bool) {
+    func toggle(isVisible: Bool, animated: Bool = false) {
         func updateAlpha() {
             alpha = isVisible ? 1 : 0
         }

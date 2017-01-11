@@ -101,14 +101,14 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = viewController.tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell<Parent.Item>
-        
+
         cell.item = items[indexPath.row]
         cell.presenter = cellPresenter
-        
+
         if let editingIndexPath = cellPresenter.currentlyEditingIndexPath, editingIndexPath.row != indexPath.row {
             cell.alpha = editingCellAlpha
         }
-        
+
         return cell
     }
 
