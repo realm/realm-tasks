@@ -30,7 +30,7 @@ class AppDelegate: NSObject {
         let logInViewController = mainStoryboard.instantiateController(withIdentifier: "LogInViewController") as! LogInViewController
         logInViewController.delelegate = self
 
-        mainWindowController.contentViewController?.presentViewControllerAsSheet(viewController: logInViewController, preventApplicationTermination: false)
+        mainWindowController.contentViewController?.presentViewControllerAsSheetPreventingTermination(logInViewController)
     }
 
     func register(userName: String?) {
@@ -38,7 +38,7 @@ class AppDelegate: NSObject {
         registerViewController.delegate = self
         registerViewController.userName = userName
 
-        mainWindowController.contentViewController?.presentViewControllerAsSheet(viewController: registerViewController, preventApplicationTermination: false)
+        mainWindowController.contentViewController?.presentViewControllerAsSheetPreventingTermination(registerViewController)
     }
 
 }
@@ -86,11 +86,11 @@ extension AppDelegate {
 
 extension AppDelegate: LogInViewControllerDelegate {
 
-    func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
+    func logInViewController(_ viewController: LogInViewController, didLogInWithUserName userName: String, password: String) {
         performAuthentication(viewController: viewController, username: userName, password: password, register: false)
     }
 
-    func logInViewControllerDidRegister(viewController: LogInViewController) {
+    func logInViewControllerDidRegister(_ viewController: LogInViewController) {
         viewController.dismiss(nil)
         register(userName: viewController.userName)
     }
@@ -99,11 +99,11 @@ extension AppDelegate: LogInViewControllerDelegate {
 
 extension AppDelegate: RegisterViewControllerDelegate {
 
-    func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
+    func registerViewController(_ viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String) {
         performAuthentication(viewController: viewController, username: userName, password: password, register: true)
     }
 
-    func registerViewControllerDidCancel(viewController: RegisterViewController) {
+    func registerViewControllerDidCancel(_ viewController: RegisterViewController) {
         viewController.dismiss(nil)
         logIn()
     }
@@ -112,9 +112,9 @@ extension AppDelegate: RegisterViewControllerDelegate {
 
 extension NSViewController {
 
-    func presentViewControllerAsSheet(viewController: NSViewController, preventApplicationTermination: Bool) {
+    func presentViewControllerAsSheetPreventingTermination(_ viewController: NSViewController) {
         presentViewControllerAsSheet(viewController)
-        viewController.view.window?.preventsApplicationTerminationWhenModal = preventApplicationTermination
+        viewController.view.window?.preventsApplicationTerminationWhenModal = false
     }
 
 }

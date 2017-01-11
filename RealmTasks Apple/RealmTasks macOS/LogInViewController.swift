@@ -20,8 +20,8 @@ import Cocoa
 
 protocol LogInViewControllerDelegate: class {
 
-    func logInViewController(viewController: LogInViewController, didLogInWithUserName userName: String, password: String)
-    func logInViewControllerDidRegister(viewController: LogInViewController)
+    func logInViewController(_ viewController: LogInViewController, didLogInWithUserName userName: String, password: String)
+    func logInViewControllerDidRegister(_ viewController: LogInViewController)
 
 }
 
@@ -37,11 +37,11 @@ class LogInViewController: NSViewController {
             return
         }
 
-        delelegate?.logInViewController(viewController: self, didLogInWithUserName: userName, password: password)
+        delelegate?.logInViewController(self, didLogInWithUserName: userName, password: password)
     }
 
     @IBAction func register(_ sender: AnyObject?) {
-        delelegate?.logInViewControllerDidRegister(viewController: self)
+        delelegate?.logInViewControllerDidRegister(self)
     }
 
 }

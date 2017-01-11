@@ -43,7 +43,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         }
     }
 
-    func completeItem(item: Item) {
+    func complete(item: Item) {
         viewController.uiWrite {
             guard !item.isInvalidated, let index = items.index(of: item) else {
                 return
@@ -77,7 +77,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
     }
     private(set) var currentlyEditingIndexPath: IndexPath?
 
-    func cellDidBeginEditing(editingCell: TableViewCell<Item>) {
+    func cellDidBeginEditing(_ editingCell: TableViewCell<Item>) {
         items.realm?.beginWrite()
         currentlyEditingCell = editingCell
         let tableView = viewController.tableView
@@ -88,7 +88,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         viewController.setTopConstraint(to: -editingOffset)
         tableView.contentInset.bottom += editingOffset
 
-        viewController.setPlaceholderAlpha(0)
+        viewController.setPlaceholderAlpha(to: 0)
         tableView.bounces = false
 
         UIView.animate(withDuration: 0.3, animations: {
@@ -101,7 +101,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         })
     }
 
-    func cellDidEndEditing(editingCell: TableViewCell<Item>) {
+    func cellDidEndEditing(_ editingCell: TableViewCell<Item>) {
         currentlyEditingCell = nil
         currentlyEditingIndexPath = nil
         let tableView = viewController.tableView
@@ -124,10 +124,10 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         viewController.finishUIWrite()
     }
 
-    func cellDidChangeText(editingCell: TableViewCell<Item>) {
+    func cellDidChangeText(_ editingCell: TableViewCell<Item>) {
         // If the height of the text view has extended to the next line,
         // reload the height of the cell
-        let height = cellHeightForText(text: editingCell.textView.text)
+        let height = cellHeight(forText: editingCell.textView.text)
         let tableView = viewController.tableView
 
         if Int(height) != Int(editingCell.frame.size.height) {
@@ -142,14 +142,14 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         }
     }
 
-    func cellHeightForText(text: String) -> CGFloat {
+    func cellHeight(forText text: String) -> CGFloat {
         guard let view = viewController.tableView.superview else {
             return 0
         }
 
         return text.boundingRect(with: CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
-                                         options: [.usesLineFragmentOrigin],
-                                         attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18)],
-                                         context: nil).height + 33
+                                 options: [.usesLineFragmentOrigin],
+                                 attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18)],
+                                 context: nil).height + 33
     }
 }

@@ -19,9 +19,9 @@
 import UIKit
 
 enum LogInViewControllerReturnCode: Int {
-    case LogIn
-    case Register
-    case Cancel
+    case logIn
+    case register
+    case cancel
 }
 
 class LogInViewController: UIViewController {
@@ -53,7 +53,7 @@ class LogInViewController: UIViewController {
         dismiss(animated: true) {
             self.completionHandler?(LogInResponse(username: self.userNameTextField.text,
                                                   password: self.passwordTextField.text,
-                                                  returnCode: .LogIn))
+                                                  returnCode: .logIn))
         }
     }
 
@@ -80,11 +80,11 @@ extension LogInViewController {
         if let viewController = segue.destination as? RegisterViewController {
             viewController.initialUserName = userNameTextField.text
             viewController.completionHandler = { response in
-                if response.returnCode == .Register {
+                if response.returnCode == .register {
                     self.dismiss(animated: true) {
                         self.completionHandler?(LogInResponse(username: response.username,
                                                               password: response.password,
-                                                              returnCode: .Register))
+                                                              returnCode: .register))
                     }
                 }
             }
@@ -109,7 +109,7 @@ extension LogInViewController: UITextFieldDelegate {
 
 extension LogInViewController: UINavigationBarDelegate {
 
-    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
+    func position(for bar: UIBarPositioning) -> UIBarPosition {
         return .topAttached
     }
 

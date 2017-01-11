@@ -21,25 +21,24 @@ import RealmSwift
 import UIKit
 
 private enum NavDirection {
-    case Up, Down
+    case up, down
 }
 
 enum ViewControllerType {
-    case Lists
-    case DefaultListTasks
-    case Tasks(TaskList)
+    case lists
+    case defaultListTasks
+    case tasks(TaskList)
 }
 
 enum ViewControllerPosition {
-    case Up(ViewControllerType)
-    case Down(ViewControllerType)
+    case up(ViewControllerType)
+    case down(ViewControllerType)
 }
 
 // MARK: View Controller
 // swiftlint:disable:next type_body_length
-final class ViewController<Item: Object, Parent: Object>:
-UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol
-                    where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
+final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGestureRecognizerDelegate,
+    UIScrollViewDelegate, ViewControllerProtocol where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
 
     // MARK: Properties
     var items: List<Item> {
@@ -98,9 +97,9 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         listPresenter.viewController = self
 
         if Item.self == Task.self {
-            auxViewController = .Up(.Lists)
+            auxViewController = .up(.lists)
         } else {
-            auxViewController = .Down(.DefaultListTasks)
+            auxViewController = .down(.defaultListTasks)
         }
     }
 
@@ -117,8 +116,8 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
     // MARK: UI
 
     private func setupUI() {
-        listPresenter.tablePresenter.setupTableView(inView: view, topConstraint: &topConstraint, listTitle: title)
-        listPresenter.tablePresenter.setupPlaceholderCell(inTableView: tableView)
+        listPresenter.tablePresenter.setupTableView(in: view, topConstraint: &topConstraint, listTitle: title)
+        listPresenter.tablePresenter.setupPlaceholderCell(in: tableView)
 
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
@@ -156,7 +155,7 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         if let indexPath = tableView.indexPathForRow(at: location),
             let typedCell = tableView.cellForRow(at: indexPath) as? TableViewCell<Item> {
             cell = typedCell
-            if case .Down(_) = auxViewController!, location.x > tableView.bounds.width / 2 {
+            if case .down(_) = auxViewController!, location.x > tableView.bounds.width / 2 {
                 navigateToBottomViewController(item: cell.item)
                 return
             }
@@ -178,15 +177,15 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
     private func navigateToBottomViewController(item: Item) {
         guard let list = item as? TaskList else { return }
 
-        auxViewController = .Down(.Tasks(list))
+        auxViewController = .down(.tasks(list))
         bottomViewController = createAuxController()
 
-        startMovingToNextViewController(direction: .Down)
-        finishMovingToNextViewController(direction: .Down)
+        startMovingToNextViewController(direction: .down)
+        finishMovingToNextViewController(direction: .down)
     }
 
     private func startMovingToNextViewController(direction: NavDirection) {
-        let nextVC = direction == .Up ? topViewController! : bottomViewController!
+        let nextVC = direction == .up ? topViewController! : bottomViewController!
         let parentVC = parent!
         parentVC.addChildViewController(nextVC)
         parentVC.view.insertSubview(nextVC.view, at: 1)
@@ -194,7 +193,7 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         nextConstraints = constrain(nextVC.view, tableViewContentView) { nextView, tableViewContentView in
             nextView.size == nextView.superview!.size
             nextView.left == nextView.superview!.left
-            if direction == .Up {
+            if direction == .up {
                 nextView.bottom == tableViewContentView.top - 200
             } else {
                 nextView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
@@ -204,14 +203,14 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
     }
 
     private func finishMovingToNextViewController(direction: NavDirection) {
-        let nextVC = direction == .Up ? topViewController! : bottomViewController!
+        let nextVC = direction == .up ? topViewController! : bottomViewController!
         let parentVC = parent!
         willMove(toParentViewController: nil)
         parentVC.title = nextVC.title
         parentVC.view.layoutIfNeeded()
         constrain(nextVC.view, view, replace: nextConstraints!) { nextView, currentView in
             nextView.edges == nextView.superview!.edges
-            if direction == .Up {
+            if direction == .up {
                 currentView.top == nextView.bottom
             } else {
                 currentView.bottom == nextView.top
@@ -240,12 +239,12 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
             }
         }
 
-        if case .Down(_) = auxViewController!, distancePulledUp > tableView.rowHeight {
+        if case .down(_) = auxViewController!, distancePulledUp > tableView.rowHeight {
             if bottomViewController === parent?.childViewControllers.last { return }
             if bottomViewController == nil {
                 bottomViewController = createAuxController()
             }
-            startMovingToNextViewController(direction: .Down)
+            startMovingToNextViewController(direction: .down)
             return
         } else {
             removeVC(bottomViewController)
@@ -261,15 +260,15 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         if distancePulledDown <= tableView.rowHeight {
             listPresenter.tablePresenter
                 .adjustPlaceholder(state: .pullToCreate(distance: distancePulledDown))
-            listPresenter.setOnboardAlpha(alpha: max(0, 1 - (distancePulledDown / cellHeight)))
+            listPresenter.setOnboardAlpha(to: max(0, 1 - (distancePulledDown / cellHeight)))
         } else if distancePulledDown <= tableView.rowHeight * 2 {
             listPresenter.tablePresenter.adjustPlaceholder(state: .releaseToCreate)
-        } else if case .Up(_) = auxViewController! {
+        } else if case .up(_) = auxViewController! {
             if topViewController === parent?.childViewControllers.last { return }
             if topViewController == nil {
                 topViewController = createAuxController()
             }
-            startMovingToNextViewController(direction: .Up)
+            startMovingToNextViewController(direction: .up)
 
             listPresenter.tablePresenter.adjustPlaceholder(state: .switchToLists)
 
@@ -278,14 +277,14 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
 
         if scrollView.isDragging {
             removeVC(topViewController)
-            setPlaceholderAlpha(min(1, distancePulledDown / tableView.rowHeight))
+            setPlaceholderAlpha(to: min(1, distancePulledDown / tableView.rowHeight))
         }
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if distancePulledUp > tableView.rowHeight {
             if bottomViewController === parent?.childViewControllers.last {
-                finishMovingToNextViewController(direction: .Down)
+                finishMovingToNextViewController(direction: .down)
             } else {
                 items.realm?.beginWrite()
                 let itemsToDelete = items.filter("completed = true")
@@ -312,7 +311,7 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
 
         if distancePulledDown > tableView.rowHeight * 2 &&
             topViewController === parent?.childViewControllers.last {
-            finishMovingToNextViewController(direction: .Up)
+            finishMovingToNextViewController(direction: .up)
             return
         }
         // Create new item
@@ -337,11 +336,11 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         topConstraint?.constant = constant
     }
 
-    func setPlaceholderAlpha(_ alpha: CGFloat) {
+    func setPlaceholderAlpha(to alpha: CGFloat) {
         listPresenter.tablePresenter.adjustPlaceholder(state: .alpha(alpha))
     }
 
-    func setListTitle(_ title: String) {
+    func setListTitle(to title: String) {
         self.title = title
         parent?.title = title
     }
@@ -358,22 +357,22 @@ UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControl
         }
 
         switch auxViewControllerType {
-        case .Up(let type): listType = type
-        case .Down(let type): listType = type
+        case .up(let type): listType = type
+        case .down(let type): listType = type
         }
 
         switch listType {
-        case .Lists:
+        case .lists:
             return ViewController<TaskList, TaskListList>(
                 parent: try! Realm().objects(TaskListList.self).first!,
                 colors: UIColor.listColors()
             )
-        case .DefaultListTasks:
+        case .defaultListTasks:
             return ViewController<Task, TaskList>(
                 parent: try! Realm().objects(TaskList.self).first!,
                 colors: UIColor.taskColors()
             )
-        case .Tasks(let list):
+        case .tasks(let list):
             return ViewController<Task, TaskList>(
                 parent: list,
                 colors: UIColor.taskColors()

@@ -158,8 +158,8 @@ class ListCellView: ItemCellView {
         }
     }
 
-    override func textFieldDidBecomeFirstResponder(textField: NSTextField) {
-        super.textFieldDidBecomeFirstResponder(textField: textField)
+    override func textFieldDidBecomeFirstResponder(_ textField: NSTextField) {
+        super.textFieldDidBecomeFirstResponder(textField)
 
         updateTextColor()
     }

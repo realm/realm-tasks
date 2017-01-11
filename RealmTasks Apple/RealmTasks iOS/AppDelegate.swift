@@ -39,16 +39,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .main)
         let logInViewController = loginStoryboard.instantiateInitialViewController() as! LogInViewController
         logInViewController.completionHandler = { response in
-            guard response.returnCode != .Cancel, let username = response.username, let password = response.password else {
+            guard response.returnCode != .cancel, let username = response.username, let password = response.password else {
                 // FIXME: handle cancellation properly or just restrict it
                 DispatchQueue.main.async {
                     self.logIn()
                 }
                 return
             }
-            authenticate(username: username, password: password, register: response.returnCode == .Register) { error in
+            authenticate(username: username, password: password, register: response.returnCode == .register) { error in
                 if let error = error {
-                    self.presentError(error: error as NSError)
+                    self.present(error: error)
                 } else {
                     self.window?.rootViewController = ContainerViewController()
                 }
@@ -57,10 +57,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController?.present(logInViewController, animated: false, completion: nil)
     }
 
-    func presentError(error: NSError) {
+    func present(error: NSError) {
         let alertController = UIAlertController(title: error.localizedDescription,
-                                              message: error.localizedFailureReason ?? "",
-                                       preferredStyle: .alert)
+                                                message: error.localizedFailureReason ?? "",
+                                                preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "Try Again", style: .default) { _ in
             self.logIn()
         })

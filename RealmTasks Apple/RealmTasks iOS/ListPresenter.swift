@@ -62,14 +62,14 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
     func observeListTitle() {
         if let parent = parent as? CellPresentable {
             (parent as! Object).addObserver(self, forKeyPath: "text", options: .new, context: &titleKVOContext)
-            viewController.setListTitle(parent.text)
+            viewController.setListTitle(to: parent.text)
             observingText = true
         }
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if context == &titleKVOContext {
-            viewController.setListTitle((parent as! CellPresentable).text)
+            viewController.setListTitle(to: (parent as! CellPresentable).text)
         }
     }
 
@@ -97,14 +97,14 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
 
     // MARK: Onboarding
     lazy var onboardView: OnboardView = {
-        return .add(toTableView: self.viewController.tableView)
+        return .add(to: self.viewController.tableView)
     }()
 
     func updateOnboardView(animated: Bool = false) {
         onboardView.toggle(isVisible: parent.items.isEmpty, animated: animated)
     }
 
-    func setOnboardAlpha(alpha: CGFloat) {
+    func setOnboardAlpha(to alpha: CGFloat) {
         if parent.items.isEmpty {
             onboardView.alpha = alpha
         } else {

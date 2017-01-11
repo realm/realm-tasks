@@ -56,7 +56,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     // MARK: Setup table view
 
-    func setupTableView(inView view: UIView, topConstraint: inout NSLayoutConstraint?, listTitle title: String?) {
+    func setupTableView(in view: UIView, topConstraint: inout NSLayoutConstraint?, listTitle title: String?) {
         let tableView = viewController.tableView
         let tableViewContentView = viewController.tableViewContentView
 
@@ -116,7 +116,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if cellPresenter.currentlyEditingIndexPath?.row == indexPath.row {
-            return floor(cellPresenter.cellHeightForText(text: cellPresenter.currentlyEditingCell!.textView.text))
+            return floor(cellPresenter.cellHeight(forText: cellPresenter.currentlyEditingCell!.textView.text))
         }
 
         var item = items[indexPath.row]
@@ -130,7 +130,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 item = items[destinationIndexPath.row]
             }
         }
-        return floor(cellPresenter.cellHeightForText(text: item.text))
+        return floor(cellPresenter.cellHeight(forText: item.text))
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -289,7 +289,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     // Placeholder cell to use before being adding to the table view
     private let placeHolderCell = TableViewCell<Parent.Item>(style: .default, reuseIdentifier: "cell")
 
-    func setupPlaceholderCell(inTableView tableView: UITableView) {
+    func setupPlaceholderCell(in tableView: UITableView) {
         placeHolderCell.alpha = 0
         placeHolderCell.backgroundView!.backgroundColor = color(forRow: 0)
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
