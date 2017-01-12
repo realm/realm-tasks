@@ -5,7 +5,7 @@ abstract_target 'RealmTasks' do
     
     pod 'RealmSwift', '~> 2.1.2'
     pod 'Cartography', '~> 1.0.1'
-    pod 'SwiftLint'
+    pod 'SwiftLint', '= 0.16.0'
     
     target 'RealmTasks iOS' do
         platform :ios, '9.0'

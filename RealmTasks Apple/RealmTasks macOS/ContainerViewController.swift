@@ -45,16 +45,16 @@ class ContainerViewController: NSViewController {
 
     @IBAction func showAllLists(_ sender: AnyObject?) {
         let rootList = try! Realm().objects(TaskListList.self).first!
-        presentViewControllerForList(list: rootList)
+        presentViewController(for: rootList)
     }
 
     @IBAction func showRecentList(_ sender: AnyObject?) {
         // TODO: restore from user defaults
         let list = try! Realm().objects(TaskList.self).first!
-        presentViewControllerForList(list: list)
+        presentViewController(for: list)
     }
 
-    func presentViewControllerForList<ListType: ListPresentable>(list: ListType) where ListType: Object {
+    func presentViewController<ListType: ListPresentable>(for list: ListType) where ListType: Object {
         let listViewController = ListViewController(list: list)
 
         addChildViewController(listViewController)
@@ -108,31 +108,31 @@ class ContainerViewController: NSViewController {
 
         currentListViewController = listViewController
 
-        updateToolbarForList(list: list)
+        updateToolbar(for: list)
 
         notificationToken?.stop()
         notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in
             // Show all lists if list is deleted on other device
-            if (list as Object).isInvalidated {
+            if list.isInvalidated {
                 self.showAllLists(nil)
             }
         }
     }
 
-    private func updateToolbarForList<ListType: ListPresentable>(list: ListType) where ListType: Object {
+    private func updateToolbar<ListType: ListPresentable>(for list: ListType) where ListType: Object {
         guard let toolbar = view.window?.toolbar else {
             return
         }
 
-        if let titleView = toolbar.itemWithIdentifier(identifier: toolbarTitleViewIdentifier)?.view as? TitleView {
+        if let titleView = toolbar.item(withIdentifier: toolbarTitleViewIdentifier)?.view as? TitleView {
             titleView.text = (list as? CellPresentable)?.text ?? "Lists"
         }
 
         if list is CellPresentable {
-            if !toolbar.hasItemWithIdentifier(identifier: toolbarShowAllListsButtonIdentifier) {
+            if !toolbar.hasItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
                 toolbar.insertItem(withItemIdentifier: toolbarShowAllListsButtonIdentifier, at: toolbar.items.count - 1)
             }
-        } else if let index = toolbar.indexOfItemWithIdentifier(identifier: toolbarShowAllListsButtonIdentifier) {
+        } else if let index = toolbar.indexOfItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
             view.window?.toolbar?.removeItem(at: index)
         }
 
@@ -144,26 +144,16 @@ class ContainerViewController: NSViewController {
 
 private extension NSToolbar {
 
-    func hasItemWithIdentifier(identifier: String) -> Bool {
-        return itemWithIdentifier(identifier: identifier) != nil
+    func hasItem(withIdentifier identifier: String) -> Bool {
+        return item(withIdentifier: identifier) != nil
     }
 
-    func itemWithIdentifier(identifier: String) -> NSToolbarItem? {
-        guard let index = indexOfItemWithIdentifier(identifier: identifier) else {
-            return nil
-        }
-
-        return items[index]
+    func item(withIdentifier identifier: String) -> NSToolbarItem? {
+        return items.first { $0.itemIdentifier == identifier }
     }
 
-    func indexOfItemWithIdentifier(identifier: String) -> Int? {
-        for (index, item) in items.enumerated() {
-            if item.itemIdentifier == identifier {
-                return index
-            }
-        }
-
-        return nil
+    func indexOfItem(withIdentifier identifier: String) -> Int? {
+        return items.index { $0.itemIdentifier == identifier }
     }
 
 }

@@ -36,7 +36,7 @@ func vibrate() {
 // MARK: Private Declarations
 
 private enum ReleaseAction {
-    case Complete, Delete
+    case complete, delete
 }
 
 private let iconWidth: CGFloat = 60
@@ -264,7 +264,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         contentView.frame.origin.x = x
 
         let fractionOfThreshold = min(1, Double(abs(x) / iconWidth))
-        releaseAction = fractionOfThreshold >= 1 ? (x > 0 ? .Complete : .Delete) : nil
+        releaseAction = fractionOfThreshold >= 1 ? (x > 0 ? .complete : .delete) : nil
 
         if x > 0 {
             doneIconView.alpha = CGFloat(fractionOfThreshold)
@@ -272,29 +272,29 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             deleteIconView.alpha = CGFloat(fractionOfThreshold)
         }
 
-        if !(item as Object).isInvalidated && !item.completed {
+        if !item.isInvalidated && !item.completed {
             overlayView.backgroundColor = .completeGreenBackground
-            overlayView.isHidden = releaseAction != .Complete
+            overlayView.isHidden = releaseAction != .complete
             if contentView.frame.origin.x > 0 {
                 textView.unstrike()
                 textView.strike(fraction: fractionOfThreshold)
             } else {
-                releaseAction == .Complete ? textView.strike() : textView.unstrike()
+                releaseAction == .complete ? textView.strike() : textView.unstrike()
             }
         } else {
-            overlayView.isHidden = releaseAction == .Complete
-            textView.alpha = releaseAction == .Complete ? 1 : 0.3
+            overlayView.isHidden = releaseAction == .complete
+            textView.alpha = releaseAction == .complete ? 1 : 0.3
             if contentView.frame.origin.x > 0 {
                 textView.unstrike()
                 textView.strike(fraction: 1 - fractionOfThreshold)
             } else {
-                releaseAction == .Complete ? textView.unstrike() : textView.strike()
+                releaseAction == .complete ? textView.unstrike() : textView.strike()
             }
         }
     }
 
     private func handlePanEnded() {
-        guard item != nil && !(item as Object).isInvalidated else {
+        guard item != nil && !item.isInvalidated else {
             return
         }
         let animationBlock: () -> Void
@@ -303,14 +303,14 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         // If not deleting, slide it back into the middle
         // If we are deleting, slide it all the way out of the view
         switch releaseAction {
-        case .Complete?:
+        case .complete?:
             animationBlock = {
                 self.contentView.frame.origin.x = 0
             }
             completionBlock = {
                 self.setCompleted(!self.item.completed, animated: true)
             }
-        case .Delete?:
+        case .delete?:
             animationBlock = {
                 self.alpha = 0
                 self.contentView.alpha = 0
@@ -330,7 +330,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         }
 
         UIView.animate(withDuration: 0.2, animations: animationBlock) { _ in
-            if self.item != nil && !(self.item as Object).isInvalidated {
+            if self.item != nil && !self.item.isInvalidated {
                 completionBlock()
             }
 
@@ -380,7 +380,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             }
             vibrate()
             UIView.animate(withDuration: 0.2, animations: updateColor)
-            presenter.completeItem(item: item)
+            presenter.complete(item: item)
         } else {
             updateColor()
         }
@@ -402,17 +402,17 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     }
 
     func textViewDidBeginEditing(_ textView: UITextView) {
-        presenter.cellDidBeginEditing(editingCell: self)
+        presenter.cellDidBeginEditing(self)
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
         item.text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
         textView.isUserInteractionEnabled = false
-        presenter.cellDidEndEditing(editingCell: self)
+        presenter.cellDidEndEditing(self)
     }
 
     func textViewDidChange(_ textView: UITextView) {
-        presenter.cellDidChangeText(editingCell: self)
+        presenter.cellDidChangeText(self)
     }
 }
 

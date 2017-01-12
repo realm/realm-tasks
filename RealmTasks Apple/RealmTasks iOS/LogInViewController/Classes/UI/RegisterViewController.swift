@@ -19,8 +19,8 @@
 import UIKit
 
 enum RegisterViewControllerReturnCode: Int {
-    case Register
-    case Cancel
+    case register
+    case cancel
 }
 
 class RegisterViewController: UIViewController {
@@ -31,7 +31,14 @@ class RegisterViewController: UIViewController {
     @IBOutlet fileprivate weak var registerButton: UIButton!
 
     var initialUserName: String?
-    var completionHandler: ((_ userName: String?, _ password: String?, _ returnCode: RegisterViewControllerReturnCode) -> Void)?
+
+    struct RegisterResponse {
+        let username: String?
+        let password: String?
+        let returnCode: RegisterViewControllerReturnCode
+    }
+
+    var completionHandler: ((RegisterResponse) -> Void)?
 
     override func viewDidLoad() {
         userNameTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)
@@ -54,13 +61,15 @@ class RegisterViewController: UIViewController {
         }
 
         dismiss(animated: true) {
-            self.completionHandler?(self.userNameTextField.text, self.passwordTextField.text, .Register)
+            self.completionHandler?(RegisterResponse(username: self.userNameTextField.text,
+                                                     password: self.passwordTextField.text,
+                                                     returnCode: .register))
         }
     }
 
     @IBAction func cancel(_ sender: AnyObject?) {
         dismiss(animated: true) {
-            self.completionHandler?(nil, nil, .Cancel)
+            self.completionHandler?(RegisterResponse(username: nil, password: nil, returnCode: .cancel))
         }
     }
 
@@ -100,7 +109,7 @@ extension RegisterViewController: UITextFieldDelegate {
 
 extension RegisterViewController: UINavigationBarDelegate {
 
-    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
+    func position(for bar: UIBarPositioning) -> UIBarPosition {
         return .topAttached
     }
 
