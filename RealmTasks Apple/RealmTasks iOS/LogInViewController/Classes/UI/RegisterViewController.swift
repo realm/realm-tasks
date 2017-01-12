@@ -79,8 +79,8 @@ class RegisterViewController: UIViewController {
 
     private func userInputValid() -> Bool {
         guard
-            let userName = userNameTextField.text, userName.characters.count > 0,
-            let password = passwordTextField.text, password.characters.count > 0,
+            let userName = userNameTextField.text, !userName.isEmpty,
+            let password = passwordTextField.text, !password.isEmpty,
             let confirmation = confirmationTextField.text, confirmation == password
         else {
             return false
