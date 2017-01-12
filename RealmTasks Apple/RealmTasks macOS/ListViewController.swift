@@ -29,8 +29,8 @@ fileprivate let prototypeCellIdentifier = "PrototypeCell"
 
 // FIXME: This type should be split up.
 // swiftlint:disable:next type_body_length
-final class ListViewController<ListType: ListPresentable>: NSViewController,
-NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecognizerDelegate where ListType: Object {
+final class ListViewController<ListType: ListPresentable>: NSViewController, NSTableViewDelegate, NSTableViewDataSource,
+    ItemCellViewDelegate, NSGestureRecognizerDelegate where ListType: Object {
 
     typealias ItemType = ListType.Item
 
@@ -152,7 +152,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         try! list.realm?.commitWrite(withoutNotifying: [notificationToken!])
     }
 
-    func uiWrite( block: () -> Void) {
+    func uiWrite(block: () -> Void) {
         beginUIWrite()
         block()
         commitUIWrite()
@@ -160,7 +160,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
     // MARK: Actions
 
-    @IBAction func newItem(sender: AnyObject?) {
+    @IBAction func newItem(_ sender: AnyObject?) {
         endEditingCells()
 
         uiWrite {
@@ -172,7 +172,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             tableView.insertRows(at: NSIndexSet(index: 0) as IndexSet, withAnimation: .effectGap)
         }) {
             if let newItemCellView = self.tableView.view(atColumn: 0, row: 0, makeIfNecessary: false) as? ItemCellView {
-                self.beginEditingCell(cellView: newItemCellView)
+                self.beginEditingCell(newItemCellView)
                 self.tableView.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
             }
         }
@@ -201,7 +201,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         return currentlyMovingRowView != nil
     }
 
-    private func beginReorderingRow(row: Int, screenPoint point: NSPoint) {
+    private func beginReorderingRow(atIndex row: Int, screenPoint point: NSPoint) {
         currentlyMovingRowView = tableView.rowView(atRow: row, makeIfNecessary: false)
 
         if currentlyMovingRowView == nil {
@@ -214,7 +214,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             }
         }
 
-        currentlyMovingRowSnapshotView = SnapshotView(sourceView: currentlyMovingRowView!)
+        currentlyMovingRowSnapshotView = SnapshotView(source: currentlyMovingRowView!)
         currentlyMovingRowView!.alphaValue = 0
 
         currentlyMovingRowSnapshotView?.frame.origin.y = view.convert(point, from: nil).y - currentlyMovingRowSnapshotView!.frame.height / 2
@@ -228,7 +228,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         beginUIWrite()
     }
 
-    private func handleReorderingForScreenPoint(point: NSPoint) {
+    private func handleReordering(forScreenPoint point: NSPoint) {
         guard reordering else {
             return
         }
@@ -250,7 +250,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             destinationRow = tableView.row(at: pointInTableView)
         }
 
-        if canMoveRow(sourceRow: sourceRow, toRow: destinationRow) {
+        if canMove(row: sourceRow, toRow: destinationRow) {
             list.items.move(from: sourceRow, to: destinationRow)
 
             NSView.animate {
@@ -261,7 +261,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
     }
 
-    private func canMoveRow(sourceRow: Int, toRow destinationRow: Int) -> Bool {
+    private func canMove(row sourceRow: Int, toRow destinationRow: Int) -> Bool {
         guard destinationRow >= 0 && destinationRow != sourceRow else {
             return false
         }
@@ -295,10 +295,10 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         commitUIWrite()
     }
 
-    private dynamic func handlePressGestureRecognizer(recognizer: NSPressGestureRecognizer) {
+    private dynamic func handlePressGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
-            beginReorderingRow(row: tableView.row(at: recognizer.location(in: tableView)), screenPoint: recognizer.location(in: nil))
+            beginReorderingRow(atIndex: tableView.row(at: recognizer.location(in: tableView)), screenPoint: recognizer.location(in: nil))
         case .ended, .cancelled:
             endReordering()
         default:
@@ -306,12 +306,12 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
     }
 
-    private dynamic func handlePanGestureRecognizer(recognizer: NSPressGestureRecognizer) {
+    private dynamic func handlePanGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
             startAutoscrolling()
         case .changed:
-            handleReorderingForScreenPoint(point: recognizer.location(in: nil))
+            handleReordering(forScreenPoint: recognizer.location(in: nil))
         case .ended:
             stopAutoscrolling()
         default:
@@ -330,7 +330,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
     private dynamic func handleAutoscrolling() {
         if let event = NSApp.currentEvent {
             if tableView.autoscroll(with: event) {
-                handleReorderingForScreenPoint(point: event.locationInWindow)
+                handleReordering(forScreenPoint: event.locationInWindow)
             }
         }
     }
@@ -346,7 +346,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         return currentlyEditingCellView != nil
     }
 
-    private func beginEditingCell(cellView: ItemCellView) {
+    private func beginEditingCell(_ cellView: ItemCellView) {
         NSView.animate(animations: {
             tableView.scrollRowToVisible(tableView.row(for: cellView))
 
@@ -371,7 +371,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
     private func endEditingCells() {
         guard
             let cellView = currentlyEditingCellView,
-            let (_, index) = findItemForCellView(view: cellView)
+            let (_, index) = findItem(for: cellView)
         else {
             return
         }
@@ -481,7 +481,7 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
             prototypeCell.configure(item: list.items[row])
         }
 
-        return prototypeCell.fittingHeightForConstrainedWidth(width: tableView.bounds.width)
+        return prototypeCell.fittingHeight(forConstrainedWidth: tableView.bounds.width)
     }
 
     func tableViewSelectionDidChange(_ notification: Notification) {
@@ -507,9 +507,9 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
 
         if let listCellView = cellView as? ListCellView, !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
-            (parent as? ContainerViewController)?.presentViewControllerForList(list: list)
+            (parent as? ContainerViewController)?.presentViewController(for: list)
         } else if cellView.isUserInteractionEnabled {
-            beginEditingCell(cellView: cellView)
+            beginEditingCell(cellView)
         }
     }
 
@@ -541,8 +541,8 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
 
     // MARK: ItemCellViewDelegate
 
-    func cellView(view: ItemCellView, didComplete complete: Bool) {
-        guard let itemAndIndex = findItemForCellView(view: view) else {
+    func cellView(_ view: ItemCellView, didComplete complete: Bool) {
+        guard let itemAndIndex = findItem(for: view) else {
             return
         }
 
@@ -578,8 +578,8 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
     }
 
-    func cellViewDidDelete(view: ItemCellView) {
-        guard let (item, index) = findItemForCellView(view: view) else {
+    func cellViewDidDelete(_ view: ItemCellView) {
+        guard let (item, index) = findItem(for: view) else {
             return
         }
 
@@ -593,21 +593,21 @@ NSTableViewDelegate, NSTableViewDataSource, ItemCellViewDelegate, NSGestureRecog
         }
     }
 
-    func cellViewDidChangeText(view: ItemCellView) {
+    func cellViewDidChangeText(_ view: ItemCellView) {
         if view == currentlyEditingCellView {
             updateTableViewHeightOfRows(indexes: IndexSet(integer: tableView.row(for: view)))
             view.window?.update()
         }
     }
 
-    func cellViewDidEndEditing(view: ItemCellView) {
+    func cellViewDidEndEditing(_ view: ItemCellView) {
         endEditingCells()
 
         // In case if Return key was pressed we need to reset table view selection
         tableView.deselectAll(nil)
     }
 
-    private func findItemForCellView(view: NSView) -> (item: ItemType, index: Int)? {
+    private func findItem(for view: ItemCellView) -> (item: ItemType, index: Int)? {
         let index = tableView.row(for: view)
 
         if index < 0 {
@@ -629,7 +629,7 @@ private final class PrototypeCellView: ItemCellView {
         text = cellView.text
     }
 
-    func fittingHeightForConstrainedWidth(width: CGFloat) -> CGFloat {
+    func fittingHeight(forConstrainedWidth width: CGFloat) -> CGFloat {
         if let widthConstraint = widthConstraint {
             widthConstraint.constant = width
         } else {
@@ -651,13 +651,13 @@ private final class PrototypeCellView: ItemCellView {
 
 private final class SnapshotView: NSView {
 
-    init(sourceView: NSView) {
-        super.init(frame: sourceView.frame)
+    init(source: NSView) {
+        super.init(frame: source.frame)
 
-        let imageRepresentation = sourceView.bitmapImageRepForCachingDisplay(in: sourceView.bounds)!
-        sourceView.cacheDisplay(in: sourceView.bounds, to: imageRepresentation)
+        let imageRepresentation = source.bitmapImageRepForCachingDisplay(in: source.bounds)!
+        source.cacheDisplay(in: source.bounds, to: imageRepresentation)
 
-        let snapshotImage = NSImage(size: sourceView.bounds.size)
+        let snapshotImage = NSImage(size: source.bounds.size)
         snapshotImage.addRepresentation(imageRepresentation)
 
         wantsLayer = true

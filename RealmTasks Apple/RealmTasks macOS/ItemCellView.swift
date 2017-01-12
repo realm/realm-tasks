@@ -24,11 +24,11 @@ import Cocoa
 
 protocol ItemCellViewDelegate: class {
 
-    func cellView(view: ItemCellView, didComplete complete: Bool)
-    func cellViewDidDelete(view: ItemCellView)
+    func cellView(_ view: ItemCellView, didComplete complete: Bool)
+    func cellViewDidDelete(_ view: ItemCellView)
 
-    func cellViewDidChangeText(view: ItemCellView)
-    func cellViewDidEndEditing(view: ItemCellView)
+    func cellViewDidChangeText(_ view: ItemCellView)
+    func cellViewDidEndEditing(_ view: ItemCellView)
 
 }
 
@@ -115,7 +115,7 @@ class ItemCellView: NSTableCellView {
         setupUI()
         setupGestures()
 
-        setTrackingArea(with: bounds, options: [.mouseEnteredAndExited, .activeInKeyWindow])
+        setTrackingArea(to: bounds)
     }
 
     required init?(coder: NSCoder) {
@@ -138,7 +138,7 @@ class ItemCellView: NSTableCellView {
 
     override func updateTrackingAreas() {
         if isUserInteractionEnabled {
-            setTrackingArea(with: bounds, options: [.mouseEnteredAndExited, .activeInKeyWindow])
+            setTrackingArea(to: bounds)
         } else {
             resetTrackingAreas()
         }
@@ -256,18 +256,18 @@ class ItemCellView: NSTableCellView {
 
 extension ItemCellView: ItemTextFieldDelegate {
 
-    func textFieldDidBecomeFirstResponder(textField: NSTextField) {
+    func textFieldDidBecomeFirstResponder(_ textField: NSTextField) {
         highlightView.isHidden = true
     }
 
     override func controlTextDidChange(_ obj: Notification) {
-        delegate?.cellViewDidChangeText(view: self)
+        delegate?.cellViewDidChangeText(self)
     }
 
     override func controlTextDidEndEditing(_ obj: Notification) {
         if editable {
             editable = false
-            delegate?.cellViewDidEndEditing(view: self)
+            delegate?.cellViewDidEndEditing(self)
         }
     }
 
@@ -277,7 +277,7 @@ extension ItemCellView: ItemTextFieldDelegate {
 
         if editable {
             editable = false
-            delegate?.cellViewDidEndEditing(view: self)
+            delegate?.cellViewDidEndEditing(self)
         }
     }
 
@@ -326,24 +326,23 @@ extension ItemCellView: NSGestureRecognizerDelegate {
             doneIconView.alphaValue = CGFloat(fractionOfThreshold)
             deleteIconView.alphaValue = CGFloat(fractionOfThreshold)
 
-            releaseAction = fractionOfThreshold == 1 ? (translation.x > 0 ? .Complete : .Delete) : nil
+            releaseAction = fractionOfThreshold == 1 ? (translation.x > 0 ? .complete : .delete) : nil
 
             if completed {
-                overlayView.isHidden = releaseAction == .Complete
-                textView.alphaValue = releaseAction == .Complete ? 1 : 0.3
+                overlayView.isHidden = releaseAction == .complete
+                textView.alphaValue = releaseAction == .complete ? 1 : 0.3
 
                 if contentView.frame.origin.x > 0 {
                     textView.strike(fraction: 1 - fractionOfThreshold)
                 }
             } else {
                 overlayView.backgroundColor = .completeGreenBackground
-                overlayView.isHidden = releaseAction != .Complete
+                overlayView.isHidden = releaseAction != .complete
 
                 if contentView.frame.origin.x > 0 {
                     textView.strike(fraction: fractionOfThreshold)
                 }
             }
-
         case .ended:
             let animationBlock:  () -> Void
             let completionBlock: () -> Void
@@ -351,7 +350,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
             // If not deleting, slide it back into the middle
             // If we are deleting, slide it all the way out of the view
             switch releaseAction {
-            case .Complete?:
+            case .complete?:
                 animationBlock = {
                     self.contentView.frame.origin.x = 0
                 }
@@ -360,10 +359,10 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                     NSView.animate(animations: {
                         self.completed = !self.completed
                     }, completion: {
-                        self.delegate?.cellView(view: self, didComplete: self.completed)
+                        self.delegate?.cellView(self, didComplete: self.completed)
                     })
                 }
-            case .Delete?:
+            case .delete?:
                 animationBlock = {
                     self.alphaValue = 0
 
@@ -372,7 +371,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
                 }
 
                 completionBlock = {
-                    self.delegate?.cellViewDidDelete(view: self)
+                    self.delegate?.cellViewDidDelete(self)
                 }
             case nil:
                 completed ? textView.strike() : textView.unstrike()
@@ -402,7 +401,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 // MARK: Private Classes
 
 private enum ReleaseAction {
-    case Complete, Delete
+    case complete, delete
 }
 
 private class HighlightView: NSView {
@@ -419,7 +418,7 @@ private class HighlightView: NSView {
 
 protocol ItemTextFieldDelegate: NSTextFieldDelegate {
 
-    func textFieldDidBecomeFirstResponder(textField: NSTextField)
+    func textFieldDidBecomeFirstResponder(_ textField: NSTextField)
 
 }
 
@@ -447,7 +446,7 @@ private class ItemTextField: NSTextField {
     }
 
     fileprivate override func becomeFirstResponder() -> Bool {
-        (delegate as? ItemTextFieldDelegate)?.textFieldDidBecomeFirstResponder(textField: self)
+        (delegate as? ItemTextFieldDelegate)?.textFieldDidBecomeFirstResponder(self)
 
         let result = super.becomeFirstResponder()
 

@@ -20,8 +20,8 @@ import Cocoa
 
 protocol RegisterViewControllerDelegate: class {
 
-    func registerViewController(viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String)
-    func registerViewControllerDidCancel(viewController: RegisterViewController)
+    func registerViewController(_ viewController: RegisterViewController, didRegisterWithUserName userName: String, password: String)
+    func registerViewControllerDidCancel(_ viewController: RegisterViewController)
 
 }
 
@@ -60,11 +60,11 @@ class RegisterViewController: NSViewController {
             return
         }
 
-        delegate?.registerViewController(viewController: self, didRegisterWithUserName: userName, password: password)
+        delegate?.registerViewController(self, didRegisterWithUserName: userName, password: password)
     }
 
     @IBAction func cancel(_ sender: AnyObject?) {
-        delegate?.registerViewControllerDidCancel(viewController: self)
+        delegate?.registerViewControllerDidCancel(self)
     }
 
 }

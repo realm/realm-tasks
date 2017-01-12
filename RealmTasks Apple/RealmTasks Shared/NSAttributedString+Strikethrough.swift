@@ -26,18 +26,19 @@ extension NSAttributedString {
 
     func strikedAttributedString(fraction: Double = 1) -> NSAttributedString {
         let range = NSRange(0..<Int(fraction * Double(length)))
-        return attributedStringBySetingAttribute(name: NSStrikethroughStyleAttributeName,
-                                                 value: NSUnderlineStyle.styleThick.rawValue as AnyObject, range: range)
+        return strike(with: .styleThick, range: range)
     }
 
     var unstrikedAttributedString: NSAttributedString {
-        return attributedStringBySetingAttribute(name: NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.styleNone.rawValue as AnyObject)
+        return strike(with: .styleNone)
     }
 
-    func attributedStringBySetingAttribute(name: String, value: AnyObject, range: NSRange? = nil) -> NSAttributedString {
+    private func strike(with style: NSUnderlineStyle, range: NSRange? = nil) -> NSAttributedString {
         let mutableAttributedString = NSMutableAttributedString(attributedString: self)
-        mutableAttributedString.removeAttribute(name, range: NSRange(0..<length))
-        mutableAttributedString.addAttribute(name, value: value, range: range ?? NSRange(0..<length))
+        let attributeName = NSStrikethroughStyleAttributeName
+        let fullRange = NSRange(0..<length)
+        mutableAttributedString.removeAttribute(attributeName, range: fullRange)
+        mutableAttributedString.addAttribute(attributeName, value: style, range: range ?? fullRange)
 
         return mutableAttributedString
     }
