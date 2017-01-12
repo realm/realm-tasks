@@ -39,7 +39,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
             items.realm?.delete(item)
             viewController.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .left)
-            viewController.didUpdateList(reload: true)
+            viewController.didUpdateList(reload: false)
         }
     }
 
