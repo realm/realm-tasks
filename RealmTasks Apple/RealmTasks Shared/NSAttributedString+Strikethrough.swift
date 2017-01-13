@@ -38,7 +38,7 @@ extension NSAttributedString {
         let attributeName = NSStrikethroughStyleAttributeName
         let fullRange = NSRange(0..<length)
         mutableAttributedString.removeAttribute(attributeName, range: fullRange)
-        mutableAttributedString.addAttribute(attributeName, value: style, range: range ?? fullRange)
+        mutableAttributedString.addAttribute(attributeName, value: style.rawValue, range: range ?? fullRange)
 
         return mutableAttributedString
     }
