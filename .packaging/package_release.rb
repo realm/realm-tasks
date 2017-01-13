@@ -25,6 +25,7 @@ end
 # 2. Install Cartography
 ################################################################
 
+`pod repo update`
 `pod install --project-directory="RealmTasks Apple"`
 
 ################################################################
