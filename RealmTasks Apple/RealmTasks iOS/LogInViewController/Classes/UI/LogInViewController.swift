@@ -19,44 +19,52 @@
 import UIKit
 
 enum LogInViewControllerReturnCode: Int {
-    case LogIn
-    case Register
-    case Cancel
+    case logIn
+    case register
+    case cancel
 }
 
 class LogInViewController: UIViewController {
 
-    @IBOutlet private weak var userNameTextField: UITextField!
-    @IBOutlet private weak var passwordTextField: UITextField!
-    @IBOutlet private weak var logInButton: UIButton!
+    @IBOutlet fileprivate weak var userNameTextField: UITextField!
+    @IBOutlet fileprivate weak var passwordTextField: UITextField!
+    @IBOutlet fileprivate weak var logInButton: UIButton!
 
-    var completionHandler: ((userName: String?, password: String?, returnCode: LogInViewControllerReturnCode) -> Void)?
+    struct LogInResponse {
+        let username: String?
+        let password: String?
+        let returnCode: LogInViewControllerReturnCode
+    }
+
+    var completionHandler: ((LogInResponse) -> Void)?
 
     override func viewDidLoad() {
-        userNameTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
-        passwordTextField.addTarget(self, action: #selector(updateUI), forControlEvents: .EditingChanged)
+        userNameTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(updateUI), for: .editingChanged)
 
         updateUI()
     }
 
-    @IBAction func logIn(sender: AnyObject?) {
+    @IBAction func logIn(_ sender: AnyObject?) {
         guard userInputValid() else {
             return
         }
 
-        dismissViewControllerAnimated(true) {
-            self.completionHandler?(userName: self.userNameTextField.text, password: self.passwordTextField.text, returnCode: .LogIn)
+        dismiss(animated: true) {
+            self.completionHandler?(LogInResponse(username: self.userNameTextField.text,
+                                                  password: self.passwordTextField.text,
+                                                  returnCode: .logIn))
         }
     }
 
     private dynamic func updateUI() {
-        logInButton.enabled = userInputValid()
+        logInButton.isEnabled = userInputValid()
     }
 
     private func userInputValid() -> Bool {
         guard
-            let userName = userNameTextField.text where userName.characters.count > 0,
-            let password = passwordTextField.text where password.characters.count > 0
+            let userName = userNameTextField.text, !userName.isEmpty,
+            let password = passwordTextField.text, !password.isEmpty
         else {
             return false
         }
@@ -68,13 +76,15 @@ class LogInViewController: UIViewController {
 
 extension LogInViewController {
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let viewController = segue.destinationViewController as? RegisterViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let viewController = segue.destination as? RegisterViewController {
             viewController.initialUserName = userNameTextField.text
-            viewController.completionHandler = { userName, password, returnCode in
-                if returnCode == .Register {
-                    self.dismissViewControllerAnimated(true) {
-                        self.completionHandler?(userName: userName, password: password, returnCode: .Register)
+            viewController.completionHandler = { response in
+                if response.returnCode == .register {
+                    self.dismiss(animated: true) {
+                        self.completionHandler?(LogInResponse(username: response.username,
+                                                              password: response.password,
+                                                              returnCode: .register))
                     }
                 }
             }
@@ -85,7 +95,7 @@ extension LogInViewController {
 
 extension LogInViewController: UITextFieldDelegate {
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == userNameTextField {
             passwordTextField.becomeFirstResponder()
         } else if textField == passwordTextField {
@@ -99,8 +109,8 @@ extension LogInViewController: UITextFieldDelegate {
 
 extension LogInViewController: UINavigationBarDelegate {
 
-    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
-        return .TopAttached
+    func position(for bar: UIBarPositioning) -> UIBarPosition {
+        return .topAttached
     }
 
 }

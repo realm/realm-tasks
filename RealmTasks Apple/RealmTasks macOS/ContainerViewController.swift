@@ -20,8 +20,8 @@ import Cartography
 import Cocoa
 import RealmSwift
 
-private let toolbarTitleViewIdentifier = "TitleView"
-private let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"
+fileprivate let toolbarTitleViewIdentifier = "TitleView"
+fileprivate let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"
 
 class ContainerViewController: NSViewController {
 
@@ -34,29 +34,27 @@ class ContainerViewController: NSViewController {
 
         if let visualEffectView = view as? NSVisualEffectView {
             if #available(OSX 10.11, *) {
-                visualEffectView.material = .UltraDark
+                visualEffectView.material = .ultraDark
             } else {
-                visualEffectView.material = .Dark
+                visualEffectView.material = .dark
             }
 
-            visualEffectView.state = .Active
+            visualEffectView.state = .active
         }
     }
 
-    @IBAction func showAllLists(sender: AnyObject?) {
+    @IBAction func showAllLists(_ sender: AnyObject?) {
         let rootList = try! Realm().objects(TaskListList.self).first!
-
-        presentViewControllerForList(rootList)
+        presentViewController(for: rootList)
     }
 
-    @IBAction func showRecentList(sender: AnyObject?) {
+    @IBAction func showRecentList(_ sender: AnyObject?) {
         // TODO: restore from user defaults
         let list = try! Realm().objects(TaskList.self).first!
-
-        presentViewControllerForList(list)
+        presentViewController(for: list)
     }
 
-    func presentViewControllerForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
+    func presentViewController<ListType: ListPresentable>(for list: ListType) where ListType: Object {
         let listViewController = ListViewController(list: list)
 
         addChildViewController(listViewController)
@@ -110,32 +108,32 @@ class ContainerViewController: NSViewController {
 
         currentListViewController = listViewController
 
-        updateToolbarForList(list)
+        updateToolbar(for: list)
 
         notificationToken?.stop()
         notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in
             // Show all lists if list is deleted on other device
-            if (list as Object).invalidated {
+            if list.isInvalidated {
                 self.showAllLists(nil)
             }
         }
     }
 
-    private func updateToolbarForList<ListType: ListPresentable where ListType: Object>(list: ListType) {
+    private func updateToolbar<ListType: ListPresentable>(for list: ListType) where ListType: Object {
         guard let toolbar = view.window?.toolbar else {
             return
         }
 
-        if let titleView = toolbar.itemWithIdentifier(toolbarTitleViewIdentifier)?.view as? TitleView {
+        if let titleView = toolbar.item(withIdentifier: toolbarTitleViewIdentifier)?.view as? TitleView {
             titleView.text = (list as? CellPresentable)?.text ?? "Lists"
         }
 
         if list is CellPresentable {
-            if !toolbar.hasItemWithIdentifier(toolbarShowAllListsButtonIdentifier) {
-                toolbar.insertItemWithItemIdentifier(toolbarShowAllListsButtonIdentifier, atIndex: toolbar.items.count - 1)
+            if !toolbar.hasItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
+                toolbar.insertItem(withItemIdentifier: toolbarShowAllListsButtonIdentifier, at: toolbar.items.count - 1)
             }
-        } else if let index = toolbar.indexOfItemWithIdentifier(toolbarShowAllListsButtonIdentifier) {
-            view.window?.toolbar?.removeItemAtIndex(index)
+        } else if let index = toolbar.indexOfItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
+            view.window?.toolbar?.removeItem(at: index)
         }
 
         // Let the new controller takes care about toolbar validation
@@ -146,26 +144,16 @@ class ContainerViewController: NSViewController {
 
 private extension NSToolbar {
 
-    func hasItemWithIdentifier(identifier: String) -> Bool {
-        return itemWithIdentifier(identifier) != nil
+    func hasItem(withIdentifier identifier: String) -> Bool {
+        return item(withIdentifier: identifier) != nil
     }
 
-    func itemWithIdentifier(identifier: String) -> NSToolbarItem? {
-        guard let index = indexOfItemWithIdentifier(identifier) else {
-            return nil
-        }
-
-        return items[index]
+    func item(withIdentifier identifier: String) -> NSToolbarItem? {
+        return items.first { $0.itemIdentifier == identifier }
     }
 
-    func indexOfItemWithIdentifier(identifier: String) -> Int? {
-        for (index, item) in items.enumerate() {
-            if item.itemIdentifier == identifier {
-                return index
-            }
-        }
-
-        return nil
+    func indexOfItem(withIdentifier identifier: String) -> Int? {
+        return items.index { $0.itemIdentifier == identifier }
     }
 
 }

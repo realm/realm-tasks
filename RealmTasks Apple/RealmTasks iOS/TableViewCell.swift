@@ -36,7 +36,7 @@ func vibrate() {
 // MARK: Private Declarations
 
 private enum ReleaseAction {
-    case Complete, Delete
+    case complete, delete
 }
 
 private let iconWidth: CGFloat = 60
@@ -45,7 +45,7 @@ private let iconWidth: CGFloat = 60
 
 // FIXME: This class should be split up.
 // swiftlint:disable type_body_length
-final class TableViewCell<Item: Object where Item: CellPresentable>: UITableViewCell, UITextViewDelegate {
+final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate where Item: CellPresentable {
 
     // MARK: Properties
 
@@ -88,7 +88,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .None
+        selectionStyle = .none
 
         setupUI()
         setupPanGestureRecognizer()
@@ -117,7 +117,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     private func setupBackgroundView() {
-        backgroundColor = .clearColor()
+        backgroundColor = .clear
 
         backgroundView = UIView()
         constrain(backgroundView!) { backgroundView in
@@ -129,19 +129,19 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         doneIconView.center = center
         doneIconView.frame.origin.x = 20
         doneIconView.alpha = 0
-        doneIconView.autoresizingMask = [.FlexibleRightMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
+        doneIconView.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
         insertSubview(doneIconView, belowSubview: contentView)
 
         deleteIconView.center = center
         deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - 20
         deleteIconView.alpha = 0
-        deleteIconView.autoresizingMask = [.FlexibleLeftMargin, .FlexibleTopMargin, .FlexibleBottomMargin]
+        deleteIconView.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin, .flexibleBottomMargin]
         insertSubview(deleteIconView, belowSubview: contentView)
     }
 
     private func setupOverlayView() {
-        overlayView.backgroundColor = .completeDimBackgroundColor()
-        overlayView.hidden = true
+        overlayView.backgroundColor = .completeDimBackground
+        overlayView.isHidden = true
         contentView.addSubview(overlayView)
         constrain(overlayView) { backgroundOverlayView in
             backgroundOverlayView.edges == backgroundOverlayView.superview!.edges
@@ -164,7 +164,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     }
 
     private func setupBorders() {
-        let singlePixelInPoints = 1 / UIScreen.mainScreen().scale
+        let singlePixelInPoints = 1 / UIScreen.main.scale
 
         let highlightLine = UIView()
         highlightLine.backgroundColor = UIColor(white: 1, alpha: 0.05)
@@ -199,9 +199,9 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         }
 
         badgeBackground.addSubview(countLabel)
-        countLabel.backgroundColor = .clearColor()
-        countLabel.textColor = .whiteColor()
-        countLabel.font = .systemFontOfSize(18)
+        countLabel.backgroundColor = .clear
+        countLabel.textColor = .white
+        countLabel.font = .systemFont(ofSize: 18)
         constrain(countLabel) { countLabel in
             countLabel.center == countLabel.superview!.center
         }
@@ -218,16 +218,16 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
     // MARK: Pan Gesture Recognizer
 
     private func setupPanGestureRecognizer() {
-        let recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        let recognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(recognizer:)))
         recognizer.delegate = self
         addGestureRecognizer(recognizer)
     }
 
     func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
-        case .Began: handlePanBegan()
-        case .Changed: handlePanChanged(translation: recognizer.translationInView(self).x)
-        case .Ended: handlePanEnded()
+        case .began: handlePanBegan()
+        case .changed: handlePanChanged(translation: recognizer.translation(in: self).x)
+        case .ended: handlePanEnded()
         default:
             break
         }
@@ -240,7 +240,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         releaseAction = nil
     }
 
-    private func handlePanChanged(translation translation: CGFloat) {
+    private func handlePanChanged(translation: CGFloat) {
         if !item.isCompletable && translation > 0 {
             releaseAction = nil
             return
@@ -264,7 +264,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         contentView.frame.origin.x = x
 
         let fractionOfThreshold = min(1, Double(abs(x) / iconWidth))
-        releaseAction = fractionOfThreshold >= 1 ? (x > 0 ? .Complete : .Delete) : nil
+        releaseAction = fractionOfThreshold >= 1 ? (x > 0 ? .complete : .delete) : nil
 
         if x > 0 {
             doneIconView.alpha = CGFloat(fractionOfThreshold)
@@ -272,29 +272,29 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             deleteIconView.alpha = CGFloat(fractionOfThreshold)
         }
 
-        if !(item as Object).invalidated && !item.completed {
-            overlayView.backgroundColor = .completeGreenBackgroundColor()
-            overlayView.hidden = releaseAction != .Complete
+        if !item.isInvalidated && !item.completed {
+            overlayView.backgroundColor = .completeGreenBackground
+            overlayView.isHidden = releaseAction != .complete
             if contentView.frame.origin.x > 0 {
                 textView.unstrike()
-                textView.strike(fractionOfThreshold)
+                textView.strike(fraction: fractionOfThreshold)
             } else {
-                releaseAction == .Complete ? textView.strike() : textView.unstrike()
+                releaseAction == .complete ? textView.strike() : textView.unstrike()
             }
         } else {
-            overlayView.hidden = releaseAction == .Complete
-            textView.alpha = releaseAction == .Complete ? 1 : 0.3
+            overlayView.isHidden = releaseAction == .complete
+            textView.alpha = releaseAction == .complete ? 1 : 0.3
             if contentView.frame.origin.x > 0 {
                 textView.unstrike()
-                textView.strike(1 - fractionOfThreshold)
+                textView.strike(fraction: 1 - fractionOfThreshold)
             } else {
-                releaseAction == .Complete ? textView.unstrike() : textView.strike()
+                releaseAction == .complete ? textView.unstrike() : textView.strike()
             }
         }
     }
 
     private func handlePanEnded() {
-        guard item != nil && !(item as Object).invalidated else {
+        guard item != nil && !item.isInvalidated else {
             return
         }
         let animationBlock: () -> Void
@@ -303,14 +303,14 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         // If not deleting, slide it back into the middle
         // If we are deleting, slide it all the way out of the view
         switch releaseAction {
-        case .Complete?:
+        case .complete?:
             animationBlock = {
                 self.contentView.frame.origin.x = 0
             }
             completionBlock = {
                 self.setCompleted(!self.item.completed, animated: true)
             }
-        case .Delete?:
+        case .delete?:
             animationBlock = {
                 self.alpha = 0
                 self.contentView.alpha = 0
@@ -319,7 +319,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                 self.deleteIconView.frame.origin.x = -iconWidth + self.deleteIconView.bounds.width + 20
             }
             completionBlock = {
-                self.presenter.deleteItem(self.item)
+                self.presenter.delete(item: self.item)
             }
         case nil:
             item.completed ? textView.strike() : textView.unstrike()
@@ -329,8 +329,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
             completionBlock = {}
         }
 
-        UIView.animateWithDuration(0.2, animations: animationBlock) { _ in
-            if self.item != nil && !(self.item as Object).invalidated {
+        UIView.animate(withDuration: 0.2, animations: animationBlock) { _ in
+            if self.item != nil && !self.item.isInvalidated {
                 completionBlock()
             }
 
@@ -342,11 +342,11 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         }
     }
 
-    override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
             return false
         }
-        let translation = panGestureRecognizer.translationInView(superview!)
+        let translation = panGestureRecognizer.translation(in: superview!)
         return fabs(translation.x) > fabs(translation.y)
     }
 
@@ -366,12 +366,12 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     // MARK: Actions
 
-    private func setCompleted(completed: Bool, animated: Bool = false) {
+    private func setCompleted(_ completed: Bool, animated: Bool = false) {
         completed ? textView.strike() : textView.unstrike()
-        overlayView.hidden = !completed
+        overlayView.isHidden = !completed
         let updateColor = { [unowned self] in
             self.overlayView.backgroundColor = completed ?
-                .completeDimBackgroundColor() : .completeGreenBackgroundColor()
+                .completeDimBackground : .completeGreenBackground
             self.textView.alpha = completed ? 0.3 : 1
         }
         if animated {
@@ -379,8 +379,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
                 item.completed = completed
             }
             vibrate()
-            UIView.animateWithDuration(0.2, animations: updateColor)
-            presenter.completeItem(item)
+            UIView.animate(withDuration: 0.2, animations: updateColor)
+            presenter.complete(item: item)
         } else {
             updateColor()
         }
@@ -388,7 +388,7 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 
     // MARK: UITextViewDelegate methods
 
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
             return false
@@ -396,22 +396,22 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
         return true
     }
 
-    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         // disable editing of completed to-do items
         return !item.completed
     }
 
-    func textViewDidBeginEditing(textView: UITextView) {
+    func textViewDidBeginEditing(_ textView: UITextView) {
         presenter.cellDidBeginEditing(self)
     }
 
-    func textViewDidEndEditing(textView: UITextView) {
-        item.text = textView.text.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
-        textView.userInteractionEnabled = false
+    func textViewDidEndEditing(_ textView: UITextView) {
+        item.text = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        textView.isUserInteractionEnabled = false
         presenter.cellDidEndEditing(self)
     }
 
-    func textViewDidChange(textView: UITextView) {
+    func textViewDidChange(_ textView: UITextView) {
         presenter.cellDidChangeText(self)
     }
 }
@@ -419,8 +419,8 @@ final class TableViewCell<Item: Object where Item: CellPresentable>: UITableView
 // Mark: Gesture Recognizer Reset
 
 extension UIGestureRecognizer {
-    private func reset() {
-        enabled = false
-        enabled = true
+    func reset() {
+        isEnabled = false
+        isEnabled = true
     }
 }

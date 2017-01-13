@@ -40,7 +40,7 @@ final class TaskListList: Object, ListPresentable {
 }
 
 final class TaskList: Object, CellPresentable, ListPresentable {
-    dynamic var id = NSUUID().UUIDString // swiftlint:disable:this variable_name
+    dynamic var id = NSUUID().uuidString // swiftlint:disable:this variable_name
     dynamic var text = ""
     dynamic var completed = false
     let items = List<Task>()

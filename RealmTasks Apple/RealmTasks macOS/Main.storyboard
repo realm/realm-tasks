@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -402,14 +403,14 @@
                                     <size key="minSize" width="18" height="18"/>
                                     <size key="maxSize" width="18" height="18"/>
                                     <connections>
-                                        <action selector="showAllLists:" target="tRP-hs-BBi" id="aev-UH-Jnm"/>
+                                        <action selector="showAllLists:" target="tRP-hs-BBi" id="6yX-IZ-She"/>
                                     </connections>
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="A4DA8878-F87C-4B8A-AFA8-C4143195201F" label="New" paletteLabel="New" toolTip="New" tag="-1" image="new" id="4CH-Dy-gYb">
                                     <size key="minSize" width="18" height="18"/>
                                     <size key="maxSize" width="18" height="18"/>
                                     <connections>
-                                        <action selector="newItem:" target="tRP-hs-BBi" id="Xf6-Bv-6Kr"/>
+                                        <action selector="newItemWithSender:" target="tRP-hs-BBi" id="6ib-XJ-1yM"/>
                                     </connections>
                                 </toolbarItem>
                             </allowedToolbarItems>
@@ -459,7 +460,7 @@ DQ
 </string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="logIn:" target="Rd6-Qu-x6P" id="mFd-Ib-LCI"/>
+                                    <action selector="logIn:" target="Rd6-Qu-x6P" id="kRR-vm-f2v"/>
                                     <binding destination="Rd6-Qu-x6P" name="enabled2" keyPath="password" previousBinding="SIu-Z8-YV7" id="iTN-j6-YEc">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="0"/>
@@ -511,7 +512,7 @@ DQ
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="register:" target="Rd6-Qu-x6P" id="NZz-6I-fBi"/>
+                                    <action selector="register:" target="Rd6-Qu-x6P" id="l74-d6-2Ic"/>
                                 </connections>
                             </button>
                             <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3WT-Fq-edH">
@@ -586,7 +587,7 @@ DQ
 </string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="register:" target="kGQ-bF-ae4" id="TaP-i7-q9D"/>
+                                    <action selector="register:" target="kGQ-bF-ae4" id="nap-sQ-eVF"/>
                                     <binding destination="kGQ-bF-ae4" name="enabled3" keyPath="confirmationMatchesPassword" previousBinding="by9-wl-s8K" id="oiK-Me-QUU">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="-1"/>
@@ -702,7 +703,7 @@ Gw
 </string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="cancel:" target="kGQ-bF-ae4" id="YDT-cM-xYu"/>
+                                    <action selector="cancel:" target="kGQ-bF-ae4" id="sdg-AK-IAE"/>
                                 </connections>
                             </button>
                         </subviews>

@@ -21,25 +21,24 @@ import RealmSwift
 import UIKit
 
 private enum NavDirection {
-    case Up, Down
+    case up, down
 }
 
 enum ViewControllerType {
-    case Lists
-    case DefaultListTasks
-    case Tasks(TaskList)
+    case lists
+    case defaultListTasks
+    case tasks(TaskList)
 }
 
 enum ViewControllerPosition {
-    case Up(ViewControllerType)
-    case Down(ViewControllerType)
+    case up(ViewControllerType)
+    case down(ViewControllerType)
 }
 
 // MARK: View Controller
-
 // swiftlint:disable:next type_body_length
-final class ViewController<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>:
-    UIViewController, UIGestureRecognizerDelegate, UIScrollViewDelegate, ViewControllerProtocol {
+final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGestureRecognizerDelegate,
+    UIScrollViewDelegate, ViewControllerProtocol where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
 
     // MARK: Properties
     var items: List<Item> {
@@ -69,13 +68,12 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     private var listPresenter: ListPresenter<Item, Parent>!
 
     // MARK: UI Writes
-
-    func uiWrite(@noescape block: () -> Void) {
-        uiWriteNoUpdateList(block)
+    func uiWrite(block: () -> Void) {
+        uiWriteNoUpdateList(block: block)
         didUpdateList(reload: false)
     }
 
-    func uiWriteNoUpdateList(@noescape block: () -> Void) {
+    func uiWriteNoUpdateList(block: () -> Void) {
         items.realm?.beginWrite()
         block()
         commitUIWrite()
@@ -99,10 +97,14 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         listPresenter.viewController = self
 
         if Item.self == Task.self {
-            auxViewController = .Up(.Lists)
+            auxViewController = .up(.lists)
         } else {
-            auxViewController = .Down(.DefaultListTasks)
+            auxViewController = .down(.defaultListTasks)
         }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -114,8 +116,8 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // MARK: UI
 
     private func setupUI() {
-        listPresenter.tablePresenter.setupTableView(inView: view, topConstraint: &topConstraint, listTitle: title)
-        listPresenter.tablePresenter.setupPlaceholderCell(inTableView: tableView)
+        listPresenter.tablePresenter.setupTableView(in: view, topConstraint: &topConstraint, listTitle: title)
+        listPresenter.tablePresenter.setupPlaceholderCell(in: tableView)
 
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
@@ -123,7 +125,7 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         listPresenter.updateOnboardView()
     }
 
-    override func didMoveToParentViewController(parent: UIViewController?) {
+    override func didMove(toParentViewController parent: UIViewController?) {
         guard parent == nil else { // we're being removed from our parent controller
             return
         }
@@ -137,78 +139,78 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
     // MARK: Gesture Recognizers
 
     private func setupGestureRecognizers() {
-        tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(_:))))
+        tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(recognizer:))))
     }
 
     func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
-        guard recognizer.state == .Ended else {
+        guard recognizer.state == .ended else {
             return
         }
         if listPresenter.cellPresenter.currentlyEditing {
             view.endEditing(true)
             return
         }
-        let location = recognizer.locationInView(tableView)
+        let location = recognizer.location(in: tableView)
         let cell: TableViewCell<Item>!
-        if let indexPath = tableView.indexPathForRowAtPoint(location),
-            let typedCell = tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell<Item> {
+        if let indexPath = tableView.indexPathForRow(at: location),
+            let typedCell = tableView.cellForRow(at: indexPath) as? TableViewCell<Item> {
             cell = typedCell
-            if case .Down(_) = auxViewController! where location.x > tableView.bounds.width / 2 {
-                navigateToBottomViewController(cell.item)
+            if case .down(_) = auxViewController!, location.x > tableView.bounds.width / 2 {
+                navigateToBottomViewController(item: cell.item)
                 return
             }
         } else {
             items.realm?.beginWrite()
             let row = items.filter("completed = false").count
-            items.insert(Item(), atIndex: row)
-            let indexPath = NSIndexPath(forRow: row, inSection: 0)
-            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-            cell = tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Item>
+            items.insert(Item(), at: row)
+            let indexPath = IndexPath(row: row, section: 0)
+            tableView.insertRows(at: [indexPath], with: .automatic)
+            cell = tableView.cellForRow(at: indexPath) as! TableViewCell<Item>
             finishUIWrite()
-            listPresenter.updateOnboardView(true)
+            listPresenter.updateOnboardView(animated: true)
         }
         let textView = cell.textView
-        textView.userInteractionEnabled = !textView.userInteractionEnabled
+        textView.isUserInteractionEnabled = !textView.isUserInteractionEnabled
         textView.becomeFirstResponder()
     }
 
     private func navigateToBottomViewController(item: Item) {
         guard let list = item as? TaskList else { return }
 
-        auxViewController = .Down(.Tasks(list))
+        auxViewController = .down(.tasks(list))
         bottomViewController = createAuxController()
 
-        startMovingToNextViewController(.Down)
-        finishMovingToNextViewController(.Down)
+        startMovingToNextViewController(direction: .down)
+        finishMovingToNextViewController(direction: .down)
     }
 
     private func startMovingToNextViewController(direction: NavDirection) {
-        let nextVC = direction == .Up ? topViewController! : bottomViewController!
-        let parentVC = parentViewController!
+        let nextVC = direction == .up ? topViewController! : bottomViewController!
+        let parentVC = parent!
         parentVC.addChildViewController(nextVC)
-        parentVC.view.insertSubview(nextVC.view, atIndex: 1)
+        parentVC.view.insertSubview(nextVC.view, at: 1)
         view.removeAllConstraints()
         nextConstraints = constrain(nextVC.view, tableViewContentView) { nextView, tableViewContentView in
             nextView.size == nextView.superview!.size
             nextView.left == nextView.superview!.left
-            if direction == .Up {
+            if direction == .up {
                 nextView.bottom == tableViewContentView.top - 200
             } else {
                 nextView.top == tableViewContentView.bottom + tableView.rowHeight + tableView.contentInset.bottom
             }
         }
-        nextVC.didMoveToParentViewController(parentVC)
+        nextVC.didMove(toParentViewController: parentVC)
     }
 
     private func finishMovingToNextViewController(direction: NavDirection) {
-        let nextVC = direction == .Up ? topViewController! : bottomViewController!
-        let parentVC = parentViewController!
-        willMoveToParentViewController(nil)
+        let nextVC = direction == .up ? topViewController! : bottomViewController!
+        let parentVC = parent!
+        willMove(toParentViewController: nil)
         parentVC.title = nextVC.title
         parentVC.view.layoutIfNeeded()
         constrain(nextVC.view, view, replace: nextConstraints!) { nextView, currentView in
             nextView.edges == nextView.superview!.edges
-            if direction == .Up {
+            if direction == .up {
                 currentView.top == nextView.bottom
             } else {
                 currentView.bottom == nextView.top
@@ -216,11 +218,11 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
             currentView.size == nextView.size
             currentView.left == nextView.left
         }
-        UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [], animations: {
             parentVC.view.layoutIfNeeded()
         }, completion: { [unowned self] _ in
             self.view.removeFromSuperview()
-            nextVC.didMoveToParentViewController(parentVC)
+            nextVC.didMove(toParentViewController: parentVC)
             self.removeFromParentViewController()
         })
     }
@@ -229,20 +231,20 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // FIXME: This could easily be refactored to avoid such a high CC.
     // swiftlint:disable:next cyclomatic_complexity
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        func removeVC(viewController: UIViewController?) {
-            if scrollView.dragging {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        func removeVC(_ viewController: UIViewController?) {
+            if scrollView.isDragging {
                 viewController?.view.removeFromSuperview()
                 viewController?.removeFromParentViewController()
             }
         }
 
-        if case .Down(_) = auxViewController! where distancePulledUp > tableView.rowHeight {
-            if bottomViewController === parentViewController?.childViewControllers.last { return }
+        if case .down(_) = auxViewController!, distancePulledUp > tableView.rowHeight {
+            if bottomViewController === parent?.childViewControllers.last { return }
             if bottomViewController == nil {
                 bottomViewController = createAuxController()
             }
-            startMovingToNextViewController(.Down)
+            startMovingToNextViewController(direction: .down)
             return
         } else {
             removeVC(bottomViewController)
@@ -257,32 +259,32 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
         if distancePulledDown <= tableView.rowHeight {
             listPresenter.tablePresenter
-                .adjustPlaceholder(.pullToCreate(distance: distancePulledDown))
-            listPresenter.setOnboardAlpha(max(0, 1 - (distancePulledDown / cellHeight)))
+                .adjustPlaceholder(state: .pullToCreate(distance: distancePulledDown))
+            listPresenter.setOnboardAlpha(to: max(0, 1 - (distancePulledDown / cellHeight)))
         } else if distancePulledDown <= tableView.rowHeight * 2 {
-            listPresenter.tablePresenter.adjustPlaceholder(.releaseToCreate)
-        } else if case .Up(_) = auxViewController! {
-            if topViewController === parentViewController?.childViewControllers.last { return }
+            listPresenter.tablePresenter.adjustPlaceholder(state: .releaseToCreate)
+        } else if case .up(_) = auxViewController! {
+            if topViewController === parent?.childViewControllers.last { return }
             if topViewController == nil {
                 topViewController = createAuxController()
             }
-            startMovingToNextViewController(.Up)
+            startMovingToNextViewController(direction: .up)
 
-            listPresenter.tablePresenter.adjustPlaceholder(.switchToLists)
+            listPresenter.tablePresenter.adjustPlaceholder(state: .switchToLists)
 
             return
         }
 
-        if scrollView.dragging {
+        if scrollView.isDragging {
             removeVC(topViewController)
-            setPlaceholderAlpha(min(1, distancePulledDown / tableView.rowHeight))
+            setPlaceholderAlpha(to: min(1, distancePulledDown / tableView.rowHeight))
         }
     }
 
-    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if distancePulledUp > tableView.rowHeight {
-            if bottomViewController === parentViewController?.childViewControllers.last {
-                finishMovingToNextViewController(.Down)
+            if bottomViewController === parent?.childViewControllers.last {
+                finishMovingToNextViewController(direction: .down)
             } else {
                 items.realm?.beginWrite()
                 let itemsToDelete = items.filter("completed = true")
@@ -296,9 +298,9 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
                 let startingIndex = items.count
                 let indexPathsToDelete = (startingIndex..<(startingIndex + numberOfItemsToDelete)).map { index in
-                    return NSIndexPath(forRow: index, inSection: 0)
+                    return IndexPath(row: index, section: 0)
                 }
-                tableView.deleteRowsAtIndexPaths(indexPathsToDelete, withRowAnimation: .Automatic)
+                tableView.deleteRows(at: indexPathsToDelete, with: .automatic)
                 finishUIWrite()
                 vibrate()
             }
@@ -308,13 +310,13 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         guard distancePulledDown > tableView.rowHeight else { return }
 
         if distancePulledDown > tableView.rowHeight * 2 &&
-            topViewController === parentViewController?.childViewControllers.last {
-            finishMovingToNextViewController(.Up)
+            topViewController === parent?.childViewControllers.last {
+            finishMovingToNextViewController(direction: .up)
             return
         }
         // Create new item
         uiWrite {
-            items.insert(Item(), atIndex: 0)
+            items.insert(Item(), at: 0)
         }
         tableView.reloadData()
         if let firstCell = tableView.visibleCells.first as? TableViewCell<Item> {
@@ -324,23 +326,23 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
 
     // MARK: ViewControllerProtocol
 
-    func didUpdateList(reload reload: Bool) {
+    func didUpdateList(reload: Bool) {
         listPresenter.tablePresenter.updateColors()
         listPresenter.updateOnboardView()
         if reload { tableView.reloadData() }
     }
 
-    func setTopConstraintTo(constant constant: CGFloat) {
+    func setTopConstraint(to constant: CGFloat) {
         topConstraint?.constant = constant
     }
 
-    func setPlaceholderAlpha(alpha: CGFloat) {
-        listPresenter.tablePresenter.adjustPlaceholder(.alpha(alpha))
+    func setPlaceholderAlpha(to alpha: CGFloat) {
+        listPresenter.tablePresenter.adjustPlaceholder(state: .alpha(alpha))
     }
 
-    func setListTitle(title: String) {
+    func setListTitle(to title: String) {
         self.title = title
-        parentViewController?.title = title
+        parent?.title = title
     }
 
     // MARK: NavigationProtocol
@@ -355,22 +357,22 @@ final class ViewController<Item: Object, Parent: Object where Item: CellPresenta
         }
 
         switch auxViewControllerType {
-        case .Up(let type): listType = type
-        case .Down(let type): listType = type
+        case .up(let type): listType = type
+        case .down(let type): listType = type
         }
 
         switch listType {
-        case .Lists:
+        case .lists:
             return ViewController<TaskList, TaskListList>(
                 parent: try! Realm().objects(TaskListList.self).first!,
                 colors: UIColor.listColors()
             )
-        case .DefaultListTasks:
+        case .defaultListTasks:
             return ViewController<Task, TaskList>(
                 parent: try! Realm().objects(TaskList.self).first!,
                 colors: UIColor.taskColors()
             )
-        case .Tasks(let list):
+        case .tasks(let list):
             return ViewController<Task, TaskList>(
                 parent: list,
                 colors: UIColor.taskColors()

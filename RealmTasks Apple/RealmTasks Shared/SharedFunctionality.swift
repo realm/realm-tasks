@@ -24,7 +24,7 @@ import RealmSwift
 private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here. https://github.com/realm/realm-sync/issues/694
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
 
-private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
+private func setDefaultRealmConfiguration(with user: SyncUser) {
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
         syncConfiguration: SyncConfiguration(user: user, realmURL: Constants.syncServerURL!),
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
@@ -48,18 +48,18 @@ private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
             return
         }
         // Deduplicate
-        dispatch_async(dispatch_queue_create("io.realm.RealmTasks.bg", nil)) {
-            let items = try! Realm().objects(TaskListList.self).first!.items
+        DispatchQueue(label: "io.realm.RealmTasks.bg", attributes: []).async {
+            var items = try! Realm().objects(TaskListList.self).first!.items
             guard items.count > 1 else { return }
 
             try! items.realm!.write {
                 let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
-                for id in listReferenceIDs where listReferenceIDs.countForObject(id) > 1 {
+                for id in listReferenceIDs where listReferenceIDs.count(for: id) > 1 {
                     let id = id as! String
-                    let indexesToRemove = items.enumerate().flatMap { index, element in
+                    let indexesToRemove = items.enumerated().flatMap { index, element in
                         return element.id == id ? index : nil
                     }
-                    indexesToRemove.dropFirst().reverse().forEach(items.removeAtIndex)
+                    indexesToRemove.dropFirst().reversed().forEach { items.remove(at: $0) }
                 }
             }
         }
@@ -70,22 +70,24 @@ private func setDefaultRealmConfigurationWithUser(user: SyncUser) {
 
 // returns true on success
 func configureDefaultRealm() -> Bool {
-    if let user = SyncUser.currentUser() {
-        setDefaultRealmConfigurationWithUser(user)
+    if let user = SyncUser.current {
+        setDefaultRealmConfiguration(with: user)
         return true
     }
     return false
 }
 
-func authenticate(username username: String, password: String, register: Bool, callback: (NSError?) -> Void) {
-    SyncUser.logInWithCredentials(.usernamePassword(username, password: password, register: register),
-                                  authServerURL: Constants.syncAuthURL) { user, error in
-        dispatch_async(dispatch_get_main_queue()) {
+func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> Void) {
+    let credentials = SyncCredentials.usernamePassword(username: username, password: password, register: register)
+    SyncUser.logIn(with: credentials, server: Constants.syncAuthURL) { user, error in
+        DispatchQueue.main.async {
             if let user = user {
-                setDefaultRealmConfigurationWithUser(user)
+                setDefaultRealmConfiguration(with: user)
             }
 
-            if let error = error where error.code == SyncError.HTTPStatusCodeError.rawValue && (error.userInfo["statusCode"] as? Int) == 400 {
+            let error = error as NSError?
+
+            if let error = error, error._code == SyncError.httpStatusCodeError.rawValue && (error.userInfo["statusCode"] as? Int) == 400 {
                 // FIXME: workararound for https://github.com/realm/realm-cocoa-private/issues/204
                 let improvedError = NSError(error: error,
                                             description: "Incorrect username or password.",
