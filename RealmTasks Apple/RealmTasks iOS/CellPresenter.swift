@@ -39,7 +39,6 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
             items.realm?.delete(item)
             viewController.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .left)
-            viewController.didUpdateList(reload: false)
         }
     }
 
@@ -62,7 +61,6 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
             items.move(from: sourceIndexPath.row, to: destinationIndexPath.row)
             viewController.tableView.moveRow(at: sourceIndexPath, to: destinationIndexPath)
-            viewController.didUpdateList(reload: false)
         }
     }
 
