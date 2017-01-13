@@ -25,6 +25,7 @@ end
 # 2. Install Cartography
 ################################################################
 
+`pod repo update`
 `pod install --project-directory="RealmTasks Apple"`
 
 ################################################################
@@ -38,7 +39,7 @@ end
 
 def embed_realm_frameworks(folder, platform_name)
   # Get useful variables
-  realm_frameworks_root = "#{@realm_release_root}/#{folder}/swift-2.3"
+  realm_frameworks_root = "#{@realm_release_root}/#{folder}/swift-3.0.2"
   target = @project.targets.find { |target| target.to_s == "RealmTasks #{platform_name}" }
   frameworks_build_phase = target.build_phases.find { |build_phase| build_phase.to_s == 'FrameworksBuildPhase' }
 
