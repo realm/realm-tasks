@@ -81,30 +81,22 @@ namespace RealmTasks
 
                 _realm = Realm.GetInstance(config);
 
-                var parent = _realm.Find<TaskListList>(0);
-                if (parent == null)
+                TaskListList parent = null;
+                _realm.Write(() =>
                 {
-                    try
+                    // Eagerly acquire write-lock to ensure we don't get into
+                    // race conditions with sync writing data in the background
+                    parent = _realm.Find<TaskListList>(0);
+                    if (parent == null)
                     {
-                        _realm.Write(() =>
+                        parent = _realm.Add(new TaskListList());
+                        parent.Items.Add(new TaskList
                         {
-                            parent = new TaskListList();
-                            parent.Items.Add(new TaskList
-                            {
-                                Id = Constants.DefaultListId,
-                                Title = Constants.DefaultListName
-                            });
-
-                            _realm.Add(parent);
+                            Id = Constants.DefaultListId,
+                            Title = Constants.DefaultListName
                         });
                     }
-                    catch (RealmDuplicatePrimaryKeyValueException)
-                    {
-                        // If sync went through too fast, we might already have that one.
-                        // We don't care though, since we only use it as container.
-                        parent = _realm.Find<TaskListList>(0);
-                    }
-                }
+                });
 
                 TaskLists = parent.Items;
             }
