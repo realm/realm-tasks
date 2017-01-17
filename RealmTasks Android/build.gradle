@@ -3,17 +3,23 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
         classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'io.realm:realm-gradle-plugin:2.2.1'
+        classpath 'io.realm:realm-gradle-plugin:2.3.0-SNAPSHOT'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+        }
     }
 }
 
