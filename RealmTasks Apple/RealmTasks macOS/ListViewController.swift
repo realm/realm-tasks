@@ -451,7 +451,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         let cellView: ItemCellView
 
         switch item {
-        case is TaskList:
+        case is TaskListReference:
             cellViewIdentifier = listCellIdentifier
             cellViewType = ListCellView.self
         case is Task:
@@ -506,8 +506,8 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
             return
         }
 
-        if let listCellView = cellView as? ListCellView, !listCellView.acceptsEditing, let list = list.items[index] as? TaskList {
-            (parent as? ContainerViewController)?.presentViewController(for: list)
+        if let listCellView = cellView as? ListCellView, !listCellView.acceptsEditing, let list = list.items[index] as? TaskListReference {
+            (parent as? ContainerViewController)?.presentViewController(for: list.list)
         } else if cellView.isUserInteractionEnabled {
             beginEditingCell(cellView)
         }

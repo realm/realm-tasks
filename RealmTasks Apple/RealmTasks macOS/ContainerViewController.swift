@@ -50,7 +50,7 @@ class ContainerViewController: NSViewController {
 
     @IBAction func showRecentList(_ sender: AnyObject?) {
         // TODO: restore from user defaults
-        let list = try! Realm().objects(TaskList.self).first!
+        let list = try! Realm().objects(TaskListReference.self).first!.list
         presentViewController(for: list)
     }
 
@@ -64,7 +64,7 @@ class ContainerViewController: NSViewController {
             constrain(listViewController.view, currentListViewController.view, replace: constraintGroup) { newView, oldView in
                 oldView.edges == oldView.superview!.edges
 
-                if list is CellPresentable {
+                if list is TaskList {
                     newView.top == newView.superview!.bottom
                 } else {
                     newView.bottom == newView.superview!.top
@@ -79,7 +79,7 @@ class ContainerViewController: NSViewController {
             constrain(listViewController.view, currentListViewController.view, replace: constraintGroup) { newView, oldView in
                 newView.edges == newView.superview!.edges
 
-                if list is CellPresentable {
+                if list is TaskList {
                     oldView.bottom == oldView.superview!.top
                 } else {
                     oldView.top == oldView.superview!.bottom
@@ -125,10 +125,10 @@ class ContainerViewController: NSViewController {
         }
 
         if let titleView = toolbar.item(withIdentifier: toolbarTitleViewIdentifier)?.view as? TitleView {
-            titleView.text = (list as? CellPresentable)?.text ?? "Lists"
+            titleView.text = (list as? TaskList)?.text ?? "Lists"
         }
 
-        if list is CellPresentable {
+        if list is TaskList {
             if !toolbar.hasItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
                 toolbar.insertItem(withItemIdentifier: toolbarShowAllListsButtonIdentifier, at: toolbar.items.count - 1)
             }

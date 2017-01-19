@@ -175,9 +175,9 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
     }
 
     private func navigateToBottomViewController(item: Item) {
-        guard let list = item as? TaskList else { return }
+        guard let list = item as? TaskListReference else { return }
 
-        auxViewController = .down(.tasks(list))
+        auxViewController = .down(.tasks(list.list))
         bottomViewController = createAuxController()
 
         startMovingToNextViewController(direction: .down)
@@ -363,13 +363,14 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
 
         switch listType {
         case .lists:
-            return ViewController<TaskList, TaskListList>(
+            return ViewController<TaskListReference, TaskListList>(
                 parent: try! Realm().objects(TaskListList.self).first!,
                 colors: UIColor.listColors()
             )
         case .defaultListTasks:
+            let firstList = try! Realm().objects(TaskListReference.self).first!.list
             return ViewController<Task, TaskList>(
-                parent: try! Realm().objects(TaskList.self).first!,
+                parent: firstList,
                 colors: UIColor.taskColors()
             )
         case .tasks(let list):

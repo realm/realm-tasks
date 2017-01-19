@@ -98,7 +98,7 @@ class ListCellView: ItemCellView {
     }
 
     override func configure(item: CellPresentable) {
-        guard let list = item as? TaskList else {
+        guard let list = item as? TaskListReference else {
             fatalError("Wrong item type")
         }
 
