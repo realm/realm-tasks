@@ -21,7 +21,6 @@ import RealmSwift
 
 // Private Helpers
 
-private var realm: Realm! // FIXME: shouldn't have to hold on to the Realm here. https://github.com/realm/realm-sync/issues/694
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
 
 private func setDefaultRealmConfiguration(with user: SyncUser) {
@@ -29,7 +28,7 @@ private func setDefaultRealmConfiguration(with user: SyncUser) {
         syncConfiguration: SyncConfiguration(user: user, realmURL: Constants.syncServerURL!),
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
     )
-    realm = try! Realm()
+    let realm = try! Realm()
 
     if realm.isEmpty {
         try! realm.write {
@@ -49,7 +48,7 @@ private func setDefaultRealmConfiguration(with user: SyncUser) {
         let itemsReference = ThreadSafeReference(to: items)
         // Deduplicate
         DispatchQueue(label: "io.realm.RealmTasks.bg").async {
-            let realm = try! Realm()
+            let realm = try! Realm(configuration: realm.configuration)
             guard let items = realm.resolve(itemsReference), items.count > 1 else {
                 return
             }
