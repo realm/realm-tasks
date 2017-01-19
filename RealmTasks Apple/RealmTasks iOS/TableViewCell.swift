@@ -56,7 +56,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             textView.text = item.text
             setCompleted(item.completed)
             if let item = item as? TaskList {
-                let count = item.items.filter("completed == false").count
+                let count = item.uncompletedCount
                 countLabel.text = String(count)
                 if count == 0 {
                     textView.alpha = 0.3

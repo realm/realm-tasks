@@ -104,7 +104,7 @@ class ListCellView: ItemCellView {
 
         super.configure(item: list)
 
-        countLabel.integerValue = list.items.filter("completed == false").count
+        countLabel.integerValue = list.uncompletedCount
         editable = false
 
         updateTextColor()

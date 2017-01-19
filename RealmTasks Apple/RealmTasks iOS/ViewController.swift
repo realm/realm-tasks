@@ -161,7 +161,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
             }
         } else {
             items.realm?.beginWrite()
-            let row = items.filter("completed = false").count
+            let row = listPresenter.parent.uncompletedCount
             items.insert(Item(), at: row)
             let indexPath = IndexPath(row: row, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)

@@ -22,6 +22,8 @@ import RealmSwift
 protocol ListPresentable {
     associatedtype Item: Object, CellPresentable
     var items: List<Item> { get }
+    var completedCount: Int { get }
+    var uncompletedCount: Int { get }
 }
 
 protocol CellPresentable {
@@ -30,9 +32,14 @@ protocol CellPresentable {
     var isCompletable: Bool { get }
 }
 
+extension ListPresentable {
+    var uncompletedCount: Int { return items.count - completedCount }
+}
+
 final class TaskListList: Object, ListPresentable {
     dynamic var id = 0 // swiftlint:disable:this variable_name
     let items = List<TaskList>()
+    var completedCount: Int { return 0 }
 
     override static func primaryKey() -> String? {
         return "id"
@@ -48,6 +55,7 @@ final class TaskList: Object, CellPresentable, ListPresentable {
     var isCompletable: Bool {
         return !items.filter("completed == false").isEmpty
     }
+    var completedCount: Int { return items.filter("completed == true").count }
 
     override static func primaryKey() -> String? {
         return "id"
