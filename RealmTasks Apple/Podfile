@@ -2,19 +2,19 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 abstract_target 'RealmTasks' do
     use_frameworks!
-    
-    pod 'RealmSwift', '~> 2.2.0'
+
+    pod 'RealmSwift', '~> 2.3'
     pod 'Cartography', '~> 1.0.1'
     pod 'SwiftLint', '= 0.16.0'
-    
+
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
     end
-    
+
     target 'RealmTasks macOS' do
         platform :osx, '10.10'
     end
-    
+
     target 'RealmTasks iOS Tests' do
         platform :ios, '9.0'
     end
