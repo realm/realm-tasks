@@ -85,17 +85,7 @@ func authenticate(username: String, password: String, register: Bool, callback: 
                 setDefaultRealmConfiguration(with: user)
             }
 
-            let error = error as NSError?
-
-            if let error = error, error._code == SyncError.httpStatusCodeError.rawValue && (error.userInfo["statusCode"] as? Int) == 400 {
-                // FIXME: workararound for https://github.com/realm/realm-cocoa-private/issues/204
-                let improvedError = NSError(error: error,
-                                            description: "Incorrect username or password.",
-                                            recoverySuggestion: "Please check username and password or register a new account.")
-                callback(improvedError)
-            } else {
-                callback(error)
-            }
+            callback(error as NSError?)
         }
     }
 }
