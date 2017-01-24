@@ -23,7 +23,17 @@ import RealmSwift
 
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
 
+private var authenticationFailureCallback: (() -> Void)?
+
 private func setDefaultRealmConfiguration(with user: SyncUser) {
+    SyncManager.shared.errorHandler = { error, session in
+        // FIXME: enable after https://github.com/realm/realm-cocoa/pull/4580 or related is merged
+        // if let authError = error as? SyncAuthError, authError.code == .invalidCredentials {
+        if let underlyingError = (error as NSError).userInfo["underlaying_error"] as? NSError, underlyingError.code == 611 {
+            authenticationFailureCallback?()
+        }
+    }
+
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
         syncConfiguration: SyncConfiguration(user: user, realmURL: Constants.syncServerURL!),
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
@@ -89,6 +99,10 @@ func resetDefaultRealm() {
     deduplicationNotificationToken.stop()
 
     user.logOut()
+}
+
+func setAuthenticationFailureCallback(callback: (() -> Void)?) {
+    authenticationFailureCallback = callback
 }
 
 func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> Void) {

@@ -78,6 +78,10 @@ extension AppDelegate: NSApplicationDelegate {
         mainWindowController.window?.titleVisibility = .hidden
         mainWindowController.showWindow(nil)
 
+        setAuthenticationFailureCallback {
+            self.logOut()
+        }
+
         if configureDefaultRealm() {
             let containerViewController = mainWindowController.contentViewController as! ContainerViewController
             containerViewController.showRecentList(nil)
