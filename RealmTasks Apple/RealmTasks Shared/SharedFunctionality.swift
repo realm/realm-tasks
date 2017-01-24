@@ -68,6 +68,10 @@ private func setDefaultRealmConfiguration(with user: SyncUser) {
 
 // Internal Functions
 
+func isDefaultRealmConfigured() -> Bool {
+    return try! !Realm().isEmpty
+}
+
 // returns true on success
 func configureDefaultRealm() -> Bool {
     if let user = SyncUser.current {
@@ -75,6 +79,16 @@ func configureDefaultRealm() -> Bool {
         return true
     }
     return false
+}
+
+func resetDefaultRealm() {
+    guard let user = SyncUser.current else {
+        return
+    }
+
+    deduplicationNotificationToken.stop()
+
+    user.logOut()
 }
 
 func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> Void) {

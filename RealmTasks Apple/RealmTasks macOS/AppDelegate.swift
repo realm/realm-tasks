@@ -41,6 +41,34 @@ class AppDelegate: NSObject {
         mainWindowController.contentViewController?.presentViewControllerAsSheetPreventingTermination(registerViewController)
     }
 
+    @IBAction func logOut(_ sender: Any? = nil) {
+        guard isDefaultRealmConfigured() else {
+            return
+        }
+
+        let containerViewController = mainWindowController.contentViewController as! ContainerViewController
+        containerViewController.dismissAllViewControllers()
+
+        resetDefaultRealm()
+
+        logIn()
+    }
+
+    fileprivate func performAuthentication(viewController: NSViewController, username: String, password: String, register: Bool) {
+        authenticate(username: username, password: password, register: register) { error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    NSApp.presentError(error)
+                } else {
+                    viewController.dismiss(nil)
+
+                    let containerViewController = self.mainWindowController.contentViewController as! ContainerViewController
+                    containerViewController.showRecentList(nil)
+                }
+            }
+        }
+    }
+
 }
 
 extension AppDelegate: NSApplicationDelegate {
@@ -64,24 +92,6 @@ extension AppDelegate: NSApplicationDelegate {
         return true
     }
 
-}
-
-extension AppDelegate {
-    func performAuthentication(viewController: NSViewController, username: String, password: String, register: Bool) {
-        authenticate(username: username, password: password, register: register) { error in
-            // FIXME: Sync API methods callbacks should be executed on main thread
-            DispatchQueue.main.async {
-                if let error = error {
-                    NSApp.presentError(error)
-                } else {
-                    viewController.dismiss(nil)
-
-                    let containerViewController = self.mainWindowController.contentViewController as! ContainerViewController
-                    containerViewController.showRecentList(nil)
-                }
-            }
-        }
-    }
 }
 
 extension AppDelegate: LogInViewControllerDelegate {
