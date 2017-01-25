@@ -46,7 +46,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = ContainerViewController()
             self.window?.rootViewController?.dismiss(animated: true, completion: nil)
         }
-        
+
         window?.rootViewController?.present(loginController, animated: false, completion: nil)
     }
 
