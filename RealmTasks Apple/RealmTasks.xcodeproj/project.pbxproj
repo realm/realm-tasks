@@ -49,9 +49,6 @@
 		C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */; };
 		C2E981E81DB4F27300288A2B /* NSAttributedString+Strikethrough.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E981E71DB4F27300288A2B /* NSAttributedString+Strikethrough.swift */; };
 		C2E981E91DB4F27300288A2B /* NSAttributedString+Strikethrough.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E981E71DB4F27300288A2B /* NSAttributedString+Strikethrough.swift */; };
-		E89CE68B1D409D3500BB4521 /* RealmSyncLogin.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */; };
-		E89CE68E1D409D3500BB4521 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE6891D409D3500BB4521 /* LogInViewController.swift */; };
-		E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */; };
 		E8A1E6501D59354500D8B04A /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */; };
 		E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */; };
 		E8A1E6531D59368200D8B04A /* SharedFunctionality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */; };
@@ -118,9 +115,6 @@
 		C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIPAddress.swift; sourceTree = "<group>"; };
 		C2E981E71DB4F27300288A2B /* NSAttributedString+Strikethrough.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Strikethrough.swift"; sourceTree = "<group>"; };
 		E84CF2B11CBC408000082C1A /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RealmSyncLogin.storyboard; sourceTree = "<group>"; };
-		E89CE6891D409D3500BB4521 /* LogInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
-		E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
 		E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedFunctionality.swift; sourceTree = "<group>"; };
 		EDC6CD4F38C58ED9185076BF /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -174,7 +168,6 @@
 				225201961D3DD648009E45FA /* LaunchScreen.storyboard */,
 				E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */,
 				9CDF4F201D9E780100EC051B /* Views */,
-				E89CE6821D409D0400BB4521 /* LogInViewController */,
 				9C24AA031D8FED0800192CE3 /* ViewController */,
 			);
 			path = "RealmTasks iOS";
@@ -285,40 +278,6 @@
 				143C81DF1D65D1AA00E872E6 /* RealmTasks iOS Tests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		E89CE6821D409D0400BB4521 /* LogInViewController */ = {
-			isa = PBXGroup;
-			children = (
-				E89CE6831D409D3500BB4521 /* Assets */,
-				E89CE6851D409D3500BB4521 /* Classes */,
-			);
-			path = LogInViewController;
-			sourceTree = "<group>";
-		};
-		E89CE6831D409D3500BB4521 /* Assets */ = {
-			isa = PBXGroup;
-			children = (
-				E89CE6841D409D3500BB4521 /* RealmSyncLogin.storyboard */,
-			);
-			path = Assets;
-			sourceTree = "<group>";
-		};
-		E89CE6851D409D3500BB4521 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				E89CE6881D409D3500BB4521 /* UI */,
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
-		E89CE6881D409D3500BB4521 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				E89CE6891D409D3500BB4521 /* LogInViewController.swift */,
-				E89CE68A1D409D3500BB4521 /* RegisterViewController.swift */,
-			);
-			path = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -472,7 +431,6 @@
 				2252019F1D3DD648009E45FA /* iOS.xcassets in Resources */,
 				225201A01D3DD648009E45FA /* LaunchScreen.storyboard in Resources */,
 				C23EB02D1D4635C400D3E0AC /* Shared.xcassets in Resources */,
-				E89CE68B1D409D3500BB4521 /* RealmSyncLogin.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,8 +683,6 @@
 				9CDF4F1F1D9E745300EC051B /* UIView+constraints.swift in Sources */,
 				2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */,
 				9CDF4F1D1D9E73AF00EC051B /* ViewControllerProtocol.swift in Sources */,
-				E89CE68E1D409D3500BB4521 /* LogInViewController.swift in Sources */,
-				E89CE68F1D409D3500BB4521 /* RegisterViewController.swift in Sources */,
 				225201A41D3DD648009E45FA /* Models.swift in Sources */,
 				225201A21D3DD648009E45FA /* RealmColor.swift in Sources */,
 				9C24AA0B1D8FFC0400192CE3 /* TablePresenter.swift in Sources */,
