@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		143C81E21D65D1AA00E872E6 /* RealmTasksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143C81E11D65D1AA00E872E6 /* RealmTasksTests.swift */; };
-		2163F0E9852950CD8D643708 /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32FAE3E2816E19668BE587C1 /* Pods_RealmTasks_RealmTasks_macOS.framework */; };
+		1DA72CE5337592E2195CAD58 /* Pods_RealmTasks_RealmTasks_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA030A92A734CF89C6AD4F8 /* Pods_RealmTasks_RealmTasks_iOS.framework */; };
 		22092D861D5C5BCB0016E757 /* NavHintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22092D851D5C5BCB0016E757 /* NavHintView.swift */; };
 		220C334A1D3DE1F40043A885 /* OnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220C33491D3DE1F40043A885 /* OnboardView.swift */; };
 		2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201941D3DD648009E45FA /* AppDelegate.swift */; };
@@ -19,7 +19,8 @@
 		225201A41D3DD648009E45FA /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019B1D3DD648009E45FA /* Models.swift */; };
 		225201A51D3DD648009E45FA /* CellTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019C1D3DD648009E45FA /* CellTextView.swift */; };
 		225201A61D3DD648009E45FA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019D1D3DD648009E45FA /* ViewController.swift */; };
-		3071C66AEB3D49B59C1C633C /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAF5806A6BD88531EE85E99 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */; };
+		535B94220A4A156FBAFB1335 /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E3DAC51F69DA3CADC0CEDEF /* Pods_RealmTasks_RealmTasks_macOS.framework */; };
+		60662D4341CEABBF2A842F0E /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97B4ACBD426131A983A5D4F9 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */; };
 		9C24AA071D8FEEB500192CE3 /* CellPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA061D8FEEB500192CE3 /* CellPresenter.swift */; };
 		9C24AA0B1D8FFC0400192CE3 /* TablePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA0A1D8FFC0400192CE3 /* TablePresenter.swift */; };
 		9C24AA0D1D8FFEA200192CE3 /* ListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA0C1D8FFEA200192CE3 /* ListPresenter.swift */; };
@@ -52,7 +53,6 @@
 		E8A1E6501D59354500D8B04A /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */; };
 		E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */; };
 		E8A1E6531D59368200D8B04A /* SharedFunctionality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */; };
-		FF0E3E58E9D099F7E36AAB6F /* Pods_RealmTasks_RealmTasks_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F0C2CAF892AF7AD2EF7F65 /* Pods_RealmTasks_RealmTasks_iOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,10 +66,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0AA4D2E06BB2A484E9D2DBF4 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		0DFE6C7EF9CCDB37848E6721 /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		12658D517EFD85331DC2F783 /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; sourceTree = "<group>"; };
 		143C81DF1D65D1AA00E872E6 /* RealmTasks iOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "RealmTasks iOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		143C81E11D65D1AA00E872E6 /* RealmTasksTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmTasksTests.swift; sourceTree = "<group>"; };
 		143C81E31D65D1AA00E872E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		17DA89361AD60841411CAFF7 /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		22092D851D5C5BCB0016E757 /* NavHintView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavHintView.swift; sourceTree = "<group>"; };
 		220C33491D3DE1F40043A885 /* OnboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardView.swift; sourceTree = "<group>"; };
 		225201941D3DD648009E45FA /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -82,17 +84,15 @@
 		2252019C1D3DD648009E45FA /* CellTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellTextView.swift; sourceTree = "<group>"; };
 		2252019D1D3DD648009E45FA /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		22FEFEBB1D91789B00523E21 /* RealmTasks-iOS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "RealmTasks-iOS.entitlements"; sourceTree = "<group>"; };
-		32FAE3E2816E19668BE587C1 /* Pods_RealmTasks_RealmTasks_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6825C45F005C0209E5FD021F /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; sourceTree = "<group>"; };
-		7CDE17C56B10A7B144574437 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS.release.xcconfig"; sourceTree = "<group>"; };
-		8AC1AE58FBA72939A20FD0A8 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		36D73C99E80DFD3FBBEC671A /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; sourceTree = "<group>"; };
+		4AA030A92A734CF89C6AD4F8 /* Pods_RealmTasks_RealmTasks_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		97B4ACBD426131A983A5D4F9 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C24AA061D8FEEB500192CE3 /* CellPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellPresenter.swift; sourceTree = "<group>"; };
 		9C24AA0A1D8FFC0400192CE3 /* TablePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TablePresenter.swift; sourceTree = "<group>"; };
 		9C24AA0C1D8FFEA200192CE3 /* ListPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListPresenter.swift; sourceTree = "<group>"; };
 		9CDF4F1C1D9E73AF00EC051B /* ViewControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerProtocol.swift; sourceTree = "<group>"; };
 		9CDF4F1E1D9E745300EC051B /* UIView+constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+constraints.swift"; sourceTree = "<group>"; };
-		A0F0C2CAF892AF7AD2EF7F65 /* Pods_RealmTasks_RealmTasks_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BBAF5806A6BD88531EE85E99 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E3DAC51F69DA3CADC0CEDEF /* Pods_RealmTasks_RealmTasks_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23EB01D1D46329400D3E0AC /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23EB01F1D46329400D3E0AC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C23EB0211D46329400D3E0AC /* macOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = macOS.xcassets; sourceTree = "<group>"; };
@@ -114,11 +114,11 @@
 		C2CFD00B1D91660200725B88 /* NSView+TrackingAreas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSView+TrackingAreas.swift"; sourceTree = "<group>"; };
 		C2E4721F1D3FDF2E00276542 /* LocalIPAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIPAddress.swift; sourceTree = "<group>"; };
 		C2E981E71DB4F27300288A2B /* NSAttributedString+Strikethrough.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Strikethrough.swift"; sourceTree = "<group>"; };
+		D537CB852E108EDC2E48B670 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		E84CF2B11CBC408000082C1A /* RealmTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealmTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8A1E64F1D59354500D8B04A /* ContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
 		E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedFunctionality.swift; sourceTree = "<group>"; };
-		EDC6CD4F38C58ED9185076BF /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; sourceTree = "<group>"; };
-		F3712636E8D982D018984234 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		F3A327E1424F6C7BA7E2D7C8 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,7 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3071C66AEB3D49B59C1C633C /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */,
+				60662D4341CEABBF2A842F0E /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,7 +134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2163F0E9852950CD8D643708 /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */,
+				535B94220A4A156FBAFB1335 /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,7 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF0E3E58E9D099F7E36AAB6F /* Pods_RealmTasks_RealmTasks_iOS.framework in Frameworks */,
+				1DA72CE5337592E2195CAD58 /* Pods_RealmTasks_RealmTasks_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,12 +173,12 @@
 			path = "RealmTasks iOS";
 			sourceTree = "<group>";
 		};
-		81B55B6263666E5877BBC1B3 /* Frameworks */ = {
+		516438FDE83F2EF7AE575983 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A0F0C2CAF892AF7AD2EF7F65 /* Pods_RealmTasks_RealmTasks_iOS.framework */,
-				BBAF5806A6BD88531EE85E99 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */,
-				32FAE3E2816E19668BE587C1 /* Pods_RealmTasks_RealmTasks_macOS.framework */,
+				4AA030A92A734CF89C6AD4F8 /* Pods_RealmTasks_RealmTasks_iOS.framework */,
+				97B4ACBD426131A983A5D4F9 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */,
+				9E3DAC51F69DA3CADC0CEDEF /* Pods_RealmTasks_RealmTasks_macOS.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -205,6 +205,19 @@
 				9CDF4F1E1D9E745300EC051B /* UIView+constraints.swift */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		A52070EF64A7533454868459 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0DFE6C7EF9CCDB37848E6721 /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */,
+				12658D517EFD85331DC2F783 /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */,
+				0AA4D2E06BB2A484E9D2DBF4 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */,
+				36D73C99E80DFD3FBBEC671A /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */,
+				D537CB852E108EDC2E48B670 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */,
+				F3A327E1424F6C7BA7E2D7C8 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		C23EB01E1D46329400D3E0AC /* RealmTasks macOS */ = {
@@ -244,19 +257,6 @@
 			path = "RealmTasks Shared";
 			sourceTree = "<group>";
 		};
-		D9AA8E5F2CAD771B3A811596 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				17DA89361AD60841411CAFF7 /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */,
-				EDC6CD4F38C58ED9185076BF /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */,
-				F3712636E8D982D018984234 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */,
-				6825C45F005C0209E5FD021F /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */,
-				8AC1AE58FBA72939A20FD0A8 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */,
-				7CDE17C56B10A7B144574437 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		E84CF2A81CBC408000082C1A = {
 			isa = PBXGroup;
 			children = (
@@ -265,8 +265,8 @@
 				C23EB01E1D46329400D3E0AC /* RealmTasks macOS */,
 				143C81E01D65D1AA00E872E6 /* RealmTasks iOS Tests */,
 				E84CF2B21CBC408000082C1A /* Products */,
-				D9AA8E5F2CAD771B3A811596 /* Pods */,
-				81B55B6263666E5877BBC1B3 /* Frameworks */,
+				A52070EF64A7533454868459 /* Pods */,
+				516438FDE83F2EF7AE575983 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -287,12 +287,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 143C81E81D65D1AA00E872E6 /* Build configuration list for PBXNativeTarget "RealmTasks iOS Tests" */;
 			buildPhases = (
-				4D5006E8C7F4D7F52425F17C /* [CP] Check Pods Manifest.lock */,
+				22EDBB5497A561545F23AE8D /* [CP] Check Pods Manifest.lock */,
 				143C81DB1D65D1AA00E872E6 /* Sources */,
 				143C81DC1D65D1AA00E872E6 /* Frameworks */,
 				143C81DD1D65D1AA00E872E6 /* Resources */,
-				453925EFCB6CD18B926A44DA /* [CP] Embed Pods Frameworks */,
-				EA9812D7653C19B23885BEC1 /* [CP] Copy Pods Resources */,
+				5B368728E85906F40F548CF1 /* [CP] Embed Pods Frameworks */,
+				0D9CF3A2D31EB552B27CDC3D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -308,14 +308,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C23EB0271D46329400D3E0AC /* Build configuration list for PBXNativeTarget "RealmTasks macOS" */;
 			buildPhases = (
-				E2588535D04DC828CA01A32F /* [CP] Check Pods Manifest.lock */,
+				2A8DD934183969A4FD9533EC /* [CP] Check Pods Manifest.lock */,
 				C23EB03A1D4648E100D3E0AC /* Write local IP address */,
 				C23EB0191D46329400D3E0AC /* Sources */,
 				C23EB01A1D46329400D3E0AC /* Frameworks */,
 				C23EB01B1D46329400D3E0AC /* Resources */,
-				454E041C0514A606B56F6A8A /* [CP] Embed Pods Frameworks */,
-				3D8EF5BEF14E8D50617287BA /* [CP] Copy Pods Resources */,
 				22AD84871E26320B002D5C48 /* SwiftLint */,
+				6A0804EADBC811A055BD359F /* [CP] Embed Pods Frameworks */,
+				40B288F667440ABF61689613 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -330,14 +330,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E84CF2CE1CBC408000082C1A /* Build configuration list for PBXNativeTarget "RealmTasks iOS" */;
 			buildPhases = (
-				789B04D88DC0D5B1B7D3EEC8 /* [CP] Check Pods Manifest.lock */,
+				6E38F307B198239ED96B8CCD /* [CP] Check Pods Manifest.lock */,
 				C2E472211D3FDFDB00276542 /* Write local IP address */,
 				E84CF2AD1CBC408000082C1A /* Sources */,
 				E84CF2AE1CBC408000082C1A /* Frameworks */,
 				E84CF2AF1CBC408000082C1A /* Resources */,
-				B28F2455243335365C52C858 /* [CP] Embed Pods Frameworks */,
-				F80B0F82C316A8061F9A1600 /* [CP] Copy Pods Resources */,
 				22AD84861E262772002D5C48 /* SwiftLint */,
+				12A823A7CA8E791DDFE2C184 /* [CP] Embed Pods Frameworks */,
+				F27998141CF9201225AF6BF3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -437,6 +437,36 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0D9CF3A2D31EB552B27CDC3D /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		12A823A7CA8E791DDFE2C184 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		22AD84861E262772002D5C48 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -465,7 +495,37 @@
 			shellPath = /bin/sh;
 			shellScript = Pods/SwiftLint/swiftlint;
 		};
-		3D8EF5BEF14E8D50617287BA /* [CP] Copy Pods Resources */ = {
+		22EDBB5497A561545F23AE8D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		2A8DD934183969A4FD9533EC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		40B288F667440ABF61689613 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -480,7 +540,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		453925EFCB6CD18B926A44DA /* [CP] Embed Pods Frameworks */ = {
+		5B368728E85906F40F548CF1 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -495,7 +555,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		454E041C0514A606B56F6A8A /* [CP] Embed Pods Frameworks */ = {
+		6A0804EADBC811A055BD359F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -510,7 +570,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4D5006E8C7F4D7F52425F17C /* [CP] Check Pods Manifest.lock */ = {
+		6E38F307B198239ED96B8CCD /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -523,36 +583,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		789B04D88DC0D5B1B7D3EEC8 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		B28F2455243335365C52C858 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C23EB03A1D4648E100D3E0AC /* Write local IP address */ = {
@@ -584,37 +614,7 @@
 			shellScript = "LOCAL_IP_ADDR=$(ipconfig getifaddr $(netstat -f inet -rant | awk '/default/ { print $6; exit }'))\necho \"let localIPAddress = \\\"${LOCAL_IP_ADDR:-127.0.0.1}\\\"\" > \"$SRCROOT/RealmTasks Shared/LocalIPAddress.swift\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E2588535D04DC828CA01A32F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		EA9812D7653C19B23885BEC1 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F80B0F82C316A8061F9A1600 /* [CP] Copy Pods Resources */ = {
+		F27998141CF9201225AF6BF3 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -714,7 +714,7 @@
 /* Begin XCBuildConfiguration section */
 		143C81E61D65D1AA00E872E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F3712636E8D982D018984234 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */;
+			baseConfigurationReference = 0AA4D2E06BB2A484E9D2DBF4 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -728,7 +728,7 @@
 		};
 		143C81E71D65D1AA00E872E6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6825C45F005C0209E5FD021F /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */;
+			baseConfigurationReference = 36D73C99E80DFD3FBBEC671A /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -742,7 +742,7 @@
 		};
 		C23EB0281D46329400D3E0AC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8AC1AE58FBA72939A20FD0A8 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */;
+			baseConfigurationReference = D537CB852E108EDC2E48B670 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks macOS/RealmTasks-macOS.entitlements";
@@ -758,7 +758,7 @@
 		};
 		C23EB0291D46329400D3E0AC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7CDE17C56B10A7B144574437 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */;
+			baseConfigurationReference = F3A327E1424F6C7BA7E2D7C8 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks macOS/RealmTasks-macOS.entitlements";
@@ -861,7 +861,7 @@
 		};
 		E84CF2CF1CBC408000082C1A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 17DA89361AD60841411CAFF7 /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */;
+			baseConfigurationReference = 0DFE6C7EF9CCDB37848E6721 /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/RealmTasks-iOS.entitlements";
@@ -878,7 +878,7 @@
 		};
 		E84CF2D01CBC408000082C1A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EDC6CD4F38C58ED9185076BF /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */;
+			baseConfigurationReference = 12658D517EFD85331DC2F783 /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/RealmTasks-iOS.entitlements";
