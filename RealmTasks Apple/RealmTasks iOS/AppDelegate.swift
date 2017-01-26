@@ -17,10 +17,14 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import UIKit
+import RealmSwift
 import RealmLoginKit
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var downloadProgressToken: AnyObject?
+    var uploadProgressToken: AnyObject?
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
@@ -28,6 +32,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         if configureDefaultRealm() {
             window?.rootViewController = ContainerViewController()
             window?.makeKeyAndVisible()
+            setUpProgressNotifications(for: SyncUser.current!)
         } else {
             window?.rootViewController = UIViewController()
             window?.makeKeyAndVisible()
@@ -45,6 +50,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             setDefaultRealmConfiguration(with: user)
             self.window?.rootViewController = ContainerViewController()
             self.window?.rootViewController?.dismiss(animated: true, completion: nil)
+            self.setUpProgressNotifications(for: user)
         }
 
         window?.rootViewController?.present(loginController, animated: false, completion: nil)
@@ -58,5 +64,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             self.logIn()
         })
         window?.rootViewController?.present(alertController, animated: true, completion: nil)
+    }
+
+    func setUpProgressNotifications(for user: SyncUser) {
+        let updateBlock: ((SyncSession.Progress) -> Void) = { progress in
+            UIApplication.shared.isNetworkActivityIndicatorVisible = !progress.isTransferComplete
+        }
+
+        let session = user.session(for: Constants.syncServerURL!)!
+        self.downloadProgressToken = session.addProgressNotification(for: .download, mode: .reportIndefinitely, block: updateBlock)
+        self.uploadProgressToken = session.addProgressNotification(for: .upload, mode: .reportIndefinitely, block: updateBlock)
     }
 }
