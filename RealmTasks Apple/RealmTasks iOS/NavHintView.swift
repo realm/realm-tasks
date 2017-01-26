@@ -46,7 +46,7 @@ class NavHintView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .blackColor()
+        self.backgroundColor = .black
         setUpLabelAndIcon()
     }
 
@@ -59,10 +59,10 @@ class NavHintView: UIView {
         hintImageView.sizeToFit()
         addSubview(hintImageView)
 
-        textLabel.backgroundColor = .blackColor()
-        textLabel.textColor = .whiteColor()
-        textLabel.font = .systemFontOfSize(18)
-        textLabel.textAlignment = .Center
+        textLabel.backgroundColor = .black
+        textLabel.textColor = .white
+        textLabel.font = .systemFont(ofSize: 18)
+        textLabel.textAlignment = .center
         addSubview(textLabel)
 
         constrain(textLabel, hintImageView) { textLabel, hintImageView in

@@ -26,17 +26,19 @@ extension NSAttributedString {
 
     func strikedAttributedString(fraction: Double = 1) -> NSAttributedString {
         let range = NSRange(0..<Int(fraction * Double(length)))
-        return attributedStringBySetingAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleThick.rawValue, range: range)
+        return strike(with: .styleThick, range: range)
     }
 
     var unstrikedAttributedString: NSAttributedString {
-        return attributedStringBySetingAttribute(NSStrikethroughStyleAttributeName, value: NSUnderlineStyle.StyleNone.rawValue)
+        return strike(with: .styleNone)
     }
 
-    func attributedStringBySetingAttribute(name: String, value: AnyObject, range: NSRange? = nil) -> NSAttributedString {
+    private func strike(with style: NSUnderlineStyle, range: NSRange? = nil) -> NSAttributedString {
         let mutableAttributedString = NSMutableAttributedString(attributedString: self)
-        mutableAttributedString.removeAttribute(name, range: NSRange(0..<length))
-        mutableAttributedString.addAttribute(name, value: value, range: range ?? NSRange(0..<length))
+        let attributeName = NSStrikethroughStyleAttributeName
+        let fullRange = NSRange(0..<length)
+        mutableAttributedString.removeAttribute(attributeName, range: fullRange)
+        mutableAttributedString.addAttribute(attributeName, value: style.rawValue, range: range ?? fullRange)
 
         return mutableAttributedString
     }
@@ -47,7 +49,7 @@ extension NSAttributedString {
     extension UITextView {
 
         func strike(fraction: Double = 1) {
-            attributedText = attributedText?.strikedAttributedString(fraction)
+            attributedText = attributedText?.strikedAttributedString(fraction: fraction)
         }
 
         func unstrike() {
@@ -59,7 +61,7 @@ extension NSAttributedString {
     extension NSTextField {
 
         func strike(fraction: Double = 1) {
-            attributedStringValue = attributedStringValue.strikedAttributedString(fraction)
+            attributedStringValue = attributedStringValue.strikedAttributedString(fraction: fraction)
         }
 
         func unstrike() {

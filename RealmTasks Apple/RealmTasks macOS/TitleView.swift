@@ -23,10 +23,10 @@ class TitleView: NSView {
     let textField: NSTextField = {
         let textField = NSTextField()
 
-        textField.editable = false
-        textField.bordered = false
+        textField.isEditable = false
+        textField.isBordered = false
         textField.drawsBackground = false
-        textField.lineBreakMode = .ByTruncatingTail
+        textField.lineBreakMode = .byTruncatingTail
 
         return textField
     }()
@@ -48,8 +48,8 @@ class TitleView: NSView {
         addSubview(textField)
     }
 
-    override func resizeSubviewsWithOldSize(oldSize: NSSize) {
-        super.resizeSubviewsWithOldSize(oldSize)
+    override func resizeSubviews(withOldSize oldSize: NSSize) {
+        super.resizeSubviews(withOldSize: oldSize)
 
         updateTextFieldFrame()
     }
@@ -62,12 +62,12 @@ class TitleView: NSView {
 
         // Center text view horizontally in window ...
         frame.origin = NSPoint(x: (window!.frame.width - textField.frame.width) / 2, y: 0)
-        frame.origin.x = max(convertPoint(frame.origin, fromView: window?.contentView).x, 0)
+        frame.origin.x = max(convert(frame.origin, from: window?.contentView).x, 0)
         // ... and vertically in self
         frame.origin.y = (bounds.height - textField.frame.height) / 2
 
         // Float values leads to blurred drawing on non-retina screens
-        frame.makeIntegralInPlace()
+        frame = frame.integral
 
         textField.frame = frame
     }

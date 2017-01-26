@@ -21,13 +21,13 @@ import Cocoa
 
 class ListCellView: ItemCellView {
 
-    private let countLabel = NSTextField()
-    private let badgeView = ColorView(backgroundColor: NSColor(white: 1, alpha: 0.15))
+    fileprivate let countLabel = NSTextField()
+    fileprivate let badgeView = ColorView(backgroundColor: NSColor(white: 1, alpha: 0.15))
 
     private(set) var acceptsEditing = false {
         didSet {
-            textView.backgroundColor = acceptsEditing ? NSColor(white: 0, alpha: 0.15) : .clearColor()
-            window?.invalidateCursorRectsForView(self)
+            textView.backgroundColor = acceptsEditing ? NSColor(white: 0, alpha: 0.15) : .clear
+            window?.invalidateCursorRects(for: self)
         }
     }
 
@@ -68,13 +68,13 @@ class ListCellView: ItemCellView {
         }
 
         countLabel.usesSingleLineMode = true
-        countLabel.bordered = false
-        countLabel.focusRingType = .None
-        countLabel.font = .systemFontOfSize(18)
-        countLabel.textColor = .whiteColor()
-        countLabel.backgroundColor = .clearColor()
-        countLabel.alignment = .Center
-        countLabel.editable = false
+        countLabel.isBordered = false
+        countLabel.focusRingType = .none
+        countLabel.font = .systemFont(ofSize: 18)
+        countLabel.textColor = .white
+        countLabel.backgroundColor = .clear
+        countLabel.alignment = .center
+        countLabel.isEditable = false
 
         badgeView.addSubview(countLabel)
         constrain(countLabel) { countLabel in
@@ -102,7 +102,7 @@ class ListCellView: ItemCellView {
             fatalError("Wrong item type")
         }
 
-        super.configure(list)
+        super.configure(item: list)
 
         countLabel.integerValue = list.items.filter("completed == false").count
         editable = false
@@ -121,11 +121,11 @@ class ListCellView: ItemCellView {
 
     override func resetCursorRects() {
         super.resetCursorRects()
-        addCursorRect(bounds, cursor: acceptsEditing ? .IBeamCursor() : .arrowCursor())
+        addCursorRect(bounds, cursor: acceptsEditing ? .iBeam() : .arrow())
     }
 
-    override func mouseEntered(theEvent: NSEvent) {
-        super.mouseEntered(theEvent)
+    override func mouseEntered(with theEvent: NSEvent) {
+        super.mouseEntered(with: theEvent)
 
         guard !editable else {
             return
@@ -136,17 +136,17 @@ class ListCellView: ItemCellView {
             textView.alphaValue = 1
         }
 
-        performSelector(#selector(delayedSetAcceptsEditing), withObject: nil, afterDelay: 1.2)
+        perform(#selector(delayedSetAcceptsEditing), with: nil, afterDelay: 1.2)
     }
 
-    override func mouseExited(theEvent: NSEvent) {
-        super.mouseExited(theEvent)
+    override func mouseExited(with theEvent: NSEvent) {
+        super.mouseExited(with: theEvent)
 
         guard !editable else {
             return
         }
 
-        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: #selector(delayedSetAcceptsEditing), object: nil)
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(delayedSetAcceptsEditing), object: nil)
         acceptsEditing = false
 
         updateTextColor()
@@ -158,7 +158,7 @@ class ListCellView: ItemCellView {
         }
     }
 
-    override func textFieldDidBecomeFirstResponder(textField: NSTextField) {
+    override func textFieldDidBecomeFirstResponder(_ textField: NSTextField) {
         super.textFieldDidBecomeFirstResponder(textField)
 
         updateTextColor()

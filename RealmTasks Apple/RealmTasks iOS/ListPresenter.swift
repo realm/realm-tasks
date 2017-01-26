@@ -22,7 +22,7 @@ import UIKit
 
 private var titleKVOContext = 0
 
-class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item>: NSObject {
+class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
 
     var cellPresenter: CellPresenter<Item>!
     var tablePresenter: TablePresenter<Parent>!
@@ -60,16 +60,16 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     private var observingText = false
 
     func observeListTitle() {
-        if let parent = parent as? TaskList {
-            parent.addObserver(self, forKeyPath: "text", options: .New, context: &titleKVOContext)
-            viewController.setListTitle(parent.text)
+        if let parent = parent as? CellPresentable {
+            (parent as! Object).addObserver(self, forKeyPath: "text", options: .new, context: &titleKVOContext)
+            viewController.setListTitle(to: parent.text)
             observingText = true
         }
     }
 
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        if context == &titleKVOContext, let parent = parent as? TaskList {
-            viewController.setListTitle(parent.text)
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if context == &titleKVOContext {
+            viewController.setListTitle(to: (parent as! CellPresentable).text)
         }
     }
 
@@ -77,34 +77,34 @@ class ListPresenter<Item: Object, Parent: Object where Item: CellPresentable, Pa
     private func setupNotifications() -> NotificationToken {
         return parent.items.addNotificationBlock { [unowned self] changes in
             switch changes {
-            case .Initial:
+            case .initial:
                 // Results are now populated and can be accessed without blocking the UI
                 self.viewController.didUpdateList(reload: true)
-            case .Update(_, let deletions, let insertions, let modifications):
+            case .update(_, let deletions, let insertions, let modifications):
                 // Query results have changed, so apply them to the UITableView
                 self.viewController.tableView.beginUpdates()
-                self.viewController.tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                self.viewController.tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .Automatic)
-                self.viewController.tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                self.viewController.tableView.insertRows(at: insertions.map { IndexPath(row: $0, section: 0) }, with: .automatic)
+                self.viewController.tableView.deleteRows(at: deletions.map { IndexPath(row: $0, section: 0) }, with: .automatic)
+                self.viewController.tableView.reloadRows(at: modifications.map { IndexPath(row: $0, section: 0) }, with: .none)
                 self.viewController.tableView.endUpdates()
                 self.viewController.didUpdateList(reload: false)
-            case .Error(let error):
+            case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
-                fatalError(String(error))
+                fatalError(String(describing: error))
             }
         }
     }
 
     // MARK: Onboarding
     lazy var onboardView: OnboardView = {
-        return .add(inView: self.viewController.tableView)
+        return .add(to: self.viewController.tableView)
     }()
 
     func updateOnboardView(animated: Bool = false) {
-        onboardView.toggle(animated: animated, isVisible: parent.items.isEmpty)
+        onboardView.toggle(isVisible: parent.items.isEmpty, animated: animated)
     }
 
-    func setOnboardAlpha(alpha: CGFloat) {
+    func setOnboardAlpha(to alpha: CGFloat) {
         if parent.items.isEmpty {
             onboardView.alpha = alpha
         } else {

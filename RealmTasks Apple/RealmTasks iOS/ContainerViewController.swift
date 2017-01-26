@@ -29,11 +29,15 @@ class ContainerViewController: UIViewController {
                 titleLabel.text = title
             }
             titleTopConstraint?.constant = (title != nil) ? 20 : 0
-            UIView.animateWithDuration(0.2) {
+            UIView.animate(withDuration: 0.2) {
                 self.titleLabel.alpha = (self.title != nil) ? 1 : 0
                 self.titleLabel.superview?.layoutIfNeeded()
             }
         }
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 
     override func viewDidLoad() {
@@ -42,22 +46,18 @@ class ContainerViewController: UIViewController {
         setupTitleBar()
     }
 
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
-
     private func addChildVC() {
         let firstList = try! Realm().objects(TaskListReference.self).first!.list
         let vc = ViewController(parent: firstList, colors: UIColor.taskColors())
         title = firstList.text
         addChildViewController(vc)
         view.addSubview(vc.view)
-        vc.didMoveToParentViewController(self)
+        vc.didMove(toParentViewController: self)
     }
 
     private func setupTitleBar() {
         let titleBar = UIToolbar()
-        titleBar.barStyle = .BlackTranslucent
+        titleBar.barStyle = .blackTranslucent
         view.addSubview(titleBar)
         constrain(titleBar) { titleBar in
             titleBar.left == titleBar.superview!.left
@@ -67,9 +67,9 @@ class ContainerViewController: UIViewController {
             titleBar.height == 20 ~ UILayoutPriorityDefaultHigh
         }
 
-        titleLabel.font = .boldSystemFontOfSize(13)
-        titleLabel.textAlignment = .Center
-        titleLabel.textColor = .whiteColor()
+        titleLabel.font = .boldSystemFont(ofSize: 13)
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = .white
         titleBar.addSubview(titleLabel)
         constrain(titleLabel) { titleLabel in
             titleLabel.left == titleLabel.superview!.left

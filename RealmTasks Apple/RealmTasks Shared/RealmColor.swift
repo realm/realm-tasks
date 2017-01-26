@@ -54,13 +54,13 @@ extension Color {
     }
 }
 
-extension CollectionType where Generator.Element == Color, Index == Int {
-    func gradientColorAtFraction(fraction: Double) -> Color {
+extension Collection where Iterator.Element == Color, Index == Int {
+    func gradientColor(atFraction fraction: Double) -> Color {
         // Ensure offset is normalized to 1
-        let normalizedOffset = max(min(fraction, 1), 0)
+        let normalizedOffset = Swift.max(Swift.min(fraction, 1.0), 0.0)
 
         // Work out the 'size' that each color stop spans
-        let colorStopRange = 1 / Double(count - 1)
+        let colorStopRange = 1.0 / (Double(self.endIndex) - 1.0)
 
         // Determine the base stop our offset is within
         let colorRangeIndex = Int(floor(normalizedOffset / colorStopRange))
@@ -87,13 +87,11 @@ extension CollectionType where Generator.Element == Color, Index == Int {
 }
 
 extension Color {
-
-    static func completeDimBackgroundColor() -> Color {
+    class var completeDimBackground: Color {
         return Color(white: 0.2, alpha: 1)
     }
 
-    static func completeGreenBackgroundColor() -> Color {
+    class var completeGreenBackground: Color {
         return Color(red: 0, green: 0.6, blue: 0, alpha: 1)
     }
-
 }

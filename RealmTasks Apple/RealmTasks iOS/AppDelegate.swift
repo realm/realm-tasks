@@ -17,13 +17,14 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import UIKit
+import RealmLoginKit
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+        window = UIWindow(frame: UIScreen.main.bounds)
         if configureDefaultRealm() {
             window?.rootViewController = ContainerViewController()
             window?.makeKeyAndVisible()
@@ -35,35 +36,27 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func logIn(animated animated: Bool = true) {
-        let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .mainBundle())
-        let logInViewController = loginStoryboard.instantiateInitialViewController() as! LogInViewController
-        logInViewController.completionHandler = { username, password, returnCode in
-            guard returnCode != .Cancel, let username = username, let password = password else {
-                // FIXME: handle cancellation properly or just restrict it
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.logIn()
-                }
-                return
-            }
-            authenticate(username: username, password: password, register: returnCode == .Register) { error in
-                if let error = error {
-                    self.presentError(error)
-                } else {
-                    self.window?.rootViewController = ContainerViewController()
-                }
-            }
+    func logIn(animated: Bool = true) {
+        let loginController = LoginViewController(style: .darkTranslucent)
+        loginController.isServerURLFieldHidden = true
+        loginController.isRememberAccountDetailsFieldHidden = true
+        loginController.serverURL = Constants.syncAuthURL.absoluteString
+        loginController.loginSuccessfulHandler = { user in
+            setDefaultRealmConfiguration(with: user)
+            self.window?.rootViewController = ContainerViewController()
+            self.window?.rootViewController?.dismiss(animated: true, completion: nil)
         }
-        window?.rootViewController?.presentViewController(logInViewController, animated: false, completion: nil)
+
+        window?.rootViewController?.present(loginController, animated: false, completion: nil)
     }
 
-    func presentError(error: NSError) {
+    func present(error: NSError) {
         let alertController = UIAlertController(title: error.localizedDescription,
-                                              message: error.localizedFailureReason ?? "",
-                                       preferredStyle: .Alert)
-        alertController.addAction(UIAlertAction(title: "Try Again", style: .Default) { _ in
+                                                message: error.localizedFailureReason ?? "",
+                                                preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Try Again", style: .default) { _ in
             self.logIn()
         })
-        window?.rootViewController?.presentViewController(alertController, animated: true, completion: nil)
+        window?.rootViewController?.present(alertController, animated: true, completion: nil)
     }
 }
