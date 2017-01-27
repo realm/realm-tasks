@@ -716,6 +716,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0AA4D2E06BB2A484E9D2DBF4 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "RealmTasks iOS Tests/Info.plist";
@@ -730,6 +731,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 36D73C99E80DFD3FBBEC671A /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "RealmTasks iOS Tests/Info.plist";
@@ -744,6 +746,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D537CB852E108EDC2E48B670 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks macOS/RealmTasks-macOS.entitlements";
 				CODE_SIGN_IDENTITY = "-";
@@ -760,6 +763,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F3A327E1424F6C7BA7E2D7C8 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks macOS/RealmTasks-macOS.entitlements";
 				CODE_SIGN_IDENTITY = "-";
@@ -863,6 +867,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0DFE6C7EF9CCDB37848E6721 /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/RealmTasks-iOS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -880,6 +885,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 12658D517EFD85331DC2F783 /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/RealmTasks-iOS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";

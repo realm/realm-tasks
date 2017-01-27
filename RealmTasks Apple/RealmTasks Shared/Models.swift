@@ -47,8 +47,9 @@ final class TaskListList: Object, ListPresentable {
 }
 
 final class TaskListReference: Object, CellPresentable {
+
     // Managed Properties
-    dynamic var id = NSUUID().UUIDString
+    dynamic var id = NSUUID().uuidString
 
     // FIXME: remove textMirror once these two issues have been resolved:
     // https://github.com/realm/realm-sync/issues/703
@@ -75,8 +76,8 @@ final class TaskListReference: Object, CellPresentable {
     // List Realm Properties
     var listRealmConfiguration: Realm.Configuration {
         let user = Realm.Configuration.defaultConfiguration.syncConfiguration!.user
-        let url = Constants.syncServerURL!.URLByAppendingPathComponent(fullServerPath ?? "/~/list-\(id)")
-        return Realm.Configuration(syncConfiguration: SyncConfiguration(user: user, realmURL: url!), objectTypes: [TaskList.self, Task.self])
+        let url = Constants.syncServerURL!.appendingPathComponent((fullServerPath ?? "list-\(id)"))
+        return Realm.Configuration(syncConfiguration: SyncConfiguration(user: user, realmURL: url), objectTypes: [TaskList.self, Task.self])
     }
     func listRealm() throws -> Realm {
         return try Realm(configuration: listRealmConfiguration)
@@ -99,7 +100,7 @@ final class TaskList: Object, CellPresentable, ListPresentable {
     dynamic var id = NSUUID().uuidString // swiftlint:disable:this variable_name
     dynamic var text = ""
     dynamic var completed = false
-    dynamic var id = 0 // swiftlint:disable:this variable_name
+    //dynamic var id = 0 // swiftlint:disable:this variable_name
     let items = List<Task>()
 
     var isCompletable: Bool {
