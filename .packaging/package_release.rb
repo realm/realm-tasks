@@ -18,7 +18,7 @@ realm_cocoa_version = ARGV[0]
 
 podfile_contents = File.read('RealmTasks Apple/Podfile')
 File.open('RealmTasks Apple/Podfile', 'w') do |file|
-  file.puts podfile_contents.gsub("    pod 'Realm", "    # pod 'Realm")
+  file.puts podfile_contents.gsub("    pod 'RealmSwift", "    # pod 'RealmSwift")
 end
 
 ################################################################
