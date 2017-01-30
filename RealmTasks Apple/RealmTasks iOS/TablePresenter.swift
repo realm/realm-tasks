@@ -330,7 +330,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 placeHolderCell.textView.text = "Release to Create Item"
             case .switchToLists:
                 placeHolderCell.navHintView.hintText = "Switch to Lists"
-                placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransform.identity.rotated(by: CGFloat(M_PI))
+                placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransform.identity.rotated(by: .pi)
 
                 UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5,
                     options: [], animations: { [unowned self] in
