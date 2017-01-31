@@ -46,7 +46,7 @@ final class TaskListList: Object, ListPresentable {
     }
 }
 
-final class TaskListReference: Object, CellPresentable {
+final class TaskListReference: Object, CellPresentable, ListPresentable {
 
     // Managed Properties
     dynamic var id = NSUUID().uuidString
@@ -68,6 +68,7 @@ final class TaskListReference: Object, CellPresentable {
     var isCompletable: Bool { return list.isCompletable }
     var completedCount: Int { return list.completedCount }
     var uncompletedCount: Int { return list.uncompletedCount }
+    var items: List<Task> { return list.items }
 
     override static func ignoredProperties() -> [String] {
         return ["text", "completed"]
