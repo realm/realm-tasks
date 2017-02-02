@@ -1,11 +1,12 @@
 # RealmTasks - the React Native version
 
-A basic task management app, designed as a *homage* to now-defunct Clear.
+A basic task management app, designed as a homage to Clear.
 
 ## Prerequisites
 
 1. meet all the prerequisites to [React Native](https://facebook.github.io/react-native/docs/getting-started.html#content) development
-2. start RealmTasks as a regular React Native app, e.g.
+2. `npm install`
+3. start RealmTasks as a regular React Native app, e.g.
 
     ./node_modules/.bin/react-native run-ios
 
