@@ -69,11 +69,11 @@ export default class LoginScreen extends React.Component {
 
         return (
             <View style={[styles.loginView]}>
-                <View style={[styles.loginRow]}>
-                    <Text style={styles.loginTitle}>RealmTasks</Text>
+                <View>
+                    <Text style={[styles.loginRow,styles.loginTitle]}>RealmTasks</Text>
                 </View>
-                <View style={[styles.loginRow]}>
-                    <TextInput style={styles.loginInput1}
+                <View>
+                    <TextInput style={[styles.loginRow,styles.loginInput1]}
                         value={this.state.login}
                         onChangeText={ login => this.setState({
                             login,
@@ -85,9 +85,9 @@ export default class LoginScreen extends React.Component {
                         maxLength = {40}
                     ></TextInput>
                 </View>
-                <View style={[styles.loginRow]}>
+                <View>
                     <TextInput
-                        style={styles.loginInput2}
+                        style={[styles.loginRow,styles.loginInput2]}
                         value={this.state.password}
                         onChangeText={ password => this.setState({
                             login: this.state.login,
@@ -99,12 +99,20 @@ export default class LoginScreen extends React.Component {
                         maxLength = {40}
                     />
                 </View>
-                <View style={[styles.loginButtons]}>
-                    <Button title="Register" onPress={ this.register.bind(this) } />
+                <View>
+                    <Text style={[styles.loginRow, styles.LoginGap]}></Text>
+                </View>
+                <View>
                     <Button title="Log in" onPress={ this.login.bind(this) }/>
                 </View>
-                <View style={[styles.loginRow]}>
-                    <Text style={styles.loginErrorLabel}>{this.state.error}</Text>
+                <View>
+                    <Text style={[styles.loginRow, styles.LoginGap]}></Text>
+                </View>
+                <View>
+                    <Button title="Register" onPress={ this.register.bind(this) } />
+                </View>
+                <View>
+                    <Text style={[styles.loginRow,styles.loginErrorLabel]}>{this.state.error}</Text>
                 </View>
             </View>
         );
