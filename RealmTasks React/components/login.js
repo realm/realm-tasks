@@ -20,17 +20,15 @@
 
 import React from 'react';
 import { AsyncStorage, Text, TextInput, View, Button } from 'react-native';
-import RealmTasks from './realm-tasks';
 import styles from './styles';
 import TodoApp from './todo-app';
 import config from '../config';
-
+import RealmTasks from '../realm-tasks';
 
 export default class LoginScreen extends React.Component {
-
     constructor (props) {
         super(props);
-        this.state = {login: '', password: ''};
+        this.state = { login: '', password: '', error: null };
         this.user = null;
     }
 
@@ -39,12 +37,10 @@ export default class LoginScreen extends React.Component {
             this.state.login,
             this.state.password,
             (error, realm) => {
-                if (error) {
-                    this.state.error = error.message;
-                } else {
-                    delete this.state.error;
-                }
-                this.forceUpdate();
+                RealmTasks.realm = realm;
+                this.setState({
+                    error: error ? error.message : "Success"
+                });
             }
         );
     }
@@ -54,18 +50,16 @@ export default class LoginScreen extends React.Component {
             this.state.login,
             this.state.password,
             (error, realm) => {
-                if (error) {
-                    this.state.error = error.message;
-                } else {
-                    delete this.state.error;
-                }
-                this.forceUpdate();
+                RealmTasks.realm = realm;
+                this.setState({
+                    error: error ? error.message : "Success"
+                });
             }
         );
     }
 
     render () {
-        if (RealmTasks.realm!==null) return <TodoApp/>; // logged in already
+        if (RealmTasks.realm) return <TodoApp/>; // logged in already
 
         return (
             <View style={[styles.loginView]}>

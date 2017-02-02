@@ -21,7 +21,7 @@
 import Realm from 'realm';
 import config from '../config';
 
-class Task extends Realm.Object {}
+export class Task extends Realm.Object {}
 Task.schema = {
     name: 'Task',
     properties: {
@@ -30,7 +30,7 @@ Task.schema = {
     },
 };
 
-class TaskList extends Realm.Object {}
+export class TaskList extends Realm.Object {}
 TaskList.schema = {
     name: 'TaskList',
     properties: {
@@ -41,39 +41,3 @@ TaskList.schema = {
     },
     primaryKey: 'id'
 };
-
-function connect (action, username, password, callback) {
-    username = username.trim();
-    password = password.trim();
-    if(username === '') {
-        return callback(new Error('Username cannot be empty'));
-    } else if (password === '') {
-        return callback(new Error('Password cannot be empty'));
-    }
-         
-    Realm.Sync.User[action](config.auth_uri, username, password,
-        (error, user) => {
-            if (error) {
-                return callback(new Error('Failed to ' + action));
-            } else {
-                my_exports.realm = new Realm({
-                    schema: [Task, TaskList],
-                    sync: {
-                        user,
-                        url: config.db_uri
-                    },
-                    path: config.db_path
-                });
-                return callback(null, my_exports.realm); // TODO errors
-            }
-        }
-    );
-}
-
-const my_exports = {
-    login: connect.bind(undefined, 'login'),
-    register: connect.bind(undefined, 'register'),
-    realm: null,
-    connect
-};
-export default my_exports;

@@ -28,7 +28,7 @@ import {
     View,
 } from 'react-native';
 
-import RealmTasks from './realm-tasks';
+import RealmTasks from '../realm-tasks';
 import styles from './styles';
 
 const iOS = (Platform.OS == 'ios');

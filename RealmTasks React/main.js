@@ -23,10 +23,3 @@ import TodoApp from './components/todo-app';
 import LoginScreen from './components/login';
 
 AppRegistry.registerComponent('ReactExample', () => LoginScreen);
-
-// uncomment for no-login admin access (see realm.js)
-// const RealmTasks = require('./components/realm-tasks');
-// var adminToken = "YourHexSecretHere==";
-// var adminUser = Realm.Sync.User.adminUser(adminToken);
-// RealmTasks.connect(adminUser, ()=>{} );
-// AppRegistry.registerComponent('ReactExample', () => TodoApp); // FIXME props?!!  

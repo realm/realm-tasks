@@ -27,7 +27,7 @@ import {
 } from 'react-native';
 
 import TodoListItem from './todo-list-item';
-import RealmTasks from './realm-tasks';
+import RealmTasks from '../realm-tasks';
 import styles from './styles';
 
 export default class TodoItem extends TodoListItem {

@@ -27,7 +27,7 @@ import {
 
 import { ListView } from 'realm/react-native';
 import TodoListItem from './todo-list-item';
-import RealmTasks from './realm-tasks';
+import RealmTasks from '../realm-tasks';
 const realm = RealmTasks.realm;
 import styles from './styles';
 

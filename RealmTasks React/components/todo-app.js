@@ -31,7 +31,7 @@ import {
 
 import TodoItem from './todo-item';
 import TodoListView from './todo-listview';
-import RealmTasks from './realm-tasks';
+import RealmTasks from '../realm-tasks';
 import styles from './styles';
 const uuidV4 = require('uuid/v4');
 

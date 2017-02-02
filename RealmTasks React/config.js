@@ -1,6 +1,4 @@
 export default {
-    //auth_uri: "https://demo.sync.realmlab.net:443/",
-    //db_uri: "realms://demo.sync.realmlab.net/~/realmtasks",
     auth_uri: "http://localhost:9080",
     db_uri: "realm://localhost:9080/~/realmtasks",
     admin_token: null, // "addTokenHexForAdminAccess=="
