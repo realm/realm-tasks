@@ -32,7 +32,7 @@ namespace RealmTasks
 
         public Color CompletedColor { get; set; }
 
-        static void OnRealmCollectionChanged(BindableObject bindable, object oldValue, object newValue)
+        private static void OnRealmCollectionChanged(BindableObject bindable, object oldValue, object newValue)
         {
             var self = (ItemColoringBehavior<T>)bindable;
             self._notificationToken?.Dispose();
@@ -104,6 +104,7 @@ namespace RealmTasks
             // Get the initial color which will serve as the origin
             var topColor = Colors[colorRangeIndex];
             var fromColors = new[] { topColor.R, topColor.G, topColor.B };
+
             // Get the destination color we will lerp to
             var bottomColor = Colors[colorRangeIndex + 1];
             var toColors = new[] { bottomColor.R, bottomColor.G, bottomColor.B };
