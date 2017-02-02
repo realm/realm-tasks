@@ -42,7 +42,6 @@ TaskList.schema = {
     primaryKey: 'id'
 };
 
-
 function connect (user, callback) {
     my_exports.realm = new Realm({
         schema: [Task, TaskList],
@@ -54,7 +53,6 @@ function connect (user, callback) {
     });
     callback(null, my_exports.realm); // TODO errors
 };
-
 
 function login (login, password, callback) {
     Realm.Sync.User.login(
@@ -71,8 +69,24 @@ function login (login, password, callback) {
     );
 }
 
+function register (login, password, callback) {
+    Realm.Sync.User.register(
+        config.auth_uri,
+        login,
+        password,
+        (error, user) => {
+            if (error) {
+                callback(error);
+            } else {
+                connect(user, callback);
+            }
+        }
+    );
+}
+
 const my_exports = {
     login,
+    register,
     realm: null,
     connect
 };
