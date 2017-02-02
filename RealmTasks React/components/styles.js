@@ -27,12 +27,25 @@ import {
 const { NavBarHeight, TotalNavHeight } = Navigator.NavigationBar.Styles.General;
 const iOS = (Platform.OS == 'ios');
 
-export default StyleSheet.create({
+const colors = {
+    charcoal: "#1c233f",
+    peach: "#fc9f95",
+    melon:    "#fcc397",
+    elephant: "#9a9ba5",
+    sexysalmon: "#f77c88",
+    flamingo:  "#f25192",
+    mulberry: "#d34ca3",
+    grape_jelly: "#9a50a5",
+    indigo: "#59569e",
+    ultramarine: "#39477f",
+};
+
+const styles = {
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'stretch',
-        backgroundColor: '#39477f',
+        backgroundColor: colors.charcoal,
     },
     navigator: {
         flex: 1,
@@ -46,7 +59,7 @@ export default StyleSheet.create({
         height: NavBarHeight,
     },
     navBarLeftArrow: {
-        color: '#fff',
+        color: 'white',
         fontSize: 40,
         fontWeight: '200',
         letterSpacing: 2,
@@ -59,7 +72,7 @@ export default StyleSheet.create({
         paddingRight: 8,
     },
     navBarText: {
-        color: '#fff',
+        color: 'white',
         fontSize: 18,
     },
     navBarTitleText: {
@@ -68,6 +81,7 @@ export default StyleSheet.create({
     navScene: {
         top: TotalNavHeight,
     },
+
     listItem: {
         borderBottomWidth: 0,
         alignItems: 'stretch',
@@ -130,43 +144,48 @@ export default StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
     },
+
     instructions: {
         textAlign: 'center',
         color: '#333333',
         marginBottom: 5,
     },
     realmColor0: {
-        backgroundColor:"#fcc397",
+        backgroundColor: colors.melon,
     },
     realmColor1: {
-        backgroundColor:"#fc9f95",
+        backgroundColor: colors.peach,
     },
     realmColor2: {
-        backgroundColor:"#f77c88",
+        backgroundColor: colors.sexysalmon,
     },
     realmColor3: {
-        backgroundColor:"#f25192",
+        backgroundColor: colors.flamingo,
     },
     realmColor4: {
-        backgroundColor:"#d34ca3",
+        backgroundColor: colors.mulberry,
     },
     realmColor5: {
-        backgroundColor:"#9a50a5",
+        backgroundColor: colors.grape_jelly,
     },
     realmColor6: {
-        backgroundColor:"#59569e",
+        backgroundColor: colors.indigo,
     },
     realmColor7: {
-        backgroundColor:  "#39477f",
+        backgroundColor:  colors.ultramarine,
     },
+
     loginView: {
         flex: 1,
         alignItems: 'stretch',
-        backgroundColor: '#39477f',
+        backgroundColor: colors.charcoal,
         justifyContent: 'center',
         padding: 20,
     },
     loginRow: {
+        fontSize: 18,
+        padding: 10,
+        height: 40,
     },
     loginInput: {
         fontSize: 18,
@@ -174,42 +193,31 @@ export default StyleSheet.create({
     },
     loginTitle: {
         fontSize: 24,
+        height: 45,
         fontWeight: 'bold',
         textAlign: 'center',
-        padding: 10,
-        backgroundColor: "#f77c88",
+        backgroundColor: colors.sexysalmon,
     },
     loginLabel1: {
-        fontSize: 18,
-        padding: 10,
-        height: 40,
-        backgroundColor: "#f25192",
+        backgroundColor: colors.flamingo,
     },
     loginInput1: {
-        fontSize: 18,
-        padding: 10,
-        height: 40,
-        backgroundColor: "#d34ca3",
+        backgroundColor: colors.mulberry,
         textAlign: 'right',
     },
     loginLabel2: {
-        fontSize: 18,
-        height: 40,
-        padding: 10,
-        backgroundColor: "#9a50a5",
+        backgroundColor: colors.grape_jelly,
     },
     loginInput2: {
-        fontSize: 18,
-        padding: 10,
-        height: 40,
-        backgroundColor: "#59569e",
+        backgroundColor: colors.indigo,
         textAlign: 'right',
     },
+    LoginGap: {
+        color: colors.ultramarine,
+    },
     loginErrorLabel: {
-        fontSize: 18,
-        height: 40,
-        padding: 10,
-        backgroundColor: "#39477f",
         color: "red",
     },
-});
+};
+
+export default StyleSheet.create(styles);
