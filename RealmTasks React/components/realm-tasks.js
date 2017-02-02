@@ -42,51 +42,37 @@ TaskList.schema = {
     primaryKey: 'id'
 };
 
-function connect (user, callback) {
-    my_exports.realm = new Realm({
-        schema: [Task, TaskList],
-        sync: {
-            user,
-            url: config.db_uri
-        },
-        path: config.db_path
-    });
-    callback(null, my_exports.realm); // TODO errors
-};
-
-function login (login, password, callback) {
-    Realm.Sync.User.login(
-        config.auth_uri,
-        login,
-        password,
+function connect (action, username, password, callback) {
+    username = username.trim();
+    password = password.trim();
+    if(username === '') {
+        return callback(new Error('Username cannot be empty'));
+    } else if (password === '') {
+        return callback(new Error('Password cannot be empty'));
+    }
+         
+    Realm.Sync.User[action](config.auth_uri, username, password,
         (error, user) => {
             if (error) {
-                callback(error);
+                return callback(new Error('Failed to ' + action));
             } else {
-                connect(user, callback);
-            }
-        }
-    );
-}
-
-function register (login, password, callback) {
-    Realm.Sync.User.register(
-        config.auth_uri,
-        login,
-        password,
-        (error, user) => {
-            if (error) {
-                callback(error);
-            } else {
-                connect(user, callback);
+                my_exports.realm = new Realm({
+                    schema: [Task, TaskList],
+                    sync: {
+                        user,
+                        url: config.db_uri
+                    },
+                    path: config.db_path
+                });
+                return callback(null, my_exports.realm); // TODO errors
             }
         }
     );
 }
 
 const my_exports = {
-    login,
-    register,
+    login: connect.bind(undefined, 'login'),
+    register: connect.bind(undefined, 'register'),
     realm: null,
     connect
 };
