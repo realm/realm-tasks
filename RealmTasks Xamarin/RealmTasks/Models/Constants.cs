@@ -13,6 +13,7 @@ namespace RealmTasks
             public static string SyncHost { get; set; } = "127.0.0.1:9080";
 
             public static Uri SyncServerUri => new Uri($"realm://{SyncHost}/~/realmtasks");
+
             public static Uri AuthServerUri => new Uri($"http://{SyncHost}");
         }
 
@@ -31,16 +32,16 @@ namespace RealmTasks
 
             public static readonly Color[] TaskColors =
             {
-                new Color(231/255.0, 167/255.0, 118/255.0),
-                new Color(228/255.0, 125/255.0, 114/255.0),
-                new Color(233/255.0, 099/255.0, 111/255.0),
-                new Color(242/255.0, 081/255.0, 145/255.0),
-                new Color(154/255.0, 080/255.0, 164/255.0),
-                new Color(088/255.0, 086/255.0, 157/255.0),
-                new Color(056/255.0, 071/255.0, 126/255.0)
+                new Color(231 / 255.0, 167 / 255.0, 118 / 255.0),
+                new Color(228 / 255.0, 125 / 255.0, 114 / 255.0),
+                new Color(233 / 255.0, 099 / 255.0, 111 / 255.0),
+                new Color(242 / 255.0, 081 / 255.0, 145 / 255.0),
+                new Color(154 / 255.0, 080 / 255.0, 164 / 255.0),
+                new Color(088 / 255.0, 086 / 255.0, 157 / 255.0),
+                new Color(056 / 255.0, 071 / 255.0, 126 / 255.0)
             };
 
-            public static readonly Color CompletedColor = new Color(51/255.0, 51 / 255.0, 51 / 255.0);
+            public static readonly Color CompletedColor = new Color(51 / 255.0, 51 / 255.0, 51 / 255.0);
         }
     }
 }

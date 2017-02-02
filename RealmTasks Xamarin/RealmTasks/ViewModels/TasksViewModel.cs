@@ -12,7 +12,9 @@ namespace RealmTasks
         public TaskList TaskList { get; private set; }
 
         public Command<Task> DeleteTaskCommand { get; }
+
         public Command<Task> CompleteTaskCommand { get; }
+
         public Command AddTaskCommand { get; }
 
         public TasksViewModel()
