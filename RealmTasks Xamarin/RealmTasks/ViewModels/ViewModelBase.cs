@@ -7,7 +7,6 @@ namespace RealmTasks
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        private bool _initialized;
         private bool _isBusy;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -49,17 +48,13 @@ namespace RealmTasks
             return false;
         }
 
-        public void Initialize()
+        public virtual void OnAppearing()
         {
-            if (!_initialized)
-            {
-                _initialized = true;
-                InitializeCore();
-            }
         }
 
-        protected virtual void InitializeCore()
+        public virtual void OnDisappearing()
         {
+            
         }
 
         protected virtual void OnBusyChanged()

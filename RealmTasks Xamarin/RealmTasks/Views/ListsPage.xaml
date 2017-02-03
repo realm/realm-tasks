@@ -31,7 +31,7 @@
 						</ViewCell.ContextActions>
 						<Grid Opacity="{Binding ., Converter={StaticResource TaskListToAlphaConverter}}">
 							<Grid.Behaviors>
-                                <local:ItemColoringBehavior x:TypeArguments="local:TaskList"
+                                <local:ItemColoringBehavior x:TypeArguments="local:TaskListReference"
                                     RealmCollection="{Binding ItemsSource, Source={x:Reference TaskListsListView}}"
                                     Colors="{StaticResource ListColors}"
 									CompletedColor="{StaticResource CompletedColor}"/>
@@ -47,24 +47,24 @@
 							</Grid.RowDefinitions>
 
 							<local:TransparentEntry 
-									Text = "{Binding Title}"
+									Text = "{Binding List.Title}"
 									TextColor="White"
 									HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
-                                    IsStrikeThrough="{Binding IsCompleted}"
+                                    IsStrikeThrough="{Binding List.IsCompleted}"
 								    Grid.RowSpan="2"/>
 
 							<BoxView Color="White" 
 									Opacity="0.15"
 								    Grid.Column="1"
 									Grid.RowSpan="2"/>
-							<Button Text="{Binding Items.Count}"
+							<Button Text="{Binding List.Items.Count}"
                                     Command="{Binding Path=BindingContext.OpenTaskListCommand, Source={x:Reference Name=TaskListsListView}}"
                                     CommandParameter="{Binding .}"
 									TextColor="White"
 									BackgroundColor="Transparent"
 									BorderColor="Transparent"
 									HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
-									IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBooleanConverter}}"
+									IsEnabled="{Binding List.IsCompleted, Converter={StaticResource InverseBooleanConverter}}"
 									Grid.Column="1" Grid.RowSpan="2" />
 							
 							<BoxView Color="Black"

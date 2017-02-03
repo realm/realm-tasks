@@ -53,6 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\TransparentEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ICompletable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValueConverters\TaskListToAlphaConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TaskListReference.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Views\" />

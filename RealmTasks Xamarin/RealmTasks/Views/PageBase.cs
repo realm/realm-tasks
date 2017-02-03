@@ -14,7 +14,12 @@ namespace RealmTasks
         {
             base.OnAppearing();
 
-            ViewModel.Initialize();
+            ViewModel.OnAppearing();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
         }
     }
 }

@@ -10,9 +10,10 @@ namespace RealmTasks
     public class ListsViewModel : ViewModelBase
     {
         private Realm _realm;
-        private IList<TaskList> _taskLists;
+        private IList<TaskListReference> _taskLists;
+        private bool _initialized;
 
-        public IList<TaskList> TaskLists
+        public IList<TaskListReference> TaskLists
         {
             get
             {
@@ -25,11 +26,11 @@ namespace RealmTasks
             }
         }
 
-        public Command<TaskList> DeleteTaskListCommand { get; }
+        public Command<TaskListReference> DeleteTaskListCommand { get; }
 
-        public Command<TaskList> CompleteTaskListCommand { get; }
+        public Command<TaskListReference> CompleteTaskListCommand { get; }
 
-        public Command<TaskList> OpenTaskListCommand { get; }
+        public Command<TaskListReference> OpenTaskListCommand { get; }
 
         public Command AddTaskListCommand { get; }
 
@@ -37,17 +38,22 @@ namespace RealmTasks
 
         public ListsViewModel()
         {
-            DeleteTaskListCommand = new Command<TaskList>(DeleteList);
-            CompleteTaskListCommand = new Command<TaskList>(CompleteList);
-            OpenTaskListCommand = new Command<TaskList>(OpenList);
+            DeleteTaskListCommand = new Command<TaskListReference>(DeleteList);
+            CompleteTaskListCommand = new Command<TaskListReference>(CompleteList);
+            OpenTaskListCommand = new Command<TaskListReference>(OpenList);
             AddTaskListCommand = new Command(AddList);
             LogoutCommand = new Command(Logout);
         }
 
-        protected override async void InitializeCore()
+        public override async void OnAppearing()
         {
-            User user = null;
+            if (_initialized)
+            {
+                return;
+            }
 
+            _initialized = true;
+            User user = null;
             try
             {
                 user = User.Current;
@@ -76,9 +82,9 @@ namespace RealmTasks
 
             try
             {
-                var config = new SyncConfiguration(user, Constants.Server.SyncServerUri)
+                var config = new SyncConfiguration(user, Constants.Server.GetSyncServerUri("/~/lists"))
                 {
-                    ObjectClasses = new[] { typeof(Task), typeof(TaskList), typeof(TaskListList) }
+                    ObjectClasses = new[] { typeof(TaskListList), typeof(TaskListReference) }
                 };
 
                 _realm = Realm.GetInstance(config);
@@ -92,10 +98,16 @@ namespace RealmTasks
                     if (parent == null)
                     {
                         parent = _realm.Add(new TaskListList());
-                        parent.Items.Add(new TaskList
+                        var taskListReference = new TaskListReference
+                        { 
+                            Id = Constants.DefaultListId
+                        };
+
+                        parent.Items.Add(taskListReference);
+
+                        taskListReference.List.Realm.Write(() =>
                         {
-                            Id = Constants.DefaultListId,
-                            Title = Constants.DefaultListName
+                            taskListReference.List.Title = Constants.DefaultListName;
                         });
                     }
                 });
@@ -108,26 +120,27 @@ namespace RealmTasks
             }
         }
 
-        private void DeleteList(TaskList list)
+        private void DeleteList(TaskListReference listReference)
         {
-            if (list != null)
+            if (listReference != null)
             {
                 _realm.Write(() =>
                 {
-                    _realm.Remove(list);
+                    _realm.Remove(listReference);
                 });
             }
         }
 
-        private void CompleteList(TaskList list)
+        private void CompleteList(TaskListReference listReference)
         {
-            if (list != null)
+            if (listReference != null)
             {
                 _realm.Write(() =>
                 {
-                    list.IsCompleted = !list.IsCompleted;
+                    listReference.IsCompleted = !listReference.IsCompleted;
+
                     int index;
-                    if (list.IsCompleted)
+                    if (listReference.IsCompleted)
                     {
                         index = TaskLists.Count;
                     }
@@ -136,18 +149,18 @@ namespace RealmTasks
                         index = TaskLists.Count(t => !t.IsCompleted);
                     }
 
-                    TaskLists.Move(list, index - 1);
+                    TaskLists.Move(listReference, index - 1);
                 });
             }
         }
 
-        private void OpenList(TaskList list)
+        private void OpenList(TaskListReference listReference)
         {
-            if (list != null)
+            if (listReference != null)
             {
                 PerformTask(async () =>
                 {
-                    await NavigationService.Navigate<TasksViewModel>(vm => vm.Setup(_realm, list.Id));
+                    await NavigationService.Navigate<TasksViewModel>(vm => vm.Setup(listReference));
                 });
             }
         }
@@ -156,7 +169,7 @@ namespace RealmTasks
         {
             _realm.Write(() =>
             {
-                TaskLists.Insert(0, new TaskList());
+                TaskLists.Insert(0, new TaskListReference());
             });
         }
 

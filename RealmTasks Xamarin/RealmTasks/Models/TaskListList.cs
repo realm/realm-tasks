@@ -10,6 +10,6 @@ namespace RealmTasks
         public int Id { get; set; }
 
         [MapTo("items")]
-        public IList<TaskList> Items { get; }
+        public IList<TaskListReference> Items { get; }
     }
 }

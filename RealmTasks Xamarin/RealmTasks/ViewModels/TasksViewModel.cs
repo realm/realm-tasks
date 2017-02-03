@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Realms;
 using Xamarin.Forms;
 
@@ -7,15 +6,29 @@ namespace RealmTasks
 {
     public class TasksViewModel : ViewModelBase
     {
-        private Realm _realm;
+        private TaskList _taskList;
 
-        public TaskList TaskList { get; private set; }
+        public TaskListReference TaskListReference { get; private set; }
+
+        public TaskList TaskList
+        {
+            get
+            {
+                return _taskList;
+            }
+            set
+            {
+                Set(ref _taskList, value);
+            }
+        }
 
         public Command<Task> DeleteTaskCommand { get; }
 
         public Command<Task> CompleteTaskCommand { get; }
 
         public Command AddTaskCommand { get; }
+
+        private Realm TaskListRealm => TaskList?.Realm;
 
         public TasksViewModel()
         {
@@ -24,20 +37,26 @@ namespace RealmTasks
             AddTaskCommand = new Command(AddTask);
         }
 
-        public void Setup(Realm realm, string taskListId)
+        public void Setup(TaskListReference listReference)
         {
-            _realm = realm;
-            TaskList = realm.Find<TaskList>(taskListId);
-            RaisePropertyChanged(nameof(TaskList));
+            TaskListReference = listReference;
+            TaskList = TaskListReference.List;
+        }
+
+        public override void OnDisappearing()
+        {
+            // var realm = TaskListRealm;
+            // TaskList = null;
+            // realm?.Dispose();
         }
 
         private void DeleteTask(Task task)
         {
             if (task != null)
             {
-                _realm.Write(() =>
+                TaskListRealm?.Write(() =>
                 {
-                    _realm.Remove(task);
+                    TaskListRealm.Remove(task);
                 });
             }
         }
@@ -46,7 +65,7 @@ namespace RealmTasks
         {
             if (task != null)
             {
-                _realm.Write(() =>
+                TaskListRealm?.Write(() =>
                 {
                     task.IsCompleted = !task.IsCompleted;
                     int index;
@@ -66,7 +85,7 @@ namespace RealmTasks
 
         private void AddTask()
         {
-            _realm.Write(() =>
+            TaskListRealm?.Write(() =>
             {
                 TaskList.Items.Insert(0, new Task());
             });

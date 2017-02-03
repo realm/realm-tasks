@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Realms;
 
 namespace RealmTasks
 {
-    public class TaskList : RealmObject, ICompletable
+    public class TaskList : RealmObject
     {
         [PrimaryKey]
-        [Required]
         [MapTo("id")]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public int Id { get; set; }
+
+        [MapTo("items")]
+        public IList<Task> Items { get; }
 
         [MapTo("text")]
         [Required]
@@ -17,8 +18,5 @@ namespace RealmTasks
 
         [MapTo("completed")]
         public bool IsCompleted { get; set; }
-
-        [MapTo("items")]
-        public IList<Task> Items { get; }
     }
 }

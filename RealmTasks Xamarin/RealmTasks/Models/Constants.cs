@@ -12,7 +12,7 @@ namespace RealmTasks
         {
             public static string SyncHost { get; set; } = "127.0.0.1:9080";
 
-            public static Uri SyncServerUri => new Uri($"realm://{SyncHost}/~/realmtasks");
+            public static Uri GetSyncServerUri(string relativePath) => new Uri($"realm://{SyncHost}{relativePath}");
 
             public static Uri AuthServerUri => new Uri($"http://{SyncHost}");
         }
