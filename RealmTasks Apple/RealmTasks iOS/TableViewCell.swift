@@ -55,15 +55,9 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         didSet {
             textView.text = item.text
             setCompleted(item.completed)
-            if let item = item as? TaskListReference {
-                let count = item.uncompletedCount
-                countLabel.text = String(count)
-                if count == 0 {
-                    textView.alpha = 0.3
-                    countLabel.alpha = 0.3
-                } else {
-                    countLabel.alpha = 1
-                }
+            if (item as? TaskListReference) != nil {
+                updateCountLabel()
+                setUpNotifications()
             }
         }
     }
@@ -83,6 +77,8 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     // Assets
     private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
     private let deleteIconView = UIImageView(image: UIImage(named: "DeleteIcon"))
+
+    private var notificationToken: NotificationToken?
 
     // MARK: Initializers
 
@@ -212,6 +208,49 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         contentView.addSubview(navHintView)
         constrain(navHintView) { navHintView in
             navHintView.edges == navHintView.superview!.edges
+        }
+    }
+
+    private func setUpNotifications() {
+        guard let item = item as? TaskListReference else {
+            return
+        }
+
+        if let notificationToken = notificationToken {
+            notificationToken.stop()
+        }
+
+        notificationToken = item.list.addNotificationBlock { changes in
+            switch changes {
+            case .change(let properties):
+                for property in properties {
+                    switch property.name {
+                    case "text":
+                        self.textView.text = item.text
+                    case "items":
+                        self.updateCountLabel()
+                    case "completed":
+                        self.setCompleted(item.completed)
+                    default: ()
+                    }
+                }
+                default: ()
+            }
+        }
+    }
+
+    private func updateCountLabel() {
+        guard let item = item as? TaskListReference else {
+            return
+        }
+
+        let count = item.uncompletedCount
+        countLabel.text = String(count)
+        if count == 0 {
+            textView.alpha = 0.3
+            countLabel.alpha = 0.3
+        } else {
+            countLabel.alpha = 1
         }
     }
 
@@ -362,6 +401,10 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         for gestureRecognizer in gestureRecognizers! {
             gestureRecognizer.reset()
         }
+
+        // Reset any notification tokens
+        notificationToken?.stop()
+        notificationToken = nil
     }
 
     // MARK: Actions
