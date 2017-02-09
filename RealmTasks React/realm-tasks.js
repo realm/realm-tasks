@@ -36,7 +36,7 @@ function connect (action, username, password, callback) {
     Realm.Sync.User[action](config.auth_uri, username, password,
         (error, user) => {
             if (error) {
-                return callback(new Error('Failed to ' + action));
+                return callback(new Error(error.message));
             } else {
                 realm = new Realm({
                     schema: [Task, TaskList],
