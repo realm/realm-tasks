@@ -20,6 +20,7 @@
 		225201A51D3DD648009E45FA /* CellTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019C1D3DD648009E45FA /* CellTextView.swift */; };
 		225201A61D3DD648009E45FA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019D1D3DD648009E45FA /* ViewController.swift */; };
 		229372151E4D5D7800B2E2A1 /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229372141E4D5D7800B2E2A1 /* FooterView.swift */; };
+		229372171E4D703800B2E2A1 /* SharingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229372161E4D703800B2E2A1 /* SharingCoordinator.swift */; };
 		22B9ADD41E44857300E81E66 /* UIImage+Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B9ADD31E44857300E81E66 /* UIImage+Icons.swift */; };
 		535B94220A4A156FBAFB1335 /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E3DAC51F69DA3CADC0CEDEF /* Pods_RealmTasks_RealmTasks_macOS.framework */; };
 		60662D4341CEABBF2A842F0E /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97B4ACBD426131A983A5D4F9 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */; };
@@ -86,6 +87,7 @@
 		2252019C1D3DD648009E45FA /* CellTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellTextView.swift; sourceTree = "<group>"; };
 		2252019D1D3DD648009E45FA /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		229372141E4D5D7800B2E2A1 /* FooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
+		229372161E4D703800B2E2A1 /* SharingCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingCoordinator.swift; sourceTree = "<group>"; };
 		22B9ADD31E44857300E81E66 /* UIImage+Icons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Icons.swift"; sourceTree = "<group>"; };
 		36D73C99E80DFD3FBBEC671A /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; sourceTree = "<group>"; };
 		4AA030A92A734CF89C6AD4F8 /* Pods_RealmTasks_RealmTasks_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,6 +204,7 @@
 				9C24AA061D8FEEB500192CE3 /* CellPresenter.swift */,
 				9C24AA0A1D8FFC0400192CE3 /* TablePresenter.swift */,
 				9CDF4F1C1D9E73AF00EC051B /* ViewControllerProtocol.swift */,
+				229372161E4D703800B2E2A1 /* SharingCoordinator.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -694,6 +697,7 @@
 				9C24AA0D1D8FFEA200192CE3 /* ListPresenter.swift in Sources */,
 				9CDF4F1F1D9E745300EC051B /* UIView+constraints.swift in Sources */,
 				2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */,
+				229372171E4D703800B2E2A1 /* SharingCoordinator.swift in Sources */,
 				229372151E4D5D7800B2E2A1 /* FooterView.swift in Sources */,
 				9CDF4F1D1D9E73AF00EC051B /* ViewControllerProtocol.swift in Sources */,
 				22B9ADD41E44857300E81E66 /* UIImage+Icons.swift in Sources */,
