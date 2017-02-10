@@ -121,7 +121,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
 
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
-
+        
         listPresenter.updateOnboardView()
     }
 
