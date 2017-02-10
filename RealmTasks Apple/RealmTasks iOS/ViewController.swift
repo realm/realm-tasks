@@ -67,6 +67,8 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
 
     private var listPresenter: ListPresenter<Item, Parent>!
 
+    private var sharingCoordinator: SharingCoordinator?
+
     // MARK: UI Writes
     func uiWrite(block: () -> Void) {
         uiWriteNoUpdateList(block: block)
@@ -121,8 +123,17 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
 
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
-        
+
         listPresenter.updateOnboardView()
+
+        if listPresenter.parent.isShareable {
+            let footerView = ListFooterView()
+            footerView.shareButtonTapped = {
+                print("Start sharing")
+            }
+
+            tableView.tableFooterView = footerView
+        }
     }
 
     override func didMove(toParentViewController parent: UIViewController?) {
@@ -151,6 +162,12 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
             return
         }
         let location = recognizer.location(in: tableView)
+
+        // Disregard tap if the footer view is visible and the tap was in its container
+        if let footerView = tableView.tableFooterView, footerView.frame.contains(location) {
+            return
+        }
+
         let cell: TableViewCell<Item>!
         if let indexPath = tableView.indexPathForRow(at: location),
             let typedCell = tableView.cellForRow(at: indexPath) as? TableViewCell<Item> {
@@ -180,7 +197,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
             parent: taskList,
             colors: UIColor.taskColors()
         )
-        
+
         startMovingToNextViewController(direction: .down)
         finishMovingToNextViewController(direction: .down)
     }
