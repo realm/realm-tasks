@@ -19,7 +19,7 @@
 import UIKit
 import Cartography
 
-class FooterView: UIView {
+class ListFooterView: UIView {
     public var shareButtonTapped: (() -> Void)?
 
     private let shareButton = UIButton(type: .system)
