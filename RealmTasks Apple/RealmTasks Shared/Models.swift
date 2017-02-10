@@ -98,10 +98,9 @@ final class TaskListReference: Object, CellPresentable, ListPresentable {
 }
 
 final class TaskList: Object, CellPresentable, ListPresentable {
-    dynamic var id = NSUUID().uuidString // swiftlint:disable:this variable_name
     dynamic var text = ""
     dynamic var completed = false
-    //dynamic var id = 0 // swiftlint:disable:this variable_name
+    dynamic var id = 0 // swiftlint:disable:this variable_name
     let items = List<Task>()
 
     var isCompletable: Bool {
