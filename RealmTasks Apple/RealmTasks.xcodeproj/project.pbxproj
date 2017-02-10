@@ -85,7 +85,6 @@
 		2252019C1D3DD648009E45FA /* CellTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellTextView.swift; sourceTree = "<group>"; };
 		2252019D1D3DD648009E45FA /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		22B9ADD31E44857300E81E66 /* UIImage+Icons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Icons.swift"; sourceTree = "<group>"; };
-		22FEFEBB1D91789B00523E21 /* RealmTasks-iOS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "RealmTasks-iOS.entitlements"; sourceTree = "<group>"; };
 		36D73C99E80DFD3FBBEC671A /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; sourceTree = "<group>"; };
 		4AA030A92A734CF89C6AD4F8 /* Pods_RealmTasks_RealmTasks_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		97B4ACBD426131A983A5D4F9 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_iOS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -163,7 +162,6 @@
 		225201931D3DD648009E45FA /* RealmTasks iOS */ = {
 			isa = PBXGroup;
 			children = (
-				22FEFEBB1D91789B00523E21 /* RealmTasks-iOS.entitlements */,
 				225201941D3DD648009E45FA /* AppDelegate.swift */,
 				225201981D3DD648009E45FA /* Info.plist */,
 				225201951D3DD648009E45FA /* iOS.xcassets */,
@@ -387,11 +385,11 @@
 					};
 					E84CF2B01CBC408000082C1A = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = QX5CR2FTN2;
+						DevelopmentTeam = 4XL3X97RQ3;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Keychain = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -808,6 +806,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -855,6 +854,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -881,9 +881,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/RealmTasks-iOS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = QX5CR2FTN2;
+				DEVELOPMENT_TEAM = 4XL3X97RQ3;
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -899,9 +898,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/RealmTasks-iOS.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = QX5CR2FTN2;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: TIGHTDB INC";
+				DEVELOPMENT_TEAM = 4XL3X97RQ3;
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
