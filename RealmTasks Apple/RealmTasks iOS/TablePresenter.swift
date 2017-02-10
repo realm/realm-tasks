@@ -75,7 +75,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         tableView.contentOffset = CGPoint(x: 0, y: -tableView.contentInset.top)
         tableView.showsVerticalScrollIndicator = false
 
-        if parent.shareable {
+        if parent.isShareable {
             tableView.tableFooterView = FooterView()
         }
 

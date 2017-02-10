@@ -24,7 +24,7 @@ protocol ListPresentable {
     var items: List<Item> { get }
     var completedCount: Int { get }
     var uncompletedCount: Int { get }
-    var shareable: Bool { get }
+    var isShareable: Bool { get }
 }
 
 protocol CellPresentable {
@@ -46,7 +46,7 @@ final class TaskListList: Object, ListPresentable {
         return "id"
     }
 
-    var shareable: Bool { return false }
+    var isShareable: Bool { return false }
 }
 
 final class TaskListReference: Object, CellPresentable, ListPresentable {
@@ -99,7 +99,7 @@ final class TaskListReference: Object, CellPresentable, ListPresentable {
         return realm.objects(TaskList.self).first!
     }
 
-    var shareable: Bool { return false }
+    var isShareable: Bool { return false }
 }
 
 final class TaskList: Object, CellPresentable, ListPresentable {
@@ -117,7 +117,7 @@ final class TaskList: Object, CellPresentable, ListPresentable {
         return "id"
     }
 
-    var shareable: Bool { return true }
+    var isShareable: Bool { return true }
 }
 
 final class Task: Object, CellPresentable {
