@@ -79,15 +79,10 @@ namespace RealmTasks
                 var authContext = new AuthenticationContext(Constants.ADCredentials.CommonAuthority);
 
                 var clientId = Constants.ADCredentials.ClientId;
-                if (clientId == "your-client-id")
-                {
-                    throw new Exception("Please update Constants.ADCredentials.ClientId with the correct ClientId of your application.");
-                }
-
                 var redirectUri = Constants.ADCredentials.RedirectUri;
-                if (redirectUri.AbsolutePath == "http://your-redirect-uri")
+                if (clientId == "your-client-id" || redirectUri.AbsolutePath == "http://your-redirect-uri")
                 {
-                    throw new Exception("Please update Constants.ADCredentials.RedirectUri with the correct RedirectUri of your application.");
+                    throw new Exception("Please update Constants.ADCredentials with the correct ClientId and RedirectUri for your application.");
                 }
 
                 var response = await authContext.AcquireTokenAsync("https://graph.windows.net",
