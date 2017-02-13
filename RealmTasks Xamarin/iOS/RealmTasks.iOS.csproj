@@ -127,6 +127,12 @@
       <HintPath>..\packages\Realm.0.82.1\lib\Xamarin.iOS10\Realm.Sync.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.3.13.8\lib\Xamarin.iOS10\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.Platform">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.3.13.8\lib\Xamarin.iOS10\Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -151,6 +157,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Renderers\TransparentEntryRenderer.cs" />
     <Compile Include="Renderers\TaskListViewRenderer.cs" />
+    <Compile Include="ADAuthenticator.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\add%403x.png" />

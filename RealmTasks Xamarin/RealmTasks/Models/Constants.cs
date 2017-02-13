@@ -43,5 +43,12 @@ namespace RealmTasks
 
             public static readonly Color CompletedColor = new Color(51 / 255.0, 51 / 255.0, 51 / 255.0);
         }
+
+        public static class ADCredentials
+        {
+            public const string ClientId = "your-client-id";
+            public const string CommonAuthority = "https://login.windows.net/common";
+            public static Uri RedirectUri = new Uri("http://your-redirect-uri");
+        }
     }
 }
