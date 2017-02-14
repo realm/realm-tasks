@@ -36,6 +36,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        if
+
+        return true
+    }
+}
+
+extension AppDelegate {
     func logIn(animated: Bool = true) {
         let loginController = LoginViewController(style: .darkTranslucent)
         loginController.isServerURLFieldHidden = true

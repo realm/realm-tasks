@@ -129,7 +129,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
         if listPresenter.parent.isShareable {
             let footerView = ListFooterView()
             footerView.shareButtonTapped = {
-                print("Start sharing")
+                self.shareList()
             }
 
             tableView.tableFooterView = footerView
@@ -145,6 +145,14 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
         for cell in visibleCells {
             (cell as! TableViewCell<Item>).reset()
         }
+    }
+
+    // MARK: Sharing
+    private func shareList() {
+        guard sharingCoordinator == nil else { return }
+
+        sharingCoordinator = SharingCoordinator(viewController: self)
+        sharingCoordinator?.shareList(for: items.realm!, from: tableView.tableFooterView)
     }
 
     // MARK: Gesture Recognizers

@@ -26,7 +26,7 @@ class ListFooterView: UIView {
 
     override init(frame: CGRect) {
         var newFrame = frame
-        newFrame.size.height = 64
+        newFrame.size.height = 74
         super.init(frame: newFrame)
     }
 
@@ -39,10 +39,10 @@ class ListFooterView: UIView {
 
         shareButton.setImage(UIImage.shareIcon(), for: .normal)
         shareButton.setTitle("Share List", for: .normal)
-        shareButton.titleLabel?.font = UIFont.systemFont(ofSize: 25, weight: UIFontWeightMedium)
+        shareButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFontWeightMedium)
         shareButton.tintColor = UIColor(white: 0.3, alpha: 1.0)
-        shareButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 10)
-        shareButton.titleEdgeInsets = UIEdgeInsets(top: 3, left: 10, bottom: 0, right: 0)
+        shareButton.imageEdgeInsets = UIEdgeInsets(top: -8, left: 0, bottom: 0, right: 10)
+        shareButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         shareButton.sizeToFit()
         self.addSubview(shareButton)
 
@@ -56,7 +56,6 @@ class ListFooterView: UIView {
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        frame.size.height = 60
         setUpButton()
     }
 
