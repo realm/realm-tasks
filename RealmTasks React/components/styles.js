@@ -216,6 +216,7 @@ const styles = {
         color: colors.ultramarine,
     },
     loginErrorLabel: {
+        height: 80,
         color: "red",
     },
 };
