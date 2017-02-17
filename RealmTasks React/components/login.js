@@ -28,7 +28,7 @@ import RealmTasks from '../realm-tasks';
 export default class LoginScreen extends React.Component {
     constructor (props) {
         super(props);
-        this.state = { login: '', password: '', error: null };
+        this.state = { login: config.login, password: config.password, error: null };
         this.user = null;
     }
 
