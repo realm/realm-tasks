@@ -20,20 +20,12 @@ import Foundation
 import RealmSwift
 
 class SharingCoordinator {
+    static let shared = SharingCoordinator()
 
-    private weak var viewController: UIViewController?
     private var shareOfferNotificationToken: NotificationToken?
     private var shareReceivedNotificationToken: NotificationToken?
 
-    init(viewController: UIViewController) {
-        self.viewController = viewController
-    }
-
-    deinit {
-        shareOfferNotificationToken?.stop()
-    }
-
-    public func shareList(for realm: Realm, from view: UIView?) {
+    public func shareList(for realm: Realm, completion: ((String) -> Void)?) {
         let realmURL = realm.configuration.syncConfiguration!.realmURL
         let managementRealm = try! SyncUser.current!.managementRealm()
 
@@ -49,16 +41,46 @@ class SharingCoordinator {
         let offerResults = managementRealm.objects(SyncPermissionOffer.self).filter("id = %@", shareOffer.id)
         shareOfferNotificationToken = offerResults.addNotificationBlock { _ in
             guard case let offer = offerResults.first, offer?.status == .success, let token = offer?.token else {
-                    return
+                return
             }
-            // Send token via UIActivityViewController
-            let url = URL(string: "realmtasks://" + token.replacingOccurrences(of: ":", with: "/"))!
-            let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-            activityViewController.popoverPresentationController?.permittedArrowDirections = [.up, .down]
-            if let view = view {
-                activityViewController.popoverPresentationController?.sourceView = view
-            }
-            self.viewController?.present(activityViewController, animated: true, completion: nil)
+
+            completion?(token)
+
+            self.shareOfferNotificationToken?.stop()
+            self.shareOfferNotificationToken = nil
         }
     }
+
+    public func receiveList(with token: String, completion: ((String) -> Void)?) {
+        let managementRealm = try! SyncUser.current!.managementRealm()
+
+        // Create response with received token
+        let response = SyncPermissionOfferResponse(token: token)
+        try! managementRealm.write {
+            managementRealm.add(response)
+        }
+
+        // Wait for server to process
+        let responseResults = managementRealm.objects(SyncPermissionOfferResponse.self).filter("id = %@", response.id)
+        shareReceivedNotificationToken = responseResults.addNotificationBlock { _ in
+            guard case let response = responseResults.first, response?.status == .success,
+                let realmURL = response?.realmUrl else {
+                    return
+            }
+
+            completion?(realmURL)
+
+            self.shareReceivedNotificationToken?.stop()
+            self.shareReceivedNotificationToken = nil
+        }
+    }
+
+    // Send token via UIActivityViewController
+//    let url = URL(string: "realmtasks://" + token.replacingOccurrences(of: ":", with: "/"))!
+//    let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+//    activityViewController.popoverPresentationController?.permittedArrowDirections = [.up, .down]
+//    if let view = view {
+//        activityViewController.popoverPresentationController?.sourceView = view
+//    }
+//    self.viewController?.present(activityViewController, animated: true, completion: nil)
 }

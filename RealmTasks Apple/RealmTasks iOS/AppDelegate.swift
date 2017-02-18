@@ -37,7 +37,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        if
+        guard url.scheme == "realmtasks" else {
+            return false
+        }
+
+        // Extract the token from the URL
+        let urlString = url.absoluteString
+        let token = urlString.replacingOccurrences(of: "realmtasks://", with: "")
+
+        print("THE TOKEN IS \(token)")
 
         return true
     }

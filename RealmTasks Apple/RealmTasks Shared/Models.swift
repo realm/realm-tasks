@@ -92,6 +92,7 @@ final class TaskListReference: Object, CellPresentable, ListPresentable {
         if realm.isEmpty {
             try! realm.write {
                 let list = TaskList()
+                list.id = self.id
                 list.text = textMirror
                 realm.add(list)
             }
@@ -103,9 +104,9 @@ final class TaskListReference: Object, CellPresentable, ListPresentable {
 }
 
 final class TaskList: Object, CellPresentable, ListPresentable {
+    dynamic var id = ""
     dynamic var text = ""
     dynamic var completed = false
-    dynamic var id = 0 // swiftlint:disable:this variable_name
     let items = List<Task>()
 
     var isCompletable: Bool {
