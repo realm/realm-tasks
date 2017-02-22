@@ -5,8 +5,6 @@ using Realms;
 using Realms.Sync;
 using Xamarin.Forms;
 
-using ThreadingTask = System.Threading.Tasks.Task;
-
 namespace RealmTasks
 {
     public class ListsViewModel : ViewModelBase
@@ -28,9 +26,13 @@ namespace RealmTasks
         }
 
         public Command<TaskList> DeleteTaskListCommand { get; }
+
         public Command<TaskList> CompleteTaskListCommand { get; }
+
         public Command<TaskList> OpenTaskListCommand { get; }
+
         public Command AddTaskListCommand { get; }
+
         public Command LogoutCommand { get; }
 
         public ListsViewModel()

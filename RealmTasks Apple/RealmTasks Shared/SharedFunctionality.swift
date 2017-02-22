@@ -25,7 +25,7 @@ private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove 
 
 private var authenticationFailureCallback: (() -> Void)?
 
-private func setDefaultRealmConfiguration(with user: SyncUser) {
+public func setDefaultRealmConfiguration(with user: SyncUser) {
     SyncManager.shared.errorHandler = { error, session in
         // FIXME: enable after https://github.com/realm/realm-cocoa/pull/4580 or related is merged
         // if let authError = error as? SyncAuthError, authError.code == .invalidCredentials {

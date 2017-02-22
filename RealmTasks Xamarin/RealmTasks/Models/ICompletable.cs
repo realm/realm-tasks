@@ -1,5 +1,4 @@
-﻿using System;
-namespace RealmTasks
+﻿namespace RealmTasks
 {
     public interface ICompletable
     {

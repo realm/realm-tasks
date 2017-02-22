@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import UIKit
+import RealmLoginKit
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -43,25 +44,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func logIn(animated: Bool = true) {
-        let loginStoryboard = UIStoryboard(name: "RealmSyncLogin", bundle: .main)
-        let logInViewController = loginStoryboard.instantiateInitialViewController() as! LogInViewController
-        logInViewController.completionHandler = { response in
-            guard response.returnCode != .cancel, let username = response.username, let password = response.password else {
-                // FIXME: handle cancellation properly or just restrict it
-                DispatchQueue.main.async {
-                    self.logIn()
-                }
-                return
-            }
-            authenticate(username: username, password: password, register: response.returnCode == .register) { error in
-                if let error = error {
-                    self.present(error: error)
-                } else {
-                    self.window?.rootViewController = ContainerViewController()
-                }
-            }
+        let loginController = LoginViewController(style: .darkTranslucent)
+        loginController.isServerURLFieldHidden = true
+        loginController.isRememberAccountDetailsFieldHidden = true
+        loginController.serverURL = Constants.syncAuthURL.absoluteString
+        loginController.loginSuccessfulHandler = { user in
+            setDefaultRealmConfiguration(with: user)
+            self.window?.rootViewController = ContainerViewController()
+            self.window?.rootViewController?.dismiss(animated: true, completion: nil)
         }
-        window?.rootViewController?.present(logInViewController, animated: false, completion: nil)
+
+        window?.rootViewController?.present(loginController, animated: false, completion: nil)
     }
 
     func present(error: NSError) {
