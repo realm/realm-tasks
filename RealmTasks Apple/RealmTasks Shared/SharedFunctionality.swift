@@ -27,9 +27,7 @@ private var authenticationFailureCallback: (() -> Void)?
 
 public func setDefaultRealmConfiguration(with user: SyncUser) {
     SyncManager.shared.errorHandler = { error, session in
-        // FIXME: enable after https://github.com/realm/realm-cocoa/pull/4580 or related is merged
-        // if let authError = error as? SyncAuthError, authError.code == .invalidCredentials {
-        if let underlyingError = (error as NSError).userInfo["underlaying_error"] as? NSError, underlyingError.code == 611 {
+        if let authError = error as? SyncAuthError, authError.code == .invalidCredential {
             authenticationFailureCallback?()
         }
     }
