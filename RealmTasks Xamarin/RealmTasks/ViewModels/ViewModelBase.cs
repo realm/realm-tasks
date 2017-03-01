@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 
+using ThreadingTask = System.Threading.Tasks.Task;
+
 namespace RealmTasks
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
@@ -71,7 +73,7 @@ namespace RealmTasks
             Console.WriteLine(ex.Message);
         }
 
-        protected async void PerformTask(Func<System.Threading.Tasks.Task> func, Action<Exception> onError = null, string progressMessage = null)
+        protected async void PerformTask(Func<ThreadingTask> func, Func<Exception, ThreadingTask> onError = null, string progressMessage = null)
         {
             IsBusy = true;
             if (progressMessage != null)
@@ -91,7 +93,7 @@ namespace RealmTasks
                 }
                 else
                 {
-                    onError(ex);
+                    await onError(ex);
                 }
             }
             finally
