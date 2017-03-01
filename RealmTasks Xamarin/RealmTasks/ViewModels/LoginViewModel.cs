@@ -85,7 +85,7 @@ namespace RealmTasks
                     throw new Exception("Please update Constants.ADCredentials with the correct ClientId and RedirectUri for your application.");
                 }
 
-                var response = await authContext.AcquireTokenAsync(Constants.ADCredentials.ClientId, // or https://graph.windows.net
+                var response = await authContext.AcquireTokenAsync("https://graph.windows.net",
                                                                    clientId,
                                                                    redirectUri,
                                                                    _adAuthenticator.Value.GetPlatformParameters());

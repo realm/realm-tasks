@@ -70,7 +70,7 @@ namespace RealmTasks
 
         protected void HandleException(Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex);
         }
 
         protected async void PerformTask(Func<ThreadingTask> func, Func<Exception, ThreadingTask> onError = null, string progressMessage = null)
