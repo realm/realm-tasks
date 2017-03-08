@@ -25,6 +25,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
+
+        setAuthenticationFailureCallback {
+            resetDefaultRealm()
+            self.window?.rootViewController = UIViewController()
+            self.logIn()
+        }
+
         if configureDefaultRealm() {
             window?.rootViewController = ContainerViewController()
             window?.makeKeyAndVisible()

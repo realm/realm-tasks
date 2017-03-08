@@ -119,6 +119,21 @@ class ContainerViewController: NSViewController {
         }
     }
 
+    func dismissAllViewControllers() {
+        currentListViewController?.removeFromParentViewController()
+        currentListViewController?.view.removeFromSuperview()
+        currentListViewController = nil
+
+        notificationToken?.stop()
+        notificationToken = nil
+
+        if let titleView = view.window?.toolbar?.item(withIdentifier: toolbarTitleViewIdentifier)?.view as? TitleView {
+            titleView.text = ""
+        }
+
+        view.window?.makeFirstResponder(nil)
+    }
+
     private func updateToolbar<ListType: ListPresentable>(for list: ListType) where ListType: Object {
         guard let toolbar = view.window?.toolbar else {
             return

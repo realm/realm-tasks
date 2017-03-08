@@ -64,54 +64,17 @@
                                                 <action selector="newItem:" target="VaM-de-JXt" id="OtT-Tp-uOI"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Open…" keyEquivalent="o" id="m6V-zC-Op3">
-                                            <connections>
-                                                <action selector="openDocument:" target="VaM-de-JXt" id="Mpd-F7-ENn"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Open Recent" id="QRB-rg-HEz">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Open Recent" systemMenu="recentDocuments" id="lcN-MU-lGm">
-                                                <items>
-                                                    <menuItem title="Clear Menu" id="SVT-Rk-Tv8">
-                                                        <connections>
-                                                            <action selector="clearRecentDocuments:" target="VaM-de-JXt" id="H6U-SX-wa4"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                </items>
-                                            </menu>
-                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="MeL-WZ-xZR"/>
                                         <menuItem title="Close" keyEquivalent="w" id="crh-aF-s4Y">
                                             <connections>
                                                 <action selector="performClose:" target="VaM-de-JXt" id="OmX-WS-gqe"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Save" keyEquivalent="s" id="QTK-5X-N14">
-                                            <connections>
-                                                <action selector="saveDocument:" target="VaM-de-JXt" id="XYy-Kr-7og"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Save As…" keyEquivalent="S" id="pd8-CG-g8Z">
-                                            <connections>
-                                                <action selector="saveDocumentAs:" target="VaM-de-JXt" id="Wqc-gI-q32"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Revert to Saved" id="fD5-wP-iuL">
+                                        <menuItem isSeparatorItem="YES" id="hAe-88-VzD"/>
+                                        <menuItem title="Log out" id="nxD-Om-Bap">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="revertDocumentToSaved:" target="VaM-de-JXt" id="0Hm-eg-cB8"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="hAe-88-VzD"/>
-                                        <menuItem title="Page Setup…" keyEquivalent="P" id="YUb-eY-KbF">
-                                            <connections>
-                                                <action selector="runPageLayout:" target="VaM-de-JXt" id="Ffz-fP-DGR"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Print…" keyEquivalent="p" id="nxD-Om-Bap">
-                                            <connections>
-                                                <action selector="print:" target="VaM-de-JXt" id="Rfz-oe-iPR"/>
+                                                <action selector="logOut:" target="VaM-de-JXt" id="0p2-wk-YzO"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -382,7 +345,7 @@
         <scene sceneID="Eh9-Oq-vpp">
             <objects>
                 <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="CrP-T3-Pfk" sceneMemberID="viewController">
-                    <window key="window" title="RealmTasks" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="UPX-nY-FVZ">
+                    <window key="window" title="RealmTasks" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="UPX-nY-FVZ">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>

@@ -23,7 +23,15 @@ import RealmSwift
 
 private var deduplicationNotificationToken: NotificationToken! // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
 
+private var authenticationFailureCallback: (() -> Void)?
+
 public func setDefaultRealmConfiguration(with user: SyncUser) {
+    SyncManager.shared.errorHandler = { error, session in
+        if let authError = error as? SyncAuthError, authError.code == .invalidCredential {
+            authenticationFailureCallback?()
+        }
+    }
+
     Realm.Configuration.defaultConfiguration = Realm.Configuration(
         syncConfiguration: SyncConfiguration(user: user, realmURL: Constants.syncServerURL!),
         objectTypes: [TaskListList.self, TaskList.self, Task.self]
@@ -68,6 +76,10 @@ public func setDefaultRealmConfiguration(with user: SyncUser) {
 
 // Internal Functions
 
+func isDefaultRealmConfigured() -> Bool {
+    return try! !Realm().isEmpty
+}
+
 // returns true on success
 func configureDefaultRealm() -> Bool {
     if let user = SyncUser.current {
@@ -75,6 +87,20 @@ func configureDefaultRealm() -> Bool {
         return true
     }
     return false
+}
+
+func resetDefaultRealm() {
+    guard let user = SyncUser.current else {
+        return
+    }
+
+    deduplicationNotificationToken.stop()
+
+    user.logOut()
+}
+
+func setAuthenticationFailureCallback(callback: (() -> Void)?) {
+    authenticationFailureCallback = callback
 }
 
 func authenticate(username: String, password: String, register: Bool, callback: @escaping (NSError?) -> Void) {
@@ -85,17 +111,7 @@ func authenticate(username: String, password: String, register: Bool, callback: 
                 setDefaultRealmConfiguration(with: user)
             }
 
-            let error = error as NSError?
-
-            if let error = error, error._code == SyncError.httpStatusCodeError.rawValue && (error.userInfo["statusCode"] as? Int) == 400 {
-                // FIXME: workararound for https://github.com/realm/realm-cocoa-private/issues/204
-                let improvedError = NSError(error: error,
-                                            description: "Incorrect username or password.",
-                                            recoverySuggestion: "Please check username and password or register a new account.")
-                callback(improvedError)
-            } else {
-                callback(error)
-            }
+            callback(error as NSError?)
         }
     }
 }
