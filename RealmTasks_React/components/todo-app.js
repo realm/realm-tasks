@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 2016 Realm Inc.
 //
@@ -14,12 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////
 
 'use strict';
 
 import React from 'react';
-
 import {
     Navigator,
     Platform,
@@ -28,69 +27,69 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { v4 as uuidV4 } from 'uuid';
 
 import TodoItem from './todo-item';
 import TodoListView from './todo-listview';
 import RealmTasks from '../realm-tasks';
 import styles from './styles';
-const uuidV4 = require('uuid/v4');
 
 export default class TodoApp extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
         // This is a Results object, which will live-update.
-        this.todoLists = RealmTasks.realm.objects('TaskList').sorted('text');
-        if (this.todoLists.length < 1) { // FIXME async?!!
-          console.log(this.todoLists.length, this.todoLists);
-            RealmTasks.realm.write(() => {
-                RealmTasks.realm.create('TaskList', {text: 'My tasks', id: uuidV4()});
-            });
-        }
-        this.todoLists.addListener((name, changes) => {
-            console.log("changed: " + JSON.stringify(changes));
-            this.forceUpdate();
-        });
-        console.log("registered listener");
+    this.todoLists = RealmTasks.realm.objects('TaskList').sorted('text');
+    if (this.todoLists.length < 1) { // FIXME async?!!
+      console.log(this.todoLists.length, this.todoLists);
+      RealmTasks.realm.write(() => {
+        RealmTasks.realm.create('TaskList', { text: 'My tasks', id: uuidV4() });
+      });
+    }
+    this.todoLists.addListener((name, changes) => {
+      console.log(`changed: ${JSON.stringify(changes)}`);
+      this.forceUpdate();
+    });
+    console.log('registered listener');
 
 
         // Bind all the methods that we will be passing as props.
-        this.renderScene = this.renderScene.bind(this);
-        this._addNewTodoList = this._addNewTodoList.bind(this);
-        this._onPressTodoList = this._onPressTodoList.bind(this);
+    this.renderScene = this.renderScene.bind(this);
+    this._addNewTodoList = this._addNewTodoList.bind(this);
+    this._onPressTodoList = this._onPressTodoList.bind(this);
 
-        this.state = {};
+    this.state = {};
+  }
+
+  get currentListView() {
+    const refs = this.refs.nav.refs;
+    return refs.listItemView || refs.listView;
+  }
+
+  componentWillMount() {
+    if (Platform.OS == 'ios') {
+      StatusBar.setBarStyle('light-content');
     }
+  }
 
-    get currentListView() {
-        let refs = this.refs.nav.refs;
-        return refs.listItemView || refs.listView;
-    }
+  render() {
+    const route = {
+      title: 'My Todo Lists',
+      component: TodoListView,
+      passProps: {
+        ref: 'listView',
+        onPressItem: this._onPressTodoList,
+      },
+      backButtonTitle: 'Lists',
+      rightButtonTitle: 'Add',
+      onRightButtonPress: this._addNewTodoList,
+    };
 
-    componentWillMount() {
-        if (Platform.OS == 'ios') {
-            StatusBar.setBarStyle('light-content');
-        }
-    }
-
-    render() {
-        let route = {
-            title: 'My Todo Lists',
-            component: TodoListView,
-            passProps: {
-                ref: 'listView',
-                onPressItem: this._onPressTodoList,
-            },
-            backButtonTitle: 'Lists',
-            rightButtonTitle: 'Add',
-            onRightButtonPress: this._addNewTodoList,
-        };
-
-        let navigationBar = (
+    const navigationBar = (
             <Navigator.NavigationBar routeMapper={RouteMapper} style={styles.navBar} />
         );
 
-        return (
+    return (
             <Navigator
                 ref="nav"
                 initialRoute={route}
@@ -99,93 +98,93 @@ export default class TodoApp extends React.Component {
                 sceneStyle={styles.navScene}
                 style={styles.navigator}
             />
-        );
+    );
+  }
+
+  renderScene(route) {
+    return <route.component items={this.todoLists} {...route.passProps} />;
+  }
+
+  _addNewTodoItem(list) {
+    const items = list.items;
+    if (!this._shouldAddNewItem(items)) {
+      return;
     }
 
-    renderScene(route) {
-        return <route.component items={this.todoLists} {...route.passProps} />
+    RealmTasks.realm.write(() => {
+      items.push({ text: '' });
+    });
+
+    this._setEditingRow(items.length - 1);
+  }
+
+  _addNewTodoList() {
+    const items = this.todoLists;
+    if (!this._shouldAddNewItem(items)) {
+      return;
     }
 
-    _addNewTodoItem(list) {
-        let items = list.items;
-        if (!this._shouldAddNewItem(items)) {
-            return;
-        }
+    const uuid = uuidV4();
 
-        RealmTasks.realm.write(() => {
-            items.push({text: ''});
-        });
+    RealmTasks.realm.write(() => {
+      RealmTasks.realm.create('TaskList', { text: 'new task list', id: uuid, completed: false });
+    });
 
-        this._setEditingRow(items.length - 1);
-    }
+    const i = this.todoLists.findIndex(l => l.id == uuid);
+    console.log('UUID', uuid, i);
 
-    _addNewTodoList() {
-        let items = this.todoLists;
-        if (!this._shouldAddNewItem(items)) {
-            return;
-        }
+    this._setEditingRow(i);
+  }
 
-        const uuid = uuidV4();
+  _onPressTodoList(list) {
+    const items = list.items;
 
-        RealmTasks.realm.write(() => {
-            RealmTasks.realm.create('TaskList', { text: 'new task list', id: uuid, completed: false });
-        });
-
-        const i = this.todoLists.findIndex( l => l.id==uuid );
-        console.log("UUID", uuid, i);
-
-        this._setEditingRow(i);
-    }
-
-    _onPressTodoList(list) {
-        let items = list.items;
-
-        let route = {
-            title: list.text,
-            component: TodoListView,
-            passProps: {
-                ref: 'listItemView',
-                items: items,
-                rowClass: TodoItem,
-            },
-        };
+    const route = {
+      title: list.text,
+      component: TodoListView,
+      passProps: {
+        ref: 'listItemView',
+        items,
+        rowClass: TodoItem,
+      },
+    };
 
         // Check if the items are mutable (i.e. List rather than Results).
-        if (items.push) {
-            Object.assign(route, {
-                rightButtonTitle: 'Add',
-                onRightButtonPress: () => this._addNewTodoItem(list),
-            });
-        }
-
-        this.refs.nav.push(route);
+    if (items.push) {
+      Object.assign(route, {
+        rightButtonTitle: 'Add',
+        onRightButtonPress: () => this._addNewTodoItem(list),
+      });
     }
 
-    _shouldAddNewItem(items) {
-        let editingRow = this.currentListView.state.editingRow;
-        let editingItem = editingRow != null && items[editingRow];
+    this.refs.nav.push(route);
+  }
+
+  _shouldAddNewItem(items) {
+    const editingRow = this.currentListView.state.editingRow;
+    const editingItem = editingRow != null && items[editingRow];
 
         // Don't allow adding a new item if the one being edited is empty.
-        return !editingItem || !!editingItem.text;
-    }
+    return !editingItem || !!editingItem.text;
+  }
 
-    _setEditingRow(rowIndex) {
-        let listView = this.currentListView;
+  _setEditingRow(rowIndex) {
+    const listView = this.currentListView;
 
         // Update the state on the currently displayed TodoList to edit this new item.
-        listView.setState({editingRow: rowIndex});
-        listView.updateDataSource();
-    }
+    listView.setState({ editingRow: rowIndex });
+    listView.updateDataSource();
+  }
 }
 
 const RouteMapper = {
-    LeftButton(route, navigator, index, navState) {
-        if (index == 0) {
-            return null;
-        }
+  LeftButton(route, navigator, index, navState) {
+    if (index == 0) {
+      return null;
+    }
 
-        let prevRoute = navState.routeStack[index - 1];
-        return (
+    const prevRoute = navState.routeStack[index - 1];
+    return (
             <TouchableOpacity onPress={() => navigator.pop()}>
                 <View style={[styles.navBarView, styles.navBarLeftButton]}>
                     <Text style={styles.navBarLeftArrow}>‹</Text>
@@ -194,15 +193,15 @@ const RouteMapper = {
                     </Text>
                 </View>
             </TouchableOpacity>
-        );
-    },
+    );
+  },
 
-    RightButton(route) {
-        if (!route.rightButtonTitle) {
-            return null;
-        }
+  RightButton(route) {
+    if (!route.rightButtonTitle) {
+      return null;
+    }
 
-        return (
+    return (
             <TouchableOpacity onPress={route.onRightButtonPress}>
                 <View style={[styles.navBarView, styles.navBarRightButton]}>
                     <Text style={styles.navBarText}>
@@ -210,16 +209,16 @@ const RouteMapper = {
                     </Text>
                 </View>
             </TouchableOpacity>
-        );
-    },
+    );
+  },
 
-    Title(route) {
-        return (
+  Title(route) {
+    return (
             <View style={styles.navBarView}>
                 <Text style={[styles.navBarText, styles.navBarTitleText]}>
                     {route.title}
                 </Text>
             </View>
-        );
-    },
+    );
+  },
 };

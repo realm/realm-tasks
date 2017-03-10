@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 2016 Realm Inc.
 //
@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////
 
 'use strict';
 
@@ -24,36 +24,35 @@ import config from './config';
 
 let realm = null;
 
-function connect (action, username, password, callback) {
-    username = username.trim();
-    password = password.trim();
-    if(username === '') {
-        return callback(new Error('Username cannot be empty'));
-    } else if (password === '') {
-        return callback(new Error('Password cannot be empty'));
-    }
-         
-    Realm.Sync.User[action](config.auth_uri, username, password,
+function connect(action, username, password, callback) {
+  username = username.trim();
+  password = password.trim();
+  if (username === '') {
+    return callback(new Error('Username cannot be empty'));
+  } else if (password === '') {
+    return callback(new Error('Password cannot be empty'));
+  }
+
+  Realm.Sync.User[action](config.auth_uri, username, password,
         (error, user) => {
-            if (error) {
-                return callback(new Error(error.message));
-            } else {
-                realm = new Realm({
-                    schema: [Task, TaskList],
-                    sync: {
-                        user,
-                        url: config.db_uri
-                    },
-                    path: config.db_path
-                });
-                return callback(null, realm); // TODO errors
-            }
-        }
+          if (error) {
+            return callback(new Error(error.message));
+          }
+          realm = new Realm({
+            schema: [Task, TaskList],
+            sync: {
+              user,
+              url: config.db_uri,
+            },
+            path: config.db_path,
+          });
+          return callback(null, realm); // TODO errors
+        },
     );
 }
 
 export default {
-    login: connect.bind(undefined, 'login'),
-    register: connect.bind(undefined, 'register'),
-    realm
+  login: connect.bind(undefined, 'login'),
+  register: connect.bind(undefined, 'register'),
+  realm,
 };
