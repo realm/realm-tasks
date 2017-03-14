@@ -1,13 +1,13 @@
 PODS:
   - Cartography (1.0.1)
-  - Realm (2.4.3):
-    - Realm/Headers (= 2.4.3)
-  - Realm/Headers (2.4.3)
-  - RealmLoginKit (0.0.9):
+  - Realm (2.4.4):
+    - Realm/Headers (= 2.4.4)
+  - Realm/Headers (2.4.4)
+  - RealmLoginKit (0.0.11):
     - Realm
     - TORoundedTableView
-  - RealmSwift (2.4.3):
-    - Realm (= 2.4.3)
+  - RealmSwift (2.4.4):
+    - Realm (= 2.4.4)
   - SwiftLint (0.16.1)
   - TORoundedTableView (0.0.3)
 
@@ -19,9 +19,9 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   Cartography: c1460e99395b824d9d75360b0382faeb0b33dcd7
-  Realm: e08d60b0048ccccd3949c8c28a92c4db5712d7e9
-  RealmLoginKit: 917fe20a4134370ee95d6e861c48cf9c64f20318
-  RealmSwift: 30d49739ccb3385d201242736ca4dda56aec9dfc
+  Realm: 5a280a1f5a9a3c267bebf4f41ee47911137703d7
+  RealmLoginKit: 3a1b3614e43e1b8553d032fcdfbe2f1280d0860c
+  RealmSwift: 0c02b9f2d4be4301c497ed10e53a0580584eb1dd
   SwiftLint: b8b683208cc09640898f16318a7a452274e91f61
   TORoundedTableView: 4155565233135d81d6626a0c4ecfba27991cf2b1
 
