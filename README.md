@@ -1,12 +1,14 @@
-# RealmTasks
+# Realm Tasks
 
-A basic task management app, designed as a *homage* to [Realmac Software's Clear](http://realmacsoftware.com/clear),
+> A basic task management app, designed as a *homage* to [Realmac Software's Clear](http://realmacsoftware.com/clear),
 with their knowledge and permission.
+
+![Realm Tasks](screenshot.jpg)
 
 **Warning:** This project is very much a work in progress, being used as a testbed for new Realm technologies.
 It is in no way a fully feature-complete product, nor is it ever meant to be an actual competitor for the Clear app.
 
-## Prerequisites
+# Requirements
 
 ### Cocoa
 
@@ -58,6 +60,24 @@ We recommend that you run at least two instances of the app together to really s
 2. Paste the following into the Realm Browser's Sync Server URL field: `realm://127.0.0.1:9080/~/realmtasks`.
 3. Enter the same username and password as you used when running RealmTasks and click "Open".
 
-## License
+# Third Party Dependencies
+
+### Cocoa
+
+The following modules will be installed as part of the CocoaPods installation:
+
+* [Realm Swift](https://realm.io) - The Swift version of the Realm Mobile Database.
+* [Realm LoginKit](https://github.com/realm-demos/realm-loginkit) - A Realm control for logging in to Realm servers.
+* [Cartography](https://github.com/robb/Cartography) - A library for making it easier to define auto layout constraints in code.
+* [SwiftLint](https://github.com/realm/SwiftLint) - A tool for validating the quality of Swift code.
+
+# Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details!
+
+This project adheres to the [Contributor Covenant Code of Conduct](https://realm.io/conduct/). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@realm.io](mailto:info@realm.io).
+
+
+# License
 
 The source code for RealmTasks is licensed under the [Apache License 2.0](LICENSE).
