@@ -3,7 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="signin_horizontal_margin">64dp</dimen>
+    <dimen name="signin_horizontal_margin">48dp</dimen>
     <dimen name="padding_bottom_pull_down">16dp</dimen>
     <dimen name="row_min_height">55dp</dimen>
     <dimen name="row_icon_margin">20dp</dimen>
