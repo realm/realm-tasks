@@ -56,7 +56,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'
     compile 'com.android.support:support-annotations:25.0.0'
-    compile 'io.realm:android-adapters:1.4.0'
+    compile 'io.realm:android-adapters:2.0.0'
     // Dependency for Facebook Sign-in
     compile 'com.facebook.android:facebook-android-sdk:4.15.0'
 
