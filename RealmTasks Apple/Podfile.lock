@@ -1,30 +1,30 @@
 PODS:
   - Cartography (1.0.1)
-  - Realm (2.5.0):
-    - Realm/Headers (= 2.5.0)
-  - Realm/Headers (2.5.0)
+  - Realm (2.6.1):
+    - Realm/Headers (= 2.6.1)
+  - Realm/Headers (2.6.1)
   - RealmLoginKit (0.0.12):
     - Realm
     - TORoundedTableView
-  - RealmSwift (2.5.0):
-    - Realm (= 2.5.0)
+  - RealmSwift (2.6.1):
+    - Realm (= 2.6.1)
   - SwiftLint (0.16.1)
   - TORoundedTableView (0.0.3)
 
 DEPENDENCIES:
   - Cartography (~> 1.0.1)
   - RealmLoginKit
-  - RealmSwift (~> 2.5.0)
+  - RealmSwift (~> 2.6.1)
   - SwiftLint (= 0.16.1)
 
 SPEC CHECKSUMS:
   Cartography: c1460e99395b824d9d75360b0382faeb0b33dcd7
-  Realm: 62abce501668580092d2be9b6ba7324a3d5f906a
+  Realm: 9abfd4f87519376daa5ae3a4603155de408bf8b3
   RealmLoginKit: f3a498de5e6ab60b361f8e4ca6d6736a8055628e
-  RealmSwift: 9f1a8f624f2f153410115c2cb7d486be9976565d
+  RealmSwift: a54d3e8931cf7d3afa5a1fac9c8f88109d7f02b3
   SwiftLint: b8b683208cc09640898f16318a7a452274e91f61
   TORoundedTableView: 4155565233135d81d6626a0c4ecfba27991cf2b1
 
-PODFILE CHECKSUM: 2bca331dbfed8db4939a3164739e56511b8829e9
+PODFILE CHECKSUM: e0f246b75e775dc606904305be55c483ab047a56
 
 COCOAPODS: 1.2.0
