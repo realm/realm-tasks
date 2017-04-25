@@ -23,17 +23,22 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import io.realm.realmtasks.R;
 
@@ -47,14 +52,18 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final int cellCompletedBackgroundColor;
     @ColorInt
     private final int cellDefaultColor;
+    @ColorInt
+    private final int metadataCellCompletedColor;
 
     private final RelativeLayout iconBar;
-    private final RelativeLayout row;
+    private final LinearLayout row;
     private final RelativeLayout hintPanel;
+    private final View metadataRow;
     private final ImageView arrow;
     private final EditText editText;
     private final TextView badge;
     private final TextView text;
+    private final TextView metadata;
     private final RecyclerView.Adapter adapter;
     private boolean completed;
     private boolean shouldChangeBackgroundColor;
@@ -64,18 +73,22 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
         iconBar = (RelativeLayout) itemView.findViewById(R.id.icon_bar);
-        row = (RelativeLayout) itemView.findViewById(R.id.row);
+        row = (LinearLayout) itemView.findViewById(R.id.row);
         hintPanel = (RelativeLayout) itemView.findViewById(R.id.hint_panel);
+        metadataRow = itemView.findViewById(R.id.row_metadata);
         arrow = (ImageView) hintPanel.findViewById(R.id.arrow);
         badge = (TextView) row.findViewById(R.id.badge);
         text = (TextView) row.findViewById(R.id.text);
+        metadata = (TextView) row.findViewById(R.id.task_metadata);
         editText = (EditText) row.findViewById(R.id.edit_text);
         cellUnusedColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_unused_color);
         cellCompletedColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_color);
         cellCompletedBackgroundColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_background_color);
         cellDefaultColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_default_color);
+        metadataCellCompletedColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_default_metadata_color);
         shouldChangeBackgroundColor = true;
         shouldChangeTextColor = true;
+        metadataRow.setVisibility(View.GONE);
         previousFirstLength = -1;
         this.adapter = adapter;
     }
@@ -97,15 +110,19 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         if (completed) {
             text.setTextColor(cellCompletedColor);
             text.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
-            row.setBackgroundColor(
-                    cellCompletedBackgroundColor);
+            metadata.setTextColor(cellCompletedColor);
+            metadata.setPaintFlags(paintFlags | Paint.STRIKE_THRU_TEXT_FLAG);
+            row.setBackgroundColor(cellCompletedBackgroundColor);
         } else {
             if (badge.getVisibility() == View.VISIBLE && badge.getText().equals("0")) {
                 text.setTextColor(cellCompletedColor);
+                metadata.setTextColor(cellCompletedColor);
             } else {
                 text.setTextColor(cellDefaultColor);
+                metadata.setTextColor(metadataCellCompletedColor);
             }
             text.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            metadata.setPaintFlags(paintFlags & ~Paint.STRIKE_THRU_TEXT_FLAG);
             row.setBackgroundColor(generateBackgroundColor());
         }
         shouldChangeTextColor = false;
@@ -120,7 +137,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             if (isEditable() == false) {
                 editText.setText(text.getText().toString());
             }
-            text.setVisibility(View.GONE);
+            hideReadOnlyTaskText();
             editText.setVisibility(View.VISIBLE);
             editText.requestFocus();
             final Context context = editText.getContext();
@@ -137,6 +154,16 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    private void hideReadOnlyTaskText() {
+        text.setVisibility(View.GONE);
+        metadataRow.setVisibility(View.GONE);
+        metadata.setText(""); // clear the metadata text if we're hiding and showing the edit text.  It will need to be reparsed.
+    }
+    
+    private void showReadOnlyTaskText() {
+        text.setVisibility(View.VISIBLE);
+    }
+    
     public boolean isEditable() {
         return editText.getVisibility() == View.VISIBLE;
     }
@@ -183,7 +210,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void reset() {
-        text.setVisibility(View.VISIBLE);
+        showReadOnlyTaskText();
         editText.setVisibility(View.GONE);
         itemView.setTranslationX(0);
         itemView.setTranslationY(0);
@@ -202,7 +229,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         row.setBackgroundColor(generateBackgroundColor());
     }
 
-    public RelativeLayout getRow() {
+    public LinearLayout getRow() {
         return row;
     }
 
@@ -212,6 +239,16 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
     public TextView getText() {
         return text;
+    }
+
+    public void setMetadataText(CharSequence text) {
+        if(TextUtils.isEmpty(text)) {
+            metadata.setText("");
+            metadataRow.setVisibility(View.GONE);
+        } else {
+            metadata.setText(text);
+            metadataRow.setVisibility(View.VISIBLE);
+        }
     }
 
     public EditText getEditText() {
