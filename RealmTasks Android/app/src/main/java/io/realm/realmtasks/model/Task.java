@@ -16,6 +16,8 @@
 
 package io.realm.realmtasks.model;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
@@ -23,10 +25,12 @@ public class Task extends RealmObject implements Completable {
 
     public static final String FIELD_TEXT = "text";
     public static final String FIELD_COMPLETED = "completed";
+    public static final String FIELD_DATE = "date";
 
     @Required
     private String text;
     private boolean completed;
+    private Date date;
 
     public String getText() {
         return text;
@@ -42,6 +46,14 @@ public class Task extends RealmObject implements Completable {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override
