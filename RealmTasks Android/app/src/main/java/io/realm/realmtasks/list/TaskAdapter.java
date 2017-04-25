@@ -28,7 +28,6 @@ import java.util.Date;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.realmtasks.model.Task;
 
 public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapter {
