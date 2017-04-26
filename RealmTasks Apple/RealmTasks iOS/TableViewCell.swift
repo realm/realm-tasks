@@ -51,6 +51,8 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
 
     // Stored Properties
     let textView = CellTextView()
+    let dateLabel = CellDateLabel()
+
     var item: Item! {
         didSet {
             textView.text = item.text
@@ -80,6 +82,8 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     private let overlayView = UIView()
     private let countLabel = UILabel()
 
+    private let constraintGroup = ConstraintGroup()
+
     // Assets
     private let doneIconView = UIImageView(image: UIImage(named: "DoneIcon"))
     private let deleteIconView = UIImageView(image: UIImage(named: "DeleteIcon"))
@@ -105,11 +109,14 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         setupIconViews()
         setupOverlayView()
         setupTextView()
+        setupDateLabel()
         setupBorders()
         if Item.self == TaskList.self {
             setupCountBadge()
         }
         setupNavHintView()
+
+        setLayoutConstraints(dateLabelHidden: true)
     }
 
     func reset() {
@@ -151,14 +158,37 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     private func setupTextView() {
         textView.delegate = self
         contentView.addSubview(textView)
+
         constrain(textView) { textView in
-            textView.left == textView.superview!.left + 8
             textView.top == textView.superview!.top + 8
-            textView.bottom == textView.superview!.bottom - 8
+            textView.left == textView.superview!.left + 8
             if Item.self == TaskList.self {
                 textView.right == textView.superview!.right - 68
             } else {
                 textView.right == textView.superview!.right - 8
+            }
+        }
+
+    }
+
+    private func setupDateLabel() {
+        contentView.addSubview(dateLabel)
+        constrain(textView, dateLabel) { textView, dateLabel in
+            dateLabel.left == dateLabel.superview!.left + 13
+            dateLabel.bottom == dateLabel.superview!.bottom - 8
+            dateLabel.right == dateLabel.superview!.right - 8
+        }
+    }
+
+    private func setLayoutConstraints(dateLabelHidden: Bool) {
+        if dateLabelHidden {
+            constrain(textView, replace: constraintGroup) { textView in
+                textView.bottom == textView.superview!.bottom - 8
+            }
+        }
+        else {
+            constrain(textView, dateLabel, replace: constraintGroup) { textView, dateLabel in
+                textView.bottom == dateLabel.top - 2
             }
         }
     }
