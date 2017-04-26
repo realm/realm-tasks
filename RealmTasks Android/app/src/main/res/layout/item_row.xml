@@ -40,7 +40,10 @@
         android:id="@+id/row"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="@dimen/row_text_padding"
+        android:paddingBottom="@dimen/row_text_padding"
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,7 +60,6 @@
                 android:layout_marginStart="@dimen/row_text_margin_left"
                 android:layout_marginRight="@dimen/row_text_margin_right"
                 android:layout_marginEnd="@dimen/row_text_margin_right"
-                android:paddingTop="@dimen/row_text_padding"
                 android:text="@string/row_text_placeholder"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/row_text_size"
@@ -74,7 +76,7 @@
                 android:layout_marginRight="@dimen/row_text_margin_right"
                 android:layout_marginEnd="@dimen/row_text_margin_right"
                 android:textColor="@android:color/white"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 android:visibility="gone"/>
 
             <TextView
@@ -107,7 +109,6 @@
                 android:layout_marginLeft="@dimen/row_text_margin_left"
                 android:layout_marginRight="@dimen/row_text_margin_right"
                 android:layout_marginEnd="@dimen/row_text_margin_right"
-                android:paddingBottom="@dimen/row_text_padding"
                 android:text="@string/row_text_placeholder"
                 android:textColor="@color/cell_default_metadata_color"
                 android:textSize="@dimen/row_metadata_text_size"
@@ -129,8 +130,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_toStartOf="@+id/arrow"
-            android:layout_toLeftOf="@id/arrow"
             android:text="@string/switch_to_lists"
             android:textColor="@android:color/white"/>
 
