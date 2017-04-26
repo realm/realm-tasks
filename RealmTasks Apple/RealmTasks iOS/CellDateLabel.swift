@@ -24,8 +24,7 @@ class CellDateLabel: UILabel {
         super.init(frame: .zero)
         backgroundColor = .clear
         font = UIFont.systemFont(ofSize: 13)
-        textColor = UIColor(white: 1.0, alpha: 0.4)
-        text = "5:00PM Today"
+        textColor = UIColor(white: 1.0, alpha: 0.7)
         sizeToFit()
     }
 

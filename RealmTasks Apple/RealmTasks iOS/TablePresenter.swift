@@ -116,7 +116,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if cellPresenter.currentlyEditingIndexPath?.row == indexPath.row {
-            return floor(cellPresenter.cellHeight(forText: cellPresenter.currentlyEditingCell!.textView.text))
+            return floor(cellPresenter.cellHeight(forText: cellPresenter.currentlyEditingCell!.textView.text, timeHidden: true))
         }
 
         var item = items[indexPath.row]
@@ -130,7 +130,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 item = items[destinationIndexPath.row]
             }
         }
-        return floor(cellPresenter.cellHeight(forText: item.text))
+        return floor(cellPresenter.cellHeight(forText: item.text, timeHidden: item.date == nil))
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

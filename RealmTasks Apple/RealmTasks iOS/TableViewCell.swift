@@ -49,6 +49,12 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
 
     // MARK: Properties
 
+    lazy var dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E, d MMM 'at' h:m a"
+        return dateFormatter
+    }()
+
     // Stored Properties
     let textView = CellTextView()
     let dateLabel = CellDateLabel()
@@ -56,6 +62,13 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     var item: Item! {
         didSet {
             textView.text = item.text
+            if item.date != nil {
+                dateLabel.isHidden = false
+                dateLabel.text = dateFormatter.string(from: item.date!)
+            }
+            else {
+                dateLabel.isHidden = true
+            }
             setCompleted(item.completed)
             if let item = item as? TaskList {
                 let count = item.items.filter("completed == false").count
