@@ -167,6 +167,8 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
             public void execute(Realm realm) {
                 Task task = getData().get(position);
                 task.setText(viewHolder.getText().getText().toString());
+                task.setDate(null); // remove date on text change, server will set
+                                    // new value if there is a value to be set.
             }
         });
         realm.close();

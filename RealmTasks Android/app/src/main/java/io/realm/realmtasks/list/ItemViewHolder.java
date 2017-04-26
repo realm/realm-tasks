@@ -146,7 +146,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             if (isEditable() == true) {
                 text.setText(editText.getText().toString());
             }
-            text.setVisibility(View.VISIBLE);
+            showReadOnlyTaskText();
             editText.setVisibility(View.GONE);
         }
     }
