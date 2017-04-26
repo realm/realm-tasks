@@ -26,6 +26,7 @@ protocol ListPresentable {
 
 protocol CellPresentable {
     var text: String { get set }
+    var date: Date? { get set }
     var completed: Bool { get set }
     var isCompletable: Bool { get }
 }
@@ -57,6 +58,7 @@ final class TaskList: Object, CellPresentable, ListPresentable {
 
 final class Task: Object, CellPresentable {
     dynamic var text = ""
+    dynamic var date: Date? = nil
     dynamic var completed = false
 
     var isCompletable: Bool { return true }
