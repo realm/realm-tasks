@@ -58,13 +58,12 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         }
     }
 
-    private String naturalDateFrom(@NonNull Date taskDueDate) {
+    private CharSequence naturalDateFrom(@NonNull Date taskDueDate) {
         return DateUtils.getRelativeDateTimeString(
                 context,
                 taskDueDate.getTime(),
                 DateUtils.DAY_IN_MILLIS,
-                DateUtils.WEEK_IN_MILLIS, 0).toString()
-                .replace(",", " at");
+                DateUtils.WEEK_IN_MILLIS, 0);
     }
 
     private void narrowRightMargin(View view) {
