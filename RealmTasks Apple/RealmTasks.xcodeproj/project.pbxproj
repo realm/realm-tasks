@@ -11,6 +11,7 @@
 		2163F0E9852950CD8D643708 /* Pods_RealmTasks_RealmTasks_macOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32FAE3E2816E19668BE587C1 /* Pods_RealmTasks_RealmTasks_macOS.framework */; };
 		22092D861D5C5BCB0016E757 /* NavHintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22092D851D5C5BCB0016E757 /* NavHintView.swift */; };
 		220C334A1D3DE1F40043A885 /* OnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220C33491D3DE1F40043A885 /* OnboardView.swift */; };
+		221324A71EAFFFD700FB22C9 /* CellDateLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221324A61EAFFFD700FB22C9 /* CellDateLabel.swift */; };
 		2252019E1D3DD648009E45FA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225201941D3DD648009E45FA /* AppDelegate.swift */; };
 		2252019F1D3DD648009E45FA /* iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 225201951D3DD648009E45FA /* iOS.xcassets */; };
 		225201A01D3DD648009E45FA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 225201961D3DD648009E45FA /* LaunchScreen.storyboard */; };
@@ -72,6 +73,7 @@
 		17DA89361AD60841411CAFF7 /* Pods-RealmTasks-RealmTasks iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		22092D851D5C5BCB0016E757 /* NavHintView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavHintView.swift; sourceTree = "<group>"; };
 		220C33491D3DE1F40043A885 /* OnboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardView.swift; sourceTree = "<group>"; };
+		221324A61EAFFFD700FB22C9 /* CellDateLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellDateLabel.swift; sourceTree = "<group>"; };
 		225201941D3DD648009E45FA /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		225201951D3DD648009E45FA /* iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = iOS.xcassets; sourceTree = "<group>"; };
 		225201971D3DD648009E45FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 			children = (
 				220C33491D3DE1F40043A885 /* OnboardView.swift */,
 				2252019C1D3DD648009E45FA /* CellTextView.swift */,
+				221324A61EAFFFD700FB22C9 /* CellDateLabel.swift */,
 				2252019A1D3DD648009E45FA /* TableViewCell.swift */,
 				22092D851D5C5BCB0016E757 /* NavHintView.swift */,
 				9CDF4F1E1D9E745300EC051B /* UIView+constraints.swift */,
@@ -673,6 +676,7 @@
 				C2E472201D3FDF2E00276542 /* LocalIPAddress.swift in Sources */,
 				225201A61D3DD648009E45FA /* ViewController.swift in Sources */,
 				22092D861D5C5BCB0016E757 /* NavHintView.swift in Sources */,
+				221324A71EAFFFD700FB22C9 /* CellDateLabel.swift in Sources */,
 				225201A51D3DD648009E45FA /* CellTextView.swift in Sources */,
 				E8A1E6521D59360A00D8B04A /* SharedFunctionality.swift in Sources */,
 				9C24AA071D8FEEB500192CE3 /* CellPresenter.swift in Sources */,
