@@ -26,5 +26,8 @@
     <string name="badge_placeholder">3</string>
     <string name="switch_to_lists">Switch to Lists</string>
     <string name="row_text_placeholder">Text</string>
+    <string name="done_indicator_content_description">Done Indicator</string>
+    <string name="delete_icon_content_description">Delete Icon</string>
+    <string name="cell_arrow_content_description">Arrow</string>
 
 </resources>

@@ -17,14 +17,17 @@
 package io.realm.realmtasks.list;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.realmtasks.model.Task;
 
 public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapter {
@@ -41,10 +44,26 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
         if (task.isValid()) {
             final TextView text = itemViewHolder.getText();
             text.setText(task.getText());
+
+            Date taskDate = task.getDate();
+            if(taskDate != null) {
+                CharSequence naturalDateString = naturalDateFrom(taskDate);
+                itemViewHolder.setMetadataText(naturalDateString);
+            } else {
+                itemViewHolder.setMetadataText(null);
+            }
             narrowRightMargin(text);
             narrowRightMargin(itemViewHolder.getEditText());
             itemViewHolder.setCompleted(task.isCompleted());
         }
+    }
+
+    private CharSequence naturalDateFrom(@NonNull Date taskDueDate) {
+        return DateUtils.getRelativeDateTimeString(
+                context,
+                taskDueDate.getTime(),
+                DateUtils.DAY_IN_MILLIS,
+                DateUtils.WEEK_IN_MILLIS, 0);
     }
 
     private void narrowRightMargin(View view) {
@@ -85,7 +104,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
     public void onItemCompleted(final int position) {
         final Task task = getData().get(position);
         final Realm realm = Realm.getDefaultInstance();
-        final int count = (int) ((RealmList<Task>) getData()).where().equalTo(Task.FIELD_COMPLETED, false).count();
+        final int count = (int) getData().where().equalTo(Task.FIELD_COMPLETED, false).count();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -148,6 +167,8 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
             public void execute(Realm realm) {
                 Task task = getData().get(position);
                 task.setText(viewHolder.getText().getText().toString());
+                task.setDate(null); // remove date on text change, server will set
+                                    // new value if there is a value to be set.
             }
         });
         realm.close();
