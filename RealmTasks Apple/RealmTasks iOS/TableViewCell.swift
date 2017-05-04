@@ -51,7 +51,9 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
 
     lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E, d MMM 'at' h:m a"
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        dateFormatter.doesRelativeDateFormatting = true
         return dateFormatter
     }()
 
