@@ -315,7 +315,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 placeHolderCell.textView.text = "Pull to Create Item"
 
                 let cellHeight = viewController.tableView.rowHeight
-                let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
+                let angle = CGFloat.pi - tan(distancePulledDown / cellHeight)
 
                 var transform = CATransform3DIdentity
                 transform.m34 = CGFloat(1.0 / -(1000 * 0.2))
