@@ -20,7 +20,6 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 * Android Studio 2.2 with Android API 25
 * An emulator, Genymotion or a real device attached and running.
 
-
 ## 1. Get the Realm Mobile Platform Package and start the Object Server
 
 1. Download and extract the Realm Mobile Platform package from <https://realm.io/docs/realm-mobile-platform/get-started/>.
@@ -59,6 +58,12 @@ We recommend that you run at least two instances of the app together to really s
 1. Launch the "Realm Browser" app included in the package obtained above and click "Open Sync URL...".
 2. Paste the following into the Realm Browser's Sync Server URL field: `realm://127.0.0.1:9080/~/realmtasks`.
 3. Enter the same username and password as you used when running RealmTasks and click "Open".
+
+# Compatibility
+
+RealmTasks is designed to be cross platform, so versions for all platforms/languages should be able to sync with each other. There may be slight discrepancies in terms of functionality which will be listed here.
+
+- Authentication against Azure Active Directory is only supported in the Xamarin version.
 
 # Third Party Dependencies
 
