@@ -162,7 +162,7 @@ namespace RealmTasks
 
         private void Logout()
         {
-            User.Current.LogOut();
+            User.Current?.LogOut();
             NavigationService.SetMainPage<ListsViewModel>();
         }
     }

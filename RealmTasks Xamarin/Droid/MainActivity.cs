@@ -1,7 +1,9 @@
 ﻿using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -21,6 +23,12 @@ namespace RealmTasks.Droid
             UserDialogs.Init(() => (Activity)Forms.Context);
 
             LoadApplication(new App());
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            AuthenticationAgentContinuationHelper.SetAuthenticationAgentContinuationEventArgs(requestCode, resultCode, data);
         }
     }
 }
