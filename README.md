@@ -1,5 +1,11 @@
 # Realm Tasks
 
+---
+
+***For information on how to try out Realm Functions, the latest feature of the Realm Mobile Platform, check out the [Realm Functions folder](RealmTasks%20Functions).***
+
+---
+
 > A basic task management app, designed as a *homage* to [Realmac Software's Clear](http://realmacsoftware.com/clear),
 with their knowledge and permission.
 
