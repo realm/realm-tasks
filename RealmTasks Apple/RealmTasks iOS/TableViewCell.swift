@@ -71,6 +71,8 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             else {
                 dateLabel.isHidden = true
             }
+            setLayoutConstraints(dateLabelHidden: dateLabel.isHidden)
+
             setCompleted(item.completed)
             if let item = item as? TaskList {
                 let count = item.items.filter("completed == false").count
@@ -175,7 +177,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         contentView.addSubview(textView)
 
         constrain(textView) { textView in
-            textView.top == textView.superview!.top + 8
+            textView.top == textView.superview!.top + 17
             textView.left == textView.superview!.left + 8
             if Item.self == TaskList.self {
                 textView.right == textView.superview!.right - 68
@@ -189,8 +191,8 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     private func setupDateLabel() {
         contentView.addSubview(dateLabel)
         constrain(textView, dateLabel) { textView, dateLabel in
-            dateLabel.left == dateLabel.superview!.left + 13
-            dateLabel.bottom == dateLabel.superview!.bottom - 8
+            dateLabel.left == dateLabel.superview!.left + 14
+            dateLabel.bottom == dateLabel.superview!.bottom - 17
             dateLabel.right == dateLabel.superview!.right - 8
         }
     }
@@ -198,12 +200,12 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     private func setLayoutConstraints(dateLabelHidden: Bool) {
         if dateLabelHidden {
             constrain(textView, replace: constraintGroup) { textView in
-                textView.bottom == textView.superview!.bottom - 8
+                textView.bottom == textView.superview!.bottom - 7
             }
         }
         else {
             constrain(textView, dateLabel, replace: constraintGroup) { textView, dateLabel in
-                textView.bottom == dateLabel.top - 2
+                textView.bottom == dateLabel.top + 10
             }
         }
     }

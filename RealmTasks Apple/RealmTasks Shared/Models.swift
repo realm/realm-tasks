@@ -58,7 +58,7 @@ final class TaskList: Object, CellPresentable, ListPresentable {
 
 final class Task: Object, CellPresentable {
     dynamic var text = ""
-    dynamic var date: Date? = nil
+    dynamic var date: Date?
     dynamic var completed = false
 
     var isCompletable: Bool { return true }

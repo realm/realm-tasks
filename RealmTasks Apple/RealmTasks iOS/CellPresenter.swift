@@ -145,7 +145,7 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
             return 0
         }
 
-        let dateHeight = timeHidden ? 0 : 10
+        let dateHeight = timeHidden ? 0 : 17
 
         return text.boundingRect(with: CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
                                  options: [.usesLineFragmentOrigin],
