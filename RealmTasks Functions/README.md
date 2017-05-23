@@ -7,7 +7,7 @@ serverside in response to when the data in a user-facing Realm changes.
 
 ![Realm Tasks and Realm Functions](https://github.com/realm-demos/realm-tasks/raw/to/functions-tutorial/RealmTasks%20Functions/screenshot.jpg)
 
-# Requirments
+# Requirements
 * A Mac running macOS Sierra / El Capitan
 * Xcode 8.3 (Running Swift 3.1)
 * A command line app (Terminal works great)
@@ -37,14 +37,20 @@ Before you can use their services, you must obtain an API key from wit.ai
 1. Navigate to [http://wit.ai](http://wit.ai) and log in with your GitHub account.
 2. Click on the '+' symbol to create a new app. Give the app a name ('RealmTasks' should be enough) and click 'Create App'.
 
-
+![Create New wit.ai App](media/CreateNewWitApp.jpg)
 
 3. To configure your app for understanding time, click 'Add a new entity', and choose 'wit/datetime'.
 
+![Create New wit.ai Entity](media/SetUpWitDateTime.jpg)
+
 4. Try writing an example sentence to see if wit.ai will pick up your time references correctly.
+
+![Create New wit.ai Entity](media/TestWitTime.jpg)
 
 5. Click on the 'Settings' button to go the settings page for your app.
 6. In 'API Details', copy the value in 'Server Access Token'. This is your API key for integrating with wit.ai
+
+![Copy wit.ai token](media/CopyWitToken.jpg)
 
 # 4. Run the Realm Object Server
 1. In the Realm Mobile Platform bundle you downloaded, open `start-object-server.command` to start running the Realm Object Server.
