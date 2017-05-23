@@ -5,7 +5,7 @@ serverside in response to when the data in a user-facing Realm changes.
 
 > This tutorial will walk you through setting up the iOS version of Realm Tasks in conjunction with a local instance of Realm Functions. When a task is added to Realm Tasks, Realm Functions will use wit.ai, a third party integration to analyze the task for any time references and pass any back to Realm Tasks as `NSDate` values.
 
-![Realm Tasks and Realm Functions](https://github.com/realm-demos/realm-tasks/raw/to/functions-tutorial/RealmTasks%20Functions/screenshot.jpg)
+![Realm Tasks and Realm Functions](screenshot.jpg)
 
 # Requirements
 * A Mac running macOS Sierra / El Capitan
