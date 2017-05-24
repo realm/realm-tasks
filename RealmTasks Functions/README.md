@@ -18,7 +18,7 @@ serverside in response to when the data in a user-facing Realm changes.
 
 Before proceeding, you'll need to make sure you have a copy of both the Realm Tasks source code, and a copy of the Realm Mobile Platform supporting Realm Functions.
 
-* [Download the latest version of Realm Tasks](https://github.com/realm-demos/realm-tasks/archive/to/functions-tutorial.zip).
+* [Download the latest version of Realm Tasks](https://github.com/realm-demos/realm-tasks/archive/master.zip).
 * [Download the latest version the Realm Mobile Platform bundle for macOS](https://realm.io/docs/get-started/installation/mac/).
 
 # 2. Install the wit.ai NPM Dependency
