@@ -154,20 +154,17 @@ public class TaskActivity extends AppCompatActivity {
         public void onMoved(RecyclerView recyclerView, ItemViewHolder from, ItemViewHolder to) {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
-            // TODO need to suppress executing listener after https://github.com/realm/realm-java/issues/4225 is introduced.
             adapter.onItemMoved(fromPosition, toPosition);
         }
 
         @Override
         public void onCompleted(ItemViewHolder viewHolder) {
-            // TODO need to suppress executing listener
             adapter.onItemCompleted(viewHolder.getAdapterPosition());
         }
 
         @Override
         public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
-            // TODO need to suppress executing listener
             adapter.onItemDismissed(position);
         }
 
@@ -183,19 +180,16 @@ public class TaskActivity extends AppCompatActivity {
 
         @Override
         public void onChanged(ItemViewHolder viewHolder) {
-            // TODO need to suppress executing listener
             adapter.onItemChanged(viewHolder);
         }
 
         @Override
         public void onAdded() {
-            // TODO need to suppress executing listener
             adapter.onItemAdded();
         }
 
         @Override
         public void onReverted(boolean shouldUpdateUI) {
-            // TODO need to suppress executing listener
             adapter.onItemReverted();
         }
 
