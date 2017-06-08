@@ -140,14 +140,16 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
         }
     }
 
-    func cellHeight(forText text: String) -> CGFloat {
+    func cellHeight(forText text: String, timeHidden: Bool = true) -> CGFloat {
         guard let view = viewController.tableView.superview else {
             return 0
         }
 
+        let dateHeight = timeHidden ? 0 : 17
+
         return text.boundingRect(with: CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
                                  options: [.usesLineFragmentOrigin],
                                  attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18)],
-                                 context: nil).height + 33
+                                 context: nil).height + 33 + CGFloat(dateHeight)
     }
 }

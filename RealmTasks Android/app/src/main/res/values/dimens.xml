@@ -12,6 +12,8 @@
     <dimen name="row_badge_width">60dp</dimen>
     <dimen name="row_arrow_margin">10dp</dimen>
     <dimen name="row_text_padding">16dp</dimen>
-    <dimen name="row_text_size">18dp</dimen>
+    <dimen name="row_text_size">18sp</dimen>
+    <dimen name="row_metadata_padding_top">6dp</dimen>
+    <dimen name="row_metadata_text_size">12sp</dimen>
 
 </resources>

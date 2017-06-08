@@ -18,22 +18,14 @@
 
 import UIKit
 
-final class CellTextView: UITextView {
-
-    // MARK: Initializers
+class CellDateLabel: UILabel {
 
     init() {
-        super.init(frame: .null, textContainer: nil)
-        isEditable = true
-        textColor = .white
-        font = .systemFont(ofSize: 18)
+        super.init(frame: .zero)
         backgroundColor = .clear
-        isUserInteractionEnabled = false
-        keyboardAppearance = .dark
-        autocapitalizationType = .words
-        returnKeyType = .done
-        isScrollEnabled = false
-        contentInset = UIEdgeInsetsMake(-10.0, 0.0, 0.0, 0.0)
+        font = UIFont.systemFont(ofSize: 13)
+        textColor = UIColor(white: 1.0, alpha: 0.7)
+        sizeToFit()
     }
 
     required init?(coder aDecoder: NSCoder) {

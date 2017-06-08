@@ -26,6 +26,7 @@ protocol ListPresentable {
 
 protocol CellPresentable {
     var text: String { get set }
+    var date: Date? { get set }
     var completed: Bool { get set }
     var isCompletable: Bool { get }
 }
@@ -42,6 +43,7 @@ final class TaskListList: Object, ListPresentable {
 final class TaskList: Object, CellPresentable, ListPresentable {
     dynamic var id = NSUUID().uuidString // swiftlint:disable:this variable_name
     dynamic var text = ""
+    dynamic var date: Date?
     dynamic var completed = false
     let items = List<Task>()
 
@@ -56,6 +58,7 @@ final class TaskList: Object, CellPresentable, ListPresentable {
 
 final class Task: Object, CellPresentable {
     dynamic var text = ""
+    dynamic var date: Date?
     dynamic var completed = false
 
     var isCompletable: Bool { return true }

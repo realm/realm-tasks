@@ -5,7 +5,9 @@
     <color name="colorAccent">#FF4081</color>
     <color name="completing">#FF078D00</color>
     <color name="cell_completed_color">#4CFFFFFF</color>
+    <color name="badge_background_color">#26FFFFFF</color>
     <color name="cell_default_color">#FFFFFFFF</color>
+    <color name="cell_default_metadata_color">#FFF4F5F5</color>
     <color name="cell_unused_color">#FF000000</color>
     <color name="cell_completed_background_color">#FF262626</color>
 </resources>

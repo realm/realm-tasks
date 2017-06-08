@@ -115,9 +115,9 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     // MARK: UITableViewDelegate
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if cellPresenter.currentlyEditingIndexPath?.row == indexPath.row {
-            return floor(cellPresenter.cellHeight(forText: cellPresenter.currentlyEditingCell!.textView.text))
-        }
+//        if cellPresenter.currentlyEditingIndexPath?.row == indexPath.row {
+//            return floor(cellPresenter.cellHeight(forText: cellPresenter.currentlyEditingCell!.textView.text, timeHidden: true))
+//        }
 
         var item = items[indexPath.row]
 
@@ -130,7 +130,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 item = items[destinationIndexPath.row]
             }
         }
-        return floor(cellPresenter.cellHeight(forText: item.text))
+        return floor(max(cellPresenter.cellHeight(forText: item.text, timeHidden: item.date == nil), tableView.rowHeight))
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -295,7 +295,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         placeHolderCell.layer.anchorPoint = CGPoint(x: 0.5, y: 1)
         tableView.addSubview(placeHolderCell)
         constrain(placeHolderCell) { placeHolderCell in
-            placeHolderCell.bottom == placeHolderCell.superview!.topMargin - 7 + 26
+            placeHolderCell.bottom == placeHolderCell.superview!.topMargin + 31//- 7 + 30
             placeHolderCell.left == placeHolderCell.superview!.superview!.left
             placeHolderCell.right == placeHolderCell.superview!.superview!.right
             placeHolderCell.height == tableView.rowHeight
@@ -315,13 +315,13 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
                 placeHolderCell.textView.text = "Pull to Create Item"
 
                 let cellHeight = viewController.tableView.rowHeight
-                let angle = CGFloat(M_PI_2) - tan(distancePulledDown / cellHeight)
+                let angle = CGFloat(Double.pi / 2.0) - tan(distancePulledDown / cellHeight)
 
                 var transform = CATransform3DIdentity
-                transform.m34 = CGFloat(1.0 / -(1000 * 0.2))
+                transform.m34 = CGFloat(1.0 / -(1000 * 0.3))
                 transform = CATransform3DRotate(transform, angle, 1, 0, 0)
-
                 placeHolderCell.layer.transform = transform
+
             case .releaseToCreate:
                 UIView.animate(withDuration: 0.1) { [unowned self] in
                     self.placeHolderCell.navHintView.alpha = 0

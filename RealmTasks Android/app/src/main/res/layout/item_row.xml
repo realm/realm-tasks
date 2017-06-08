@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/black"
@@ -16,62 +16,107 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/row_icon_margin"
+            android:layout_marginStart="@dimen/row_icon_margin"
+            android:contentDescription="@string/done_indicator_content_description"
             android:src="@drawable/ic_done"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/row_icon_margin"
+            android:layout_marginEnd="@dimen/row_icon_margin"
+            android:contentDescription="@string/delete_icon_content_description"
             android:src="@drawable/ic_delete"/>
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/row"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/row_text_padding"
+        android:paddingBottom="@dimen/row_text_padding"
+        >
 
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/row_text_margin_left"
-            android:layout_marginRight="@dimen/row_text_margin_right"
-            android:paddingBottom="@dimen/row_text_padding"
-            android:paddingTop="@dimen/row_text_padding"
-            android:text="@string/row_text_placeholder"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/row_text_size"/>
-
-        <EditText
-            android:id="@+id/edit_text"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/row_text_margin_left"
-            android:layout_marginRight="@dimen/row_text_margin_right"
-            android:textColor="@android:color/white"
-            android:visibility="gone"/>
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/badge"
-            android:layout_width="@dimen/row_badge_width"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:background="#26FFFFFF"
-            android:gravity="center"
-            android:text="@string/badge_placeholder"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/row_text_size"
-            android:visibility="gone"/>
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/row_text_margin_left"
+                android:layout_marginStart="@dimen/row_text_margin_left"
+                android:layout_marginRight="@dimen/row_text_margin_right"
+                android:layout_marginEnd="@dimen/row_text_margin_right"
+                android:text="@string/row_text_placeholder"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/row_text_size"
+                tools:text="Go shopping at 5pm"
+                />
 
-    </RelativeLayout>
+            <EditText
+                android:id="@+id/edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/row_text_margin_left"
+                android:layout_marginStart="@dimen/row_text_margin_left"
+                android:layout_marginRight="@dimen/row_text_margin_right"
+                android:layout_marginEnd="@dimen/row_text_margin_right"
+                android:textColor="@android:color/white"
+                android:inputType="textMultiLine"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/badge"
+                android:layout_width="@dimen/row_badge_width"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:background="@color/badge_background_color"
+                android:gravity="center"
+                android:text="@string/badge_placeholder"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/row_text_size"
+                android:visibility="gone"
+                />
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/row_metadata"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/task_metadata"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/row_metadata_padding_top"
+                android:layout_marginStart="@dimen/row_text_margin_left"
+                android:layout_marginLeft="@dimen/row_text_margin_left"
+                android:layout_marginRight="@dimen/row_text_margin_right"
+                android:layout_marginEnd="@dimen/row_text_margin_right"
+                android:text="@string/row_text_placeholder"
+                android:textColor="@color/cell_default_metadata_color"
+                android:textSize="@dimen/row_metadata_text_size"
+                tools:text="Today at 5:00 PM"
+                />
+
+        </FrameLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/hint_panel"
@@ -94,7 +139,10 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/row_arrow_margin"
+            android:layout_marginEnd="@dimen/row_arrow_margin"
             android:layout_toLeftOf="@id/switch_hint"
+            android:layout_toStartOf="@id/switch_hint"
+            android:contentDescription="@string/cell_arrow_content_description"
             android:src="@drawable/ic_arrow"/>
 
     </RelativeLayout>
