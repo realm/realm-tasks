@@ -92,3 +92,4 @@ This project adheres to the [Contributor Covenant Code of Conduct](https://realm
 # License
 
 The source code for RealmTasks is licensed under the [Apache License 2.0](LICENSE).
+![analytics](https://ga-beacon.appspot.com/UA-50247013-2/realm-tasks/README?pixel)
