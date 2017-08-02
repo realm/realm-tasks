@@ -155,20 +155,17 @@ public class TaskActivity extends AppCompatActivity {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
             adapter.onItemMoved(fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override
         public void onCompleted(ItemViewHolder viewHolder) {
             adapter.onItemCompleted(viewHolder.getAdapterPosition());
-            adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
-            adapter.notifyItemRemoved(position);
         }
 
         @Override
@@ -184,21 +181,16 @@ public class TaskActivity extends AppCompatActivity {
         @Override
         public void onChanged(ItemViewHolder viewHolder) {
             adapter.onItemChanged(viewHolder);
-            adapter.notifyItemChanged(viewHolder.getAdapterPosition());
         }
 
         @Override
         public void onAdded() {
             adapter.onItemAdded();
-            adapter.notifyItemInserted(0);
         }
 
         @Override
         public void onReverted(boolean shouldUpdateUI) {
             adapter.onItemReverted();
-            if (shouldUpdateUI) {
-                adapter.notifyDataSetChanged();
-            }
         }
 
         @Override
