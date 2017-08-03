@@ -1,5 +1,4 @@
-﻿using RealmTasks.Implementation;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace RealmTasks
 {
