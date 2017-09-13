@@ -38,7 +38,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 1. Run `pod install` from the `RealmTasks Apple` directory in this repo.
 2. Open `RealmTasks Apple/RealmTasks.xcworkspace` with Xcode 8.
-3. Select either the "RealmTasks macOS" or "RealmTasks iOS" depending on which platform you'd like to try the app on.
+3. Select either the "RealmTasks macOS" or "RealmTasks iOS" scheme, depending on which platform you'd like to try the app on.
 4. Click the "Build and Run" icon in the upper left of Xcode (play icon).
 5. When the app launches, tap/click "Register" if this is the first time you're trying the app, or "Log In" if you've
    already created an account.
