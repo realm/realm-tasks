@@ -947,10 +947,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "RealmTasks iOS/RealmTasks-iOS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-<<<<<<< Updated upstream
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-=======
->>>>>>> Stashed changes
 				DEVELOPMENT_TEAM = 4XL3X97RQ3;
 				INFOPLIST_FILE = "$(SRCROOT)/$(TARGET_NAME)/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
