@@ -41,16 +41,10 @@ final class TaskListList: Object, ListPresentable {
 }
 
 final class TaskList: Object, CellPresentable, ListPresentable {
-<<<<<<< Updated upstream
-    dynamic var id = NSUUID().uuidString // swiftlint:disable:this variable_name
-    dynamic var text = ""
-    dynamic var date: Date?
-    dynamic var completed = false
-=======
     @objc dynamic var id = NSUUID().uuidString // swiftlint:disable:this variable_name
     @objc dynamic var text = ""
+    @objc dynamic var date: Date?
     @objc dynamic var completed = false
->>>>>>> Stashed changes
     let items = List<Task>()
 
     var isCompletable: Bool {
@@ -63,14 +57,9 @@ final class TaskList: Object, CellPresentable, ListPresentable {
 }
 
 final class Task: Object, CellPresentable {
-<<<<<<< Updated upstream
-    dynamic var text = ""
-    dynamic var date: Date?
-    dynamic var completed = false
-=======
     @objc dynamic var text = ""
+    @objc dynamic var date: Date?
     @objc dynamic var completed = false
->>>>>>> Stashed changes
 
     var isCompletable: Bool { return true }
 

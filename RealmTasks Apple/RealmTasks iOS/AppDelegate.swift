@@ -45,7 +45,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func logIn(animated: Bool = true) {
         let loginController = LoginViewController(style: .darkTranslucent)
-        loginController.isServerURLFieldHidden = true
         loginController.isRememberAccountDetailsFieldHidden = true
         loginController.serverURL = Constants.syncAuthURL.absoluteString
         loginController.loginSuccessfulHandler = { user in

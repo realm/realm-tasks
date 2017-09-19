@@ -165,7 +165,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         viewController.tableView.addGestureRecognizer(longPressGestureRecognizer)
     }
 
-    func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
+    @objc func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
         let tableView = viewController.tableView
 
         let location = recognizer.location(in: tableView)

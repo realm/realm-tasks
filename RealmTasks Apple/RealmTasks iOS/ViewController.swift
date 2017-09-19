@@ -122,6 +122,10 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
         tableView.dataSource = listPresenter.tablePresenter
         tableView.delegate = listPresenter.tablePresenter
 
+        if #available(iOS 11.0, *) {
+            tableView.contentInsetAdjustmentBehavior = .never
+        }
+
         listPresenter.updateOnboardView()
     }
 
