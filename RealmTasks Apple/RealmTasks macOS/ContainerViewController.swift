@@ -145,7 +145,7 @@ class ContainerViewController: NSViewController {
 
         if list is CellPresentable {
             if !toolbar.hasItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
-                toolbar.insertItem(withItemIdentifier: toolbarShowAllListsButtonIdentifier, at: toolbar.items.count - 1)
+                toolbar.insertItem(withItemIdentifier: NSToolbarItem.Identifier(rawValue: toolbarShowAllListsButtonIdentifier), at: toolbar.items.count - 1)
             }
         } else if let index = toolbar.indexOfItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
             view.window?.toolbar?.removeItem(at: index)
@@ -164,7 +164,7 @@ private extension NSToolbar {
     }
 
     func item(withIdentifier identifier: String) -> NSToolbarItem? {
-        return items.first { $0.itemIdentifier == identifier }
+        return items.first { $0.itemIdentifier.rawValue == identifier }
     }
 
     func indexOfItem(withIdentifier identifier: String) -> Int? {

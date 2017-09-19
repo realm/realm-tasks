@@ -33,7 +33,7 @@ final class ColorView: NSView {
 
     override func draw(_ dirtyRect: NSRect) {
         backgroundColor.setFill()
-        NSRectFillUsingOperation(dirtyRect, .sourceOver)
+        __NSRectFillUsingOperation(dirtyRect, .sourceOver)
     }
 
 }

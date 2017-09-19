@@ -121,7 +121,7 @@ class ListCellView: ItemCellView {
 
     override func resetCursorRects() {
         super.resetCursorRects()
-        addCursorRect(bounds, cursor: acceptsEditing ? .iBeam() : .arrow())
+        addCursorRect(bounds, cursor: (self.acceptsEditing ? .iBeam() : .arrow()))
     }
 
     override func mouseEntered(with theEvent: NSEvent) {
@@ -152,7 +152,7 @@ class ListCellView: ItemCellView {
         updateTextColor()
     }
 
-    private dynamic func delayedSetAcceptsEditing() {
+    @objc private dynamic func delayedSetAcceptsEditing() {
         if isUserInteractionEnabled {
             acceptsEditing = true
         }
@@ -165,3 +165,4 @@ class ListCellView: ItemCellView {
     }
 
 }
+@objc

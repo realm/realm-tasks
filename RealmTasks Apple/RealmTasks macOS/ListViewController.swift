@@ -52,7 +52,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     init(list: ListType) {
         self.list = list
 
-        super.init(nibName: nil, bundle: nil)!
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -91,9 +91,9 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         let notificationCenter = NotificationCenter.default
 
         // Handle window resizing to update table view rows height
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidResize, object: view.window)
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidEnterFullScreen, object: view.window)
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidExitFullScreen, object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didResizeNotification, object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didEnterFullScreenNotification, object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didExitFullScreenNotification, object: view.window)
 
         setupNotifications()
         setupGestureRecognizers()
@@ -168,7 +168,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
 
         NSView.animate(animations: {
-            NSAnimationContext.current().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
+            NSAnimationContext.current.allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             tableView.insertRows(at: NSIndexSet(index: 0) as IndexSet, withAnimation: .effectGap)
         }) {
             if let newItemCellView = self.tableView.view(atColumn: 0, row: 0, makeIfNecessary: false) as? ItemCellView {
@@ -255,7 +255,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
 
             NSView.animate {
                 // Disable implicit animations because tableView animates reordering via animator proxy
-                NSAnimationContext.current().allowsImplicitAnimation = false
+                NSAnimationContext.current.allowsImplicitAnimation = false
                 tableView.moveRow(at: sourceRow, to: destinationRow)
             }
         }
@@ -461,7 +461,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
             fatalError("Unknown item type")
         }
 
-        if let view = tableView.make(withIdentifier: cellViewIdentifier, owner: self) as? ItemCellView {
+        if let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellViewIdentifier), owner: self) as? ItemCellView {
             cellView = view
         } else {
             cellView = cellViewType.init(identifier: listCellIdentifier)
@@ -570,7 +570,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
             }
 
             NSView.animate(duration: 0.3, animations: {
-                NSAnimationContext.current().allowsImplicitAnimation = false
+                NSAnimationContext.current.allowsImplicitAnimation = false
                 self.tableView.moveRow(at: index, to: destinationIndex)
             }) {
                 self.updateColors()
@@ -588,7 +588,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
 
         NSView.animate {
-            NSAnimationContext.current().allowsImplicitAnimation = false
+            NSAnimationContext.current.allowsImplicitAnimation = false
             tableView.removeRows(at: IndexSet(integer: index), withAnimation: .slideLeft)
         }
     }

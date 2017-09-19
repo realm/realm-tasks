@@ -96,13 +96,13 @@ class ItemCellView: NSTableCellView {
 
     fileprivate let doneIconView: NSImageView = {
         let imageView = NSImageView()
-        imageView.image = NSImage(named: "DoneIcon")
+        imageView.image = NSImage(named: NSImage.Name(rawValue: "DoneIcon"))
         return imageView
     }()
 
     fileprivate let deleteIconView: NSImageView = {
         let imageView = NSImageView()
-        imageView.image = NSImage(named: "DeleteIcon")
+        imageView.image = NSImage(named: NSImage.Name(rawValue: "DeleteIcon"))
         return imageView
     }()
 
@@ -110,7 +110,7 @@ class ItemCellView: NSTableCellView {
 
     required init(identifier: String) {
         super.init(frame: .zero)
-        self.identifier = identifier
+        self.identifier = NSUserInterfaceItemIdentifier(rawValue: identifier)
 
         setupUI()
         setupGestures()
@@ -156,12 +156,12 @@ class ItemCellView: NSTableCellView {
     private func setupIconViews() {
         doneIconView.frame.size.width = iconWidth
         doneIconView.frame.origin.x = iconOffset
-        doneIconView.autoresizingMask = [.viewMaxXMargin, .viewHeightSizable]
+        doneIconView.autoresizingMask = [.maxXMargin, .height]
         addSubview(doneIconView, positioned: .below, relativeTo: contentView)
 
         deleteIconView.frame.size.width = iconWidth
         deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - iconOffset
-        deleteIconView.autoresizingMask = [.viewMinXMargin, .viewHeightSizable]
+        deleteIconView.autoresizingMask = [.minXMargin, .height]
         addSubview(deleteIconView, positioned: .below, relativeTo: contentView)
     }
 
@@ -169,7 +169,7 @@ class ItemCellView: NSTableCellView {
         addSubview(contentView)
 
         contentView.frame = bounds
-        contentView.autoresizingMask = [.viewWidthSizable, .viewHeightSizable]
+        contentView.autoresizingMask = [.width, .height]
     }
 
     private func setupHighlightView() {

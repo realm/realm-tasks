@@ -21,7 +21,7 @@ import Cocoa
 public extension NSView {
 
     @discardableResult public func setTrackingArea(to rect: NSRect,
-                                                   options: NSTrackingAreaOptions = [.mouseEnteredAndExited, .activeInKeyWindow])
+                                                   options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeInKeyWindow])
                                                    -> NSTrackingArea {
         resetTrackingAreas()
 
