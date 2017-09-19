@@ -149,7 +149,12 @@ class CellPresenter<Item: Object> where Item: CellPresentable {
 
         return text.boundingRect(with: CGSize(width: view.bounds.size.width - 25, height: view.bounds.size.height),
                                  options: [.usesLineFragmentOrigin],
+<<<<<<< Updated upstream
                                  attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 18)],
                                  context: nil).height + 33 + CGFloat(dateHeight)
+=======
+                                 attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 18)],
+                                 context: nil).height + 33
+>>>>>>> Stashed changes
     }
 }

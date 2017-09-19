@@ -270,7 +270,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         addGestureRecognizer(recognizer)
     }
 
-    func handlePan(recognizer: UIPanGestureRecognizer) {
+    @objc func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began: handlePanBegan()
         case .changed: handlePanChanged(translation: recognizer.translation(in: self).x)

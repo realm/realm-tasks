@@ -64,7 +64,7 @@ class ContainerViewController: UIViewController {
             titleBar.top == titleBar.superview!.top
             titleBar.right == titleBar.superview!.right
             titleBar.height >= 20
-            titleBar.height == 20 ~ UILayoutPriorityDefaultHigh
+            titleBar.height == 20 ~ UILayoutPriority.defaultHigh
         }
 
         titleLabel.font = .boldSystemFont(ofSize: 13)

@@ -142,7 +142,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(recognizer:))))
     }
 
-    func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
+    @objc func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
         guard recognizer.state == .ended else {
             return
         }

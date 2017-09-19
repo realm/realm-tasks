@@ -36,7 +36,7 @@ class OnboardView: UIView {
 
     init() {
         labelView.text = "Pull Down to Start"
-        labelView.font = .systemFont(ofSize: 20, weight: UIFontWeightMedium)
+        labelView.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
         labelView.textColor = contentColor
         labelView.textAlignment = .center
         labelView.sizeToFit()

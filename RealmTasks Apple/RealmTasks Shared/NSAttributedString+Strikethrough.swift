@@ -35,7 +35,7 @@ extension NSAttributedString {
 
     private func strike(with style: NSUnderlineStyle, range: NSRange? = nil) -> NSAttributedString {
         let mutableAttributedString = NSMutableAttributedString(attributedString: self)
-        let attributeName = NSStrikethroughStyleAttributeName
+        let attributeName = NSAttributedStringKey.strikethroughStyle
         let fullRange = NSRange(0..<length)
         mutableAttributedString.removeAttribute(attributeName, range: fullRange)
         mutableAttributedString.addAttribute(attributeName, value: style.rawValue, range: range ?? fullRange)

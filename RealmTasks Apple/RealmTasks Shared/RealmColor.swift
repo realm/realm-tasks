@@ -67,18 +67,25 @@ extension Collection where Iterator.Element == Color, Index == Int {
 
         // Get the initial color which will serve as the origin
         let topColor = self[colorRangeIndex]
-        var fromColors: [CGFloat] = [0, 0, 0]
-        topColor.getRed(&fromColors[0], green: &fromColors[1], blue: &fromColors[2], alpha: nil)
+        var fromRed: CGFloat = 0.0
+        var fromGreen: CGFloat = 0.0
+        var fromBlue: CGFloat = 0.0
+        topColor.getRed(&fromRed, green: &fromGreen, blue: &fromBlue, alpha: nil)
 
         // Get the destination color we will lerp to
         let bottomColor = self[colorRangeIndex + 1]
-        var toColors: [CGFloat] = [0, 0, 0]
-        bottomColor.getRed(&toColors[0], green: &toColors[1], blue: &toColors[2], alpha: nil)
+        var toRed: CGFloat = 0.0
+        var toGreen: CGFloat = 0.0
+        var toBlue: CGFloat = 0.0
+        bottomColor.getRed(&toRed, green: &toGreen, blue: &toBlue, alpha: nil)
 
         // Work out the actual percentage we need to lerp, inside just that stop range
         let stopOffset = CGFloat((normalizedOffset - (Double(colorRangeIndex) * colorStopRange)) / colorStopRange)
 
         // Perform the interpolation
+        let fromColors: [CGFloat] = [fromRed, fromGreen, fromBlue]
+        let toColors: [CGFloat] = [toRed, toGreen, toBlue]
+        
         let finalColors = zip(fromColors, toColors).map { from, to in
             return from + stopOffset * (to - from)
         }
