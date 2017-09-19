@@ -24,7 +24,7 @@ class ListCellView: ItemCellView {
     fileprivate let countLabel = NSTextField()
     fileprivate let badgeView = ColorView(backgroundColor: NSColor(white: 1, alpha: 0.15))
 
-    private(set) var acceptsEditing = false {
+    private(set) var acceptsEditing: Bool = false {
         didSet {
             textView.backgroundColor = acceptsEditing ? NSColor(white: 0, alpha: 0.15) : .clear
             window?.invalidateCursorRects(for: self)
@@ -121,7 +121,7 @@ class ListCellView: ItemCellView {
 
     override func resetCursorRects() {
         super.resetCursorRects()
-        addCursorRect(bounds, cursor: (self.acceptsEditing ? .iBeam() : .arrow()))
+        //addCursorRect(bounds, cursor: ((self.acceptsEditing == true) ? .iBeam() : .arrow()))
     }
 
     override func mouseEntered(with theEvent: NSEvent) {
@@ -158,11 +158,10 @@ class ListCellView: ItemCellView {
         }
     }
 
-    override func textFieldDidBecomeFirstResponder(_ textField: NSTextField) {
+    @objc override func textFieldDidBecomeFirstResponder(_ textField: NSTextField) {
         super.textFieldDidBecomeFirstResponder(textField)
 
         updateTextColor()
     }
 
 }
-@objc

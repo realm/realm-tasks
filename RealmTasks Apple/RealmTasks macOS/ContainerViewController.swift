@@ -168,7 +168,7 @@ private extension NSToolbar {
     }
 
     func indexOfItem(withIdentifier identifier: String) -> Int? {
-        return items.index { $0.itemIdentifier == identifier }
+        return items.index { ($0.itemIdentifier.rawValue == identifier) }
     }
 
 }

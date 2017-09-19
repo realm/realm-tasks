@@ -424,9 +424,9 @@ protocol ItemTextFieldDelegate: NSTextFieldDelegate {
 
 private class ItemTextField: NSTextField {
 
-    override class func cellClass() -> AnyClass? {
-        return ItemTextFieldCell.self
-    }
+//    override class func cellClass() -> AnyClass? {
+//        return ItemTextFieldCell.self
+//    }
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
