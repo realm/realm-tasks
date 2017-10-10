@@ -53,7 +53,7 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
     }
 
     deinit {
-        notificationToken?.stop()
+        notificationToken?.invalidate()
     }
 
     // MARK: List title
@@ -75,7 +75,7 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
 
     // MARK: Notifications
     private func setupNotifications() -> NotificationToken {
-        return parent.items.addNotificationBlock { [unowned self] changes in
+        return parent.items.observe { [unowned self] changes in
             switch changes {
             case .initial:
                 // Results are now populated and can be accessed without blocking the UI

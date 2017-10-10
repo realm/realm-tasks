@@ -50,7 +50,7 @@ public func setDefaultRealmConfiguration(with user: SyncUser) {
     }
 
     // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
-    deduplicationNotificationToken = realm.addNotificationBlock { _, realm in
+    deduplicationNotificationToken = realm.observe { _, realm in
         let items = realm.objects(TaskListList.self).first!.items
         guard items.count > 1 && !realm.isInWriteTransaction else { return }
         let itemsReference = ThreadSafeReference(to: items)
@@ -67,7 +67,7 @@ public func setDefaultRealmConfiguration(with user: SyncUser) {
                 let indexesToRemove = items.enumerated().flatMap { index, element in
                     return element.id == id ? index : nil
                 }
-                indexesToRemove.dropFirst().reversed().forEach(items.remove(objectAtIndex:))
+                indexesToRemove.dropFirst().reversed().forEach(items.remove)
             }
             try! realm.commitWrite()
         }
@@ -94,7 +94,7 @@ func resetDefaultRealm() {
         return
     }
 
-    deduplicationNotificationToken.stop()
+    deduplicationNotificationToken.invalidate()
 
     user.logOut()
 }

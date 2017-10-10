@@ -33,7 +33,7 @@ final class CellTextView: UITextView {
         autocapitalizationType = .words
         returnKeyType = .done
         isScrollEnabled = false
-        contentInset = UIEdgeInsetsMake(-10.0, 0.0, 0.0, 0.0)
+        contentInset = UIEdgeInsets(top: -10.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 
     required init?(coder aDecoder: NSCoder) {

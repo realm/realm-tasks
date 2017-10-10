@@ -60,7 +60,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     }
 
     deinit {
-        notificationToken?.stop()
+        notificationToken?.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -103,7 +103,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     }
 
     private func setupNotifications() {
-        notificationToken = list.items.addNotificationBlock { [unowned self] changes in
+        notificationToken = list.items.observe { [unowned self] changes in
             switch changes {
                 case .initial:
                     self.tableView.reloadData()
@@ -564,7 +564,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
                 item.completed = complete
 
                 if index != destinationIndex {
-                    self.list.items.remove(objectAtIndex: index)
+                    self.list.items.remove(at: index)
                     self.list.items.insert(item, at: destinationIndex)
                 }
             }

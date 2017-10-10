@@ -110,8 +110,8 @@ class ContainerViewController: NSViewController {
 
         updateToolbar(for: list)
 
-        notificationToken?.stop()
-        notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in
+        notificationToken?.invalidate()
+        notificationToken = list.realm?.observe { [unowned self] _, _ in
             // Show all lists if list is deleted on other device
             if list.isInvalidated {
                 self.showAllLists(nil)
@@ -124,7 +124,7 @@ class ContainerViewController: NSViewController {
         currentListViewController?.view.removeFromSuperview()
         currentListViewController = nil
 
-        notificationToken?.stop()
+        notificationToken?.invalidate()
         notificationToken = nil
 
         if let titleView = view.window?.toolbar?.item(withIdentifier: toolbarTitleViewIdentifier)?.view as? TitleView {
