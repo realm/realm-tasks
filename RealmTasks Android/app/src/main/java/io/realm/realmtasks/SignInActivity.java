@@ -52,7 +52,7 @@ import io.realm.realmtasks.model.TaskListList;
 
 import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
 
-public class SignInActivity extends AppCompatActivity implements SyncUser.Callback {
+public class SignInActivity extends AppCompatActivity implements SyncUser.Callback<SyncUser> {
 
     public static final String ACTION_IGNORE_CURRENT_USER = "action.ignoreCurrentUser";
 
@@ -71,12 +71,12 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(R.string.activity_sign_in_label);
 
-        usernameView = (AutoCompleteTextView) findViewById(R.id.username);
-        passwordView = (EditText) findViewById(R.id.password);
+        usernameView = findViewById(R.id.username);
+        passwordView = findViewById(R.id.password);
         passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.log_in || id == EditorInfo.IME_NULL) {
+                if (id == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
                 }

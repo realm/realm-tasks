@@ -53,7 +53,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final int metadataCellCompletedColor;
 
     private final RelativeLayout iconBar;
-    private final LinearLayout row;
+    private final RelativeLayout row = itemView.findViewById(R.id.row);
     private final RelativeLayout hintPanel;
     private final View metadataRow;
     private final ImageView arrow;
@@ -69,15 +69,14 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
     public ItemViewHolder(View itemView, RecyclerView.Adapter adapter) {
         super(itemView);
-        iconBar = (RelativeLayout) itemView.findViewById(R.id.icon_bar);
-        row = (LinearLayout) itemView.findViewById(R.id.row);
-        hintPanel = (RelativeLayout) itemView.findViewById(R.id.hint_panel);
+        iconBar = itemView.findViewById(R.id.icon_bar);
+        hintPanel = itemView.findViewById(R.id.hint_panel);
         metadataRow = itemView.findViewById(R.id.row_metadata);
-        arrow = (ImageView) hintPanel.findViewById(R.id.arrow);
-        badge = (TextView) row.findViewById(R.id.badge);
-        text = (TextView) row.findViewById(R.id.text);
-        metadata = (TextView) row.findViewById(R.id.task_metadata);
-        editText = (EditText) row.findViewById(R.id.edit_text);
+        arrow = hintPanel.findViewById(R.id.arrow);
+        badge = row.findViewById(R.id.badge);
+        text = row.findViewById(R.id.text);
+        metadata = row.findViewById(R.id.task_metadata);
+        editText = row.findViewById(R.id.edit_text);
         cellUnusedColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_unused_color);
         cellCompletedColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_color);
         cellCompletedBackgroundColor = ContextCompat.getColor(itemView.getContext(), R.color.cell_completed_background_color);
@@ -226,7 +225,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         row.setBackgroundColor(generateBackgroundColor());
     }
 
-    public LinearLayout getRow() {
+    public RelativeLayout getRow() {
         return row;
     }
 

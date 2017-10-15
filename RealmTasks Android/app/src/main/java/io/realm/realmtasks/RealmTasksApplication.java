@@ -35,7 +35,5 @@ public class RealmTasksApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
-        FacebookSdk.sdkInitialize(this);
-        RealmLog.setLevel(LogLevel.TRACE);
     }
 }

@@ -51,7 +51,7 @@ public class TaskListActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_common_list);
-        recyclerView = (RecyclerViewWithEmptyViewSupport) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setEmptyView(findViewById(R.id.empty_view));
     }
@@ -103,7 +103,7 @@ public class TaskListActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        list.removeChangeListeners();
+        list.removeAllChangeListeners();
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
             adapter = null;

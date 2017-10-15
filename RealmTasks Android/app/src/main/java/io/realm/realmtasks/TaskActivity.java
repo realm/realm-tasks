@@ -155,7 +155,6 @@ public class TaskActivity extends AppCompatActivity {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
             adapter.onItemMoved(fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override
@@ -168,7 +167,6 @@ public class TaskActivity extends AppCompatActivity {
         public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
-            adapter.notifyItemRemoved(position);
         }
 
         @Override

@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -67,7 +68,7 @@ public class TaskAdapter extends CommonAdapter<Task> implements TouchHelperAdapt
     }
 
     private void narrowRightMargin(View view) {
-        final RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+        final LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
         layoutParams.rightMargin = (int) (layoutParams.rightMargin * 0.2);
     }
 
