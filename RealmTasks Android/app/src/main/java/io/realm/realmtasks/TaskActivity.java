@@ -26,13 +26,15 @@ import android.view.MenuItem;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
 import io.realm.realmtasks.list.ItemViewHolder;
 import io.realm.realmtasks.list.TaskAdapter;
 import io.realm.realmtasks.list.TouchHelper;
 import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.view.RecyclerViewWithEmptyViewSupport;
 
+/**
+ * Show all tasks for a given list.
+ */
 public class TaskActivity extends AppCompatActivity {
 
     public static final String EXTRA_LIST_ID = "extra.list_id";
@@ -42,7 +44,7 @@ public class TaskActivity extends AppCompatActivity {
     private TaskAdapter adapter;
     private TouchHelper touchHelper;
     private String id;
-    RealmResults<TaskList> list;
+    private TaskList taskList;
     private boolean logoutAfterClose;
 
     @Override
@@ -50,7 +52,7 @@ public class TaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_common_list);
 
-        recyclerView = (RecyclerViewWithEmptyViewSupport) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setEmptyView(findViewById(R.id.empty_view));
 
@@ -69,24 +71,21 @@ public class TaskActivity extends AppCompatActivity {
         }
         adapter = null;
         realm = Realm.getDefaultInstance();
-        list = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findAll();
-        list.addChangeListener(new RealmChangeListener<RealmResults<TaskList>>() {
+        taskList = realm.where(TaskList.class).equalTo(TaskList.FIELD_ID, id).findFirstAsync();
+        taskList.addChangeListener(new RealmChangeListener<TaskList>() {
             @Override
-            public void onChange(RealmResults<TaskList> results) {
-                updateList(results);
+            public void onChange(TaskList taskList) {
+                updateList(taskList);
             }
         });
-        updateList(list);
+        setTitle("Loading");
     }
 
-    private void updateList(RealmResults<TaskList> results) {
-        // Use `findAllAsync` because change listeners are not called when items are deleted and using `findFirst()`
-        // See https://github.com/realm/realm-java/issues/3138
-        if (results.size() > 0) {
-            TaskList element = results.first();
-            setTitle(element.getText());
+    private void updateList(TaskList taskList) {
+        if (taskList.isValid()) {
+            setTitle(taskList.getText());
             if (adapter == null) {
-                adapter = new TaskAdapter(TaskActivity.this, element.getItems());
+                adapter = new TaskAdapter(TaskActivity.this, taskList.getItems());
                 touchHelper = new TouchHelper(new Callback(), adapter);
                 touchHelper.attachToRecyclerView(recyclerView);
             }
@@ -155,20 +154,17 @@ public class TaskActivity extends AppCompatActivity {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
             adapter.onItemMoved(fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override
         public void onCompleted(ItemViewHolder viewHolder) {
             adapter.onItemCompleted(viewHolder.getAdapterPosition());
-            adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
-            adapter.notifyItemRemoved(position);
         }
 
         @Override
@@ -184,21 +180,16 @@ public class TaskActivity extends AppCompatActivity {
         @Override
         public void onChanged(ItemViewHolder viewHolder) {
             adapter.onItemChanged(viewHolder);
-            adapter.notifyItemChanged(viewHolder.getAdapterPosition());
         }
 
         @Override
         public void onAdded() {
             adapter.onItemAdded();
-            adapter.notifyItemInserted(0);
         }
 
         @Override
         public void onReverted(boolean shouldUpdateUI) {
             adapter.onItemReverted();
-            if (shouldUpdateUI) {
-                adapter.notifyDataSetChanged();
-            }
         }
 
         @Override

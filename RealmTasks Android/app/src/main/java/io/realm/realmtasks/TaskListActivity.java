@@ -38,6 +38,9 @@ import io.realm.realmtasks.model.TaskList;
 import io.realm.realmtasks.model.TaskListList;
 import io.realm.realmtasks.view.RecyclerViewWithEmptyViewSupport;
 
+/**
+ * Show all lists.
+ */
 public class TaskListActivity extends AppCompatActivity {
 
     private Realm realm;
@@ -51,7 +54,7 @@ public class TaskListActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_common_list);
-        recyclerView = (RecyclerViewWithEmptyViewSupport) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setEmptyView(findViewById(R.id.empty_view));
     }
@@ -103,7 +106,7 @@ public class TaskListActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        list.removeChangeListeners();
+        list.removeAllChangeListeners();
         if (adapter != null) {
             touchHelper.attachToRecyclerView(null);
             adapter = null;
@@ -157,20 +160,17 @@ public class TaskListActivity extends AppCompatActivity {
             final int fromPosition = from.getAdapterPosition();
             final int toPosition = to.getAdapterPosition();
             adapter.onItemMoved(fromPosition, toPosition);
-            adapter.notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override
         public void onCompleted(ItemViewHolder viewHolder) {
             adapter.onItemCompleted(viewHolder.getAdapterPosition());
-            adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onDismissed(ItemViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
             adapter.onItemDismissed(position);
-            adapter.notifyItemRemoved(position);
         }
 
         @Override
@@ -192,21 +192,16 @@ public class TaskListActivity extends AppCompatActivity {
         @Override
         public void onChanged(ItemViewHolder viewHolder) {
             adapter.onItemChanged(viewHolder);
-            adapter.notifyItemChanged(viewHolder.getAdapterPosition());
         }
 
         @Override
         public void onAdded() {
             adapter.onItemAdded();
-            adapter.notifyItemInserted(0);
         }
 
         @Override
         public void onReverted(boolean shouldUpdateUI) {
             adapter.onItemReverted();
-            if (shouldUpdateUI) {
-                adapter.notifyDataSetChanged();
-            }
         }
 
         @Override

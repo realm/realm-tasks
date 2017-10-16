@@ -31,10 +31,12 @@ import io.realm.realmtasks.R;
 
 public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapter<T, RecyclerView.ViewHolder> {
 
+    protected Context context;
     protected OnFirstItemUpdateListener onFirstItemUpdateListener;
 
     public CommonAdapter(Context context, OrderedRealmCollection<T> items) {
-        super(context, items, true);
+        super(items, true);
+        this.context = context;
     }
 
     @Override
@@ -70,7 +72,6 @@ public class CommonAdapter<T extends RealmModel> extends RealmRecyclerViewAdapte
     }
 
     public interface OnFirstItemUpdateListener {
-
         void updated(RecyclerView.ViewHolder viewHolder);
     }
 }

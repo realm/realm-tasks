@@ -45,7 +45,7 @@ import io.realm.realmtasks.auth.google.GoogleAuth;
 import static android.text.TextUtils.isEmpty;
 import static io.realm.realmtasks.RealmTasksApplication.AUTH_URL;
 
-public class RegisterActivity extends AppCompatActivity implements SyncUser.Callback {
+public class RegisterActivity extends AppCompatActivity implements SyncUser.Callback<SyncUser> {
 
     private AutoCompleteTextView usernameView;
     private EditText passwordView;
@@ -59,13 +59,13 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        usernameView = (AutoCompleteTextView) findViewById(R.id.username);
-        passwordView = (EditText) findViewById(R.id.password);
-        passwordConfirmationView = (EditText) findViewById(R.id.password_confirmation);
+        usernameView = findViewById(R.id.username);
+        passwordView = findViewById(R.id.password);
+        passwordConfirmationView = findViewById(R.id.password_confirmation);
         passwordConfirmationView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.register || id == EditorInfo.IME_NULL) {
+                if (id == EditorInfo.IME_NULL) {
                     attemptRegister();
                     return true;
                 }
@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
         });
 
 
-        final Button mailRegisterButton = (Button) findViewById(R.id.email_register_button);
+        final Button mailRegisterButton = findViewById(R.id.email_register_button);
         mailRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
             focusView.requestFocus();
         } else {
             showProgress(true);
-            SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), AUTH_URL, new SyncUser.Callback() {
+            SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), AUTH_URL, new SyncUser.Callback<SyncUser>() {
                 @Override
                 public void onSuccess(SyncUser user) {
                     registrationComplete(user);
