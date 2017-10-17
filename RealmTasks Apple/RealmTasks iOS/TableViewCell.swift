@@ -411,7 +411,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
 
     // MARK: Actions
 
-    private func setCompleted(_ completed: Bool, animated: Bool = false) {
+    func setCompleted(_ completed: Bool, animated: Bool = false) {
         completed ? textView.strike() : textView.unstrike()
         overlayView.isHidden = !completed
         let updateColor = { [unowned self] in

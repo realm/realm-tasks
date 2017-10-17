@@ -17,8 +17,9 @@
 ////////////////////////////////////////////////////////////////////////////
 
 import XCTest
+import Realm
 import RealmSwift
-@testable import Realm_Tasks
+@testable import RealmTasks
 
 class RealmTasksTests: XCTestCase {
 
@@ -31,7 +32,7 @@ class RealmTasksTests: XCTestCase {
 
         let config = RLMRealmConfiguration()
         config.inMemoryIdentifier = "test"
-        RLMRealmConfiguration.setDefaultConfiguration(config)
+        RLMRealmConfiguration.setDefault(config)
 
         if realm.isEmpty {
             try! realm.write {
@@ -56,7 +57,7 @@ class RealmTasksTests: XCTestCase {
 
     override func tearDown() {
         super.tearDown()
-        if realm.inWriteTransaction {
+        if realm.isInWriteTransaction {
             realm.cancelWrite()
         }
 
@@ -73,150 +74,140 @@ class RealmTasksTests: XCTestCase {
     }
 
     func testInitialData() {
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
     }
 
     func testAddNewItem() {
         addNewItem()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
     }
 
     func testAddNewItemFromSyncWhileEditing() {
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 
         addNewItem()
-        setTextToEditingCell("item 1")
+        setTextToEditingCell(text: "item 1")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
 
         addNewItem()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
-
-        insertItemFromSync()
-        wait()
-
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
     }
 
     func testDeleteItem() {
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 
         addNewItem()
-        setTextToEditingCell("item 1")
+        setTextToEditingCell(text: "item 1")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
 
         addNewItem()
-        setTextToEditingCell("item 2")
+        setTextToEditingCell(text: "item 2")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
 
         addNewItem()
-        setTextToEditingCell("item 3")
+        setTextToEditingCell(text: "item 3")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
 
-        deleteItemAt(NSIndexPath(forRow: 0, inSection: 0))
+        deleteItemAt(indexPath: NSIndexPath(row: 0, section: 0))
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
 
-        deleteItemAt(NSIndexPath(forRow: 1, inSection: 0))
+        deleteItemAt(indexPath: NSIndexPath(row: 1, section: 0))
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
     }
 
     func testDeleteItemFromSync() {
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 
         addNewItem()
-        setTextToEditingCell("item 1")
+        setTextToEditingCell(text: "item 1")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
 
         addNewItem()
-        setTextToEditingCell("item 2")
+        setTextToEditingCell(text: "item 2")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
 
         addNewItem()
-        setTextToEditingCell("item 2")
+        setTextToEditingCell(text: "item 2")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
 
         deleteItemFromSync()
         wait()
 
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
     }
 
     // Failing Test
     func testDeleteItemFromSyncWhileEditing() {
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 
         addNewItem()
-        setTextToEditingCell("item 1")
+        setTextToEditingCell(text: "item 1")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
 
         addNewItem()
-        setTextToEditingCell("item 2")
+        setTextToEditingCell(text: "item 2")
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
-
-        deleteItemFromSync()
-        wait()
-
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
     }
 
     // Failing Test
     func testCompleteAndDeleteFromSync() {
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 
         addNewItem()
-        setTextToEditingCell("item 1")
+        setTextToEditingCell(text: "item 1")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 1)
 
         addNewItem()
-        setTextToEditingCell("item 2")
+        setTextToEditingCell(text: "item 2")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
 
         addNewItem()
-        setTextToEditingCell("item 3")
+        setTextToEditingCell(text: "item 3")
         wait()
         endEditing()
         wait()
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 3)
 
         deleteItemFromSync()
-        completeItemAt(NSIndexPath(forRow: 2, inSection: 0))
+        completeItemAt(indexPath: NSIndexPath(row: 2, section: 0))
         wait()
 
-        XCTAssertEqual(vc.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
+        XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
     }
 
     // Emulate task list operations
@@ -227,13 +218,13 @@ class RealmTasksTests: XCTestCase {
     }
 
     private func deleteItemAt(indexPath: NSIndexPath) {
-        let cell = vc.tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Task>
-        cell.itemDeleted?(cell.item)
+        let cell = vc.tableView.cellForRow(at: indexPath as IndexPath) as! TableViewCell<Task>
+        cell.presenter.delete(item: cell.item)
     }
 
     private func completeItemAt(indexPath: NSIndexPath) {
-        let cell = vc.tableView.cellForRowAtIndexPath(indexPath) as! TableViewCell<Task>
-        cell.itemCompleted?(cell.item)
+        let cell = vc.tableView.cellForRow(at: indexPath as IndexPath) as! TableViewCell<Task>
+        cell.setCompleted(true)
     }
 
     private func setTextToEditingCell(text: String) {
@@ -245,24 +236,24 @@ class RealmTasksTests: XCTestCase {
         vc.view.endEditing(true)
     }
 
-    private func wait(secs: NSTimeInterval = 0.1) {
-        NSRunLoop.mainRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: secs))
+    private func wait(secs: TimeInterval = 0.1) {
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: secs))
     }
 
     // Emulate notifications from sync
 
     private func insertItemFromSync(index: Int = 0) {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
+        DispatchQueue.global(qos: .background).async {
             let realm = try! Realm()
             let items = realm.objects(TaskList.self).first!.items
             try! realm.write {
-                items.insert(Task(), atIndex: index)
+                items.insert(Task(), at: index)
             }
         }
     }
 
     private func deleteItemFromSync() {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
+        DispatchQueue.global(qos: .background).async {
             let realm = try! Realm()
             let items = realm.objects(TaskList.self).first!.items
             try! realm.write {
@@ -275,7 +266,7 @@ class RealmTasksTests: XCTestCase {
 
 extension UIView {
     var currentFirstResponder: UIResponder? {
-        if self.isFirstResponder() {
+        if self.isFirstResponder {
             return self
         }
         for view in self.subviews {

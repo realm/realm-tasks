@@ -31,7 +31,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = UIViewController()
             self.logIn()
         }
-
         if configureDefaultRealm() {
             window?.rootViewController = ContainerViewController()
             window?.makeKeyAndVisible()

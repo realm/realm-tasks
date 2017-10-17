@@ -51,10 +51,11 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     }
 
     deinit {
-        viewController.tableView.removeObserver(self, forKeyPath: "bounds")
+        boundsToken?.invalidate()
     }
 
     // MARK: Setup table view
+    private var boundsToken: NSKeyValueObservation?
 
     func setupTableView(in view: UIView, topConstraint: inout NSLayoutConstraint?, listTitle title: String?) {
         let tableView = viewController.tableView
@@ -78,7 +79,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         view.addSubview(tableViewContentView)
         tableViewContentView.isHidden = true
 
-        tableView.observe(\UITableView.bounds) { [weak self] _, _ in
+        boundsToken = tableView.observe(\UITableView.bounds) { [weak self] _, _ in
             guard let viewController = self?.viewController else { return }
             let tableView = viewController.tableView
             let tableViewContentView = viewController.tableViewContentView
