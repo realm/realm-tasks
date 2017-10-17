@@ -45,6 +45,11 @@ final class ViewController<Item, Parent: Object>: UIViewController, UIGestureRec
         return listPresenter.parent.items
     }
 
+    // Cast first to existential to placate generic type checking.
+    private static func castCell(cell: UITableViewCell?) -> TableViewCell<Item>? {
+        return cell as Any as? TableViewCell<Item>
+    }
+
     // Table View
     internal let tableView = UITableView()
     internal let tableViewContentView = UIView()
@@ -132,8 +137,7 @@ final class ViewController<Item, Parent: Object>: UIViewController, UIGestureRec
 
         let visibleCells = tableView.visibleCells
         for cell in visibleCells {
-            let cell = cell as! TableViewCell<Item>
-            (cell as! TableViewCell<Item>).reset()
+            ViewController.castCell(cell: cell)?.reset()
         }
     }
 
@@ -154,7 +158,7 @@ final class ViewController<Item, Parent: Object>: UIViewController, UIGestureRec
         let location = recognizer.location(in: tableView)
         let cell: TableViewCell<Item>!
         if let indexPath = tableView.indexPathForRow(at: location),
-            let typedCell = tableView.cellForRow(at: indexPath) as? TableViewCell<Item> {
+            let typedCell = ViewController.castCell(cell: tableView.cellForRow(at: indexPath)) {
             cell = typedCell
             if case .down(_) = auxViewController!, location.x > tableView.bounds.width / 2 {
                 navigateToBottomViewController(item: cell.item)
@@ -166,7 +170,7 @@ final class ViewController<Item, Parent: Object>: UIViewController, UIGestureRec
             items.insert(Item(), at: row)
             let indexPath = IndexPath(row: row, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
-            cell = tableView.cellForRow(at: indexPath) as! TableViewCell<Item>
+            cell = ViewController.castCell(cell: tableView.cellForRow(at: indexPath))!
             finishUIWrite()
             listPresenter.updateOnboardView(animated: true)
         }
@@ -319,7 +323,7 @@ final class ViewController<Item, Parent: Object>: UIViewController, UIGestureRec
             items.insert(Item(), at: 0)
         }
         tableView.reloadData()
-        if let firstCell = tableView.visibleCells.first as? TableViewCell<Item> {
+        if let firstCell = ViewController.castCell(cell: tableView.visibleCells.first) {
             firstCell.textView.becomeFirstResponder()
         }
     }
