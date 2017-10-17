@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ protocol ItemCellViewDelegate: class {
 
 }
 
-fileprivate let iconWidth: CGFloat = 40
-fileprivate let iconOffset = iconWidth / 2
-fileprivate let swipeThreshold = iconWidth * 2
+private let iconWidth: CGFloat = 40
+private let iconOffset = iconWidth / 2
+private let swipeThreshold = iconWidth * 2
 
-class ItemCellView: NSTableCellView {
+class ItemCellView: NSTableCellView, ItemTextFieldDelegate {
 
     weak var delegate: ItemCellViewDelegate?
 
@@ -96,13 +96,13 @@ class ItemCellView: NSTableCellView {
 
     fileprivate let doneIconView: NSImageView = {
         let imageView = NSImageView()
-        imageView.image = NSImage(named: "DoneIcon")
+        imageView.image = NSImage(named: NSImage.Name(rawValue: "DoneIcon"))
         return imageView
     }()
 
     fileprivate let deleteIconView: NSImageView = {
         let imageView = NSImageView()
-        imageView.image = NSImage(named: "DeleteIcon")
+        imageView.image = NSImage(named: NSImage.Name(rawValue: "DeleteIcon"))
         return imageView
     }()
 
@@ -110,7 +110,7 @@ class ItemCellView: NSTableCellView {
 
     required init(identifier: String) {
         super.init(frame: .zero)
-        self.identifier = identifier
+        self.identifier = NSUserInterfaceItemIdentifier(rawValue: identifier)
 
         setupUI()
         setupGestures()
@@ -156,12 +156,12 @@ class ItemCellView: NSTableCellView {
     private func setupIconViews() {
         doneIconView.frame.size.width = iconWidth
         doneIconView.frame.origin.x = iconOffset
-        doneIconView.autoresizingMask = [.viewMaxXMargin, .viewHeightSizable]
+        doneIconView.autoresizingMask = [.maxXMargin, .height]
         addSubview(doneIconView, positioned: .below, relativeTo: contentView)
 
         deleteIconView.frame.size.width = iconWidth
         deleteIconView.frame.origin.x = bounds.width - deleteIconView.bounds.width - iconOffset
-        deleteIconView.autoresizingMask = [.viewMinXMargin, .viewHeightSizable]
+        deleteIconView.autoresizingMask = [.minXMargin, .height]
         addSubview(deleteIconView, positioned: .below, relativeTo: contentView)
     }
 
@@ -169,7 +169,7 @@ class ItemCellView: NSTableCellView {
         addSubview(contentView)
 
         contentView.frame = bounds
-        contentView.autoresizingMask = [.viewWidthSizable, .viewHeightSizable]
+        contentView.autoresizingMask = [.width, .height]
     }
 
     private func setupHighlightView() {
@@ -250,11 +250,7 @@ class ItemCellView: NSTableCellView {
         }
     }
 
-}
-
-// MARK: ItemTextFieldDelegate
-
-extension ItemCellView: ItemTextFieldDelegate {
+    // MARK: ItemTextFieldDelegate
 
     func textFieldDidBecomeFirstResponder(_ textField: NSTextField) {
         highlightView.isHidden = true
@@ -299,7 +295,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 
     // FIXME: This could easily be refactored to avoid such a high CC.
     // swiftlint:disable:next cyclomatic_complexity
-    fileprivate dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
+    @objc fileprivate dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
         let originalDoneIconOffset = iconOffset
         let originalDeleteIconOffset = bounds.width - deleteIconView.bounds.width - iconOffset
 
@@ -423,9 +419,11 @@ protocol ItemTextFieldDelegate: NSTextFieldDelegate {
 }
 
 private class ItemTextField: NSTextField {
-
-    override class func cellClass() -> AnyClass? {
-        return ItemTextFieldCell.self
+    override class var cellClass: Swift.AnyClass? {
+        set { /**/ }
+        get {
+            return ItemTextFieldCell.self
+        }
     }
 
     override init(frame frameRect: NSRect) {

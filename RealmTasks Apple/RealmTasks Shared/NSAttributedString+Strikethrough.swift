@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ extension NSAttributedString {
 
     private func strike(with style: NSUnderlineStyle, range: NSRange? = nil) -> NSAttributedString {
         let mutableAttributedString = NSMutableAttributedString(attributedString: self)
-        let attributeName = NSStrikethroughStyleAttributeName
+        let attributeName = NSAttributedStringKey.strikethroughStyle
         let fullRange = NSRange(0..<length)
         mutableAttributedString.removeAttribute(attributeName, range: fullRange)
         mutableAttributedString.addAttribute(attributeName, value: style.rawValue, range: range ?? fullRange)

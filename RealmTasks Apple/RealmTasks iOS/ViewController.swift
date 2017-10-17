@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ enum ViewControllerPosition {
 
 // MARK: View Controller
 // swiftlint:disable:next type_body_length
-final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGestureRecognizerDelegate,
-    UIScrollViewDelegate, ViewControllerProtocol where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
+final class ViewController<Item, Parent: Object>: UIViewController, UIGestureRecognizerDelegate,
+    UIScrollViewDelegate, ViewControllerProtocol where Parent: ListPresentable, Parent.Item == Item {
 
     // MARK: Properties
     var items: List<Item> {
@@ -132,6 +132,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
 
         let visibleCells = tableView.visibleCells
         for cell in visibleCells {
+            let cell = cell as! TableViewCell<Item>
             (cell as! TableViewCell<Item>).reset()
         }
     }
@@ -142,7 +143,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(recognizer:))))
     }
 
-    func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
+    @objc func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
         guard recognizer.state == .ended else {
             return
         }
@@ -230,7 +231,6 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
     // MARK: UIScrollViewDelegate methods
 
     // FIXME: This could easily be refactored to avoid such a high CC.
-    // swiftlint:disable:next cyclomatic_complexity
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         func removeVC(_ viewController: UIViewController?) {
             if scrollView.isDragging {

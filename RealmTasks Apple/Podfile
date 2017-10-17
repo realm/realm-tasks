@@ -1,24 +1,24 @@
 source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
 
 abstract_target 'RealmTasks' do
-    use_frameworks!
-
-    pod 'RealmSwift', '= 3.0.0-rc.1'
-    pod 'Cartography', '~> 1.0.1'
-    pod 'SwiftLint', '= 0.16.1'
+    pod 'RealmSwift', '~> 3'
+    pod 'Cartography', '~> 2.0.0'
+    pod 'SwiftLint', '= 0.23.1'
 
     target 'RealmTasks iOS' do
         platform :ios, '9.0'
-        pod 'RealmLoginKit'
+        pod 'RealmLoginKit', :podspec=>'https://raw.githubusercontent.com/realm-demos/realm-loginkit/master/RealmLoginKit%20Apple/RealmLoginKit.podspec', :branch => 'to/swift-4'
     end
 
     target 'RealmTasks macOS' do
         platform :osx, '10.10'
     end
+end
 
-    target 'RealmTasks iOS Tests' do
-        platform :ios, '9.0'
-    end
+target 'RealmTasks iOS Tests' do
+	platform :osx, '10.10'
+    pod 'RealmSwift', '~> 3'
 end
 
 post_install do |installer|
@@ -26,6 +26,15 @@ post_install do |installer|
         target.build_configurations.each do |config|
             # Signing
             config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = ''
+
+            # Swift4 pods
+            next unless target.name.start_with?("RealmSwift") ||
+                target.name.start_with?("RealmLoginKit") ||
+                target.name.start_with?("Cartography")
+
+            config.build_settings['SWIFT_VERSION'] = '4.0'
+
         end
     end
 end
+

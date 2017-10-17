@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,13 +67,15 @@ extension Collection where Iterator.Element == Color, Index == Int {
 
         // Get the initial color which will serve as the origin
         let topColor = self[colorRangeIndex]
-        var fromColors: [CGFloat] = [0, 0, 0]
-        topColor.getRed(&fromColors[0], green: &fromColors[1], blue: &fromColors[2], alpha: nil)
+        var fromRed: CGFloat = 0, fromGreen: CGFloat = 0, fromBlue: CGFloat = 0
+        topColor.getRed(&fromRed, green: &fromGreen, blue: &fromBlue, alpha: nil)
+        let fromColors: [CGFloat] = [fromRed, fromGreen, fromBlue]
 
         // Get the destination color we will lerp to
         let bottomColor = self[colorRangeIndex + 1]
-        var toColors: [CGFloat] = [0, 0, 0]
-        bottomColor.getRed(&toColors[0], green: &toColors[1], blue: &toColors[2], alpha: nil)
+        var toRed: CGFloat = 0, toGreen: CGFloat = 0, toBlue: CGFloat = 0
+        bottomColor.getRed(&toRed, green: &toGreen, blue: &toBlue, alpha: nil)
+        let toColors: [CGFloat] = [toRed, toGreen, toBlue]
 
         // Work out the actual percentage we need to lerp, inside just that stop range
         let stopOffset = CGFloat((normalizedOffset - (Double(colorRangeIndex) * colorStopRange)) / colorStopRange)

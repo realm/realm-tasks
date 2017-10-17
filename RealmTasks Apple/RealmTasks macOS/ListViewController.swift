@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import Cartography
 import Cocoa
 import RealmSwift
 
-fileprivate let taskCellIdentifier = "TaskCell"
-fileprivate let listCellIdentifier = "ListCell"
-fileprivate let prototypeCellIdentifier = "PrototypeCell"
+private let taskCellIdentifier = "TaskCell"
+private let listCellIdentifier = "ListCell"
+private let prototypeCellIdentifier = "PrototypeCell"
 
 // FIXME: This type should be split up.
 // swiftlint:disable:next type_body_length
@@ -52,7 +52,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     init(list: ListType) {
         self.list = list
 
-        super.init(nibName: nil, bundle: nil)!
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -91,9 +91,9 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         let notificationCenter = NotificationCenter.default
 
         // Handle window resizing to update table view rows height
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidResize, object: view.window)
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidEnterFullScreen, object: view.window)
-        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindowDidExitFullScreen, object: view.window)
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindow.didResizeNotification, object: view.window)
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindow.didEnterFullScreenNotification, object: view.window)
+        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSWindow.didExitFullScreenNotification, object: view.window)
 
         setupNotifications()
         setupGestureRecognizers()
@@ -105,16 +105,16 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     private func setupNotifications() {
         notificationToken = list.items.observe { [unowned self] changes in
             switch changes {
-                case .initial:
-                    self.tableView.reloadData()
-                case .update(_, let deletions, let insertions, let modifications):
-                    self.tableView.beginUpdates()
-                    self.tableView.removeRows(at: deletions.toIndexSet() as IndexSet, withAnimation: .effectGap)
-                    self.tableView.insertRows(at: insertions.toIndexSet() as IndexSet, withAnimation: .effectGap)
-                    self.tableView.reloadData(forRowIndexes: modifications.toIndexSet() as IndexSet, columnIndexes: IndexSet(integer: 0))
-                    self.tableView.endUpdates()
-                case .error(let error):
-                    fatalError(String(describing: error))
+            case .initial:
+                self.tableView.reloadData()
+            case .update(_, let deletions, let insertions, let modifications):
+                self.tableView.beginUpdates()
+                self.tableView.removeRows(at: deletions.toIndexSet() as IndexSet, withAnimation: .effectGap)
+                self.tableView.insertRows(at: insertions.toIndexSet() as IndexSet, withAnimation: .effectGap)
+                self.tableView.reloadData(forRowIndexes: modifications.toIndexSet() as IndexSet, columnIndexes: IndexSet(integer: 0))
+                self.tableView.endUpdates()
+            case .error(let error):
+                fatalError(String(describing: error))
             }
         }
     }
@@ -131,7 +131,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
     }
 
-    private dynamic func windowDidResize(notification: NSNotification) {
+    @objc private dynamic func windowDidResize(notification: NSNotification) {
         updateTableViewHeightOfRows()
     }
 
@@ -168,14 +168,14 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
 
         NSView.animate(animations: {
-            NSAnimationContext.current().allowsImplicitAnimation = false // prevents NSTableView autolayout issues
+            NSAnimationContext.current.allowsImplicitAnimation = false // prevents NSTableView autolayout issues
             tableView.insertRows(at: NSIndexSet(index: 0) as IndexSet, withAnimation: .effectGap)
-        }) {
+        }, completion: {
             if let newItemCellView = self.tableView.view(atColumn: 0, row: 0, makeIfNecessary: false) as? ItemCellView {
                 self.beginEditingCell(newItemCellView)
                 self.tableView.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
             }
-        }
+        })
     }
 
     override func validateToolbarItem(_ toolbarItem: NSToolbarItem) -> Bool {
@@ -255,7 +255,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
 
             NSView.animate {
                 // Disable implicit animations because tableView animates reordering via animator proxy
-                NSAnimationContext.current().allowsImplicitAnimation = false
+                NSAnimationContext.current.allowsImplicitAnimation = false
                 tableView.moveRow(at: sourceRow, to: destinationRow)
             }
         }
@@ -276,7 +276,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
 
         NSView.animate(animations: {
             currentlyMovingRowSnapshotView?.frame = view.convert(currentlyMovingRowView!.frame, from: tableView)
-        }) {
+        }, completion: {
             self.currentlyMovingRowView?.alphaValue = 1
             self.currentlyMovingRowView = nil
 
@@ -290,12 +290,12 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
             }
 
             self.updateColors()
-        }
+        })
 
         commitUIWrite()
     }
 
-    private dynamic func handlePressGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
+    @objc private dynamic func handlePressGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
             beginReorderingRow(atIndex: tableView.row(at: recognizer.location(in: tableView)), screenPoint: recognizer.location(in: nil))
@@ -306,7 +306,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
     }
 
-    private dynamic func handlePanGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
+    @objc private dynamic func handlePanGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
             startAutoscrolling()
@@ -327,7 +327,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         autoscrollTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(handleAutoscrolling), userInfo: nil, repeats: true)
     }
 
-    private dynamic func handleAutoscrolling() {
+    @objc private dynamic func handleAutoscrolling() {
         if let event = NSApp.currentEvent {
             if tableView.autoscroll(with: event) {
                 handleReordering(forScreenPoint: event.locationInWindow)
@@ -356,9 +356,9 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
                     view.isUserInteractionEnabled = false
                 }
             }
-        }) {
+        }, completion: {
             self.view.window?.update()
-        }
+        })
 
         cellView.editable = true
         view.window?.makeFirstResponder(cellView.textView)
@@ -398,13 +398,13 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
                     view.alphaValue = 1
                 }
             }
-        }) {
+        }, completion: {
             self.tableView.enumerateAvailableRowViews { _, row in
                 if let view = self.tableView.view(atColumn: 0, row: row, makeIfNecessary: false) as? ItemCellView {
                     view.isUserInteractionEnabled = true
                 }
             }
-        }
+        })
     }
 
     // MARK: NSGestureRecognizerDelegate
@@ -461,7 +461,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
             fatalError("Unknown item type")
         }
 
-        if let view = tableView.make(withIdentifier: cellViewIdentifier, owner: self) as? ItemCellView {
+        if let view = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: cellViewIdentifier), owner: self) as? ItemCellView {
             cellView = view
         } else {
             cellView = cellViewType.init(identifier: listCellIdentifier)
@@ -570,11 +570,11 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
             }
 
             NSView.animate(duration: 0.3, animations: {
-                NSAnimationContext.current().allowsImplicitAnimation = false
+                NSAnimationContext.current.allowsImplicitAnimation = false
                 self.tableView.moveRow(at: index, to: destinationIndex)
-            }) {
+            }, completion: {
                 self.updateColors()
-            }
+            })
         }
     }
 
@@ -588,7 +588,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
 
         NSView.animate {
-            NSAnimationContext.current().allowsImplicitAnimation = false
+            NSAnimationContext.current.allowsImplicitAnimation = false
             tableView.removeRows(at: IndexSet(integer: index), withAnimation: .slideLeft)
         }
     }

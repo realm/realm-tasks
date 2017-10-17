@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -121,7 +121,7 @@ class ListCellView: ItemCellView {
 
     override func resetCursorRects() {
         super.resetCursorRects()
-        addCursorRect(bounds, cursor: acceptsEditing ? .iBeam() : .arrow())
+        addCursorRect(bounds, cursor: acceptsEditing ? .iBeam : .arrow)
     }
 
     override func mouseEntered(with theEvent: NSEvent) {
@@ -152,7 +152,7 @@ class ListCellView: ItemCellView {
         updateTextColor()
     }
 
-    private dynamic func delayedSetAcceptsEditing() {
+    @objc private dynamic func delayedSetAcceptsEditing() {
         if isUserInteractionEnabled {
             acceptsEditing = true
         }

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,18 +78,13 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         view.addSubview(tableViewContentView)
         tableViewContentView.isHidden = true
 
-        tableView.addObserver(self, forKeyPath: "bounds", options: .new, context: &tableViewBoundsKVOContext)
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if context == &tableViewBoundsKVOContext {
+        tableView.observe(\UITableView.bounds) { [weak self] _, _ in
+            guard let viewController = self?.viewController else { return }
             let tableView = viewController.tableView
             let tableViewContentView = viewController.tableViewContentView
             let view = tableView.superview!
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
 
@@ -165,7 +160,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         viewController.tableView.addGestureRecognizer(longPressGestureRecognizer)
     }
 
-    func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
+    @objc func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
         let tableView = viewController.tableView
 
         let location = recognizer.location(in: tableView)
@@ -308,39 +303,39 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     func adjustPlaceholder(state: PlaceholderState) {
         switch state {
-            case .pullToCreate(let distancePulledDown):
-                UIView.animate(withDuration: 0.1) { [unowned self] in
-                    self.placeHolderCell.navHintView.alpha = 0
-                }
-                placeHolderCell.textView.text = "Pull to Create Item"
+        case .pullToCreate(let distancePulledDown):
+            UIView.animate(withDuration: 0.1) { [unowned self] in
+                self.placeHolderCell.navHintView.alpha = 0
+            }
+            placeHolderCell.textView.text = "Pull to Create Item"
 
-                let cellHeight = viewController.tableView.rowHeight
-                let angle = CGFloat(Double.pi / 2.0) - tan(distancePulledDown / cellHeight)
+            let cellHeight = viewController.tableView.rowHeight
+            let angle = CGFloat(Double.pi / 2.0) - tan(distancePulledDown / cellHeight)
 
-                var transform = CATransform3DIdentity
-                transform.m34 = CGFloat(1.0 / -(1000 * 0.3))
-                transform = CATransform3DRotate(transform, angle, 1, 0, 0)
-                placeHolderCell.layer.transform = transform
+            var transform = CATransform3DIdentity
+            transform.m34 = CGFloat(1.0 / -(1000 * 0.3))
+            transform = CATransform3DRotate(transform, angle, 1, 0, 0)
+            placeHolderCell.layer.transform = transform
 
-            case .releaseToCreate:
-                UIView.animate(withDuration: 0.1) { [unowned self] in
-                    self.placeHolderCell.navHintView.alpha = 0
-                }
-                placeHolderCell.layer.transform = CATransform3DIdentity
-                placeHolderCell.textView.text = "Release to Create Item"
-            case .switchToLists:
-                placeHolderCell.navHintView.hintText = "Switch to Lists"
-                placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransform.identity.rotated(by: .pi)
+        case .releaseToCreate:
+            UIView.animate(withDuration: 0.1) { [unowned self] in
+                self.placeHolderCell.navHintView.alpha = 0
+            }
+            placeHolderCell.layer.transform = CATransform3DIdentity
+            placeHolderCell.textView.text = "Release to Create Item"
+        case .switchToLists:
+            placeHolderCell.navHintView.hintText = "Switch to Lists"
+            placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransform.identity.rotated(by: .pi)
 
-                UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5,
-                    options: [], animations: { [unowned self] in
+            UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5,
+                options: [], animations: { [unowned self] in
 
-                    self.placeHolderCell.navHintView.alpha = 1
-                    self.placeHolderCell.navHintView.hintArrowTransfom  = .identity
-                }, completion: nil)
+                self.placeHolderCell.navHintView.alpha = 1
+                self.placeHolderCell.navHintView.hintArrowTransfom  = .identity
+            }, completion: nil)
 
-            case .alpha(let alpha):
-                placeHolderCell.alpha = alpha
+        case .alpha(let alpha):
+            placeHolderCell.alpha = alpha
         }
     }
 }

@@ -1,34 +1,39 @@
 PODS:
-  - Cartography (1.0.1)
-  - Realm (3.0.0-rc.1):
-    - Realm/Headers (= 3.0.0-rc.1)
-  - Realm/Headers (3.0.0-rc.1)
-  - RealmLoginKit (0.1.2):
+  - Cartography (2.0.0)
+  - Realm (3.0.0):
+    - Realm/Headers (= 3.0.0)
+  - Realm/Headers (3.0.0)
+  - RealmLoginKit (0.1.3):
     - Realm
-    - RealmLoginKit/Core (= 0.1.2)
+    - RealmLoginKit/Core (= 0.1.3)
     - TORoundedTableView
-  - RealmLoginKit/Core (0.1.2):
+  - RealmLoginKit/Core (0.1.3):
     - Realm
     - TORoundedTableView
-  - RealmSwift (3.0.0-rc.1):
-    - Realm (= 3.0.0-rc.1)
-  - SwiftLint (0.16.1)
+  - RealmSwift (3.0.0):
+    - Realm (= 3.0.0)
+  - SwiftLint (0.23.1)
   - TORoundedTableView (0.1.3)
 
 DEPENDENCIES:
-  - Cartography (~> 1.0.1)
-  - RealmLoginKit
-  - RealmSwift (= 3.0.0-rc.1)
-  - SwiftLint (= 0.16.1)
+  - Cartography (~> 2.0.0)
+  - RealmLoginKit (from `https://raw.githubusercontent.com/realm-demos/realm-loginkit/master/RealmLoginKit%20Apple/RealmLoginKit.podspec`)
+  - RealmSwift (~> 3)
+  - SwiftLint (= 0.23.1)
+
+EXTERNAL SOURCES:
+  RealmLoginKit:
+    :branch: to/swift-4
+    :podspec: https://raw.githubusercontent.com/realm-demos/realm-loginkit/master/RealmLoginKit%20Apple/RealmLoginKit.podspec
 
 SPEC CHECKSUMS:
-  Cartography: c1460e99395b824d9d75360b0382faeb0b33dcd7
-  Realm: f79164edf2fb3807debe2fd2132ae15ed642d0a6
-  RealmLoginKit: ee1dcad4f3535ef65f4fa0b8e53c045ce0e0774e
-  RealmSwift: f3e689d09a6cc406cfa6f32dc4da432543aa945b
-  SwiftLint: b8b683208cc09640898f16318a7a452274e91f61
+  Cartography: d295eb25ab54bb57eecd8c2f04e9648c850f1281
+  Realm: dec0de73be8c57506e39db72694d513c189493b3
+  RealmLoginKit: 41a2fc61f3fa294e35c786b751133b1744f4d640
+  RealmSwift: 44a7090b16d1b22a406c6bf129bdd602db1bbecc
+  SwiftLint: 1b670ce79284c76520f84060e87d645078fd32fa
   TORoundedTableView: cd1437ef81ab3888dea8c06d2dfe4795bcaac768
 
-PODFILE CHECKSUM: 74ed0795c43d930714dfa98971c2dbff5d897efa
+PODFILE CHECKSUM: 4cc264cc1ee5b64dc1cdd42fbf8a07bd14d9dc91
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.3.1
