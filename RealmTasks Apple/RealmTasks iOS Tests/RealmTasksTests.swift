@@ -70,6 +70,8 @@ class RealmTasksTests: XCTestCase {
         try! realm.write {
             taskList.items.removeAll()
         }
+        // Need to allow the notification to propagate, so advance the runloop.
+        wait()
         vc.tableView.reloadData()
     }
 
@@ -161,7 +163,6 @@ class RealmTasksTests: XCTestCase {
         XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
     }
 
-    // Failing Test
     func testDeleteItemFromSyncWhileEditing() {
         XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 
@@ -178,7 +179,6 @@ class RealmTasksTests: XCTestCase {
         XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 2)
     }
 
-    // Failing Test
     func testCompleteAndDeleteFromSync() {
         XCTAssertEqual(vc.tableView.dataSource!.tableView(vc.tableView, numberOfRowsInSection: 0), 0)
 

@@ -33,6 +33,11 @@ enum PlaceholderState {
 class TablePresenter<Parent: Object>: NSObject,
 UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Parent: ListPresentable {
 
+    // Cast first to existential to placate generic type checking.
+    private func castCell(cell: UITableViewCell?) -> TableViewCell<Parent.Item>? {
+        return cell as Any as? TableViewCell<Parent.Item>
+    }
+
     var viewController: ViewControllerProtocol! {
         didSet {
             setupMovingGesture()
@@ -96,8 +101,8 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = viewController.tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell<Parent.Item>
-
+        let cell = castCell(cell: viewController.tableView.dequeueReusableCell(withIdentifier: "cell",
+                                                                               for: indexPath))!
         cell.item = items[indexPath.row]
         cell.presenter = cellPresenter
 
@@ -135,7 +140,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     }
 
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let itemCell = cell as! TableViewCell<Parent.Item>
+        let itemCell = castCell(cell: cell)!
         itemCell.reset()
     }
 
@@ -249,7 +254,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
         let location = gestureRecognizer.location(in: tableView)
         if let indexPath = tableView.indexPathForRow(at: location),
-            let cell = tableView.cellForRow(at: indexPath) as? TableViewCell<Parent.Item> {
+            let cell = castCell(cell: tableView.cellForRow(at: indexPath)) {
             return !cell.item.completed
         }
         return gestureRecognizer is UITapGestureRecognizer
