@@ -5,3 +5,4 @@ disabled_rules:
   - force_try
   - function_body_length
   - todo
+  - identifier_name

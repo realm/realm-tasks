@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import UIKit
 
 private var titleKVOContext = 0
 
-class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
+class ListPresenter<Item, Parent: Object>: NSObject where Parent: ListPresentable, Parent.Item == Item {
 
     var cellPresenter: CellPresenter<Item>!
     var tablePresenter: TablePresenter<Parent>!
@@ -36,8 +36,8 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
 
             if viewController != nil {
                 observeListTitle()
-            } else if observingText {
-                parent.removeObserver(self, forKeyPath: "text")
+            } else {
+                titleToken?.invalidate()
             }
 
             notificationToken = setupNotifications()
@@ -53,29 +53,32 @@ class ListPresenter<Item: Object, Parent: Object>: NSObject where Item: CellPres
     }
 
     deinit {
-        notificationToken?.stop()
+        notificationToken?.invalidate()
     }
 
     // MARK: List title
-    private var observingText = false
+    private var titleToken: NotificationToken?
 
     func observeListTitle() {
-        if let parent = parent as? CellPresentable {
-            (parent as! Object).addObserver(self, forKeyPath: "text", options: .new, context: &titleKVOContext)
-            viewController.setListTitle(to: parent.text)
-            observingText = true
-        }
-    }
+        guard let parent = parent as? CellPresentable,
+            let parentObject = parent as? Object else { return }
 
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if context == &titleKVOContext {
-            viewController.setListTitle(to: (parent as! CellPresentable).text)
+        titleToken = parentObject.observe { [weak self] change in
+            switch change {
+            case .change(let properties):
+                if properties.first(where: { $0.name == "text"}) != nil {
+                    self?.viewController.setListTitle(to: parent.text)
+                }
+            default: break
+            }
         }
+
+        viewController.setListTitle(to: parent.text)
     }
 
     // MARK: Notifications
     private func setupNotifications() -> NotificationToken {
-        return parent.items.addNotificationBlock { [unowned self] changes in
+        return parent.items.observe { [unowned self] changes in
             switch changes {
             case .initial:
                 // Results are now populated and can be accessed without blocking the UI

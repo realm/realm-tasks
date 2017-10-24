@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -346,7 +347,7 @@
             <objects>
                 <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="CrP-T3-Pfk" sceneMemberID="viewController">
                     <window key="window" title="RealmTasks" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="UPX-nY-FVZ">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
@@ -383,6 +384,9 @@
                                 <toolbarItem reference="4CH-Dy-gYb"/>
                             </defaultToolbarItems>
                         </toolbar>
+                        <connections>
+                            <outlet property="delegate" destination="CrP-T3-Pfk" id="YQd-5H-2Ih"/>
+                        </connections>
                     </window>
                     <connections>
                         <segue destination="sgL-6S-YI5" kind="relationship" relationship="window.shadowedContentViewController" id="oMM-yy-uhq"/>
@@ -446,7 +450,7 @@ DQ
                                     </binding>
                                 </connections>
                             </button>
-                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dnu-R6-dg3">
+                            <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dnu-R6-dg3">
                                 <rect key="frame" x="20" y="103" width="400" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="400" id="3DH-iz-9f5"/>
@@ -478,7 +482,7 @@ DQ
                                     <action selector="register:" target="Rd6-Qu-x6P" id="l74-d6-2Ic"/>
                                 </connections>
                             </button>
-                            <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3WT-Fq-edH">
+                            <secureTextField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3WT-Fq-edH">
                                 <rect key="frame" x="20" y="71" width="400" height="22"/>
                                 <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Password" drawsBackground="YES" usesSingleLineMode="YES" id="6co-ML-XIY">
                                     <font key="font" metaFont="system"/>
@@ -500,7 +504,7 @@ DQ
                                     </binding>
                                 </connections>
                             </secureTextField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q30-0U-JD1">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q30-0U-JD1">
                                 <rect key="frame" x="124" y="155" width="193" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Log In Existing Account" id="2N0-Ax-pEB">
                                     <font key="font" metaFont="system" size="18"/>
@@ -582,7 +586,7 @@ DQ
                                     </binding>
                                 </connections>
                             </button>
-                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XQ5-Da-goe">
+                            <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XQ5-Da-goe">
                                 <rect key="frame" x="20" y="135" width="400" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="400" id="FLP-e8-YBH"/>
@@ -604,7 +608,7 @@ DQ
                                     </binding>
                                 </connections>
                             </textField>
-                            <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OOi-AF-17P">
+                            <secureTextField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OOi-AF-17P">
                                 <rect key="frame" x="20" y="103" width="400" height="22"/>
                                 <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Password" drawsBackground="YES" usesSingleLineMode="YES" id="URr-6Y-2RY">
                                     <font key="font" metaFont="system"/>
@@ -626,7 +630,7 @@ DQ
                                     </binding>
                                 </connections>
                             </secureTextField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aWH-bc-036">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aWH-bc-036">
                                 <rect key="frame" x="164" y="187" width="112" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="New Account" id="zP6-2c-z4T">
                                     <font key="font" metaFont="system" size="18"/>
@@ -634,7 +638,7 @@ DQ
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DYP-ma-osA">
+                            <secureTextField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DYP-ma-osA">
                                 <rect key="frame" x="20" y="71" width="400" height="22"/>
                                 <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Confirmation" drawsBackground="YES" usesSingleLineMode="YES" id="NUI-qy-Txa">
                                     <font key="font" metaFont="system"/>

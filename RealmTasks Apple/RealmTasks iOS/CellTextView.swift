@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ final class CellTextView: UITextView {
         autocapitalizationType = .words
         returnKeyType = .done
         isScrollEnabled = false
-        contentInset = UIEdgeInsetsMake(-10.0, 0.0, 0.0, 0.0)
+        contentInset = UIEdgeInsets(top: -10.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 
     required init?(coder aDecoder: NSCoder) {

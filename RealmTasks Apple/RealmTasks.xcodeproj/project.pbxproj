@@ -20,7 +20,7 @@
 		225201A41D3DD648009E45FA /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019B1D3DD648009E45FA /* Models.swift */; };
 		225201A51D3DD648009E45FA /* CellTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019C1D3DD648009E45FA /* CellTextView.swift */; };
 		225201A61D3DD648009E45FA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2252019D1D3DD648009E45FA /* ViewController.swift */; };
-		3071C66AEB3D49B59C1C633C /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAF5806A6BD88531EE85E99 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */; };
+		46F6E42D7D462D58372761A6 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAF5806A6BD88531EE85E99 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */; };
 		9C24AA071D8FEEB500192CE3 /* CellPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA061D8FEEB500192CE3 /* CellPresenter.swift */; };
 		9C24AA0B1D8FFC0400192CE3 /* TablePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA0A1D8FFC0400192CE3 /* TablePresenter.swift */; };
 		9C24AA0D1D8FFEA200192CE3 /* ListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C24AA0C1D8FFEA200192CE3 /* ListPresenter.swift */; };
@@ -57,7 +57,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		143C81E41D65D1AA00E872E6 /* PBXContainerItemProxy */ = {
+		9C4019541F9639F900A8DCB9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E84CF2A91CBC408000082C1A /* Project object */;
 			proxyType = 1;
@@ -85,6 +85,8 @@
 		2252019D1D3DD648009E45FA /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		22FEFEBB1D91789B00523E21 /* RealmTasks-iOS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "RealmTasks-iOS.entitlements"; sourceTree = "<group>"; };
 		32FAE3E2816E19668BE587C1 /* Pods_RealmTasks_RealmTasks_macOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_RealmTasks_macOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E570DA90AEC39A744DC1042 /* Pods-RealmTasks iOS Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks iOS Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks iOS Tests/Pods-RealmTasks iOS Tests.release.xcconfig"; sourceTree = "<group>"; };
+		5C0E0D687A7EFC396DBDD8B5 /* Pods-RealmTasks iOS Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks iOS Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks iOS Tests/Pods-RealmTasks iOS Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6825C45F005C0209E5FD021F /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig"; sourceTree = "<group>"; };
 		7CDE17C56B10A7B144574437 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS.release.xcconfig"; sourceTree = "<group>"; };
 		8AC1AE58FBA72939A20FD0A8 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 		E8A1E6511D59360A00D8B04A /* SharedFunctionality.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedFunctionality.swift; sourceTree = "<group>"; };
 		EDC6CD4F38C58ED9185076BF /* Pods-RealmTasks-RealmTasks iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS.release.xcconfig"; sourceTree = "<group>"; };
 		F3712636E8D982D018984234 /* Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		FAC13C0FBA3E760632A58E7C /* Pods_RealmTasks_iOS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTasks_iOS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,7 +131,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3071C66AEB3D49B59C1C633C /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */,
+				46F6E42D7D462D58372761A6 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +184,7 @@
 				A0F0C2CAF892AF7AD2EF7F65 /* Pods_RealmTasks_RealmTasks_iOS.framework */,
 				BBAF5806A6BD88531EE85E99 /* Pods_RealmTasks_RealmTasks_iOS_Tests.framework */,
 				32FAE3E2816E19668BE587C1 /* Pods_RealmTasks_RealmTasks_macOS.framework */,
+				FAC13C0FBA3E760632A58E7C /* Pods_RealmTasks_iOS_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -256,6 +260,8 @@
 				6825C45F005C0209E5FD021F /* Pods-RealmTasks-RealmTasks iOS Tests.release.xcconfig */,
 				8AC1AE58FBA72939A20FD0A8 /* Pods-RealmTasks-RealmTasks macOS.debug.xcconfig */,
 				7CDE17C56B10A7B144574437 /* Pods-RealmTasks-RealmTasks macOS.release.xcconfig */,
+				5C0E0D687A7EFC396DBDD8B5 /* Pods-RealmTasks iOS Tests.debug.xcconfig */,
+				4E570DA90AEC39A744DC1042 /* Pods-RealmTasks iOS Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -300,7 +306,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				143C81E51D65D1AA00E872E6 /* PBXTargetDependency */,
+				9C4019551F9639F900A8DCB9 /* PBXTargetDependency */,
 			);
 			name = "RealmTasks iOS Tests";
 			productName = "RealmTasks iOS Tests";
@@ -358,7 +364,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Realm;
 				TargetAttributes = {
 					143C81DE1D65D1AA00E872E6 = {
@@ -489,9 +495,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Cartography-iOS/Cartography.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cartography.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -504,9 +517,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Cartography-macOS/Cartography.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm-macOS/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift-macOS/RealmSwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cartography.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -519,13 +539,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RealmTasks-RealmTasks iOS Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		789B04D88DC0D5B1B7D3EEC8 /* [CP] Check Pods Manifest.lock */ = {
@@ -534,13 +557,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RealmTasks-RealmTasks iOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B28F2455243335365C52C858 /* [CP] Embed Pods Frameworks */ = {
@@ -549,9 +575,20 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Cartography-iOS/Cartography.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm-iOS/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmLoginKit/RealmLoginKit.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift-iOS/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/TORoundedTableView/TORoundedTableView.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cartography.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmLoginKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TORoundedTableView.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -593,13 +630,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RealmTasks-RealmTasks macOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EA9812D7653C19B23885BEC1 /* [CP] Copy Pods Resources */ = {
@@ -697,10 +737,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		143C81E51D65D1AA00E872E6 /* PBXTargetDependency */ = {
+		9C4019551F9639F900A8DCB9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E84CF2B01CBC408000082C1A /* RealmTasks iOS */;
-			targetProxy = 143C81E41D65D1AA00E872E6 /* PBXContainerItemProxy */;
+			targetProxy = 9C4019541F9639F900A8DCB9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -726,6 +766,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.realm.RealmTasks-iOS-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RealmTasks.app/RealmTasks";
 			};
 			name = Debug;
@@ -740,6 +782,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.realm.RealmTasks-iOS-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RealmTasks.app/RealmTasks";
 			};
 			name = Release;
@@ -757,6 +801,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = io.realm.realmtasks.macos;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -773,6 +818,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = io.realm.realmtasks.macos;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -785,14 +831,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -832,14 +884,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -878,6 +936,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.realm.realmtasks.ios;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -897,6 +956,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.realm.realmtasks.ios;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

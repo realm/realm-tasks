@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import Cartography
 import Cocoa
 import RealmSwift
 
-fileprivate let toolbarTitleViewIdentifier = "TitleView"
-fileprivate let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"
+private let toolbarTitleViewIdentifier = "TitleView"
+private let toolbarShowAllListsButtonIdentifier = "ShowAllListsButton"
 
 class ContainerViewController: NSViewController {
 
@@ -96,10 +96,10 @@ class ContainerViewController: NSViewController {
                 listViewController.view.alphaValue = 1
 
                 view.layoutSubtreeIfNeeded()
-            }) {
+            }, completion: {
                 currentListViewController.removeFromParentViewController()
                 currentListViewController.view.removeFromSuperview()
-            }
+            })
         } else {
             constrain(listViewController.view, replace: constraintGroup) { view in
                 view.edges == view.superview!.edges
@@ -110,8 +110,8 @@ class ContainerViewController: NSViewController {
 
         updateToolbar(for: list)
 
-        notificationToken?.stop()
-        notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in
+        notificationToken?.invalidate()
+        notificationToken = list.realm?.observe { [unowned self] _, _ in
             // Show all lists if list is deleted on other device
             if list.isInvalidated {
                 self.showAllLists(nil)
@@ -124,7 +124,7 @@ class ContainerViewController: NSViewController {
         currentListViewController?.view.removeFromSuperview()
         currentListViewController = nil
 
-        notificationToken?.stop()
+        notificationToken?.invalidate()
         notificationToken = nil
 
         if let titleView = view.window?.toolbar?.item(withIdentifier: toolbarTitleViewIdentifier)?.view as? TitleView {
@@ -145,7 +145,7 @@ class ContainerViewController: NSViewController {
 
         if list is CellPresentable {
             if !toolbar.hasItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
-                toolbar.insertItem(withItemIdentifier: toolbarShowAllListsButtonIdentifier, at: toolbar.items.count - 1)
+                toolbar.insertItem(withItemIdentifier: NSToolbarItem.Identifier(rawValue: toolbarShowAllListsButtonIdentifier), at: toolbar.items.count - 1)
             }
         } else if let index = toolbar.indexOfItem(withIdentifier: toolbarShowAllListsButtonIdentifier) {
             view.window?.toolbar?.removeItem(at: index)
@@ -164,11 +164,11 @@ private extension NSToolbar {
     }
 
     func item(withIdentifier identifier: String) -> NSToolbarItem? {
-        return items.first { $0.itemIdentifier == identifier }
+        return items.first { $0.itemIdentifier.rawValue == identifier }
     }
 
     func indexOfItem(withIdentifier identifier: String) -> Int? {
-        return items.index { $0.itemIdentifier == identifier }
+        return items.index { $0.itemIdentifier.rawValue == identifier }
     }
 
 }

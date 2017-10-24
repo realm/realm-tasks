@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,12 +37,17 @@ enum ViewControllerPosition {
 
 // MARK: View Controller
 // swiftlint:disable:next type_body_length
-final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGestureRecognizerDelegate,
-    UIScrollViewDelegate, ViewControllerProtocol where Item: CellPresentable, Parent: ListPresentable, Parent.Item == Item {
+final class ViewController<Item, Parent: Object>: UIViewController, UIGestureRecognizerDelegate,
+    UIScrollViewDelegate, ViewControllerProtocol where Parent: ListPresentable, Parent.Item == Item {
 
     // MARK: Properties
     var items: List<Item> {
         return listPresenter.parent.items
+    }
+
+    // Cast first to existential to placate generic type checking.
+    private static func castCell(cell: UITableViewCell?) -> TableViewCell<Item>? {
+        return cell as Any as? TableViewCell<Item>
     }
 
     // Table View
@@ -132,7 +137,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
 
         let visibleCells = tableView.visibleCells
         for cell in visibleCells {
-            (cell as! TableViewCell<Item>).reset()
+            ViewController.castCell(cell: cell)?.reset()
         }
     }
 
@@ -142,7 +147,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognized(recognizer:))))
     }
 
-    func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
+    @objc func tapGestureRecognized(recognizer: UITapGestureRecognizer) {
         guard recognizer.state == .ended else {
             return
         }
@@ -153,7 +158,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
         let location = recognizer.location(in: tableView)
         let cell: TableViewCell<Item>!
         if let indexPath = tableView.indexPathForRow(at: location),
-            let typedCell = tableView.cellForRow(at: indexPath) as? TableViewCell<Item> {
+            let typedCell = ViewController.castCell(cell: tableView.cellForRow(at: indexPath)) {
             cell = typedCell
             if case .down(_) = auxViewController!, location.x > tableView.bounds.width / 2 {
                 navigateToBottomViewController(item: cell.item)
@@ -165,7 +170,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
             items.insert(Item(), at: row)
             let indexPath = IndexPath(row: row, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
-            cell = tableView.cellForRow(at: indexPath) as! TableViewCell<Item>
+            cell = ViewController.castCell(cell: tableView.cellForRow(at: indexPath))!
             finishUIWrite()
             listPresenter.updateOnboardView(animated: true)
         }
@@ -230,7 +235,6 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
     // MARK: UIScrollViewDelegate methods
 
     // FIXME: This could easily be refactored to avoid such a high CC.
-    // swiftlint:disable:next cyclomatic_complexity
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         func removeVC(_ viewController: UIViewController?) {
             if scrollView.isDragging {
@@ -319,7 +323,7 @@ final class ViewController<Item: Object, Parent: Object>: UIViewController, UIGe
             items.insert(Item(), at: 0)
         }
         tableView.reloadData()
-        if let firstCell = tableView.visibleCells.first as? TableViewCell<Item> {
+        if let firstCell = ViewController.castCell(cell: tableView.visibleCells.first) {
             firstCell.textView.becomeFirstResponder()
         }
     }

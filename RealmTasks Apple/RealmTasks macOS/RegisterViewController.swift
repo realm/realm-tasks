@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ class RegisterViewController: NSViewController {
 
     weak var delegate: RegisterViewControllerDelegate?
 
-    var userName: String?
-    var password: String?
-    var confirmation: String?
+    @objc var userName: String?
+    @objc var password: String?
+    @objc var confirmation: String?
 
     var confirmationMatchesPassword: Bool {
         return password == confirmation

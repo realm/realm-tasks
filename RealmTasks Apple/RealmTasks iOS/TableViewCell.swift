@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,8 +67,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             if item.date != nil {
                 dateLabel.isHidden = false
                 dateLabel.text = dateFormatter.string(from: item.date!)
-            }
-            else {
+            } else {
                 dateLabel.isHidden = true
             }
             setLayoutConstraints(dateLabelHidden: dateLabel.isHidden)
@@ -190,7 +189,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
 
     private func setupDateLabel() {
         contentView.addSubview(dateLabel)
-        constrain(textView, dateLabel) { textView, dateLabel in
+        constrain(textView, dateLabel) { _, dateLabel in
             dateLabel.left == dateLabel.superview!.left + 14
             dateLabel.bottom == dateLabel.superview!.bottom - 17
             dateLabel.right == dateLabel.superview!.right - 8
@@ -202,8 +201,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             constrain(textView, replace: constraintGroup) { textView in
                 textView.bottom == textView.superview!.bottom - 7
             }
-        }
-        else {
+        } else {
             constrain(textView, dateLabel, replace: constraintGroup) { textView, dateLabel in
                 textView.bottom == dateLabel.top + 10
             }
@@ -270,7 +268,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
         addGestureRecognizer(recognizer)
     }
 
-    func handlePan(recognizer: UIPanGestureRecognizer) {
+    @objc func handlePan(recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began: handlePanBegan()
         case .changed: handlePanChanged(translation: recognizer.translation(in: self).x)
@@ -413,7 +411,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
 
     // MARK: Actions
 
-    private func setCompleted(_ completed: Bool, animated: Bool = false) {
+    func setCompleted(_ completed: Bool, animated: Bool = false) {
         completed ? textView.strike() : textView.unstrike()
         overlayView.isHidden = !completed
         let updateColor = { [unowned self] in
@@ -463,7 +461,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
     }
 }
 
-// Mark: Gesture Recognizer Reset
+// MARK: Gesture Recognizer Reset
 
 extension UIGestureRecognizer {
     func reset() {

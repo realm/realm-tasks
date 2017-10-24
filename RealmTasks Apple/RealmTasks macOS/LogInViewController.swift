@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ class LogInViewController: NSViewController {
 
     weak var delelegate: LogInViewControllerDelegate?
 
-    var userName: String?
-    var password: String?
+    @objc var userName: String?
+    @objc var password: String?
 
     @IBAction func logIn(_ sender: AnyObject?) {
         guard let userName = userName, let password = password else {

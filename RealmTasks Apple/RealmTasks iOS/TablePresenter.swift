@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,11 @@ enum PlaceholderState {
 class TablePresenter<Parent: Object>: NSObject,
 UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Parent: ListPresentable {
 
+    // Cast first to existential to placate generic type checking.
+    private func castCell(cell: UITableViewCell?) -> TableViewCell<Parent.Item>? {
+        return cell as Any as? TableViewCell<Parent.Item>
+    }
+
     var viewController: ViewControllerProtocol! {
         didSet {
             setupMovingGesture()
@@ -51,10 +56,11 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     }
 
     deinit {
-        viewController.tableView.removeObserver(self, forKeyPath: "bounds")
+        boundsToken?.invalidate()
     }
 
     // MARK: Setup table view
+    private var boundsToken: NSKeyValueObservation?
 
     func setupTableView(in view: UIView, topConstraint: inout NSLayoutConstraint?, listTitle title: String?) {
         let tableView = viewController.tableView
@@ -78,18 +84,13 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         view.addSubview(tableViewContentView)
         tableViewContentView.isHidden = true
 
-        tableView.addObserver(self, forKeyPath: "bounds", options: .new, context: &tableViewBoundsKVOContext)
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if context == &tableViewBoundsKVOContext {
+        boundsToken = tableView.observe(\UITableView.bounds) { [weak self] _, _ in
+            guard let viewController = self?.viewController else { return }
             let tableView = viewController.tableView
             let tableViewContentView = viewController.tableViewContentView
             let view = tableView.superview!
             let height = max(view.frame.height - tableView.contentInset.top, tableView.contentSize.height + tableView.contentInset.bottom)
             tableViewContentView.frame = CGRect(x: 0, y: -tableView.contentOffset.y, width: view.frame.width, height: height)
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
 
@@ -100,8 +101,8 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = viewController.tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell<Parent.Item>
-
+        let cell = castCell(cell: viewController.tableView.dequeueReusableCell(withIdentifier: "cell",
+                                                                               for: indexPath))!
         cell.item = items[indexPath.row]
         cell.presenter = cellPresenter
 
@@ -139,7 +140,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
     }
 
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let itemCell = cell as! TableViewCell<Parent.Item>
+        let itemCell = castCell(cell: cell)!
         itemCell.reset()
     }
 
@@ -165,7 +166,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
         viewController.tableView.addGestureRecognizer(longPressGestureRecognizer)
     }
 
-    func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
+    @objc func longPressGestureRecognized(recognizer: UILongPressGestureRecognizer) {
         let tableView = viewController.tableView
 
         let location = recognizer.location(in: tableView)
@@ -253,7 +254,7 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
         let location = gestureRecognizer.location(in: tableView)
         if let indexPath = tableView.indexPathForRow(at: location),
-            let cell = tableView.cellForRow(at: indexPath) as? TableViewCell<Parent.Item> {
+            let cell = castCell(cell: tableView.cellForRow(at: indexPath)) {
             return !cell.item.completed
         }
         return gestureRecognizer is UITapGestureRecognizer
@@ -308,39 +309,39 @@ UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate where Pa
 
     func adjustPlaceholder(state: PlaceholderState) {
         switch state {
-            case .pullToCreate(let distancePulledDown):
-                UIView.animate(withDuration: 0.1) { [unowned self] in
-                    self.placeHolderCell.navHintView.alpha = 0
-                }
-                placeHolderCell.textView.text = "Pull to Create Item"
+        case .pullToCreate(let distancePulledDown):
+            UIView.animate(withDuration: 0.1) { [unowned self] in
+                self.placeHolderCell.navHintView.alpha = 0
+            }
+            placeHolderCell.textView.text = "Pull to Create Item"
 
-                let cellHeight = viewController.tableView.rowHeight
-                let angle = CGFloat(Double.pi / 2.0) - tan(distancePulledDown / cellHeight)
+            let cellHeight = viewController.tableView.rowHeight
+            let angle = CGFloat(Double.pi / 2.0) - tan(distancePulledDown / cellHeight)
 
-                var transform = CATransform3DIdentity
-                transform.m34 = CGFloat(1.0 / -(1000 * 0.3))
-                transform = CATransform3DRotate(transform, angle, 1, 0, 0)
-                placeHolderCell.layer.transform = transform
+            var transform = CATransform3DIdentity
+            transform.m34 = CGFloat(1.0 / -(1000 * 0.3))
+            transform = CATransform3DRotate(transform, angle, 1, 0, 0)
+            placeHolderCell.layer.transform = transform
 
-            case .releaseToCreate:
-                UIView.animate(withDuration: 0.1) { [unowned self] in
-                    self.placeHolderCell.navHintView.alpha = 0
-                }
-                placeHolderCell.layer.transform = CATransform3DIdentity
-                placeHolderCell.textView.text = "Release to Create Item"
-            case .switchToLists:
-                placeHolderCell.navHintView.hintText = "Switch to Lists"
-                placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransform.identity.rotated(by: .pi)
+        case .releaseToCreate:
+            UIView.animate(withDuration: 0.1) { [unowned self] in
+                self.placeHolderCell.navHintView.alpha = 0
+            }
+            placeHolderCell.layer.transform = CATransform3DIdentity
+            placeHolderCell.textView.text = "Release to Create Item"
+        case .switchToLists:
+            placeHolderCell.navHintView.hintText = "Switch to Lists"
+            placeHolderCell.navHintView.hintArrowTransfom = CGAffineTransform.identity.rotated(by: .pi)
 
-                UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5,
-                    options: [], animations: { [unowned self] in
+            UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5,
+                options: [], animations: { [unowned self] in
 
-                    self.placeHolderCell.navHintView.alpha = 1
-                    self.placeHolderCell.navHintView.hintArrowTransfom  = .identity
-                }, completion: nil)
+                self.placeHolderCell.navHintView.alpha = 1
+                self.placeHolderCell.navHintView.hintArrowTransfom  = .identity
+            }, completion: nil)
 
-            case .alpha(let alpha):
-                placeHolderCell.alpha = alpha
+        case .alpha(let alpha):
+            placeHolderCell.alpha = alpha
         }
     }
 }

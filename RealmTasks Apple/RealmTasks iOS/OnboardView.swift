@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2016-2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class OnboardView: UIView {
 
     init() {
         labelView.text = "Pull Down to Start"
-        labelView.font = .systemFont(ofSize: 20, weight: UIFontWeightMedium)
+        labelView.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
         labelView.textColor = contentColor
         labelView.textAlignment = .center
         labelView.sizeToFit()
