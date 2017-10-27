@@ -1,6 +1,6 @@
 
 
-** NOTE: Below instructions are only accurate for Realm Object Server 1.8. The projects are currently being upgraded to version 2.0 **
+**NOTE: Below instructions are only accurate for Realm Object Server 1.8. The projects are currently being upgraded to version 2.0**
 
 
 # Realm Tasks
