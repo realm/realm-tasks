@@ -1,10 +1,9 @@
+
+
+** NOTE: Below instructions are only accurate for Realm Object Server 1.8. The projects are currently being upgraded to version 2.0 **
+
+
 # Realm Tasks
-
----
-
-***For information on how to try out Realm Functions, the latest feature of the Realm Mobile Platform, check out the [Realm Functions folder](RealmTasks%20Functions).***
-
----
 
 > A basic task management app, designed as a *homage* to [Realmac Software's Clear](http://realmacsoftware.com/clear),
 with their knowledge and permission.
@@ -26,7 +25,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 * Android Studio 2.2 with Android API 25
 * An emulator, Genymotion or a real device attached and running.
 
-## 1. Get the Realm Mobile Platform Package and start the Object Server
+## 1. Get the Realm Platform Package and start the Object Server
 
 1. Download and extract the Realm Mobile Platform package from <https://realm.io/docs/realm-mobile-platform/get-started/>.
 2. Double-click the `start-object-server.command` script in the package obtained above.
