@@ -1,8 +1,3 @@
-
-
-**NOTE: Below instructions are only accurate for Realm Object Server 1.8. The projects are currently being upgraded to version 2.0**
-
-
 # Realm Tasks
 
 > A basic task management app, designed as a *homage* to [Realmac Software's Clear](http://realmacsoftware.com/clear),
@@ -25,13 +20,13 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 * Android Studio 2.2 with Android API 25
 * An emulator, Genymotion or a real device attached and running.
 
-## 1. Get the Realm Platform Package and start the Object Server
+### 1. Get the Realm Obejct Server
 
-1. Download and extract the Realm Mobile Platform package from <https://realm.io/docs/realm-mobile-platform/get-started/>.
-2. Double-click the `start-object-server.command` script in the package obtained above.
-
+The Realm Object Server can be installed via npm as a node application for macOS or Linux. Please see the [installation instructions](https://realm.io/docs/get-started/installation/developer-edition/). If you already got Node.js installed, it's a one-liner.
 
 ## 2. Build and Run RealmTasks
+
+First download or clone this repo.
 
 ### Cocoa
 
@@ -46,7 +41,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 ### Android
 
-1. Go to the `RealmTasks Android` folder.
+1. Go to the `RealmTasks Android` directory in this repo.
 2. Run `./gradlew installDebug`
 3. The RealmTask app should now be installed on all attached Android devices and emulators. You need to launch the app manually.
 
@@ -57,12 +52,13 @@ running instances of the app wether it is the Android, iOS or macOS app.
 
 We recommend that you run at least two instances of the app together to really show off sync in action.
 
+## 3. Access Realm Files with Realm Studio
 
-## 3. Access Realm Files with the Realm Browser
+Another useful tool is [Realm Studio](https://realm.io/products/realm-studio/) which is available for macOS, Linux, Windows and allows developers to inspect and manage Realms. Realm Studio is recommended for all developers and can be downloaded from the [Realm web site](https://realm.io/products/realm-studio/).
 
-1. Launch the "Realm Browser" app included in the package obtained above and click "Open Sync URL...".
-2. Paste the following into the Realm Browser's Sync Server URL field: `realm://127.0.0.1:9080/~/realmtasks`.
-3. Enter the same username and password as you used when running RealmTasks and click "Open".
+1. Launch the Realm Studio app obtained above and click "Connect to Realm Object Server".
+2. Press "Connect" to connect to the Realm Object Server running locally.
+3. You now see a list of all Realms on the server. The RealmTask file is named `/<UserId>/realmtasks`.
 
 # Compatibility
 
