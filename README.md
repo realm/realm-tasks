@@ -1,8 +1,3 @@
-
-
-**NOTE: Below instructions are only accurate for Realm Object Server 1.8. The projects are currently being upgraded to version 2.0**
-
-
 # Realm Tasks
 
 > A basic task management app, designed as a *homage* to [Realmac Software's Clear](http://realmacsoftware.com/clear),
@@ -25,11 +20,13 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 * Android Studio 2.2 with Android API 25
 * An emulator, Genymotion or a real device attached and running.
 
-### 1. Get the Realm Platform
+### 1. Get the Realm Obejct Server
 
-The Realm Platform can be installed via npm as a node application for macOS or Linux. For installation instructions please see the [Realm Object Server installation instructions](https://realm.io/docs/get-started/installation/developer-edition/). If you already got Node.js installed, it's a one-liner.
+The Realm Object Server can be installed via npm as a node application for macOS or Linux. Please see the [installation instructions](https://realm.io/docs/get-started/installation/developer-edition/). If you already got Node.js installed, it's a one-liner.
 
 ## 2. Build and Run RealmTasks
+
+First download or clone this repo.
 
 ### Cocoa
 
@@ -44,7 +41,7 @@ The Realm Platform can be installed via npm as a node application for macOS or L
 
 ### Android
 
-1. Go to the `RealmTasks Android` folder.
+1. Go to the `RealmTasks Android` directory in this repo.
 2. Run `./gradlew installDebug`
 3. The RealmTask app should now be installed on all attached Android devices and emulators. You need to launch the app manually.
 
