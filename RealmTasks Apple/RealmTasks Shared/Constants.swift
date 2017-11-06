@@ -22,7 +22,7 @@ struct Constants {
     #if os(OSX)
     static let syncHost = "127.0.0.1"
     #else
-    static let syncHost = "rmp-demo-sf.realm.io"//localIPAddress
+    static let syncHost = localIPAddress    //"rmp-demo-sf.realm.io"//localIPAddress
     #endif
 
     static let syncRealmPath = "realmtasks"
