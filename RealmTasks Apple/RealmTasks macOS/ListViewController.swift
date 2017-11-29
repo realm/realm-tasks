@@ -327,7 +327,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         autoscrollTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(handleAutoscrolling), userInfo: nil, repeats: true)
     }
 
-    private dynamic func handleAutoscrolling() {
+    @objc private dynamic func handleAutoscrolling() {
         if let event = NSApp.currentEvent {
             if tableView.autoscroll(with: event) {
                 handleReordering(forScreenPoint: event.locationInWindow)

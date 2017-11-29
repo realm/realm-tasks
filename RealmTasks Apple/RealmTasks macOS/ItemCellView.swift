@@ -299,7 +299,7 @@ extension ItemCellView: NSGestureRecognizerDelegate {
 
     // FIXME: This could easily be refactored to avoid such a high CC.
     // swiftlint:disable:next cyclomatic_complexity
-    fileprivate dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
+    @objc fileprivate dynamic func handlePan(recognizer: NSPanGestureRecognizer) {
         let originalDoneIconOffset = iconOffset
         let originalDeleteIconOffset = bounds.width - deleteIconView.bounds.width - iconOffset
 
