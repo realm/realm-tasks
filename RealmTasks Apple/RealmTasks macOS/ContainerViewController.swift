@@ -111,7 +111,7 @@ class ContainerViewController: NSViewController {
         updateToolbar(for: list)
 
         notificationToken?.invalidate()
-        notificationToken = list.realm?.addNotificationBlock { [unowned self] _, _ in
+        notificationToken = list.realm?.observe { [unowned self] _, _ in
             // Show all lists if list is deleted on other device
             if list.isInvalidated {
                 self.showAllLists(nil)
