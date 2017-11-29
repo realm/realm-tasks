@@ -85,7 +85,7 @@ extension Collection where Iterator.Element == Color, Index == Int {
         // Perform the interpolation
         let fromColors: [CGFloat] = [fromRed, fromGreen, fromBlue]
         let toColors: [CGFloat] = [toRed, toGreen, toBlue]
-        
+
         let finalColors = zip(fromColors, toColors).map { from, to in
             return from + stopOffset * (to - from)
         }
