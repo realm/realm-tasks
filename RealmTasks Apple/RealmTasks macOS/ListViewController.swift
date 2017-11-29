@@ -91,9 +91,15 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         let notificationCenter = NotificationCenter.default
 
         // Handle window resizing to update table view rows height
-//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didResizeNotification, object: view.window)
-//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didEnterFullScreenNotification, object: view.window)
-//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didExitFullScreenNotification, object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize),
+//                                       name: NSNotification.Name.NSWindow.didResizeNotification,
+//                                       object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize),
+//                                       name: NSNotification.Name.NSWindow.didEnterFullScreenNotification,
+//                                       object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize),
+//                                       name: NSNotification.Name.NSWindow.didExitFullScreenNotification,
+//                                       object: view.window)
 
         setupNotifications()
         setupGestureRecognizers()

@@ -27,14 +27,16 @@ class AppDelegate: NSObject {
     fileprivate var mainWindowController: NSWindowController!
 
     func logIn() {
-        let logInViewController = mainStoryboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "LogInViewController")) as! LogInViewController
+        let logInViewController = mainStoryboard
+            .instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "LogInViewController")) as! LogInViewController
         logInViewController.delelegate = self
 
         mainWindowController.contentViewController?.presentViewControllerAsSheetPreventingTermination(logInViewController)
     }
 
     func register(userName: String?) {
-        let registerViewController = mainStoryboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "RegisterViewController")) as! RegisterViewController
+        let registerViewController = mainStoryboard
+            .instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "RegisterViewController")) as! RegisterViewController
         registerViewController.delegate = self
         registerViewController.userName = userName
 
@@ -74,7 +76,8 @@ class AppDelegate: NSObject {
 extension AppDelegate: NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        mainWindowController = mainStoryboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "MainWindowController")) as! NSWindowController
+        mainWindowController = mainStoryboard
+            .instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "MainWindowController")) as! NSWindowController
         mainWindowController.window?.titleVisibility = .hidden
         mainWindowController.showWindow(nil)
 
