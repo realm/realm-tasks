@@ -60,7 +60,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     }
 
     deinit {
-        notificationToken?.stop()
+        notificationToken?.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
 
