@@ -131,7 +131,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
     }
 
-    private dynamic func windowDidResize(notification: NSNotification) {
+    @objc private dynamic func windowDidResize(notification: NSNotification) {
         updateTableViewHeightOfRows()
     }
 
@@ -295,7 +295,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         commitUIWrite()
     }
 
-    private dynamic func handlePressGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
+    @objc private dynamic func handlePressGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
             beginReorderingRow(atIndex: tableView.row(at: recognizer.location(in: tableView)), screenPoint: recognizer.location(in: nil))
@@ -306,7 +306,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
     }
 
-    private dynamic func handlePanGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
+    @objc private dynamic func handlePanGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
             startAutoscrolling()
