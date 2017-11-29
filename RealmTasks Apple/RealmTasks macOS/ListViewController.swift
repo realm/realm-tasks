@@ -103,7 +103,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     }
 
     private func setupNotifications() {
-        notificationToken = list.items.addNotificationBlock { [unowned self] changes in
+        notificationToken = list.items.observe { [unowned self] changes in
             switch changes {
                 case .initial:
                     self.tableView.reloadData()
