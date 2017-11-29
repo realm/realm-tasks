@@ -50,7 +50,7 @@ public func setDefaultRealmConfiguration(with user: SyncUser) {
     }
 
     // FIXME: Remove once core supports ordered sets: https://github.com/realm/realm-core/issues/1206
-    
+
     deduplicationNotificationToken = realm.observe { _, realm in
         let items = realm.objects(TaskListList.self).first!.items
         guard items.count > 1 && !realm.isInWriteTransaction else { return }

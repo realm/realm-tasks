@@ -3,8 +3,8 @@ source 'https://github.com/CocoaPods/Specs.git'
 abstract_target 'RealmTasks' do
     use_frameworks!
 
-    pod 'RealmSwift'		#, '= 2.10.1’
-    pod 'Cartography'       #, :git => 'https://github.com/robb/Cartography.git'
+    pod 'RealmSwift'		#, '= 2.10.1'
+    pod 'Cartography', :git => 'https://github.com/robb/Cartography.git'
     pod 'SwiftLint', '= 0.16.1'
 
     target 'RealmTasks iOS' do

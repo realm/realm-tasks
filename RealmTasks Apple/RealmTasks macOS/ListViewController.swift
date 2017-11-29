@@ -60,7 +60,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     }
 
     deinit {
-        notificationToken?.stop()
+        notificationToken?.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -91,9 +91,15 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         let notificationCenter = NotificationCenter.default
 
         // Handle window resizing to update table view rows height
-//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didResizeNotification, object: view.window)
-//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didEnterFullScreenNotification, object: view.window)
-//        notificationCenter.addObserver(self, selector: #selector(windowDidResize), name: NSNotification.Name.NSWindow.didExitFullScreenNotification, object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize),
+//                                       name: NSNotification.Name.NSWindow.didResizeNotification,
+//                                       object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize),
+//                                       name: NSNotification.Name.NSWindow.didEnterFullScreenNotification,
+//                                       object: view.window)
+//        notificationCenter.addObserver(self, selector: #selector(windowDidResize),
+//                                       name: NSNotification.Name.NSWindow.didExitFullScreenNotification,
+//                                       object: view.window)
 
         setupNotifications()
         setupGestureRecognizers()
@@ -103,7 +109,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
     }
 
     private func setupNotifications() {
-        notificationToken = list.items.addNotificationBlock { [unowned self] changes in
+        notificationToken = list.items.observe { [unowned self] changes in
             switch changes {
                 case .initial:
                     self.tableView.reloadData()
@@ -131,7 +137,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
     }
 
-    private dynamic func windowDidResize(notification: NSNotification) {
+    @objc private dynamic func windowDidResize(notification: NSNotification) {
         updateTableViewHeightOfRows()
     }
 
@@ -295,7 +301,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         commitUIWrite()
     }
 
-    private dynamic func handlePressGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
+    @objc private dynamic func handlePressGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
             beginReorderingRow(atIndex: tableView.row(at: recognizer.location(in: tableView)), screenPoint: recognizer.location(in: nil))
@@ -306,7 +312,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         }
     }
 
-    private dynamic func handlePanGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
+    @objc private dynamic func handlePanGestureRecognizer(_ recognizer: NSPressGestureRecognizer) {
         switch recognizer.state {
         case .began:
             startAutoscrolling()
@@ -327,7 +333,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
         autoscrollTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(handleAutoscrolling), userInfo: nil, repeats: true)
     }
 
-    private dynamic func handleAutoscrolling() {
+    @objc private dynamic func handleAutoscrolling() {
         if let event = NSApp.currentEvent {
             if tableView.autoscroll(with: event) {
                 handleReordering(forScreenPoint: event.locationInWindow)
@@ -564,7 +570,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
                 item.completed = complete
 
                 if index != destinationIndex {
-                    self.list.items.remove(objectAtIndex: index)
+                    self.list.items.remove(at: index)
                     self.list.items.insert(item, at: destinationIndex)
                 }
             }
