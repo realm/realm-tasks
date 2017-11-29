@@ -67,8 +67,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             if item.date != nil {
                 dateLabel.isHidden = false
                 dateLabel.text = dateFormatter.string(from: item.date!)
-            }
-            else {
+            } else {
                 dateLabel.isHidden = true
             }
             setLayoutConstraints(dateLabelHidden: dateLabel.isHidden)
@@ -202,8 +201,7 @@ final class TableViewCell<Item: Object>: UITableViewCell, UITextViewDelegate whe
             constrain(textView, replace: constraintGroup) { textView in
                 textView.bottom == textView.superview!.bottom - 7
             }
-        }
-        else {
+        } else {
             constrain(textView, dateLabel, replace: constraintGroup) { textView, dateLabel in
                 textView.bottom == dateLabel.top + 10
             }
