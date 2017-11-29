@@ -564,7 +564,7 @@ final class ListViewController<ListType: ListPresentable>: NSViewController, NST
                 item.completed = complete
 
                 if index != destinationIndex {
-                    self.list.items.remove(objectAtIndex: index)
+                    self.list.items.remove(at: index)
                     self.list.items.insert(item, at: destinationIndex)
                 }
             }
