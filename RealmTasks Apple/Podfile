@@ -3,7 +3,7 @@ use_frameworks!
 
 abstract_target 'RealmTasks' do
     pod 'RealmSwift', '~> 3'
-    pod 'Cartography', '~> 2.0.0'
+    pod 'Cartography', '~> 2.1.0'
     pod 'SwiftLint', '= 0.23.1'
 
     target 'RealmTasks iOS' do
@@ -37,4 +37,3 @@ post_install do |installer|
         end
     end
 end
-
