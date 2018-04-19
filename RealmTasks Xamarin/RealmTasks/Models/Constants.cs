@@ -12,9 +12,9 @@ namespace RealmTasks
         {
             public static string SyncHost { get; set; } = "127.0.0.1:9080";
 
-            public static Uri SyncServerUri => new Uri($"realm://{SyncHost}/~/realmtasks");
+            public static Uri SyncServerUri => new Uri($"realms://{SyncHost}/~/realmtasks");
 
-            public static Uri AuthServerUri => new Uri($"http://{SyncHost}");
+            public static Uri AuthServerUri => new Uri($"https://{SyncHost}");
         }
 
         public static class Colors
