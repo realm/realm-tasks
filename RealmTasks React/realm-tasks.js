@@ -24,7 +24,7 @@ import config from './config';
 
 let realm = null;
 
-function connect (action, username, password, callback) {
+function connect(action, username, password, callback) {
     username = username.trim();
     password = password.trim();
     if(username === '') {
@@ -32,24 +32,20 @@ function connect (action, username, password, callback) {
     } else if (password === '') {
         return callback(new Error('Password cannot be empty'));
     }
-         
-    Realm.Sync.User[action](config.auth_uri, username, password,
-        (error, user) => {
-            if (error) {
-                return callback(new Error(error.message));
-            } else {
-                realm = new Realm({
-                    schema: [Task, TaskList],
-                    sync: {
-                        user,
-                        url: config.db_uri
-                    },
-                    path: config.db_path
-                });
-                return callback(null, realm); // TODO errors
-            }
-        }
-    );
+
+    Realm.Sync.User[action](config.auth_uri, username, password).then(user => {
+      realm = new Realm({
+          schema: [Task, TaskList],
+          sync: {
+              user,
+              url: config.db_uri,
+          },
+          path: config.db_path
+      });
+      return callback(null, realm); // TODO errors
+    }, err => {
+      callback(err);
+    });
 }
 
 export default {
