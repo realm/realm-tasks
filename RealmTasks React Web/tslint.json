@@ -1,0 +1,27 @@
+{
+  "extends": [
+    "tslint:latest",
+    "tslint-react",
+    "tslint-eslint-rules",
+    "tslint-config-prettier"
+  ],
+  "rulesDirectory": [
+    "tslint-plugin-prettier"
+  ],
+  "rules": {
+    "object-literal-sort-keys": false,
+    "jsx-boolean-value": false,
+    "jsx-no-lambda": false,
+    "no-implicit-dependencies": [
+      true,
+      "dev"
+    ],
+    "prettier": [
+      true,
+      {
+        "singleQuote": true,
+        "trailingComma": "all"
+      }
+    ]
+  }
+}
