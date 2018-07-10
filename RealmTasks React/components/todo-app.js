@@ -42,7 +42,7 @@ export default class TodoApp extends React.Component {
         // This is a Results object, which will live-update.
         this.todoLists = RealmTasks.realm.objects('TaskList').sorted('text');
         if (this.todoLists.length < 1) { // FIXME async?!!
-          console.log(this.todoLists.length, this.todoLists);
+            console.log(this.todoLists.length, this.todoLists);
             RealmTasks.realm.write(() => {
                 RealmTasks.realm.create('TaskList', {text: 'My tasks', id: uuidV4()});
             });
