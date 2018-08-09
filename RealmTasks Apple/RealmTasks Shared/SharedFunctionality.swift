@@ -32,10 +32,9 @@ public func setDefaultRealmConfiguration(with user: SyncUser) {
         }
     }
 
-    Realm.Configuration.defaultConfiguration = Realm.Configuration(
-        syncConfiguration: SyncConfiguration(user: user, realmURL: Constants.syncServerURL!),
-        objectTypes: [TaskListList.self, TaskList.self, Task.self]
-    )
+    var configuration = user.configuration(realmURL: Constants.syncServerURL, fullSynchronization: true)
+    configuration.objectTypes = [TaskListList.self, TaskList.self, Task.self]
+    Realm.Configuration.defaultConfiguration = configuration
     let realm = try! Realm()
 
     if realm.isEmpty {
@@ -64,7 +63,7 @@ public func setDefaultRealmConfiguration(with user: SyncUser) {
             let listReferenceIDs = NSCountedSet(array: items.map { $0.id })
             for id in listReferenceIDs where listReferenceIDs.count(for: id) > 1 {
                 let id = id as! String
-                let indexesToRemove = items.enumerated().flatMap { index, element in
+                let indexesToRemove = items.enumerated().compactMap { index, element in
                     return element.id == id ? index : nil
                 }
                 indexesToRemove.dropFirst().reversed().forEach(items.remove)

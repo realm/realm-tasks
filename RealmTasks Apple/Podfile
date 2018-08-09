@@ -2,7 +2,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
 abstract_target 'RealmTasks' do
-    pod 'RealmSwift', '~> 3'
+    pod 'RealmSwift', '~> 3.7'
     pod 'Cartography', '~> 2.0.0'
     pod 'SwiftLint', '= 0.23.1'
 

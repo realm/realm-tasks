@@ -301,7 +301,6 @@
 				143C81DC1D65D1AA00E872E6 /* Frameworks */,
 				143C81DD1D65D1AA00E872E6 /* Resources */,
 				453925EFCB6CD18B926A44DA /* [CP] Embed Pods Frameworks */,
-				EA9812D7653C19B23885BEC1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -323,7 +322,6 @@
 				C23EB01A1D46329400D3E0AC /* Frameworks */,
 				C23EB01B1D46329400D3E0AC /* Resources */,
 				454E041C0514A606B56F6A8A /* [CP] Embed Pods Frameworks */,
-				3D8EF5BEF14E8D50617287BA /* [CP] Copy Pods Resources */,
 				22AD84871E26320B002D5C48 /* SwiftLint */,
 			);
 			buildRules = (
@@ -345,7 +343,6 @@
 				E84CF2AE1CBC408000082C1A /* Frameworks */,
 				E84CF2AF1CBC408000082C1A /* Resources */,
 				B28F2455243335365C52C858 /* [CP] Embed Pods Frameworks */,
-				F80B0F82C316A8061F9A1600 /* [CP] Copy Pods Resources */,
 				22AD84861E262772002D5C48 /* SwiftLint */,
 			);
 			buildRules = (
@@ -473,21 +470,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = Pods/SwiftLint/swiftlint;
-		};
-		3D8EF5BEF14E8D50617287BA /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks macOS/Pods-RealmTasks-RealmTasks macOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		453925EFCB6CD18B926A44DA /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -640,36 +622,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EA9812D7653C19B23885BEC1 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS Tests/Pods-RealmTasks-RealmTasks iOS Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F80B0F82C316A8061F9A1600 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RealmTasks-RealmTasks iOS/Pods-RealmTasks-RealmTasks iOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
