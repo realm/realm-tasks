@@ -22,7 +22,7 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 
 ## 1. Get the Realm Object Server
 
-The Realm Tasks apps use a Realm Object Server to synchronize tasks between them.
+The Realm Tasks apps uses a Realm Object Server to synchronize tasks between them.
 
 The fastest way to get access to a Realm Object Server is by signing up for a free Realm Cloud trial: 
 https://cloud.realm.io/login/sign-up.
