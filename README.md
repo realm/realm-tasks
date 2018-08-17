@@ -20,9 +20,12 @@ It is in no way a fully feature-complete product, nor is it ever meant to be an 
 * Android Studio 2.2 with Android API 25
 * An emulator, Genymotion or a real device attached and running.
 
-### 1. Get the Realm Object Server
+## 1. Get the Realm Object Server
 
-The Realm Object Server can be installed via npm as a node application for macOS or Linux. Please see the [installation instructions](https://realm.io/docs/get-started/installation/developer-edition/). If you already got Node.js installed, it's a one-liner.
+The Realm Tasks apps uses a Realm Object Server to synchronize tasks between them.
+
+The fastest way to get access to a Realm Object Server is by signing up for a free Realm Cloud trial: 
+https://cloud.realm.io/login/sign-up.
 
 ## 2. Build and Run RealmTasks
 
