@@ -1,0 +1,27 @@
+{
+  "name": "realm-tasks-react-native",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "test": "jest",
+    "postinstall": "react-native link realm"
+  },
+  "main": "src/index.js",
+  "dependencies": {
+    "react": "16.4.1",
+    "react-native": "0.56.0",
+    "realm": "^2.14.2"
+  },
+  "devDependencies": {
+    "babel-jest": "23.2.0",
+    "babel-preset-react-native": "^5",
+    "jest": "23.3.0",
+    "react-test-renderer": "16.4.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
