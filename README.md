@@ -1,4 +1,6 @@
-# Realm Tasks
+# Realm Tasks (DEPRECATED)
+
+**This project is deprecated and is no longer actively maintained.**
 
 > A basic task management app, designed as a *homage* to [Realmac Software's Clear](http://realmacsoftware.com/clear),
 with their knowledge and permission.
