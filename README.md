@@ -86,10 +86,12 @@ The following modules will be installed as part of the CocoaPods installation:
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more details!
 
-This project adheres to the [Contributor Covenant Code of Conduct](https://realm.io/conduct/). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@realm.io](mailto:info@realm.io).
-
+This project adheres to the [MongoDB Code of Conduct](https://www.mongodb.com/community-code-of-conduct).
+By participating, you are expected to uphold this code. Please report
+unacceptable behavior to [community-conduct@mongodb.com](mailto:community-conduct@mongodb.com).
 
 # License
 
 The source code for RealmTasks is licensed under the [Apache License 2.0](LICENSE).
-![analytics](https://ga-beacon.appspot.com/UA-50247013-2/realm-tasks/README?pixel)
+
+<img style="width: 0px; height: 0px;" src="https://3eaz4mshcd.execute-api.us-east-1.amazonaws.com/prod?s=https://github.com/realm/realm-tasks#README.md (deprecated)">
